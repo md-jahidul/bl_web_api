@@ -138,7 +138,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Degital Service Banglaflix',
                         'url_btn_label' => 'Banglaflix',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Monthly ৳ 50'
                     ],
                     [
                         'title' =>  'Mobile TV',
@@ -147,7 +147,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Degital service Mobile TV',
                         'url_btn_label' => 'Banglaflix',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Monthly ৳ 50'
                     ],[
                         'title' =>  'Gaan Mela',
                         'description' => 'Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.',
@@ -155,7 +155,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Degital Service Gaan Mela',
                         'url_btn_label' => 'Banglaflix',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Monthly ৳ 50'
                     ],
                     [
                         'title' =>  'Boi Ghor',
@@ -164,7 +164,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Degital service Boi Ghor',
                         'url_btn_label' => 'Banglaflix',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Monthly ৳ 50'
                     ]
                 ]
             ],
@@ -181,7 +181,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Banglalink clients',
                         'url_btn_label' => 'sadfsd fsdfdfs',
                         'url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex',
-                        'Other note' => ''
+                        'Other note' => 'Studiomaqs'
                     ],
                     [
                         'title' =>  'Shahriar Ahmed',
@@ -190,7 +190,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Banglalink clients',
                         'url_btn_label' => '',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Studiomaqs'
                     ],[
                         'title' =>  'Shahriar Ahmed',
                         'description' => 'Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.',
@@ -198,7 +198,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Banglalink clients',
                         'url_btn_label' => 'sadfsd fsdfdfs',
                         'url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex',
-                        'Other note' => ''
+                        'Other note' => 'Studiomaqs'
                     ],
                     [
                         'title' =>  'Shahriar Ahmed',
@@ -207,7 +207,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Banglalink clients',
                         'url_btn_label' => '',
                         'url' => '',
-                        'Other note' => ''
+                        'Other note' => 'Studiomaqs'
                     ] 
                 ]
             ],
@@ -221,18 +221,38 @@ class DemoApiController extends Controller{
     {
 
         // Apps & Services, Business, Loyalty,eShop
-        $menu = [
+        $footer_menu = [
             [
                 'id' => 1,
-                'title' => 'Home',
-                'url' => 'http://banglalink.net',
+                'title' => 'About',
+                'url' => 'http://banglalink.net/about',
                 'display_order' => 1,
                 'parent' => 0,
-                'chield_menus' => []
+                'child_menus' => [
+                    [
+                        'id' => 6,
+                        'title' => 'About Banglalink',
+                        'url' => 'http://banglalink.net/about-banglalink',
+                        'display_order' => 1,
+                        'parent' => 1
+                    ],[
+                        'id' => 7,
+                        'title' => 'About Veon',
+                        'url' => 'http://banglalink.net/postpaid',
+                        'display_order' => 2,
+                        'parent' => 1
+                    ],[
+                        'id' => 8,
+                        'title' => 'Suppliers and Partners',
+                        'url' => 'http://banglalink.net/suppliers-and-partners',
+                        'display_order' => 3,
+                        'parent' => 1
+                    ]
+                ] 
             ],
             [
                 'id' => 2,
-                'title' => 'Offers',
+                'title' => 'Offer',
                 'url' => 'http://banglalink.net/offers',
                 'display_order' => 2,
                 'parent' => 0,
@@ -251,8 +271,8 @@ class DemoApiController extends Controller{
                         'parent' => 2
                     ],[
                         'id' => 8,
-                        'title' => 'Propaid',
-                        'url' => 'http://banglalink.net/propaid',
+                        'title' => 'Roaming',
+                        'url' => 'http://banglalink.net/roaming',
                         'display_order' => 3,
                         'parent' => 2
                     ]
@@ -273,8 +293,8 @@ class DemoApiController extends Controller{
             ],
             [
                 'id' => 5,
-                'title' => 'eShop',
-                'url' => 'http://banglalink.net/eshop',
+                'title' => 'Useful Links',
+                'url' => 'http://banglalink.net/useful-links',
                 'display_order' => 5,
                 'parent' => 0,
             ]
