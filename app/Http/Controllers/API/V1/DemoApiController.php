@@ -5,302 +5,225 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class DemoApiController extends Controller{
 
 
-    public function menu()
+    public function slider()
     {
+        try{
 
-        // Apps & Services, Business, Loyalty,eShop
-        $menu = [
-            [
-                'id' => 1,
-                'title' => 'Home',
-                'url' => 'http://banglalink.net',
-                'display_order' => 1,
-                'parent' => 0,
-                'child_menus' => []
-            ],
-            [
-                'id' => 2,
-                'title' => 'Offers',
-                'url' => 'http://banglalink.net/offers',
-                'display_order' => 2,
-                'parent' => 0,
-                'child_menus' => [
-                    [
-                        'id' => 6,
-                        'title' => 'Prepaid',
-                        'url' => 'http://banglalink.net/prepaid',
-                        'display_order' => 1,
-                        'parent' => 2
-                    ],[
-                        'id' => 7,
-                        'title' => 'Postpaid',
-                        'url' => 'http://banglalink.net/postpaid',
-                        'display_order' => 2,
-                        'parent' => 2
-                    ],[
-                        'id' => 8,
-                        'title' => 'Propaid',
-                        'url' => 'http://banglalink.net/propaid',
-                        'display_order' => 3,
-                        'parent' => 2
+            $slider = [
+                [
+                    "id"=> 1,
+                    "title"=> "Home page main slider",
+                    "description"=> "",
+                    "shortcode"=> "Slider",
+                    "slider_images"=> [
+                        [
+                            "title"=> "Extra internet for all Banglalink users",
+                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "thumb_image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Internet offer image",
+                            "action_btn_label"=> "Internet Offers",
+                            "action_btn_url"=> "https=>//www.banglalink.net/offers",
+                            "is_external_url"=> false
+                        ],
+                        [
+                            "title"=> "Extra internet for all Banglalink users 1",
+                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "thumb_image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Internet offer image",
+                            "action_btn_label"=> "Internet Offers",
+                            "action_btn_url"=> "https=>//www.banglalink.net/offers",
+                            "is_external_url"=> false
+                        ],
+                        [
+                            "title"=> "Extra internet for all Banglalink users 2",
+                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "thumb_image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Internet offer image",
+                            "action_btn_label"=> "Internet Offers",
+                            "action_btn_url"=> "https=>//www.banglalink.net/offers",
+                            "is_external_url"=> false
+                        ]
+                    ]
+                ],
+
+                [
+                    "id"=> 1,
+                    "title"=> "MOBILE RECHARGE & POSTPAID BILL PAYMENT",
+                    "description"=> "",
+                    "shortcode"=> "RechargeAndServices",
+                    "slider_images"=> []
+                ],
+                [
+                    "id"=> 2,
+                    "title"=> "Home page exple device",
+                    "description"=> "",
+                    "shortcode"=> "ExploreDevices",
+                    "slider_images"=> [
+                        [
+                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+                            "short_note"=> "iPhone XR",
+                            "description"=> "Brilliant. In every way.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Explore device => samsung",
+                            "action_btn_label"=> "Show now",
+                            "action_btn_url"=> "https=>//www.banglalink.net/en/business/business-solutions/m-connex",
+                            "is_external_url"=> true
+                        ],
+                        [
+                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+                            "short_note"=> "iPhone XR",
+                            "description"=> "Brilliant. In every way.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Explore device => samsung",
+                            "action_btn_label"=> "Show now",
+                            "action_btn_url"=> "https=>//www.banglalink.net/en/business/business-solutions/m-connex",
+                            "is_external_url"=> true
+                        ],
+                        [
+                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+                            "short_note"=> "iPhone XR",
+                            "description"=> "Brilliant. In every way.",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Explore device => samsung",
+                            "action_btn_label"=> "Show now",
+                            "action_btn_url"=> "https=>//www.banglalink.net/en/business/business-solutions/m-connex",
+                            "is_external_url"=> true
+                        ]
+                    ]
+                ],
+
+                [
+                    "id"=> 3,
+                    "title"=> "Home page digital services slider",
+                    "description"=> "",
+                    "shortcode"=> "DigitalServices",
+                    "slider_images"=> [
+                        [
+                            "title"=> "Banglaflix",
+                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+                            "short_note"=> "Monthly ৳ 50",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Degital Service Banglaflix",
+                            "external_apps_url1"=> "https=>www.play.google.com/Banglaflix",
+                            "external_apps_url2"=> "https=>//www.apple.com/ios/app-store/Banglaflix"
+                        ],
+                        [
+                            "title"=> "Mobile Tv",
+                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+                            "short_note"=> "Monthly ৳ 50",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Degital Service Banglaflix",
+                            "apps_url1"=> "https=>www.play.google.com/Banglaflix",
+                            "apps_url2"=> "https=>//www.apple.com/ios/app-store/Banglaflix",
+                        ],
+                        [
+                            "title"=> "Gaan Mela",
+                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+                            "short_note"=> "Monthly ৳ 50",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Degital Service Banglaflix",
+                            "external_apps_url1"=> "https=>www.play.google.com/Banglaflix",
+                            "external_apps_url2"=> "https=>//www.apple.com/ios/app-store/Banglaflix"
+                        ],
+                        [
+                            "title"=> "Boi Ghar",
+                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+                            "short_note"=> "Monthly ৳ 50",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Degital Service Banglaflix",
+                            "apps_url1"=> "https=>www.play.google.com/Banglaflix",
+                            "apps_url2"=> "https=>//www.apple.com/ios/app-store/Banglaflix",
+                        ],
+                        [
+                            "title"=> "Others",
+                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+                            "short_note"=> "Monthly ৳ 50",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Degital Service Banglaflix",
+                            "apps_url1"=> "https=>www.play.google.com/Banglaflix",
+                            "apps_url2"=> "https=>//www.apple.com/ios/app-store/Banglaflix",
+                        ]
+                    ]
+                ],
+
+                [
+                    "id"=> 1,
+                    "title"=> "Testimonial",
+                    "description"=> "asdf sdfsdf sdf",
+                    "shortcode"=> "clients",
+                    "slider_images"=> [
+                        [
+                            "title"=> "Shahriar Ahmed",
+                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                            "short_note"=> "Studiomaqs",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Banglalink clients",
+                            "ratings"=> 4.5
+                        ],
+                        [
+                            "title"=> "Shahriar Ahmed",
+                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                            "short_note"=> "Studiomaqs",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Banglalink clients",
+                            "ratings"=> 4.5
+                        ],
+                        [
+                            "title"=> "Shahriar Ahmed",
+                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                            "short_note"=> "Studiomaqs",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Banglalink clients",
+                            "ratings"=> 4.5
+                        ],
+                        [
+                            "title"=> "Shahriar Ahmed",
+                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                            "short_note"=> "Studiomaqs",
+                            "image_url"=> "https=>//www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                            "alt_text"=> "Banglalink clients",
+                            "ratings"=> 4.5
+                        ]
                     ]
                 ]
-            ],[
-                'id' => 3,
-                'title' => 'Apps & Services',
-                'url' => 'http://banglalink.net/app-service',
-                'display_order' => 3,
-                'parent' => 0,
-            ],
-            [
-                'id' => 4,
-                'title' => 'Business',
-                'url' => 'http://banglalink.net/business',
-                'display_order' => 4,
-                'parent' => 0,
-            ],
-            [
-                'id' => 5,
-                'title' => 'eShop',
-                'url' => 'http://banglalink.net/eshop',
-                'display_order' => 5,
-                'parent' => 0,
-            ]
-        ];
+            ];
 
-    	return response()->json($menu);
-    }
 
-	public function slider(){
-        $sliders = [
-            'hero' => [
-                'id' => 1,
-                'title' => 'Home page main slider',
-                'description' => '',
-                'shortcode' => 'hero',
-                'images' => [
+            if (isset($slider)) {
+                return response()->json(
                     [
-                        'title' =>  'Extra internet for all Banglalink users',
-                        'description' => 'Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Internet offer image',
-                        'url_btn_label' =>  'Internet Offers',
-                        'external_url' => 'https://www.banglalink.net/offers'
-                    ],
-                    [
-                        'title' =>  'Extra internet for all Banglalink users',
-                        'description' => 'Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Internet offer image',
-                        'url_btn_label' => 'Internet Offers',
-                        'external_url' => 'https://www.banglalink.net/offers'
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => $slider
                     ]
+                );
+            }
+            return response()->json(
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
                 ]
-            ],
-            'explore' => [
-                'id' => 1,
-                'title' => 'Home page exple device',
-                'description' => '',
-                'shortcode' => 'explore',
-                'images' => [
-                    [
-                        'title' =>  'Find the best deals from our eshop and enjoy exclusive offers!',
-                        'description' => 'Brilliant. In every way.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Explore device : samsung',
-                        'url_btn_label' => 'Show now',
-                        'external_url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex'
-                    ],
-                    [
-                        'title' =>  'Find the best deals from our eshop and enjoy exclusive offers!',
-                        'description' => 'Brilliant. In every way.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Explore device : samsung',
-                        'url_btn_label' => 'Show now',
-                        'external_url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex'
-                    ]
+            );
+        }catch (QueryException $e) {
+            return response()->json(
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                    'description' => explode('|', $e->getMessage())[1]
                 ]
-            ],
-            'service' => [
-                'id' => 1,
-                'title' => 'Home page digital services slider',
-                'description' => '',
-                'shortcode' => 'service',
-                'images' => [
-                    [
-                        'title' =>  'Banglaflix',
-                        'description' => 'Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Degital Service Banglaflix',
-                        'url_btn_label' => 'Banglaflix',
-                        'url' => '',
-                        'Other note' => 'Monthly ৳ 50'
-                    ],
-                    [
-                        'title' =>  'Mobile TV',
-                        'description' => 'Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Degital service Mobile TV',
-                        'url_btn_label' => 'Banglaflix',
-                        'url' => '',
-                        'Other note' => 'Monthly ৳ 50'
-                    ],[
-                        'title' =>  'Gaan Mela',
-                        'description' => 'Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Degital Service Gaan Mela',
-                        'url_btn_label' => 'Banglaflix',
-                        'url' => '',
-                        'Other note' => 'Monthly ৳ 50'
-                    ],
-                    [
-                        'title' =>  'Boi Ghor',
-                        'description' => 'Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Degital service Boi Ghor',
-                        'url_btn_label' => 'Banglaflix',
-                        'url' => '',
-                        'Other note' => 'Monthly ৳ 50'
-                    ]
-                ]
-            ],
-            'client' => [
-                'id' => 1,
-                'title' => 'Testimonial',
-                'description' => 'asdf sdfsdf sdf',
-                'shortcode' => 'client',
-                'images' => [
-                    [
-                        'title' =>  'Shahriar Ahmed',
-                        'description' => 'Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Banglalink clients',
-                        'url_btn_label' => 'sadfsd fsdfdfs',
-                        'url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex',
-                        'Other note' => 'Studiomaqs'
-                    ],
-                    [
-                        'title' =>  'Shahriar Ahmed',
-                        'description' => 'Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Banglalink clients',
-                        'url_btn_label' => '',
-                        'url' => '',
-                        'Other note' => 'Studiomaqs'
-                    ],[
-                        'title' =>  'Shahriar Ahmed',
-                        'description' => 'Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Banglalink clients',
-                        'url_btn_label' => 'sadfsd fsdfdfs',
-                        'url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex',
-                        'Other note' => 'Studiomaqs'
-                    ],
-                    [
-                        'title' =>  'Shahriar Ahmed',
-                        'description' => 'Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.',
-                        'image_url' => 'https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg',
-                        'alt_text' => 'Banglalink clients',
-                        'url_btn_label' => '',
-                        'url' => '',
-                        'Other note' => 'Studiomaqs'
-                    ]
-                ]
-            ],
-        ];
-
-    	return response()->json($sliders);
-    }
-
-
-    public function footer()
-    {
-
-        // Apps & Services, Business, Loyalty,eShop
-        $footer_menu = [
-            [
-                'id' => 1,
-                'title' => 'About',
-                'url' => 'http://banglalink.net/about',
-                'display_order' => 1,
-                'parent' => 0,
-                'child_menus' => [
-                    [
-                        'id' => 6,
-                        'title' => 'About Banglalink',
-                        'url' => 'http://banglalink.net/about-banglalink',
-                        'display_order' => 1,
-                        'parent' => 1
-                    ],[
-                        'id' => 7,
-                        'title' => 'About Veon',
-                        'url' => 'http://banglalink.net/postpaid',
-                        'display_order' => 2,
-                        'parent' => 1
-                    ],[
-                        'id' => 8,
-                        'title' => 'Suppliers and Partners',
-                        'url' => 'http://banglalink.net/suppliers-and-partners',
-                        'display_order' => 3,
-                        'parent' => 1
-                    ]
-                ]
-            ],
-            [
-                'id' => 2,
-                'title' => 'Offer',
-                'url' => 'http://banglalink.net/offers',
-                'display_order' => 2,
-                'parent' => 0,
-                'child_menus' => [
-                    [
-                        'id' => 6,
-                        'title' => 'Prepaid',
-                        'url' => 'http://banglalink.net/prepaid',
-                        'display_order' => 1,
-                        'parent' => 2
-                    ],[
-                        'id' => 7,
-                        'title' => 'Postpaid',
-                        'url' => 'http://banglalink.net/postpaid',
-                        'display_order' => 2,
-                        'parent' => 2
-                    ],[
-                        'id' => 8,
-                        'title' => 'Roaming',
-                        'url' => 'http://banglalink.net/roaming',
-                        'display_order' => 3,
-                        'parent' => 2
-                    ]
-                ]
-            ],[
-                'id' => 3,
-                'title' => 'Apps & Services',
-                'url' => 'http://banglalink.net/app-service',
-                'display_order' => 3,
-                'parent' => 0,
-            ],
-            [
-                'id' => 4,
-                'title' => 'Business',
-                'url' => 'http://banglalink.net/business',
-                'display_order' => 4,
-                'parent' => 0,
-            ],
-            [
-                'id' => 5,
-                'title' => 'Useful Links',
-                'url' => 'http://banglalink.net/useful-links',
-                'display_order' => 5,
-                'parent' => 0,
-            ]
-        ];
-
-    	return response()->json($menu);
+            );
+        }
     }
 
 }
