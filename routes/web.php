@@ -20,10 +20,9 @@ $router->get('/key', function() {
     return str_random(32);
 });
 
-
-
 $router->group(['prefix' => 'api/v1'], function () use ($router) {
-    $router->get('menu','DemoApiController@menu');
+    $router->get('menu','API\V1\MenuApiController@getMenu');
+    $router->get('header-footer','API\V1\FooterMenuApiController@getFooterMenu');
     $router->get('slider','DemoApiController@slider');
     $router->get('footer','DemoApiController@footer');
 });

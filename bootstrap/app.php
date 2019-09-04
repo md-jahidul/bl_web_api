@@ -82,6 +82,10 @@ $app->singleton(
 
 $app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
 
+$app->middleware([
+    App\Http\Middleware\Cross::class
+]);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

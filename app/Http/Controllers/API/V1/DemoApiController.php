@@ -1,14 +1,14 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use App\Models\Car;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
- 
+
 class DemoApiController extends Controller{
 
-	
+
     public function menu()
     {
 
@@ -20,7 +20,7 @@ class DemoApiController extends Controller{
                 'url' => 'http://banglalink.net',
                 'display_order' => 1,
                 'parent' => 0,
-                'chield_menus' => []
+                'child_menus' => []
             ],
             [
                 'id' => 2,
@@ -48,7 +48,7 @@ class DemoApiController extends Controller{
                         'display_order' => 3,
                         'parent' => 2
                     ]
-                ] 
+                ]
             ],[
                 'id' => 3,
                 'title' => 'Apps & Services',
@@ -71,8 +71,8 @@ class DemoApiController extends Controller{
                 'parent' => 0,
             ]
         ];
-        
-    	return response()->json($menu); 
+
+    	return response()->json($menu);
     }
 
 	public function slider(){
@@ -98,7 +98,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Internet offer image',
                         'url_btn_label' => 'Internet Offers',
                         'external_url' => 'https://www.banglalink.net/offers'
-                    ] 
+                    ]
                 ]
             ],
             'explore' => [
@@ -122,7 +122,7 @@ class DemoApiController extends Controller{
                         'alt_text' => 'Explore device : samsung',
                         'url_btn_label' => 'Show now',
                         'external_url' => 'https://www.banglalink.net/en/business/business-solutions/m-connex'
-                    ] 
+                    ]
                 ]
             ],
             'service' => [
@@ -208,14 +208,14 @@ class DemoApiController extends Controller{
                         'url_btn_label' => '',
                         'url' => '',
                         'Other note' => 'Studiomaqs'
-                    ] 
+                    ]
                 ]
             ],
         ];
-        
-    	return response()->json($sliders); 
+
+    	return response()->json($sliders);
     }
-    
+
 
     public function footer()
     {
@@ -248,7 +248,7 @@ class DemoApiController extends Controller{
                         'display_order' => 3,
                         'parent' => 1
                     ]
-                ] 
+                ]
             ],
             [
                 'id' => 2,
@@ -276,7 +276,7 @@ class DemoApiController extends Controller{
                         'display_order' => 3,
                         'parent' => 2
                     ]
-                ] 
+                ]
             ],[
                 'id' => 3,
                 'title' => 'Apps & Services',
@@ -299,8 +299,8 @@ class DemoApiController extends Controller{
                 'parent' => 0,
             ]
         ];
-        
-    	return response()->json($menu); 
+
+    	return response()->json($menu);
     }
 
 }
