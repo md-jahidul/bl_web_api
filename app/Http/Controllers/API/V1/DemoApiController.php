@@ -13,7 +13,6 @@ class DemoApiController extends Controller{
     public function slider()
     {
         try{
-
             $slider = [
                 [
                     "id"=> 1,
@@ -195,8 +194,6 @@ class DemoApiController extends Controller{
                     ]
                 ]
             ];
-
-
             if (isset($slider)) {
                 return response()->json(
                     [
