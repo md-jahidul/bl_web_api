@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => 'cors', 'prefix' => 'api/v1'], function () {
+Route::group(['prefix' => 'api/v1'], function () {
     Route::get('menu','API\V1\MenuApiController@getMenu');
     Route::get('header-footer','API\V1\HeaderFooterMenuApiController@getFooterMenu');
     Route::get('slider','API\V1\SliderApiController@getSlider');
