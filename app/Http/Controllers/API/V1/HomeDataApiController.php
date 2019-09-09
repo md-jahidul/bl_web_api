@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\QuickLaunch;
+use App\Models\QuickLaunchItem;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class SliderApiController extends Controller
+class HomeDataApiController extends Controller
 {
-    public function getSlider()
+    public function getHomeData()
     {
         try{
             $slider = [
@@ -192,13 +194,19 @@ class SliderApiController extends Controller
                     ]
                 ]
             ];
+            $quickLaunch = QuickLaunchItem::all();
             if (isset($slider)) {
                 return response()->json(
                     [
                         'status' => 200,
                         'success' => true,
                         'message' => 'Data Found!',
-                        'data' => $slider
+                        'data' => [
+                            'slider' => [
+                                'hero_slider' => $slider
+                            ],
+                            'quick_launch_item' => $quickLaunch
+                        ]
                     ]
                 );
             }
