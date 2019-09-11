@@ -13,8 +13,11 @@ class HomeDataApiController extends Controller
     public function getHomeData()
     {
         try{
-            $slider = [
-                [
+
+            $quickLaunch = QuickLaunchItem::all();
+
+            $homePageData = [
+                'hero_slider' => [
                     "id"=> 1,
                     "title"=> "Home page main slider",
                     "description"=> "",
@@ -53,14 +56,15 @@ class HomeDataApiController extends Controller
                     ]
                 ],
 
-                [
+                'recharge_and_services' => [
                     "id"=> 1,
                     "title"=> "MOBILE RECHARGE & POSTPAID BILL PAYMENT",
                     "description"=> "",
                     "shortcode"=> "RechargeAndServices",
-                    "slider_images"=> []
+                    "info"=> []
                 ],
-                [
+                'quick_launch_item' => $quickLaunch,
+                'explore_devices_slider' => [
                     "id"=> 2,
                     "title"=> "Home page exple device",
                     "description"=> "",
@@ -99,7 +103,7 @@ class HomeDataApiController extends Controller
                     ]
                 ],
 
-                [
+                'digital_services_slider' => [
                     "id"=> 3,
                     "title"=> "Home page digital services slider",
                     "description"=> "",
@@ -153,7 +157,7 @@ class HomeDataApiController extends Controller
                     ]
                 ],
 
-                [
+                'testimonial_slider' => [
                     "id"=> 1,
                     "title"=> "Testimonial",
                     "description"=> "asdf sdfsdf sdf",
@@ -194,18 +198,15 @@ class HomeDataApiController extends Controller
                     ]
                 ]
             ];
-            $quickLaunch = QuickLaunchItem::all();
-            if (isset($slider)) {
+
+            if (isset($homePageData)) {
                 return response()->json(
                     [
                         'status' => 200,
                         'success' => true,
                         'message' => 'Data Found!',
                         'data' => [
-                            'slider' => [
-                                'hero_slider' => $slider
-                            ],
-                            'quick_launch_item' => $quickLaunch
+                            $homePageData
                         ]
                     ]
                 );
