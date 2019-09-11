@@ -17,12 +17,12 @@ class HomeDataApiController extends Controller
             $quickLaunch = QuickLaunchItem::all();
 
             $homePageData = [
-                'hero_slider' => [
+                [
                     "id"=> 1,
                     "title"=> "Home page main slider",
                     "description"=> "",
                     "shortcode"=> "Slider",
-                    "slider_images"=> [
+                    "data" => [
                         [
                             "title"=> "Extra internet for all Banglalink users",
                             "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
@@ -56,20 +56,23 @@ class HomeDataApiController extends Controller
                     ]
                 ],
 
-                'recharge_and_services' => [
+               [
                     "id"=> 1,
                     "title"=> "MOBILE RECHARGE & POSTPAID BILL PAYMENT",
                     "description"=> "",
                     "shortcode"=> "RechargeAndServices",
-                    "info"=> []
+                    "data" => []
                 ],
-                'quick_launch_item' => $quickLaunch,
-                'explore_devices_slider' => [
+                [
+                    "shortcode"=> "QuickLaunch",
+                    "data" => $quickLaunch
+                ],
+                [
                     "id"=> 2,
                     "title"=> "Home page exple device",
                     "description"=> "",
                     "shortcode"=> "ExploreDevices",
-                    "slider_images"=> [
+                    "data" => [
                         [
                             "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
                             "short_note"=> "iPhone XR",
@@ -103,12 +106,12 @@ class HomeDataApiController extends Controller
                     ]
                 ],
 
-                'digital_services_slider' => [
+                [
                     "id"=> 3,
                     "title"=> "Home page digital services slider",
                     "description"=> "",
                     "shortcode"=> "DigitalServices",
-                    "slider_images"=> [
+                    "data" => [
                         [
                             "title"=> "Banglaflix",
                             "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
@@ -156,13 +159,12 @@ class HomeDataApiController extends Controller
                         ]
                     ]
                 ],
-
-                'testimonial_slider' => [
+                [
                     "id"=> 1,
                     "title"=> "Testimonial",
                     "description"=> "asdf sdfsdf sdf",
                     "shortcode"=> "clients",
-                    "slider_images"=> [
+                    "data" => [
                         [
                             "title"=> "Shahriar Ahmed",
                             "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
