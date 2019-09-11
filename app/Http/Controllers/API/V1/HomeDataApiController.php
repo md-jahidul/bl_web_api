@@ -207,9 +207,7 @@ class HomeDataApiController extends Controller
                         'status' => 200,
                         'success' => true,
                         'message' => 'Data Found!',
-                        'data' => [
-                            $homePageData
-                        ]
+                        'data' => $homePageData
                     ]
                 );
             }
