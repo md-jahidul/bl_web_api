@@ -115,8 +115,8 @@ class HomeDataApiController extends Controller
                             "short_note"=> "Monthly ৳ 50",
                             "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
                             "alt_text"=> "Degital Service Banglaflix",
-                            "external_apps_url1"=> "https:www.play.google.com/Banglaflix",
-                            "external_apps_url2"=> "https://www.apple.com/ios/app-store/Banglaflix"
+                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
                         ],
                         [
                             "title"=> "Mobile Tv",
@@ -124,8 +124,8 @@ class HomeDataApiController extends Controller
                             "short_note"=> "Monthly ৳ 50",
                             "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
                             "alt_text"=> "Degital Service Banglaflix",
-                            "apps_url1"=> "https:www.play.google.com/Banglaflix",
-                            "apps_url2"=> "https://www.apple.com/ios/app-store/Banglaflix",
+                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
                         ],
                         [
                             "title"=> "Gaan Mela",
@@ -133,8 +133,8 @@ class HomeDataApiController extends Controller
                             "short_note"=> "Monthly ৳ 50",
                             "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
                             "alt_text"=> "Degital Service Banglaflix",
-                            "external_apps_url1"=> "https:www.play.google.com/Banglaflix",
-                            "external_apps_url2"=> "https://www.apple.com/ios/app-store/Banglaflix"
+                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
                         ],
                         [
                             "title"=> "Boi Ghar",
@@ -142,8 +142,8 @@ class HomeDataApiController extends Controller
                             "short_note"=> "Monthly ৳ 50",
                             "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
                             "alt_text"=> "Degital Service Banglaflix",
-                            "apps_url1"=> "https:www.play.google.com/Banglaflix",
-                            "apps_url2"=> "https://www.apple.com/ios/app-store/Banglaflix",
+                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
                         ],
                         [
                             "title"=> "Others",
@@ -151,8 +151,8 @@ class HomeDataApiController extends Controller
                             "short_note"=> "Monthly ৳ 50",
                             "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
                             "alt_text"=> "Degital Service Banglaflix",
-                            "apps_url1"=> "https:www.play.google.com/Banglaflix",
-                            "apps_url2"=> "https://www.apple.com/ios/app-store/Banglaflix",
+                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
                         ]
                     ]
                 ],
