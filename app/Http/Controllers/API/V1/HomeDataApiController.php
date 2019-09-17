@@ -14,7 +14,8 @@ class HomeDataApiController extends Controller
     {
         try{
 
-            $quickLaunch = QuickLaunchItem::all();
+            $quickLaunch = QuickLaunchItem::orderBy('display_order')->get();
+
             $homePageData = [
                 [
                     "id"=> 1,
