@@ -4,57 +4,47 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\QuickLaunch;
 use App\Models\QuickLaunchItem;
+use App\Models\Slider;
+use App\Models\SliderComponentType;
+use App\Models\SliderImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class HomeDataApiController extends Controller
 {
+    public function getSliderData($id){
+        $slider_images = SliderImage::where('slider_id',$id)->orderBy('sequence')->get();
+
+        foreach ($slider_images as $slider_image){
+            if(!empty($slider_image->other_attributes)){
+                $slider_image->other_attributes = json_decode( $slider_image->other_attributes );
+
+                foreach ($slider_image->other_attributes as $key => $value){
+                    $slider_image->{$key} = $value;
+                }
+            }
+            unset($slider_image->other_attributes);
+        }
+
+
+        $slider = Slider::find($id);
+        $slider->component = SliderComponentType::find($slider->component_id)->slug;
+        $slider->data = $slider_images;
+        return $slider;
+    }
+
     public function getHomeData()
     {
         try{
 
             $quickLaunch = QuickLaunchItem::orderBy('display_order')->get();
 
+            $heroSlider = $this->getSliderData(1);
+            $digitalServiceSlider = $this->getSliderData(2);
+
             $homePageData = [
-                [
-                    "id"=> 1,
-                    "title"=> "Home page main slider",
-                    "description"=> "",
-                    "shortcode"=> "Slider",
-                    "data" => [
-                        [
-                            "title"=> "Extra internet for all Banglalink users",
-                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "thumb_image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Internet offer image",
-                            "action_btn_label"=> "Internet Offers",
-                            "action_btn_url"=> "https://www.banglalink.net/offers",
-                            "is_external_url"=> false
-                        ],
-                        [
-                            "title"=> "Extra internet for all Banglalink users 1",
-                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "thumb_image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Internet offer image",
-                            "action_btn_label"=> "Internet Offers",
-                            "action_btn_url"=> "https://www.banglalink.net/offers",
-                            "is_external_url"=> false
-                        ],
-                        [
-                            "title"=> "Extra internet for all Banglalink users 2",
-                            "description"=> "Banglalink is one of the leading digital communications service providers in Bangladesh working to unlock new opportunities for its customers as they navigate the digital world.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "thumb_image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Internet offer image",
-                            "action_btn_label"=> "Internet Offers",
-                            "action_btn_url"=> "https://www.banglalink.net/offers",
-                            "is_external_url"=> false
-                        ]
-                    ]
-                ],
+                $heroSlider,
                 [
                     "id"=> 1,
                     "title"=> "MOBILE RECHARGE & POSTPAID BILL PAYMENT",
@@ -104,59 +94,60 @@ class HomeDataApiController extends Controller
                         ]
                     ]
                 ],
-                [
-                    "id"=> 3,
-                    "title"=> "Home page digital services slider",
-                    "description"=> "",
-                    "shortcode"=> "DigitalServices",
-                    "data" => [
-                        [
-                            "title"=> "Banglaflix",
-                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-                            "short_note"=> "Monthly ৳ 50",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Degital Service Banglaflix",
-                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-                        ],
-                        [
-                            "title"=> "Mobile Tv",
-                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-                            "short_note"=> "Monthly ৳ 50",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Degital Service Banglaflix",
-                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-                        ],
-                        [
-                            "title"=> "Gaan Mela",
-                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-                            "short_note"=> "Monthly ৳ 50",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Degital Service Banglaflix",
-                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-                        ],
-                        [
-                            "title"=> "Boi Ghar",
-                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-                            "short_note"=> "Monthly ৳ 50",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Degital Service Banglaflix",
-                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-                        ],
-                        [
-                            "title"=> "Others",
-                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-                            "short_note"=> "Monthly ৳ 50",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Degital Service Banglaflix",
-                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-                        ]
-                    ]
-                ],
+                $digitalServiceSlider,
+//                [
+//                    "id"=> 3,
+//                    "title"=> "Home page digital services slider",
+//                    "description"=> "",
+//                    "shortcode"=> "DigitalServices",
+//                    "data" => [
+//                        [
+//                            "title"=> "Banglaflix",
+//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+//                            "short_note"=> "Monthly ৳ 50",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Degital Service Banglaflix",
+//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                        ],
+//                        [
+//                            "title"=> "Mobile Tv",
+//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+//                            "short_note"=> "Monthly ৳ 50",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Degital Service Banglaflix",
+//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                        ],
+//                        [
+//                            "title"=> "Gaan Mela",
+//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+//                            "short_note"=> "Monthly ৳ 50",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Degital Service Banglaflix",
+//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                        ],
+//                        [
+//                            "title"=> "Boi Ghar",
+//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+//                            "short_note"=> "Monthly ৳ 50",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Degital Service Banglaflix",
+//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                        ],
+//                        [
+//                            "title"=> "Others",
+//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
+//                            "short_note"=> "Monthly ৳ 50",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Degital Service Banglaflix",
+//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
+//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                        ]
+//                    ]
+//                ],
                 [
                     "id"=> 1,
                     "title"=> "Testimonial",
