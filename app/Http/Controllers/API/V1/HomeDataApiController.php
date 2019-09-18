@@ -152,7 +152,7 @@ class HomeDataApiController extends Controller
                     "id"=> 1,
                     "title"=> "Testimonial",
                     "description"=> "asdf sdfsdf sdf",
-                    "shortcode"=> "Testimonial",
+                    "component"=> "Testimonial",
                     "data" => [
                         [
                             "title"=> "Shahriar Ahmed",
