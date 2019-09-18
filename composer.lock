@@ -3119,16 +3119,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "1.4.17",
+            "version": "1.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "52cf237a9ec53062e344a53d50428ca2f989035a"
+                "reference": "ee576355042241c09a76d787d7a4bcd1694ee797"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/52cf237a9ec53062e344a53d50428ca2f989035a",
-                "reference": "52cf237a9ec53062e344a53d50428ca2f989035a",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/ee576355042241c09a76d787d7a4bcd1694ee797",
+                "reference": "ee576355042241c09a76d787d7a4bcd1694ee797",
                 "shasum": ""
             },
             "require": {
@@ -3183,7 +3183,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2019-09-06T09:15:50+00:00"
+            "time": "2019-09-09T06:08:22+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -3650,18 +3650,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library for handling version information and constraints",
@@ -3983,8 +3983,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "FilterIterator implementation that filters files based on a list of suffixes.",
@@ -4025,8 +4025,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Simple template engine.",
@@ -4074,8 +4074,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Utility class for timing",
@@ -4891,8 +4891,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",

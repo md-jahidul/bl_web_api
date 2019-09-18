@@ -16,11 +16,15 @@ class HeaderFooterMenuApiController extends Controller
             $headerMenu = Menu::with('children')
                             ->where('parent_id', 0)
                             ->where('status', 1)
+                            ->orderBy('display_order')
                             ->get();
+
             $footerMenu = FooterMenu::with('children')
                                     ->where('parent_id', 0)
                                     ->where('status', 1)
+                                    ->orderBy('display_order')
                                     ->get();
+                                    
             if (isset($footerMenu)) {
                 return response()->json(
                     [
