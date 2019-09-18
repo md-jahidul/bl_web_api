@@ -49,18 +49,18 @@ class HomeDataApiController extends Controller
                     "id"=> 1,
                     "title"=> "MOBILE RECHARGE & POSTPAID BILL PAYMENT",
                     "description"=> "",
-                    "shortcode"=> "RechargeAndServices",
+                    "component"=> "RechargeAndServices",
                     "data" => []
                 ],
                 [
-                    "shortcode"=> "QuickLaunch",
+                    "component"=> "QuickLaunch",
                     "data" => $quickLaunch
                 ],
                 [
                     "id"=> 2,
                     "title"=> "Home page exple device",
                     "description"=> "",
-                    "shortcode"=> "ExploreDevices",
+                    "component"=> "ExploreDevices",
                     "data" => [
                         [
                             "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
