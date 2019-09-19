@@ -56,44 +56,44 @@ class HomeDataApiController extends Controller
                     "component"=> "QuickLaunch",
                     "data" => $quickLaunch
                 ],
-                [
-                    "id"=> 2,
-                    "title"=> "Home page exple device",
-                    "description"=> "",
-                    "component"=> "ExploreDevices",
-                    "data" => [
-                        [
-                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
-                            "short_note"=> "iPhone XR",
-                            "description"=> "Brilliant. In every way.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Explore device => samsung",
-                            "action_btn_label"=> "Show now",
-                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
-                            "is_external_url"=> true
-                        ],
-                        [
-                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
-                            "short_note"=> "iPhone XR",
-                            "description"=> "Brilliant. In every way.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Explore device => samsung",
-                            "action_btn_label"=> "Show now",
-                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
-                            "is_external_url"=> true
-                        ],
-                        [
-                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
-                            "short_note"=> "iPhone XR",
-                            "description"=> "Brilliant. In every way.",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Explore device => samsung",
-                            "action_btn_label"=> "Show now",
-                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
-                            "is_external_url"=> true
-                        ]
-                    ]
-                ],
+//                [
+//                    "id"=> 2,
+//                    "title"=> "Home page exple device",
+//                    "description"=> "",
+//                    "component"=> "ExploreDevices",
+//                    "data" => []
+//                        [
+//                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+//                            "short_note"=> "iPhone XR",
+//                            "description"=> "Brilliant. In every way.",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Explore device => samsung",
+//                            "action_btn_label"=> "Show now",
+//                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
+//                            "is_external_url"=> true
+//                        ],
+//                        [
+//                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+//                            "short_note"=> "iPhone XR",
+//                            "description"=> "Brilliant. In every way.",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Explore device => samsung",
+//                            "action_btn_label"=> "Show now",
+//                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
+//                            "is_external_url"=> true
+//                        ],
+//                        [
+//                            "title"=> "Find the best deals from our eshop and enjoy exclusive offers!",
+//                            "short_note"=> "iPhone XR",
+//                            "description"=> "Brilliant. In every way.",
+//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+//                            "alt_text"=> "Explore device => samsung",
+//                            "action_btn_label"=> "Show now",
+//                            "action_btn_url"=> "https://www.banglalink.net/en/business/business-solutions/m-connex",
+//                            "is_external_url"=> true
+//                        ]
+//                    ]
+//                ],
                 $digitalServiceSlider,
 //                [
 //                    "id"=> 3,
