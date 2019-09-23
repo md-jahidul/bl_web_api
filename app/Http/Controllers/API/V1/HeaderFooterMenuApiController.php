@@ -14,8 +14,7 @@ class HeaderFooterMenuApiController extends Controller
     public function getFooterMenu()
     {
         try{
-            $headerMenu = Menu::with('children')
-                            ->where('parent_id', 0)
+            $headerMenus = Menu::with('children')->where('parent_id', 0)
                             ->where('status', 1)
                             ->orderBy('display_order')
                             ->get();
@@ -26,27 +25,22 @@ class HeaderFooterMenuApiController extends Controller
                                     ->orderBy('display_order')
                                     ->get();
 
-
             $h_settings = Config::where('key','site_logo')
                         ->orWhere('key','logo_alt_text')
                         ->get();
 
-            $header_settings = [];                        
+            $header_settings = [];
             foreach ($h_settings as $settings) {
                 $header_settings[ $settings->key ] =  $settings->value;
             }
 
-           
-
-            $f_settings = Config::whereNotIn('key',['site_logo','logo_alt_text'])
-                                      ->get();
-
-            $footer_settings = [];                        
+            $f_settings = Config::whereNotIn('key',['site_logo','logo_alt_text'])->get();
+            $footer_settings = [];
             foreach ($f_settings as $settings) {
                 $footer_settings[$settings->key] = $settings->value;
             }
 
-            
+
 
             if (isset($footerMenu)) {
                 return response()->json(
@@ -56,7 +50,7 @@ class HeaderFooterMenuApiController extends Controller
                         'message' => 'Data Found!',
                         'data' => [
                             'header' => [
-                                'menu' => $headerMenu,
+                                'menu' => $headerMenus,
                                 'settings' => $header_settings
                             ],
                             'footer' => [

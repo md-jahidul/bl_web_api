@@ -42,6 +42,9 @@ class HomeDataApiController extends Controller
 
             $heroSlider = $this->getSliderData(1);
             $digitalServiceSlider = $this->getSliderData(2);
+            $testimonialSlider = $this->getSliderData(3);
+
+//            return $digitalServiceSlider;
 
             $homePageData = [
                 $heroSlider,
@@ -95,99 +98,48 @@ class HomeDataApiController extends Controller
 //                    ]
 //                ],
                 $digitalServiceSlider,
+                $testimonialSlider,
+
 //                [
-//                    "id"=> 3,
-//                    "title"=> "Home page digital services slider",
-//                    "description"=> "",
-//                    "shortcode"=> "DigitalServices",
+//                    "id"=> 1,
+//                    "title"=> "Testimonial",
+//                    "description"=> "asdf sdfsdf sdf",
+//                    "component"=> "Testimonial",
 //                    "data" => [
 //                        [
-//                            "title"=> "Banglaflix",
-//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-//                            "short_note"=> "Monthly ৳ 50",
+//                            "title"=> "Shahriar Ahmed",
+//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+//                            "short_note"=> "Studiomaqs",
 //                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Degital Service Banglaflix",
-//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                            "alt_text"=> "Banglalink clients",
+//                            "ratings"=> 4.5
 //                        ],
 //                        [
-//                            "title"=> "Mobile Tv",
-//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-//                            "short_note"=> "Monthly ৳ 50",
+//                            "title"=> "Shahriar Ahmed",
+//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+//                            "short_note"=> "Studiomaqs",
 //                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Degital Service Banglaflix",
-//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                            "alt_text"=> "Banglalink clients",
+//                            "ratings"=> 4.5
 //                        ],
 //                        [
-//                            "title"=> "Gaan Mela",
-//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-//                            "short_note"=> "Monthly ৳ 50",
+//                            "title"=> "Shahriar Ahmed",
+//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+//                            "short_note"=> "Studiomaqs",
 //                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Degital Service Banglaflix",
-//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                            "alt_text"=> "Banglalink clients",
+//                            "ratings"=> 4.5
 //                        ],
 //                        [
-//                            "title"=> "Boi Ghar",
-//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-//                            "short_note"=> "Monthly ৳ 50",
+//                            "title"=> "Shahriar Ahmed",
+//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+//                            "short_note"=> "Studiomaqs",
 //                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Degital Service Banglaflix",
-//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
-//                        ],
-//                        [
-//                            "title"=> "Others",
-//                            "description"=> "Mobile TV brings live TV &amp; Video on Demand (VOD) streaming on a mobile phone.",
-//                            "short_note"=> "Monthly ৳ 50",
-//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Degital Service Banglaflix",
-//                            "google_play_url"=> "https://play.google.com/store/apps/details?id=com.ebs.banglaflix",
-//                            "apple_store_url"=> "https://apps.apple.com/us/app/banglaflix/id1124030141",
+//                            "alt_text"=> "Banglalink clients",
+//                            "ratings"=> 4.5
 //                        ]
 //                    ]
-//                ],
-                [
-                    "id"=> 1,
-                    "title"=> "Testimonial",
-                    "description"=> "asdf sdfsdf sdf",
-                    "component"=> "Testimonial",
-                    "data" => [
-                        [
-                            "title"=> "Shahriar Ahmed",
-                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                            "short_note"=> "Studiomaqs",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Banglalink clients",
-                            "ratings"=> 4.5
-                        ],
-                        [
-                            "title"=> "Shahriar Ahmed",
-                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                            "short_note"=> "Studiomaqs",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Banglalink clients",
-                            "ratings"=> 4.5
-                        ],
-                        [
-                            "title"=> "Shahriar Ahmed",
-                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                            "short_note"=> "Studiomaqs",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Banglalink clients",
-                            "ratings"=> 4.5
-                        ],
-                        [
-                            "title"=> "Shahriar Ahmed",
-                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                            "short_note"=> "Studiomaqs",
-                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                            "alt_text"=> "Banglalink clients",
-                            "ratings"=> 4.5
-                        ]
-                    ]
-                ]
+//                ]
             ];
 
             if (isset($homePageData)) {
