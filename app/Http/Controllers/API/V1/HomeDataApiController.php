@@ -19,7 +19,6 @@ class HomeDataApiController extends Controller
         foreach ($slider_images as $slider_image){
             if(!empty($slider_image->other_attributes)){
                 $slider_image->other_attributes = json_decode( $slider_image->other_attributes );
-
                 foreach ($slider_image->other_attributes as $key => $value){
                     $slider_image->{$key} = $value;
                 }
@@ -27,8 +26,18 @@ class HomeDataApiController extends Controller
             unset($slider_image->other_attributes);
         }
 
-
         $slider = Slider::find($id);
+
+//        return $slider;
+
+        if(!empty($slider->other_attributes)){
+            $slider->other_attributes = json_decode( $slider->other_attributes );
+            foreach ($slider->other_attributes as $key => $value){
+                $slider->{$key} = $value;
+            }
+            unset($slider->other_attributes);
+        }
+
         $slider->component = SliderComponentType::find($slider->component_id)->slug;
         $slider->data = $slider_images;
         return $slider;
