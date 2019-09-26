@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\QuickLaunch;
 use App\Models\QuickLaunchItem;
-use App\Models\Slider;
-use App\Models\SliderComponentType;
-use App\Models\SliderImage;
+use App\Models\AlSlider;
+use App\Models\AlSliderComponentType;
+use App\Models\AlSliderImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 class HomeDataApiController extends Controller
 {
     public function getSliderData($id){
-        $slider_images = SliderImage::where('slider_id',$id)->orderBy('sequence')->get();
+        $slider_images = AlSliderImage::where('slider_id',$id)->orderBy('display_order')->get();
 
         foreach ($slider_images as $slider_image){
             if(!empty($slider_image->other_attributes)){
@@ -26,7 +26,7 @@ class HomeDataApiController extends Controller
             unset($slider_image->other_attributes);
         }
 
-        $slider = Slider::find($id);
+        $slider = AlSlider::find($id);
 
 //        return $slider;
 
@@ -38,7 +38,7 @@ class HomeDataApiController extends Controller
             unset($slider->other_attributes);
         }
 
-        $slider->component = SliderComponentType::find($slider->component_id)->slug;
+        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
         $slider->data = $slider_images;
         return $slider;
     }
@@ -52,9 +52,6 @@ class HomeDataApiController extends Controller
             $heroSlider = $this->getSliderData(1);
             $digitalServiceSlider = $this->getSliderData(2);
             $testimonialSlider = $this->getSliderData(3);
-
-//            return $digitalServiceSlider;
-
             $homePageData = [
                 $heroSlider,
                 [
@@ -109,46 +106,6 @@ class HomeDataApiController extends Controller
                 $digitalServiceSlider,
                 $testimonialSlider,
 
-//                [
-//                    "id"=> 1,
-//                    "title"=> "Testimonial",
-//                    "description"=> "asdf sdfsdf sdf",
-//                    "component"=> "Testimonial",
-//                    "data" => [
-//                        [
-//                            "title"=> "Shahriar Ahmed",
-//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-//                            "short_note"=> "Studiomaqs",
-//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Banglalink clients",
-//                            "ratings"=> 4.5
-//                        ],
-//                        [
-//                            "title"=> "Shahriar Ahmed",
-//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-//                            "short_note"=> "Studiomaqs",
-//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Banglalink clients",
-//                            "ratings"=> 4.5
-//                        ],
-//                        [
-//                            "title"=> "Shahriar Ahmed",
-//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-//                            "short_note"=> "Studiomaqs",
-//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Banglalink clients",
-//                            "ratings"=> 4.5
-//                        ],
-//                        [
-//                            "title"=> "Shahriar Ahmed",
-//                            "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-//                            "short_note"=> "Studiomaqs",
-//                            "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-//                            "alt_text"=> "Banglalink clients",
-//                            "ratings"=> 4.5
-//                        ]
-//                    ]
-//                ]
             ];
 
             if (isset($homePageData)) {

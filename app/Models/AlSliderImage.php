@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SliderImage extends Model
+class AlSliderImage extends Model
 {
     public function slider(){
-        return $this->belongsTo(Slider::class);
+        return $this->belongsTo(AlSlider::class);
     }
 }
