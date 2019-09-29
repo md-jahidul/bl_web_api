@@ -7,6 +7,7 @@ use App\Models\QuickLaunchItem;
 use App\Models\AlSlider;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
+use App\Models\ShortCode;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -86,42 +87,13 @@ class HomeDataDynamicApiController extends Controller
     {
         try{
 
-            $componentList = (object)[
-                [
-                    'component_type' => 'slider',
-                    'component_id'   =>  1,
-                    'component_status' => 'enabled'
-                ],
-                [
-                    'component_type' => 'recharge',
-                    'component_id'   =>  null,
-                    'component_status' => 'enabled'
-                ],
-                [
-                    'component_type' => 'quicklaunch',
-                    'component_id'   =>  null,
-                    'component_status' => 'enabled'
-                ],
-                [
-                    'component_type' => 'slider',
-                    'component_id'   =>  2,
-                    'component_status' => 'enabled'
-                ],
-                [
-                    'component_type' => 'slider',
-                    'component_id'   =>  3,
-                    'component_status' => 'enabled'
-                ]
-            ];
-
-
-            $componentList = json_decode(json_encode($componentList));
+            $componentList = ShortCode::where('page_id',1)
+                                        ->where('component_status','enabled')
+                                        ->get();
 
             $homePageData = [];
             foreach ($componentList as $component) {
-                if($component->component_status == 'enabled'){
-                    $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
-                }
+                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
             }
 
             if (isset($homePageData)) {
