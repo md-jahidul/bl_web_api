@@ -8,6 +8,8 @@ use App\Models\AlSlider;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
+use App\Models\PartnerOffer;
+
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -62,7 +64,18 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function factoryComponent($type,$id)
+    public function getPartnerOffersData($filter)
+    {
+        return [
+            "title_en" => "Lifestyle & benefits",
+            "title_bn" => "লাইফস্টাইল এবং বেনিফিট",
+            "component"=> "PartnerOffer",
+            "data" => PartnerOffer::where('show_in_home',$filter)->where('is_active',1)->get()
+        ];
+    }
+
+
+    public function factoryComponent($type,$id,$filter = true)
     {
         $data = null;
         switch ($type) {
@@ -74,6 +87,9 @@ class HomeDataDynamicApiController extends Controller
                 break;
             case "quicklaunch":
                 $data = $this->getQuickLaunchData();
+                break;
+            case "partner_offers":
+                $data = $this->getPartnerOffersData($filter);
                 break;
             default:
                 $data = "No suitable component found";
