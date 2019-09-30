@@ -9,7 +9,7 @@ use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
 use App\Models\PartnerOffer;
-
+use App\Models\Partner;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -75,9 +75,20 @@ class HomeDataDynamicApiController extends Controller
             }
             unset($slider->other_attributes);
         }
-
+        
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
-        $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)->get();
+        // $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)
+        //                             ->with('Partner:id,partner_category_id,company_name_en,company_name_bn,company_logo')
+        //                             ->get();
+
+        $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)
+                                    ->with(['partner'=>function($query){
+                                                $query->with('PartnerCategory:id,name_en,name_bn')->select();
+                                            }
+                                          ])->get();
+
+                                    
+                                    
         return $slider;
     }
 
