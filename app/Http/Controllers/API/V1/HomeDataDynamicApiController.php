@@ -64,17 +64,21 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function getPartnerOffersData($filter)
+    public function getPartnerOffersData($id,$filter)
     {
-        return [
-            "title_en" => "Lifestyle & benefits",
-            "title_bn" => "লাইফস্টাইল এবং বেনিফিট",
-            "component"=> "PartnerOffer",
-            'sliding_speed' => 10,
-            'view_list_btn_text_en' => "View all offers",
-            'view_list_btn_text_bn' => "সমস্ত পরিষেবা দেখুন",
-            "data" => PartnerOffer::where('show_in_home',$filter)->where('is_active',1)->get()
-        ];
+        $slider = AlSlider::find($id);
+
+        if(!empty($slider->other_attributes)){
+            $slider->other_attributes = json_decode( $slider->other_attributes );
+            foreach ($slider->other_attributes as $key => $value){
+                $slider->{$key} = $value;
+            }
+            unset($slider->other_attributes);
+        }
+
+        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
+        $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)->get();
+        return $slider;
     }
 
 
@@ -92,7 +96,7 @@ class HomeDataDynamicApiController extends Controller
                 $data = $this->getQuickLaunchData();
                 break;
             case "slider_multiple":
-                $data = $this->getPartnerOffersData($filter);
+                $data = $this->getPartnerOffersData($id,$filter);
                 break;
             default:
                 $data = "No suitable component found";
