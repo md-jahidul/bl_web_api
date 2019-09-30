@@ -70,6 +70,9 @@ class HomeDataDynamicApiController extends Controller
             "title_en" => "Lifestyle & benefits",
             "title_bn" => "লাইফস্টাইল এবং বেনিফিট",
             "component"=> "PartnerOffer",
+            'sliding_speed' => 10,
+            'view_list_btn_text_en' => "View all offers",
+            'view_list_btn_text_bn' => "সমস্ত পরিষেবা দেখুন",
             "data" => PartnerOffer::where('show_in_home',$filter)->where('is_active',1)->get()
         ];
     }
@@ -79,7 +82,7 @@ class HomeDataDynamicApiController extends Controller
     {
         $data = null;
         switch ($type) {
-            case "slider":
+            case "slider_single":
                 $data = $this->getSliderData($id);
                 break;
             case "recharge":
@@ -88,7 +91,7 @@ class HomeDataDynamicApiController extends Controller
             case "quicklaunch":
                 $data = $this->getQuickLaunchData();
                 break;
-            case "partner_offers":
+            case "slider_multiple":
                 $data = $this->getPartnerOffersData($filter);
                 break;
             default:
