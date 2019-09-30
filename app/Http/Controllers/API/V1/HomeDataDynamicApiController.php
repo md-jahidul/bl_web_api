@@ -122,7 +122,7 @@ class HomeDataDynamicApiController extends Controller
         try{
 
             $componentList = ShortCode::where('page_id',1)
-                                        ->where('component_status','enabled')
+                                        ->where('is_active',1)
                                         ->get();
 
             $homePageData = [];
