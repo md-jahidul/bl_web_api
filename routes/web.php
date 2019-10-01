@@ -20,5 +20,6 @@ Route::group(['prefix' => 'api/v1'], function () {
     Route::get('header-footer','API\V1\HeaderFooterMenuApiController@getFooterMenu');
     Route::get('home-page','API\V1\HomeDataDynamicApiController@getHomeData');
     Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
+    Route::get('partner-offers','API\V1\OfferAPiController@index');
 });
 

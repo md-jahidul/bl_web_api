@@ -37,7 +37,6 @@ class HomeDataApiController extends Controller
             }
             unset($slider->other_attributes);
         }
-
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
         $slider->data = $slider_images;
         return $slider;

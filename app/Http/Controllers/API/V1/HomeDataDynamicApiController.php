@@ -75,7 +75,7 @@ class HomeDataDynamicApiController extends Controller
             }
             unset($slider->other_attributes);
         }
-        
+
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
         // $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)
         //                             ->with('Partner:id,partner_category_id,company_name_en,company_name_bn,company_logo')
@@ -87,8 +87,8 @@ class HomeDataDynamicApiController extends Controller
                                             }
                                           ])->get();
 
-                                    
-                                    
+
+
         return $slider;
     }
 
@@ -101,7 +101,7 @@ class HomeDataDynamicApiController extends Controller
                 $data = $this->getSliderData($id);
                 break;
             case "recharge":
-                $data = $this->getRechargeData();  
+                $data = $this->getRechargeData();
                 break;
             case "quicklaunch":
                 $data = $this->getQuickLaunchData();
@@ -120,11 +120,9 @@ class HomeDataDynamicApiController extends Controller
     public function getHomeData()
     {
         try{
-
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
                                         ->get();
-
             $homePageData = [];
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
