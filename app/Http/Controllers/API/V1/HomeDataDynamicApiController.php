@@ -17,14 +17,28 @@ use DB;
 
 class HomeDataDynamicApiController extends Controller
 {
+//    public function bindDynamicValues(&$obj)
+//    {
+//
+//    }
+
     public function getSliderData($id){
-        $slider_images = AlSliderImage::where('slider_id',$id)
-                                        ->orderBy('display_order')
-                                        ->get();
+
+        $slider = AlSlider::find($id);
+        $component = AlSliderComponentType::find($slider->component_id)->slug;
+
+        $limit = ( $component == 'Testimonial' ) ? 5 : false;
+
+        $query = AlSliderImage::where('slider_id',$id)
+                                ->where('is_active',1)
+                                ->orderBy('display_order');
+
+        $query = $limit ? $query->limit($limit) : $query;
+        $slider_images =  $query->get();
 
         foreach ($slider_images as $slider_image){
             if(!empty($slider_image->other_attributes)){
-                $slider_image->other_attributes = json_decode( $slider_image->other_attributes );
+                $slider_image->other_attributes = $slider_image->other_attributes;
                 foreach ($slider_image->other_attributes as $key => $value){
                     $slider_image->{$key} = $value;
                 }
@@ -32,17 +46,15 @@ class HomeDataDynamicApiController extends Controller
             unset($slider_image->other_attributes);
         }
 
-        $slider = AlSlider::find($id);
-
         if(!empty($slider->other_attributes)){
-            $slider->other_attributes = json_decode( $slider->other_attributes );
+            $slider->other_attributes = $slider->other_attributes;
             foreach ($slider->other_attributes as $key => $value){
                 $slider->{$key} = $value;
             }
             unset($slider->other_attributes);
         }
 
-        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
+        $slider->component = $component;
         $slider->data = $slider_images;
         return $slider;
     }
@@ -67,12 +79,12 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function getPartnerOffersData($id,$filter)
+    public function getPartnerOffersData($id)
     {
-        $slider = AlSlider::find(4);
+        $slider = AlSlider::find($id);
 
         if(!empty($slider->other_attributes)){
-            $slider->other_attributes = json_decode( $slider->other_attributes );
+            $slider->other_attributes = $slider->other_attributes;
             foreach ($slider->other_attributes as $key => $value){
                 $slider->{$key} = $value;
             }
@@ -80,11 +92,8 @@ class HomeDataDynamicApiController extends Controller
         }
 
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
-        // $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)
-        //                             ->with('Partner:id,partner_category_id,company_name_en,company_name_bn,company_logo')
-        //                             ->get();
 
-        $slider->data = PartnerOffer::where('show_in_home',$filter)->where('is_active',1)
+        $slider->data = PartnerOffer::where('show_in_home',1)->where('is_active',1)
                                     ->with(['partner'=>function($query){
                                                 $query->with('PartnerCategory:id,name_en,name_bn')->select();
                                             }
@@ -102,7 +111,7 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function factoryComponent($type,$id,$filter = true)
+    public function factoryComponent($type,$id)
     {
         $data = null;
         switch ($type) {
@@ -116,7 +125,7 @@ class HomeDataDynamicApiController extends Controller
                 $data = $this->getQuickLaunchData();
                 break;
             case "slider_multiple":
-                $data = $this->getPartnerOffersData($id,$filter);
+                $data = $this->getPartnerOffersData($id);
                 break;
             default:
                 $data = "No suitable component found";
