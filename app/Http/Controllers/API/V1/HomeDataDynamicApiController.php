@@ -75,7 +75,7 @@ class HomeDataDynamicApiController extends Controller
 
     public function getPartnerOffersData($id)
     {
-        $slider = AlSlider::find($id);
+        $slider = AlSlider::find(4);
 
         if(!empty($slider->other_attributes)){
             $slider->other_attributes = $slider->other_attributes;
