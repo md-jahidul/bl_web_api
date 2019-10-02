@@ -17,10 +17,17 @@ use DB;
 
 class HomeDataDynamicApiController extends Controller
 {
-//    public function bindDynamicValues(&$obj)
-//    {
-//
-//    }
+    // In PHP, By default objects are passed as reference copy to a new Object.
+    public function bindDynamicValues($obj)
+    {
+        if(!empty($obj->other_attributes)){
+            $obj->other_attributes = $obj->other_attributes;
+            foreach ($obj->other_attributes as $key => $value){
+                $obj->{$key} = $value;
+            }
+        }
+        unset($obj->other_attributes);
+    }
 
     public function getSliderData($id){
 
@@ -33,26 +40,13 @@ class HomeDataDynamicApiController extends Controller
                                 ->where('is_active',1)
                                 ->orderBy('display_order');
 
-        $query = $limit ? $query->limit($limit) : $query;
-        $slider_images =  $query->get();
+        $slider_images =  $limit ? $query->limit($limit)->get() : $query->get();
 
         foreach ($slider_images as $slider_image){
-            if(!empty($slider_image->other_attributes)){
-                $slider_image->other_attributes = $slider_image->other_attributes;
-                foreach ($slider_image->other_attributes as $key => $value){
-                    $slider_image->{$key} = $value;
-                }
-            }
-            unset($slider_image->other_attributes);
+           $this->bindDynamicValues($slider_image);
         }
 
-        if(!empty($slider->other_attributes)){
-            $slider->other_attributes = $slider->other_attributes;
-            foreach ($slider->other_attributes as $key => $value){
-                $slider->{$key} = $value;
-            }
-            unset($slider->other_attributes);
-        }
+        $this->bindDynamicValues($slider);
 
         $slider->component = $component;
         $slider->data = $slider_images;
