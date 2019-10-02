@@ -8,6 +8,7 @@ use App\Models\PartnerCategory;
 
 class Partner extends Model
 {
+
     protected $casts = [
         'other_attributes' => 'array'
     ];

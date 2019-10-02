@@ -9,15 +9,18 @@ use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
 use App\Models\PartnerOffer;
-use App\Models\Partner;
+use App\Models\MetaTag;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use DB;
 
 class HomeDataDynamicApiController extends Controller
 {
     public function getSliderData($id){
-        $slider_images = AlSliderImage::where('slider_id',$id)->orderBy('display_order')->get();
+        $slider_images = AlSliderImage::where('slider_id',$id)
+                                        ->orderBy('display_order')
+                                        ->get();
 
         foreach ($slider_images as $slider_image){
             if(!empty($slider_image->other_attributes)){
@@ -87,6 +90,12 @@ class HomeDataDynamicApiController extends Controller
                                             }
                                           ])->get();
 
+        $slider->data = DB::table('partner_offers as po')
+                        ->join('partners as p', 'po.partner_id', '=', 'p.id')
+                        ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+                        ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
+                        ->get();
+
 
 
         return $slider;
@@ -123,6 +132,10 @@ class HomeDataDynamicApiController extends Controller
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
                                         ->get();
+
+            $metainfo = MetaTag::where('page_id',1)
+                                     ->first()->toArray();
+
             $homePageData = [];
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
@@ -134,7 +147,10 @@ class HomeDataDynamicApiController extends Controller
                         'status' => 200,
                         'success' => true,
                         'message' => 'Data Found!',
-                        'data' => $homePageData
+                        'data' => [
+                            'metatags' => $metainfo,
+                            'components' => $homePageData
+                        ]
                     ]
                 );
             }
