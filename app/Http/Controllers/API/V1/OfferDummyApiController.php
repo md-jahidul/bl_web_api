@@ -6,5 +6,8 @@ use Illuminate\Http\Request;
 
 class OfferApiController extends Controller
 {
-    //
+    public function index()
+    {
+        # code...
+    }
 }
