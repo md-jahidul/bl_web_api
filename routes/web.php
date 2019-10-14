@@ -23,5 +23,6 @@ Route::group(['prefix' => 'api/v1'], function () {
     Route::get('partner-offers','API\V1\OfferApiController@index');
     Route::get('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
+    Route::get('success','API\V1\SslCommerzController@success');
 });
 
