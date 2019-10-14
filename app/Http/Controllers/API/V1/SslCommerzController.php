@@ -14,10 +14,17 @@ class SslCommerzController extends Controller
     {
 
         // $gatewayurl = Mage::getStoreConfig('payment/synsslcompay/gatewayurl');
-       
+
+//     <----------cred: our old ssl account------------>
+//        $url = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+//        $store_id = 'silve5d873fa5b7245';
+//        $store_passwd = 'silve5d873fa5b7245@ssl';
+
+
+//     <----------cred: Banglalink account------------->
         $url = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
-        $store_id = 'silve5d873fa5b7245';
-        $store_passwd = 'silve5d873fa5b7245@ssl';
+        $store_id = 'bangl5da2f2be91898';
+        $store_passwd = 'bangl5da2f2be91898@ssl';
 
         // $url = 'https://sandbox.sslcommerz.com/gwprocess/v3/api.php';
         // $store_id = 'bs5d9f0b6f76bcf';
@@ -29,11 +36,11 @@ class SslCommerzController extends Controller
         $furl = $this->base_url . '/failure';
         $caurl = $this->base_url . '/cancel';
         $version = "3.00";
-        
+
         $post_data['total_amount'] = '10'; # You cant not pay less than 10
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid(); // tran_id must be unique
-       
+
          # CUSTOMER INFORMATION
          $post_data['cus_name'] = 'Customer Name';
          $post_data['cus_email'] = 'customer@mail.com';
@@ -45,7 +52,7 @@ class SslCommerzController extends Controller
          $post_data['cus_country'] = "Bangladesh";
          $post_data['cus_phone'] = '8801XXXXXXXXX';
          $post_data['cus_fax'] = "";
-         
+
           # SHIPMENT INFORMATION
 
         $post_data["shipping_method"] = "NO";
@@ -57,19 +64,19 @@ class SslCommerzController extends Controller
         $post_data['product_amount'] = '5';
         $post_data["product_profile"] = "general";
         $post_data["product_profile_id"] = "5";
-        $post_data['discount_amount'] = "5";     
+        $post_data['discount_amount'] = "5";
         $post_data['vat'] = "5";
         $post_data['multi_card_name'] = "brac_visa,brac_master";
         $post_data["previous_customer"] = "Yes";
         $post_data["ipn_url"] = "https://developer.sslcommerz.com/doc/v4/";
         $post_data['tokenize_id'] = "1";
         $post_data["topup_number"] = '01711111111';
-        $post_data["store_id"] = $store_id; 
+        $post_data["store_id"] = $store_id;
         $post_data["store_passwd"] =$store_passwd;
         $post_data['success_url']=$surl;
         $post_data['fail_url']=$furl;
         $post_data['cancel_url']=$caurl;
-  
+
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
         $returnResult= $this->calltoapiAction($post_data,$setLocalhost = true,$direct_api_url);
@@ -88,12 +95,12 @@ class SslCommerzController extends Controller
             'url' => $url,
             'total_amount' => '5',
             'store_id' => $store_id,
-            'store_passwd' => $store_passwd, 
+            'store_passwd' => $store_passwd,
             'tran_id' => 1,
             'success_url' => $surl,
             'fail_url' => $furl,
-            'cancel_url' => $caurl, 
-            'version' => $version,            
+            'cancel_url' => $caurl,
+            'version' => $version,
         );
 
         $response = new \stdClass();
@@ -103,8 +110,8 @@ class SslCommerzController extends Controller
         $request['gateway_url'] = $GatewayURL;
         $request['gateway_status'] = $GatewayStatus;
         $request['gateway_connect_status'] = $sslReturnResult['status'];
-        $response->data = $request;       
-       
+        $response->data = $request;
+
         return response()->json($response);
     }
 
@@ -142,4 +149,7 @@ class SslCommerzController extends Controller
             //return "cURL Error #:" . $err;
         }
     }
+
+
+
 }
