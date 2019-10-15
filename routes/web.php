@@ -26,5 +26,11 @@ Route::group(['prefix' => 'api/v1'], function () {
     Route::post('success','API\V1\SslCommerzController@success');
     Route::post('failure','API\V1\SslCommerzController@failure');
     Route::post('cancel','API\V1\SslCommerzController@cancel');
+
+
+
+    Route::get('ebl-pay','API\V1\EblPaymentApiController@postData');
+    Route::get('ebl-pay/complete/{order_id}','API\V1\EblPaymentApiController@complete');
+    Route::get('ebl-pay/cancel','API\V1\EblPaymentApiController@cancel');
 });
 
