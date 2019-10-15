@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -13,7 +14,7 @@ class SslCommerzController extends Controller
 
     public function __construct()
     {
-        $this->base_url = url('/');
+        $this->base_url =  'http://localhost:3030';// url('/');
     }
 
     public function getPostData()
@@ -21,12 +22,12 @@ class SslCommerzController extends Controller
         $post_data = array();
         $post_data['store_id'] = "bangl5da2f2be91898";
         $post_data['store_passwd'] = "bangl5da2f2be91898@ssl";
-        $post_data['total_amount'] = "500";
+        $post_data['total_amount'] = "15000";
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
-        $post_data['success_url'] =  $this->base_url . "/api/v1/success";
-        $post_data['fail_url'] =  $this->base_url . "/api/v1/failure";
-        $post_data['cancel_url'] = $this->base_url . "/api/v1/cancel";
+        $post_data['success_url'] =  $this->base_url . "/en/payment-success";
+        $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
+        $post_data['cancel_url'] = $this->base_url . "/en/cancel";
 
         # CUSTOMER INFORMATION
         $post_data['cus_name'] = "Jahidul Islam";
@@ -75,8 +76,6 @@ class SslCommerzController extends Controller
 
     public function ssl()
     {
-
-
 //     <----------cred: Banglalink account------------->
         $url = 'https://sandbox.sslcommerz.com/gwprocess/v3/api.php';
         $store_id = 'bangl5da2f2be91898';
@@ -114,7 +113,37 @@ class SslCommerzController extends Controller
         $request['gateway_connect_status'] = $sslReturnResult['status'];
         $response->data = $request;
 
-        return response()->json($response);
+//        $this->tryCase($response);
+
+        try{
+            if (isset($response)) {
+                return response()->json(
+                    [
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => $response
+                    ]
+                );
+            }
+            return response()->json(
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
+                ]
+            );
+        }catch (QueryException $e) {
+            return response()->json(
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                ]
+            );
+        }
+
+//        return response()->json($response);
     }
 
     public function calltoapiAction($data,$setLocalhost = false,$direct_api_url=''){
@@ -151,19 +180,52 @@ class SslCommerzController extends Controller
         }
     }
 
+
+    public function tryCase($data)
+    {
+        try{
+            if (isset($data)) {
+                return response()->json(
+                    [
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => $data
+                    ]
+                );
+            }
+            return response()->json(
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
+                ]
+            );
+        }catch (QueryException $e) {
+            return response()->json(
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                ]
+            );
+        }
+    }
+
     public function success(Request $request){
-       dd(request()->all());
-        echo "Transaction success";
+        $successData = request()->all();
+        $this->tryCase($successData);
     }
 
     public function failure(Request $request){
-        dd(request()->all());
-        echo "Transaction success";
+
+        $failureData = request()->all();
+        $this->tryCase($failureData);
     }
 
     public function cancel(Request $request){
-        dd(request()->all());
-        echo "Transaction cancel";
+        $cancelData = request()->all();
+        $this->tryCase($cancelData);
     }
 
 }
