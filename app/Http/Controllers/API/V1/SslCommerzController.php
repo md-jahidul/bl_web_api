@@ -218,11 +218,9 @@ class SslCommerzController extends Controller
 
     public function success(Request $request){
         $successData = request()->all();
-
-        dd($successData);
-
-
-        $this->tryCase($successData);
+        return redirect('http://172.16.229.242/en/payment-success');
+        // dd($successData);
+        // $this->tryCase($successData);
     }
 
     public function failure(Request $request){
