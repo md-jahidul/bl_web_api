@@ -14,7 +14,7 @@ class SslCommerzController extends Controller
 
     public function __construct()
     {
-        $this->base_url =  'http://localhost:3030';// url('/');
+        $this->base_url =  url('/'); // 'http://localhost:3030';
     }
 
     public function getPostData()
@@ -214,17 +214,25 @@ class SslCommerzController extends Controller
 
     public function success(Request $request){
         $successData = request()->all();
+
+        dd($successData);
+
+
         $this->tryCase($successData);
     }
 
     public function failure(Request $request){
 
         $failureData = request()->all();
+
+        dd($failureData);
         $this->tryCase($failureData);
     }
 
     public function cancel(Request $request){
         $cancelData = request()->all();
+
+        dd($cancelData);
         $this->tryCase($cancelData);
     }
 
