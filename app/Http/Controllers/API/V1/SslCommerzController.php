@@ -25,9 +25,9 @@ class SslCommerzController extends Controller
         $post_data['total_amount'] = "15000";
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
-        $post_data['success_url'] =  $this->base_url . "/en/payment-success";
-        $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
-        $post_data['cancel_url'] = $this->base_url . "/en/cancel";
+        $post_data['success_url'] =  $this->base_url . "/success";
+        $post_data['fail_url'] =  $this->base_url . "/failure";
+        $post_data['cancel_url'] = $this->base_url . "/cancel";
 
         # CUSTOMER INFORMATION
         $post_data['cus_name'] = "Jahidul Islam";
@@ -211,6 +211,10 @@ class SslCommerzController extends Controller
             );
         }
     }
+
+    // $post_data['success_url'] =  $this->base_url . "/en/payment-success";
+    // $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
+    // $post_data['cancel_url'] = $this->base_url . "/en/cancel";
 
     public function success(Request $request){
         $successData = request()->all();
