@@ -28,7 +28,7 @@ class EblPaymentApiController extends Controller
 
         $postData = array();
         $postData['order']['id'] = $orderID;
-        $postData['order']['amount'] = "5000";
+        $postData['order']['amount'] = "50";
         $postData['order']['currency'] = "BDT";
         $postData['order']['description'] = "EBL SKYPAY DEMO";
         $postData['interaction']['cancelUrl'] = "http://172.16.229.242/api/v1/ebl-pay/cancel";
