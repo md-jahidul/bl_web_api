@@ -14,7 +14,7 @@ class SslCommerzController extends Controller
 
     public function __construct()
     {
-        $this->base_url =  url('/'); // 'http://localhost:3030';
+        $this->base_url =  url('/') . '/api/v1'; // 'http://localhost:3030';
     }
 
     public function getPostData()
