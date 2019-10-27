@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PartnerOffer;
 use App\Models\Partner;
+use App\Models\Product;
 use DB;
 
 class OfferApiController extends Controller
