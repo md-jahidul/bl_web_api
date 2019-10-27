@@ -28,11 +28,11 @@ class EblPaymentApiController extends Controller
 
         $postData = array();
         $postData['order']['id'] = $orderID;
-        $postData['order']['amount'] = "5000";
+        $postData['order']['amount'] = "50";
         $postData['order']['currency'] = "BDT";
         $postData['order']['description'] = "EBL SKYPAY DEMO";
-        $postData['interaction']['cancelUrl'] = "http://asset-lite-api.test/api/v1/ebl-pay/cancel";
-        $postData['interaction']['returnUrl'] = "http://asset-lite-api.test/api/v1/ebl-pay/complete/$orderID";
+        $postData['interaction']['cancelUrl'] = url('/') . '/api/v1/ebl-pay/cancel';
+        $postData['interaction']['returnUrl'] = url('/') . "/api/v1/ebl-pay/complete/$orderID";
         $postData['interaction']['operation'] = "PURCHASE";
         $postData['interaction']['timeout']   = "600";
         $postData['interaction']['merchant']['name']   = "EBL SKYPAY DEMO";
