@@ -17,6 +17,37 @@ class SslCommerzController extends Controller
         $this->base_url =  'http://localhost:3030';// url('/');
     }
 
+    public function apiFormatter($response)
+    {
+        try{
+            if (isset($response)) {
+                return response()->json(
+                    [
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => $response
+                    ]
+                );
+            }
+            return response()->json(
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
+                ]
+            );
+        }catch (QueryException $e) {
+            return response()->json(
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                ]
+            );
+        }
+    }
+
     public function getPostData()
     {
         $post_data = array();
@@ -113,7 +144,7 @@ class SslCommerzController extends Controller
         $request['gateway_connect_status'] = $sslReturnResult['status'];
         $response->data = $request;
 
-//        $this->tryCase($response);
+//        $this->apiFormatter($response);
 
         try{
             if (isset($response)) {
@@ -150,6 +181,8 @@ class SslCommerzController extends Controller
         $header=array();
         $curl = curl_init();
 
+
+
         if (!$setLocalhost) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // The default value for this option is 2. It means, it has to have the same name in the certificate as is in the URL you operate against.
@@ -163,6 +196,7 @@ class SslCommerzController extends Controller
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
 
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -181,51 +215,22 @@ class SslCommerzController extends Controller
     }
 
 
-    public function tryCase($data)
-    {
-        try{
-            if (isset($data)) {
-                return response()->json(
-                    [
-                        'status' => 200,
-                        'success' => true,
-                        'message' => 'Data Found!',
-                        'data' => $data
-                    ]
-                );
-            }
-            return response()->json(
-                [
-                    'status' => 400,
-                    'success' => false,
-                    'message' => 'Data Not Found!'
-                ]
-            );
-        }catch (QueryException $e) {
-            return response()->json(
-                [
-                    'status' => 403,
-                    'success' => false,
-                    'message' => explode('|', $e->getMessage())[0],
-                ]
-            );
-        }
-    }
+
 
     public function success(Request $request){
         $successData = request()->all();
-        $this->tryCase($successData);
+        $this->apiFormatter($successData);
     }
 
     public function failure(Request $request){
 
         $failureData = request()->all();
-        $this->tryCase($failureData);
+        $this->apiFormatter($failureData);
     }
 
     public function cancel(Request $request){
         $cancelData = request()->all();
-        $this->tryCase($cancelData);
+        $this->apiFormatter($cancelData);
     }
 
 }
