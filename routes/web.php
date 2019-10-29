@@ -36,5 +36,9 @@ Route::group(['prefix' => 'api/v1'], function () {
     Route::get('ebl-pay','API\V1\EblPaymentApiController@postData');
     Route::get('ebl-pay/complete/{order_id}','API\V1\EblPaymentApiController@complete');
     Route::get('ebl-pay/cancel','API\V1\EblPaymentApiController@cancel');
+
+
+    Route::get('en-bn/{number}','API\V1\HomeDataDynamicApiController@test');
+
 });
 

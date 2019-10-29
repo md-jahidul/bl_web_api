@@ -23,6 +23,17 @@ class OfferApiController extends Controller
         ];
     }
 
+    public function bindDynamicValues($obj, $json_data = 'other_attributes')
+    {
+        if(!empty($obj->{ $json_data }))
+        {
+            foreach ($obj->{ $json_data } as $key => $value){
+                $obj->{$key} = $value;
+            }
+        }
+        unset($obj->{ $json_data });
+    }
+
     public function getPartnerOffersData()
     {
 
@@ -42,7 +53,11 @@ class OfferApiController extends Controller
 
     public function offers($type)
     {
-        $this->response['data'] = Product::category($type)->get();
+        $products = Product::category($type)->get();
+        foreach ( $products as $product){
+            $this->bindDynamicValues($product, 'offer_info');
+        }
+        $this->response['data'] = $products;
         return response()->json($this->response);
     }
 

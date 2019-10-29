@@ -7,6 +7,10 @@ use App\Models\SimCategory;
 
 class Product extends Model
 {
+    protected $casts = [
+        'offer_info' => 'array'
+    ];
+
     public function sim_category()
     {
         return $this->belongsTo(SimCategory::class);
