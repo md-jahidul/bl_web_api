@@ -93,7 +93,7 @@ class HomeDataDynamicApiController extends Controller
                                     ->orderBy('po.display_order')
                                     ->get();
         }else {
-            $products = Product::where('show_in_home',1)->orderBy('display_order')->get();
+            $products = Product::where('show_in_home',1)->where('status', 1)->orderBy('display_order')->get();
 
             foreach ( $products as $product){
                 $this->bindDynamicValues($product, 'offer_info');
