@@ -40,42 +40,24 @@ class HeaderFooterMenuApiController extends Controller
                 $footer_settings[$settings->key] = $settings->value;
             }
 
-
-
-            if (isset($footerMenu)) {
-                return response()->json(
-                    [
-                        'status' => 200,
-                        'success' => true,
-                        'message' => 'Data Found!',
-                        'data' => [
-                            'header' => [
-                                'menu' => $headerMenus,
-                                'settings' => $header_settings
-                            ],
-                            'footer' => [
-                               'menu' => $footerMenu,
-                               'settings' => $footer_settings
-                            ]
-                        ]
+            if (!isset($footerMenu) && isset($headerMenus)) {
+                $result = [
+                    'header' => [
+                        'menu' => $headerMenus,
+                        'settings' => $header_settings
+                    ],
+                    'footer' => [
+                       'menu' => $footerMenu,
+                       'settings' => $footer_settings
                     ]
-                );
+                ];
+
+                return response()->success($result, 'Data Found!');
             }
-            return response()->json(
-                [
-                    'status' => 400,
-                    'success' => false,
-                    'message' => 'Data Not Found!'
-                ]
-            );
+
+            return response()->error('Data Not Found!');               
         }catch (QueryException $e) {
-            return response()->json(
-                [
-                    'status' => 403,
-                    'success' => false,
-                    'error-message' => explode('|', $e->getMessage())[0],
-                ]
-            );
+            return response()->error('Data Not Found!', $e->getMessage());  
         }
     }
 

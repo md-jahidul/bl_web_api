@@ -15,6 +15,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
+use Validator;
 
 class HomeDataDynamicApiController extends Controller
 {
@@ -174,5 +175,31 @@ class HomeDataDynamicApiController extends Controller
                 ]
             );
         }
+    }
+
+    /**
+     *  Macro & mixin sample output for 
+     */
+
+    public function macro(){
+
+        $input = request()->all();
+
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'detail' => 'required'
+        ]);
+
+
+        if($validator->fails()){
+            return response()->error('Validation Error.', $validator->errors());       
+        }
+
+        $result  = [
+            ['id' => 1], 
+            ['id' => 2]
+        ]; 
+
+        return response()->success($result);
     }
 }

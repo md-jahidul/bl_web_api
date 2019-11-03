@@ -40,5 +40,7 @@ Route::group(['prefix' => 'api/v1'], function () {
 
     Route::get('en-bn/{number}','API\V1\HomeDataDynamicApiController@test');
 
+    Route::get('macro','API\V1\HomeDataDynamicApiController@macro');
+
 });
 
