@@ -17,7 +17,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use Validator;
 
-class HomeDataDynamicApiController extends Controller
+class HomePageController extends Controller
 {
     // In PHP, By default objects are passed as reference copy to a new Object.
     public function bindDynamicValues($obj, $json_data = 'other_attributes')
@@ -131,7 +131,7 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function getHomeData()
+    public function getHomePageData()
     {
         try{
             $componentList = ShortCode::where('page_id',1)

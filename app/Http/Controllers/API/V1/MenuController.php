@@ -9,9 +9,9 @@ use App\Models\Menu;
 use App\Models\Config;
 use Illuminate\Database\QueryException;
 
-class HeaderFooterMenuApiController extends Controller
+class MenuController extends Controller
 {
-    public function getFooterMenu()
+    public function getHeaderFooterMenus()
     {
         try{
             $headerMenus = Menu::with('children')->where('parent_id', 0)
@@ -40,7 +40,7 @@ class HeaderFooterMenuApiController extends Controller
                 $footer_settings[$settings->key] = $settings->value;
             }
 
-            if (!isset($footerMenu) && isset($headerMenus)) {
+            if (isset($footerMenu) && isset($headerMenus)) {
                 $result = [
                     'header' => [
                         'menu' => $headerMenus,
