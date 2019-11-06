@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\DurationCategory;
+use App\Models\OfferCategory;
+use App\Models\SimCategory;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PartnerOffer;
@@ -71,4 +75,32 @@ class OfferApiController extends Controller
             ]
         );
     }
+
+
+
+
+    public function offerCategories()
+    {
+        $tags = Tag::all();
+        $sim  = SimCategory::all();
+        $offer  = OfferCategory::all();
+        $duration  = DurationCategory::all();
+
+        return response()->json(
+            [
+                'status' => 200,
+                'success' => true,
+                'message' => 'Data Found!',
+                'data' => [
+                    'tag' => $tags,
+                    'sim' => $sim,
+                    'offer' => $offer,
+                    'duration' => $duration
+                ]
+            ]
+        );
+    }
+
+
+
 }
