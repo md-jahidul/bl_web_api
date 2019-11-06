@@ -6,6 +6,7 @@ use App\Models\DurationCategory;
 use App\Models\OfferCategory;
 use App\Models\SimCategory;
 use App\Models\Tag;
+use App\Models\TagCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PartnerOffer;
@@ -81,7 +82,7 @@ class OfferApiController extends Controller
 
     public function offerCategories()
     {
-        $tags = Tag::all();
+        $tags = TagCategory::all();
         $sim  = SimCategory::all();
         $offer  = OfferCategory::all();
         $duration  = DurationCategory::all();
