@@ -14,7 +14,7 @@ use App\Models\Partner;
 use App\Models\Product;
 use DB;
 
-class OfferApiController extends Controller
+class OfferCategoryController extends Controller
 {
     protected $response = [];
 
@@ -78,16 +78,12 @@ class OfferApiController extends Controller
     }
 
 
-
-
     public function offerCategories()
     {
         $tags = TagCategory::all();
         $sim  = SimCategory::all();
         $offer  = OfferCategory::where('parent_id', 0)->with('children')->get();
         $duration  = DurationCategory::all();
-
-//        return $offer;
 
         return response()->json(
             [
@@ -104,6 +100,35 @@ class OfferApiController extends Controller
         );
     }
 
+    public function productDetails($type, $id)
+    {
+        $productDetail = Product::where('id',$id)
+            ->category($type)
+            ->with('product_details', 'related_product')
+            ->first();
 
+        $this->bindDynamicValues($productDetail, 'offer_info');
 
+        $data = [];
+        foreach ($productDetail->related_product as $product)
+        {
+            $findProduct = Product::findOrFail($product->related_product_id);
+            array_push($data, $findProduct);
+        }
+
+        $productDetail->related_products = $data;
+
+        $this->bindDynamicValues($productDetail->related_products, 'offer_info');
+//        return $productDetail->related_products;
+
+        unset($productDetail->related_product);
+        return response()->json(
+            [
+                'status' => 200,
+                'success' => true,
+                'message' => 'Data Found!',
+                'data' => $productDetail
+            ]
+        );
+    }
 }

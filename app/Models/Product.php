@@ -22,4 +22,14 @@ class Product extends Model
             $q->where('alias', $type);
         });
     }
+
+    public function product_details()
+    {
+        return $this->hasOne(ProductDetail::class);
+    }
+
+    public function related_product()
+    {
+        return $this->hasMany(RelatedProduct::class);
+    }
 }
