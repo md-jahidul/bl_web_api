@@ -84,8 +84,10 @@ class OfferApiController extends Controller
     {
         $tags = TagCategory::all();
         $sim  = SimCategory::all();
-        $offer  = OfferCategory::all();
+        $offer  = OfferCategory::where('parent_id', 0)->with('children')->get();
         $duration  = DurationCategory::all();
+
+//        return $offer;
 
         return response()->json(
             [
