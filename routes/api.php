@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware' => 'checkIp','prefix' => '/v1'], function () {
+Route::group(['prefix' => '/v1'], function () {
     Route::get('menu','API\V1\MenuApiController@getMenu');
     Route::get('header-footer','API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page','API\V1\HomePageController@getHomePageData');
