@@ -18,7 +18,7 @@ class CheckIpMiddleware
     public function handle($request, Closure $next)
     {
         if (!in_array($request->ip(), $this->whiteIps)) {
-            return response()->json(['Request from invalid IP address']);
+            return response()->json(['Request from invalid IP address '. $request->ip()]);
         }
 
         return $next($request);
