@@ -17,6 +17,37 @@ class SslCommerzController extends Controller
         $this->base_url =  url('/') . '/api/v1'; // 'http://localhost:3030';
     }
 
+    public function apiFormatter($response)
+    {
+        try{
+            if (isset($response)) {
+                return response()->json(
+                    [
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => $response
+                    ]
+                );
+            }
+            return response()->json(
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
+                ]
+            );
+        }catch (QueryException $e) {
+            return response()->json(
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                ]
+            );
+        }
+    }
+
     public function getPostData()
     {
         $post_data = array();
@@ -113,7 +144,7 @@ class SslCommerzController extends Controller
         $request['gateway_connect_status'] = $sslReturnResult['status'];
         $response->data = $request;
 
-//        $this->tryCase($response);
+//        $this->apiFormatter($response);
 
         try{
             if (isset($response)) {
@@ -150,6 +181,8 @@ class SslCommerzController extends Controller
         $header=array();
         $curl = curl_init();
 
+
+
         if (!$setLocalhost) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // The default value for this option is 2. It means, it has to have the same name in the certificate as is in the URL you operate against.
@@ -163,6 +196,7 @@ class SslCommerzController extends Controller
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
 
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
@@ -181,36 +215,7 @@ class SslCommerzController extends Controller
     }
 
 
-    public function tryCase($data)
-    {
-        try{
-            if (isset($data)) {
-                return response()->json(
-                    [
-                        'status' => 200,
-                        'success' => true,
-                        'message' => 'Data Found!',
-                        'data' => $data
-                    ]
-                );
-            }
-            return response()->json(
-                [
-                    'status' => 400,
-                    'success' => false,
-                    'message' => 'Data Not Found!'
-                ]
-            );
-        }catch (QueryException $e) {
-            return response()->json(
-                [
-                    'status' => 403,
-                    'success' => false,
-                    'message' => explode('|', $e->getMessage())[0],
-                ]
-            );
-        }
-    }
+
 
     // $post_data['success_url'] =  $this->base_url . "/en/payment-success";
     // $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
@@ -218,24 +223,22 @@ class SslCommerzController extends Controller
 
     public function success(Request $request){
         $successData = request()->all();
+        $this->apiFormatter($successData);
         return redirect('http://172.16.229.242/en/payment-success');
-        // dd($successData);
-        // $this->tryCase($successData);
+
     }
 
     public function failure(Request $request){
 
         $failureData = request()->all();
+        $this->apiFormatter($failureData);
         return redirect('http://172.16.229.242/en/payment-fail');
-        // dd($failureData);
-        // $this->tryCase($failureData);
+
     }
 
     public function cancel(Request $request){
         $cancelData = request()->all();
-
-        dd($cancelData);
-        $this->tryCase($cancelData);
+        $this->apiFormatter($cancelData);
     }
 
 }

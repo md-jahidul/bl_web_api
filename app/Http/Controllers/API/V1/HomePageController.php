@@ -15,19 +15,21 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
+use Validator;
 
-class HomeDataDynamicApiController extends Controller
+class HomePageController extends Controller
 {
     // In PHP, By default objects are passed as reference copy to a new Object.
-    public function bindDynamicValues($obj)
+    public function bindDynamicValues($obj, $json_data = 'other_attributes')
     {
-        if(!empty($obj->other_attributes)){
-            $obj->other_attributes = $obj->other_attributes;
-            foreach ($obj->other_attributes as $key => $value){
+        if(!empty($obj->{ $json_data }))
+        {
+            foreach ($obj->{ $json_data } as $key => $value){
                 $obj->{$key} = $value;
             }
         }
-        unset($obj->other_attributes);
+
+        unset($obj->{ $json_data });
     }
 
     public function getSliderData($id){
@@ -77,16 +79,9 @@ class HomeDataDynamicApiController extends Controller
     public function getMultipleSliderData($id)
     {
         $slider = AlSlider::find($id);
+        $this->bindDynamicValues($slider);
 
-        if(!empty($slider->other_attributes)){
-            $slider->other_attributes = $slider->other_attributes;
-            foreach ($slider->other_attributes as $key => $value){
-                $slider->{$key} = $value;
-            }
-            unset($slider->other_attributes);
-        }
-
-        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;     
+        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
 
 
         if($id == 4){
@@ -99,7 +94,13 @@ class HomeDataDynamicApiController extends Controller
                                     ->orderBy('po.display_order')
                                     ->get();
         }else {
-            $slider->data = Product::where('show_in_home',1)->orderBy('display_order')->get();
+            $products = Product::where('show_in_home',1)->where('status', 1)->orderBy('display_order')->get();
+
+            foreach ( $products as $product){
+                $this->bindDynamicValues($product, 'offer_info');
+            }
+
+            $slider->data = $products;
         }
 
         return $slider;
@@ -130,7 +131,7 @@ class HomeDataDynamicApiController extends Controller
     }
 
 
-    public function getHomeData()
+    public function getHomePageData()
     {
         try{
             $componentList = ShortCode::where('page_id',1)
@@ -174,5 +175,31 @@ class HomeDataDynamicApiController extends Controller
                 ]
             );
         }
+    }
+
+    /**
+     *  Macro & mixin sample output for 
+     */
+
+    public function macro(){
+
+        $input = request()->all();
+
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'detail' => 'required'
+        ]);
+
+
+        if($validator->fails()){
+            return response()->error('Validation Error.', $validator->errors());       
+        }
+
+        $result  = [
+            ['id' => 1], 
+            ['id' => 2]
+        ]; 
+
+        return response()->success($result);
     }
 }
