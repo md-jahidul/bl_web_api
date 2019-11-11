@@ -22,8 +22,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('header-footer','API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page','API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-    Route::get('partner-offers','API\V1\OfferApiController@index');
-    Route::get('offers/{type}','API\V1\OfferApiController@offers');
+    Route::get('partner-offers','API\V1\OfferCategoryController@index');
+    Route::get('offers/{type}','API\V1\OfferCategoryController@offers');
     Route::get('offers-categories','API\V1\OfferCategoryController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\OfferCategoryController@productDetails');
 
