@@ -17,11 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => '/v1'], function () {
+Route::group(['middleware' => 'checkIp','prefix' => '/v1'], function () {
     Route::get('menu','API\V1\MenuApiController@getMenu');
-    Route::get('header-footer','API\V1\HeaderFooterMenuApiController@getFooterMenu');
-    Route::get('home-page','API\V1\HomeDataDynamicApiController@getHomeData');
-//    Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
+    Route::get('header-footer','API\V1\MenuController@getHeaderFooterMenus');
+    Route::get('home-page','API\V1\HomePageController@getHomePageData');
+    // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
     Route::get('partner-offers','API\V1\OfferApiController@index');
     Route::get('offers/{type}','API\V1\OfferApiController@offers');
     Route::get('offers-categories','API\V1\OfferCategoryController@offerCategories');
