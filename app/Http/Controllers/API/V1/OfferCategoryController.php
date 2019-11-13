@@ -62,7 +62,7 @@ class OfferCategoryController extends Controller
         $dateTime = $mytime->toDateTimeString();
         $currentSecends = strtotime($dateTime);
 
-//        return $currentSecends;
+        return $mytime;
 
         $products = Product::category($type)->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)->get();
         foreach ( $products as $product){
