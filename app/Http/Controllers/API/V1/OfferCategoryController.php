@@ -13,6 +13,7 @@ use App\Models\PartnerOffer;
 use App\Models\Partner;
 use App\Models\Product;
 use DB;
+use Carbon\Carbon;
 
 class OfferCategoryController extends Controller
 {
@@ -57,7 +58,13 @@ class OfferCategoryController extends Controller
 
     public function offers($type)
     {
-        $products = Product::category($type)->get();
+        $mytime = Carbon::now('Asia/Dhaka');
+        $dateTime = $mytime->toDateTimeString();
+        $currentSecends = strtotime($dateTime);
+
+//        return $currentSecends;
+
+        $products = Product::category($type)->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)->get();
         foreach ( $products as $product){
             $this->bindDynamicValues($product, 'offer_info');
         }
