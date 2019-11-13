@@ -62,7 +62,7 @@ class OfferCategoryController extends Controller
         $dateTime = $mytime->toDateTimeString();
         $currentSecends = strtotime($dateTime);
 
-        $products = Product::category($type)->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)->get();
+        $products = Product::where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)->category($type)->get();
         foreach ( $products as $product){
             $this->bindDynamicValues($product, 'offer_info');
         }
