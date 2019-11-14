@@ -99,7 +99,7 @@ class HomePageController extends Controller
             $dateTime = $bdTimeZone->toDateTimeString();
             $currentSecends = strtotime($dateTime);
 
-            $products = Product::where('show_in_home',1)
+            $products = Product::where('show_in_home', 1)
                 ->where('status', 1)
                 ->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)
                 ->orderBy('display_order')
