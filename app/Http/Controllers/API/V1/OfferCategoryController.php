@@ -124,7 +124,6 @@ class OfferCategoryController extends Controller
         $productDetail->related_products = $data;
 
         $this->bindDynamicValues($productDetail->related_products, 'offer_info');
-//        return $productDetail->related_products;
 
         unset($productDetail->related_product);
         return response()->json(

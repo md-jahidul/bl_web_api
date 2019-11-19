@@ -26,6 +26,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers/{type}','API\V1\OfferCategoryController@offers');
     Route::get('offers-categories','API\V1\OfferCategoryController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\OfferCategoryController@productDetails');
+    Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
 
     Route::get('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
@@ -37,5 +38,5 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('ebl-pay/complete/{order_id}','API\V1\EblPaymentApiController@complete');
     Route::get('ebl-pay/cancel','API\V1\EblPaymentApiController@cancel');
 
-    Route::get('macro','API\V1\HomeDataDynamicApiController@macro');
+    Route::get('macro','API\V1\HomePageController@macro');
 });

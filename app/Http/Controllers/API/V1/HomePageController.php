@@ -209,6 +209,6 @@ class HomePageController extends Controller
             ['id' => 2]
         ]; 
 
-        return response()->success($result);
+        return response()->success($result, "Data Success");
     }
 }

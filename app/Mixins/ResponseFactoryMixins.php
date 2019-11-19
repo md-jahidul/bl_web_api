@@ -8,9 +8,10 @@ class ResponseFactoryMixins
         return function ($result, $message = 'Items retrieved successfully') {
             $response = [
                 'success' => true,
-                'data'    => $result,
+                'status' => 200,
                 'message' => $message,
-            ];    
+                'data'    => $result,
+            ];
     
             return response()->json($response, 200);
         };
@@ -20,6 +21,7 @@ class ResponseFactoryMixins
         return function ($error = 'Validation Error', $errorMessages = [], $code = 404) {
             $response = [
                 'success' => false,
+                'status' => 404,
                 'message' => $error,
                 'data' => []
             ];    
