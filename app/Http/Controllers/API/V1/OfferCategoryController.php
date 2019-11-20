@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Models\DurationCategory;
 use App\Models\OfferCategory;
+use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
@@ -62,7 +63,26 @@ class OfferCategoryController extends Controller
         $dateTime = $mytime->toDateTimeString();
         $currentSecends = strtotime($dateTime);
 
-        $products = Product::where('status', 1)->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)->category($type)->get();
+
+//        $query = Product::query();
+//
+//        $query->where('status', 1);
+//        $query->where('start_date', '<=', $currentSecends);
+//        $query->whereNull('end_date');
+//        $products =  $query->orWhere('end_date', '>=', $currentSecends)->category($type)->get();
+       // $products =  $query->whereNull('end_date')->category($type)->get();
+
+
+
+
+
+        $products = Product::where('status', 1)
+                            ->where('start_date', '<=', $currentSecends)
+                            ->whereNull('end_date')
+                            ->orWhere('end_date', '>=', $currentSecends)
+                            ->category($type)
+                            ->get();
+
         foreach ( $products as $product){
             $this->bindDynamicValues($product, 'offer_info');
         }
