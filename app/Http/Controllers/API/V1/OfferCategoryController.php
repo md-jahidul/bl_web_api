@@ -72,10 +72,6 @@ class OfferCategoryController extends Controller
 //        $products =  $query->orWhere('end_date', '>=', $currentSecends)->category($type)->get();
        // $products =  $query->whereNull('end_date')->category($type)->get();
 
-
-
-
-
         $products = Product::where('status', 1)
                             ->where('start_date', '<=', $currentSecends)
                             ->whereNull('end_date')
@@ -155,4 +151,31 @@ class OfferCategoryController extends Controller
             ]
         );
     }
+
+    public function offerDetails($type, $id)
+    {
+        $productDetail = Product::where('id',$id)
+            ->category($type)
+            ->with('product_details', 'related_product')
+            ->first();
+
+        $this->bindDynamicValues($productDetail, 'offer_info');
+
+
+
+        $productDetail->related_products = $data;
+
+        $this->bindDynamicValues($productDetail->related_products, 'offer_info');
+
+        unset($productDetail->related_product);
+        return response()->json(
+            [
+                'status' => 200,
+                'success' => true,
+                'message' => 'Data Found!',
+                'data' => $productDetail
+            ]
+        );
+    }
+
 }

@@ -39,7 +39,6 @@ class PriyojonController extends Controller
                 ->get();
 
             if (isset($priyojonOffers)) {
-
                 return response()->success($priyojonOffers, 'Data Found!');
             }
 
