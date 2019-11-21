@@ -8,6 +8,7 @@ use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PartnerOffer;
@@ -26,19 +27,18 @@ class OfferCategoryController extends Controller
             'status' => 200,
             'success' => true,
             'message' => 'Data Found!',
-            'data' =>  []
+            'data' => []
         ];
     }
 
     public function bindDynamicValues($obj, $json_data = 'other_attributes')
     {
-        if(!empty($obj->{ $json_data }))
-        {
-            foreach ($obj->{ $json_data } as $key => $value){
+        if (!empty($obj->{$json_data})) {
+            foreach ($obj->{$json_data} as $key => $value) {
                 $obj->{$key} = $value;
             }
         }
-        unset($obj->{ $json_data });
+        unset($obj->{$json_data});
     }
 
     public function getPartnerOffersData()
@@ -49,11 +49,11 @@ class OfferCategoryController extends Controller
 //                            }
 //                            ])->get();
 
-        $data = DB::table('partner_offers as po')->where('is_active',1)
-                        ->join('partners as p', 'po.partner_id', '=', 'p.id')
-                        ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                        ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
-                        ->get();
+        $data = DB::table('partner_offers as po')->where('is_active', 1)
+            ->join('partners as p', 'po.partner_id', '=', 'p.id')
+            ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id')// you may add more joins
+            ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
+            ->get();
         return $data;
     }
 
@@ -70,16 +70,16 @@ class OfferCategoryController extends Controller
 //        $query->where('start_date', '<=', $currentSecends);
 //        $query->whereNull('end_date');
 //        $products =  $query->orWhere('end_date', '>=', $currentSecends)->category($type)->get();
-       // $products =  $query->whereNull('end_date')->category($type)->get();
+        // $products =  $query->whereNull('end_date')->category($type)->get();
 
         $products = Product::where('status', 1)
-                            ->where('start_date', '<=', $currentSecends)
-                            ->whereNull('end_date')
-                            ->orWhere('end_date', '>=', $currentSecends)
-                            ->category($type)
-                            ->get();
+            ->where('start_date', '<=', $currentSecends)
+            ->whereNull('end_date')
+            ->orWhere('end_date', '>=', $currentSecends)
+            ->category($type)
+            ->get();
 
-        foreach ( $products as $product){
+        foreach ($products as $product) {
             $this->bindDynamicValues($product, 'offer_info');
         }
         $this->response['data'] = $products;
@@ -102,9 +102,9 @@ class OfferCategoryController extends Controller
     public function offerCategories()
     {
         $tags = TagCategory::all();
-        $sim  = SimCategory::all();
-        $offer  = OfferCategory::where('parent_id', 0)->with('children')->get();
-        $duration  = DurationCategory::all();
+        $sim = SimCategory::all();
+        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        $duration = DurationCategory::all();
 
         return response()->json(
             [
@@ -123,7 +123,7 @@ class OfferCategoryController extends Controller
 
     public function productDetails($type, $id)
     {
-        $productDetail = Product::where('id',$id)
+        $productDetail = Product::where('id', $id)
             ->category($type)
             ->with('product_details', 'related_product')
             ->first();
@@ -131,8 +131,7 @@ class OfferCategoryController extends Controller
         $this->bindDynamicValues($productDetail, 'offer_info');
 
         $data = [];
-        foreach ($productDetail->related_product as $product)
-        {
+        foreach ($productDetail->related_product as $product) {
             $findProduct = Product::findOrFail($product->related_product_id);
             array_push($data, $findProduct);
         }
@@ -152,30 +151,31 @@ class OfferCategoryController extends Controller
         );
     }
 
-    public function offerDetails($type, $id)
+    public function offerDetails($id)
     {
-        $productDetail = Product::where('id',$id)
-            ->category($type)
-            ->with('product_details', 'related_product')
-            ->first();
+        try {
 
-        $this->bindDynamicValues($productDetail, 'offer_info');
+            $productDetail = PartnerOffer::select('id', 'partner_id')->where('id', $id)
+                ->with(['partner_offer_details', 'partner' => function ($query) {
+                    $query->select([
+                        'id',
+                        'contact_person_mobile',
+                        'company_address',
+                        'company_website',
+                        'google_play_link',
+                        'apple_app_store_link']);
+                }])
+                ->first();
 
+            if (isset($productDetail)) {
+                return response()->success($productDetail, 'Data Found!');
+            }
 
+            return response()->error('Data Not Found!');
 
-        $productDetail->related_products = $data;
-
-        $this->bindDynamicValues($productDetail->related_products, 'offer_info');
-
-        unset($productDetail->related_product);
-        return response()->json(
-            [
-                'status' => 200,
-                'success' => true,
-                'message' => 'Data Found!',
-                'data' => $productDetail
-            ]
-        );
+        } catch (QueryException $e) {
+            return response()->error('Data Not Found!', $e->getMessage());
+        }
     }
 
 }
