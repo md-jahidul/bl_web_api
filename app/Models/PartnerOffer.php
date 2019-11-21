@@ -18,11 +18,4 @@ class PartnerOffer extends Model
     {
         return $this->hasOne(PartnerOfferDetail::class);
     }
-
-//    public function scopeSelcetColumn($query, $column)
-//    {
-//        return $query->whereHas('partner', function ($q) use ($column) {
-//            $q->select($column);
-//        });
-//    }
 }
