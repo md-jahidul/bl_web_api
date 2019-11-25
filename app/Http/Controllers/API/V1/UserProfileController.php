@@ -12,6 +12,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserProfileController extends Controller
 {
@@ -32,5 +33,15 @@ class UserProfileController extends Controller
         $mobile = $request['mobile'];
         $userDetails = $this->userService->viewProfile($mobile);
         return $userDetails;
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), ['mobile' => 'required']);
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+        }
+
+        return $this->userService->updateProfile($request);
     }
 }
