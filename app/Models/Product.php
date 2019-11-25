@@ -32,4 +32,9 @@ class Product extends Model
     {
         return $this->hasMany(RelatedProduct::class);
     }
+
+    public function other_related_product()
+    {
+        return $this->hasMany(OtherRelatedProduct::class, $this->offer_info['other_offer_type_id']);
+    }
 }
