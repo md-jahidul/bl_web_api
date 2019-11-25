@@ -76,7 +76,7 @@ class UserService extends ApiBaseService
             $this->register($customerInfo, $mobile);
         }
 
-        return $this->sendOTP('8801923774442');
+        return $this->sendOTP('8801734240825');
 
     }
 
@@ -95,12 +95,12 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('IDP error', $tokenResponse, HttpStatusCode::UNAUTHORIZED);
         } else {
             $customerInfo = $this->getCustomerInfo($request['mobile']);
-            $final_data = [
+            $profileData = [
                 'token' => $tokenResponse,
                 'customerInfo' => $customerInfo,
             ];
 
-            return $final_data;
+            return $this->sendSuccessResponse($profileData, "Successfully updated");
         }
     }
 
@@ -188,10 +188,10 @@ class UserService extends ApiBaseService
     }
 
 
-    public function viewProfile($userId)
+    public function viewProfile($mobile)
     {
-        $user = $this->userRepository->findOneBy(['phone' => $userId]);
-        return $this->sendSuccessResponse($this->transformUserData($user), 'Data found', []);
+        $user = $this->getCustomerInfo($mobile);
+        return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
     private function transformUserData($user)
@@ -248,5 +248,29 @@ class UserService extends ApiBaseService
         }
 
         return $this->sendErrorResponse(json_decode($response), [], HttpStatusCode::INTERNAL_ERROR);
+    }
+
+    public function updateProfile($request)
+    {
+        $bearerToken = ['token' => $request->header('authorization')];
+
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $idpData = json_decode($response, true);
+
+        if ($idpData['token_status'] != 'Valid') {
+            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $user = $this->userRepository->findOneBy(['phone' => $idpData['user']['mobile']]);
+
+
+        $data = $request->all();
+        $data['msisdn'] = '+880'.$idpData['user']['mobile'];
+
+        $user->update($request->all());
+
+        return $this->sendSuccessResponse($user, 'Data updated successfully');
     }
 }
