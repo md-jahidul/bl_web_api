@@ -30,8 +30,7 @@ class UserProfileController extends Controller
 
     public function view(Request $request)
     {
-        $mobile = $request['mobile'];
-        $userDetails = $this->userService->viewProfile($mobile);
+        $userDetails = $this->userService->viewProfile($request);
         return $userDetails;
     }
 

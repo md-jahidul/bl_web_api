@@ -188,9 +188,20 @@ class UserService extends ApiBaseService
     }
 
 
-    public function viewProfile($mobile)
+    public function viewProfile($request)
     {
-        $user = $this->getCustomerInfo($mobile);
+        $bearerToken = ['token' => $request->header('authorization')];
+
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $idpData = json_decode($response, true);
+
+        if ($idpData['token_status'] != 'Valid') {
+            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $user = $this->getCustomerInfo($idpData['user']['mobile']);
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
