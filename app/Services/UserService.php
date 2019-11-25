@@ -192,7 +192,6 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
 
-
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
         $idpData = json_decode($response, true);
