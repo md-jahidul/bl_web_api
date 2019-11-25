@@ -38,6 +38,9 @@ class PriyojonController extends Controller
                 ->orderBy('po.display_order')
                 ->get();
 
+
+            return $priyojonOffers;
+
             if (isset($priyojonOffers)) {
                 return response()->success($priyojonOffers, 'Data Found!');
             }
