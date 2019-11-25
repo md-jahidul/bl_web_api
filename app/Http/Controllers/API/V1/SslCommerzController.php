@@ -14,12 +14,12 @@ class SslCommerzController extends Controller
 
     public function __construct()
     {
-        $this->base_url =  url('/') . '/api/v1'; // 'http://localhost:3030';
+        $this->base_url = url('/') . '/api/v1'; // 'http://localhost:3030';
     }
 
     public function apiFormatter($response)
     {
-        try{
+        try {
             if (isset($response)) {
                 return response()->json(
                     [
@@ -37,7 +37,7 @@ class SslCommerzController extends Controller
                     'message' => 'Data Not Found!'
                 ]
             );
-        }catch (QueryException $e) {
+        } catch (QueryException $e) {
             return response()->json(
                 [
                     'status' => 403,
@@ -56,8 +56,8 @@ class SslCommerzController extends Controller
         $post_data['total_amount'] = "15000";
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
-        $post_data['success_url'] =  $this->base_url . "/success";
-        $post_data['fail_url'] =  $this->base_url . "/failure";
+        $post_data['success_url'] = $this->base_url . "/success";
+        $post_data['fail_url'] = $this->base_url . "/failure";
         $post_data['cancel_url'] = $this->base_url . "/cancel";
 
         # CUSTOMER INFORMATION
@@ -92,10 +92,10 @@ class SslCommerzController extends Controller
 
         # CART PARAMETERS
         $post_data['cart'] = json_encode(array(
-            array("product"=>"DHK TO BRS AC A1","amount"=>"200.00"),
-            array("product"=>"DHK TO BRS AC A2","amount"=>"200.00"),
-            array("product"=>"DHK TO BRS AC A3","amount"=>"200.00"),
-            array("product"=>"DHK TO BRS AC A4","amount"=>"200.00")
+            array("product" => "DHK TO BRS AC A1", "amount" => "200.00"),
+            array("product" => "DHK TO BRS AC A2", "amount" => "200.00"),
+            array("product" => "DHK TO BRS AC A3", "amount" => "200.00"),
+            array("product" => "DHK TO BRS AC A4", "amount" => "200.00")
         ));
         $post_data['product_amount'] = "100";
         $post_data['vat'] = "5";
@@ -114,17 +114,17 @@ class SslCommerzController extends Controller
 
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
-        $returnResult= $this->calltoapiAction($this->getPostData(),$setLocalhost = true,$direct_api_url);
+        $returnResult = $this->calltoapiAction($this->getPostData(), $setLocalhost = true, $direct_api_url);
 
 
         $sslReturnResult = json_decode($returnResult, true);
-        $sessionkey='';
-        $GatewayURL='';
-        $GatewayStatus='200';
-        if($sslReturnResult['status']=='SUCCESS'){
-            $sessionkey=$sslReturnResult['sessionkey'];
-            $GatewayURL=$sslReturnResult['GatewayPageURL'];
-            $GatewayStatus='100';
+        $sessionkey = '';
+        $GatewayURL = '';
+        $GatewayStatus = '200';
+        if ($sslReturnResult['status'] == 'SUCCESS') {
+            $sessionkey = $sslReturnResult['sessionkey'];
+            $GatewayURL = $sslReturnResult['GatewayPageURL'];
+            $GatewayStatus = '100';
         }
 
         $request = array(
@@ -136,7 +136,7 @@ class SslCommerzController extends Controller
         );
 
         $response = new \stdClass();
-        $response->response_code =(!empty($orderId))?100:400;
+        $response->response_code = (!empty($orderId)) ? 100 : 400;
         $response->errors = array();
         $request['sessionkey'] = $sessionkey;
         $request['gateway_url'] = $GatewayURL;
@@ -146,7 +146,7 @@ class SslCommerzController extends Controller
 
 //        $this->apiFormatter($response);
 
-        try{
+        try {
             if (isset($response)) {
                 return response()->json(
                     [
@@ -164,7 +164,7 @@ class SslCommerzController extends Controller
                     'message' => 'Data Not Found!'
                 ]
             );
-        }catch (QueryException $e) {
+        } catch (QueryException $e) {
             return response()->json(
                 [
                     'status' => 403,
@@ -177,10 +177,10 @@ class SslCommerzController extends Controller
 //        return response()->json($response);
     }
 
-    public function calltoapiAction($data,$setLocalhost = false,$direct_api_url=''){
-        $header=array();
+    public function calltoapiAction($data, $setLocalhost = false, $direct_api_url = '')
+    {
+        $header = array();
         $curl = curl_init();
-
 
 
         if (!$setLocalhost) {
@@ -221,14 +221,16 @@ class SslCommerzController extends Controller
     // $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
     // $post_data['cancel_url'] = $this->base_url . "/en/cancel";
 
-    public function success(Request $request){
+    public function success(Request $request)
+    {
         $successData = request()->all();
         $this->apiFormatter($successData);
         return redirect('http://172.16.229.242/en/payment-success');
 
     }
 
-    public function failure(Request $request){
+    public function failure(Request $request)
+    {
 
         $failureData = request()->all();
         $this->apiFormatter($failureData);
@@ -236,7 +238,8 @@ class SslCommerzController extends Controller
 
     }
 
-    public function cancel(Request $request){
+    public function cancel(Request $request)
+    {
         $cancelData = request()->all();
         $this->apiFormatter($cancelData);
     }

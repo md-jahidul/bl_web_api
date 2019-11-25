@@ -11,43 +11,43 @@ class DigitalServiceController extends Controller
     public function getDigitalService()
     {
 
-        try{
+        try {
             $digitalService = [
                 [
                     "id" => 1,
-                    "title"=> "Robiul Islam",
-                    "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                    "short_note"=> "Studiomaqs",
-                    "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                    "alt_text"=> "Banglalink clients",
-                    "ratings"=> 4.5
+                    "title" => "Robiul Islam",
+                    "description" => "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                    "short_note" => "Studiomaqs",
+                    "image_url" => "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                    "alt_text" => "Banglalink clients",
+                    "ratings" => 4.5
                 ],
                 [
                     "id" => 2,
-                    "title"=> "Shahriar Ahmed",
-                    "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                    "short_note"=> "Studiomaqs",
-                    "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                    "alt_text"=> "Banglalink clients",
-                    "ratings"=> 4.5
+                    "title" => "Shahriar Ahmed",
+                    "description" => "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                    "short_note" => "Studiomaqs",
+                    "image_url" => "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                    "alt_text" => "Banglalink clients",
+                    "ratings" => 4.5
                 ],
                 [
                     "id" => 3,
-                    "title"=> "Shahriar Ahmed",
-                    "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                    "short_note"=> "Studiomaqs",
-                    "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                    "alt_text"=> "Banglalink clients",
-                    "ratings"=> 4.5
+                    "title" => "Shahriar Ahmed",
+                    "description" => "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                    "short_note" => "Studiomaqs",
+                    "image_url" => "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                    "alt_text" => "Banglalink clients",
+                    "ratings" => 4.5
                 ],
                 [
                     "id" => 4,
-                    "title"=> "Shahriar Ahmed",
-                    "description"=> "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
-                    "short_note"=> "Studiomaqs",
-                    "image_url"=> "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
-                    "alt_text"=> "Banglalink clients",
-                    "ratings"=> 4.5
+                    "title" => "Shahriar Ahmed",
+                    "description" => "Banglalink provide the fastest internet throughout the country, I never get the best experience except using Banlalink. It’s awesome service ever, I’ll always use Banglalink.",
+                    "short_note" => "Studiomaqs",
+                    "image_url" => "https://www.banglalink.net/sites/default/files/Home-Banner-1920-X-870_0.jpg",
+                    "alt_text" => "Banglalink clients",
+                    "ratings" => 4.5
                 ]
             ];
             if (isset($digitalService)) {
@@ -67,7 +67,7 @@ class DigitalServiceController extends Controller
                     'message' => 'Data Not Found!'
                 ]
             );
-        }catch (QueryException $e) {
+        } catch (QueryException $e) {
             return response()->json(
                 [
                     'status' => 403,
