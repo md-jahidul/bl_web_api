@@ -277,10 +277,58 @@ class UserService extends ApiBaseService
 
 
         $data = $request->all();
-        $data['msisdn'] = '+880'.$idpData['user']['mobile'];
+        $data['msisdn'] = '+880' . $idpData['user']['mobile'];
 
-        $user->update($request->all());
+        if ($request->hasFile('profile_photo')) {
+            $path = $this->uploadImage($request);
+            $data['profile_image'] = $path;
+        }
+
+        $user->update($data);
 
         return $this->sendSuccessResponse($user, 'Data updated successfully');
+    }
+
+    public function uploadProfileImage($request)
+    {
+        $bearerToken = ['token' => $request->header('authorization')];
+
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $idpData = json_decode($response, true);
+
+        if ($idpData['token_status'] != 'Valid') {
+            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $user = $this->userRepository->findOneBy(['phone' => $idpData['user']['mobile']]);
+
+        $path = $this->uploadImage($request);
+
+        $user->update(['profile_image' => $path]);
+
+        return $this->sendSuccessResponse(['image_path' => $path], 'Profile picture updated successfully');
+    }
+
+    private function uploadImage($request)
+    {
+        try {
+            $file = $request->file('profile_photo');
+            $ext = $file->getClientOriginalExtension();
+            $photoExt = array('jpg', 'JPG', 'JPEG', 'jpeg', 'png', 'PNG', 'gif', 'bmp');
+            if (!in_array($ext, $photoExt)) {
+                return $this->sendErrorResponse('Invalid image extension', [], 400);
+            }
+            $fileName = md5(strtotime(now())) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs(
+                'uploads/profile-images',
+                $fileName,
+                'public'
+            );
+            return '/storage/uploads/profile-images/'.$fileName;
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), [], 500);
+        }
     }
 }
