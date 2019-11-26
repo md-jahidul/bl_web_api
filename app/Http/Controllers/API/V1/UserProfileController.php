@@ -42,11 +42,10 @@ class UserProfileController extends Controller
 
     public function updateProfileImage(Request $request)
     {
-        $validator = Validator::make($request->all(), ['profile_photo' => 'required']);
-        if ($validator->fails()) {
-            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+        if ($request->hasFile('profile_photo')) {
+            return $this->userService->uploadProfileImage($request);
+        } else {
+            return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);
         }
-
-        return $this->userService->uploadProfileImage($request);
     }
 }
