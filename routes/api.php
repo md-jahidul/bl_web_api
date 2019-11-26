@@ -46,6 +46,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::get('user/profile/view','API\V1\UserProfileController@view');
     Route::post('user/profile/update','API\V1\UserProfileController@update');
+    Route::post('user/profile/image/update','API\V1\UserProfileController@updateProfileImage');
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 });

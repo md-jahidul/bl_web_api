@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\API\V1;
 
 
+use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -36,11 +37,16 @@ class UserProfileController extends Controller
 
     public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), ['mobile' => 'required']);
+        return $this->userService->updateProfile($request);
+    }
+
+    public function updateProfileImage(Request $request)
+    {
+        $validator = Validator::make($request->all(), ['profile_photo' => 'required']);
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
         }
 
-        return $this->userService->updateProfile($request);
+        return $this->userService->uploadProfileImage($request);
     }
 }
