@@ -126,43 +126,7 @@ class OfferCategoryController extends Controller
      * @param $products
      * @return array
      */
-//    public function findRelatedProduct($products)
-//    {
-//        $data = [];
-//        foreach ($products as $product) {
-//
-//            $findProduct = Product::findOrFail($product->related_product_id);
-//            array_push($data, $findProduct);
-//        }
-//        return $data;
-//    }
 
-//    public function productDetails($type, $id)
-//    {
-//        $productDetail = Product::where('id', $id)
-//            ->category($type)
-//            ->with('product_details', 'related_product', 'other_related_product')
-//            ->first();
-//
-//        $this->bindDynamicValues($productDetail, 'offer_info');
-//
-//
-//        $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
-//        $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
-//
-//        $this->bindDynamicValues($productDetail->related_products, 'offer_info');
-//
-//        unset($productDetail->other_related_product);
-//        unset($productDetail->related_product);
-//        return response()->json(
-//            [
-//                'status' => 200,
-//                'success' => true,
-//                'message' => 'Data Found!',
-//                'data' => $productDetail
-//            ]
-//        );
-//    }
 
     public function offerDetails($id)
     {
