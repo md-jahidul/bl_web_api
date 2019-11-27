@@ -30,7 +30,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers','API\V1\PriyojonController@priyojonOffers');
 
-    Route::get('offer-details/{id}','API\V1\OfferCategoryController@offerDetails');
+    Route::get('offer-details/{id}','API\V1\PartnerOfferController@offerDetails');
 
     Route::get('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
