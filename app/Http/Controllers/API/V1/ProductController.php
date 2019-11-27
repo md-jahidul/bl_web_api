@@ -37,20 +37,6 @@ class ProductController extends Controller
     }
 
     /**
-     * @param $obj
-     * @param string $json_data
-     */
-    public function bindDynamicValues($obj, $json_data = 'other_attributes')
-    {
-        if (!empty($obj->{$json_data})) {
-            foreach ($obj->{$json_data} as $key => $value) {
-                $obj->{$key} = $value;
-            }
-        }
-        unset($obj->{$json_data});
-    }
-
-    /**
      * @param $type
      * @return mixed
      */

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PartnerOfferResource;
 use App\Models\PartnerCategory;
 use App\Repositories\PartnerOfferRepository;
 use App\Repositories\ProductDetailRepository;
@@ -21,9 +22,9 @@ class PartnerOfferService extends ApiBaseService
      */
     protected $partnerOfferRepository;
 
-    /***
-     * ProductService constructor.
-     * @param ProductRepository $productRepository
+    /**
+     * PartnerOfferService constructor.
+     * @param PartnerOfferRepository $partnerOfferRepository
      */
     public function __construct(PartnerOfferRepository $partnerOfferRepository)
     {
@@ -63,6 +64,27 @@ class PartnerOfferService extends ApiBaseService
 
 
     /**
+     * @Get_Priyojon_Offers form Partner table
+     */
+    public function priyojonOffers()
+    {
+
+        try {
+            $partnerOffers = $this->partnerOfferRepository->offers();
+
+            if ($partnerOffers) {
+                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
+                return response()->success($partnerOffers, 'Data Found!');
+            }
+            return response()->error("Data Not Found!");
+
+        } catch (QueryException $exception) {
+            return response()->error("Something wrong", $exception);
+        }
+    }
+
+
+    /**
      * @param $type
      * @param $id
      * @return mixed
@@ -84,13 +106,13 @@ class PartnerOfferService extends ApiBaseService
                 unset($productDetail->other_related_product);
                 unset($productDetail->related_product);
 
-                return response()->success($productDetail, 'Data Receved');
+                return response()->success($productDetail, 'Data Found!');
             }
 
             return response()->error("Data Not Found!");
 
         } catch (QueryException $exception) {
-            return response()->error("Data Not Found!", $exception);
+            return response()->error("Something wrong", $exception);
         }
     }
 

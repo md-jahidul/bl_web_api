@@ -5,12 +5,32 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
+use App\Services\PartnerOfferService;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PriyojonController extends Controller
 {
+
+    /**
+     * @var PartnerOfferService
+     */
+    private $partnerOfferService;
+
+    /**
+     * PriyojonController constructor.
+     * @param PartnerOfferService $partnerOfferService
+     */
+    public function __construct(
+        PartnerOfferService $partnerOfferService
+    ) {
+        $this->partnerOfferService = $partnerOfferService;
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function PriyojonHeader()
     {
         try{
@@ -24,33 +44,15 @@ class PriyojonController extends Controller
             return response()->error('Data Not Found!');
 
         }catch (QueryException $e) {
-            return response()->error('Data Not Found!', $e->getMessage());
+            return response()->error('Something wrong!', $e->getMessage());
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function priyojonOffers()
     {
-        try{
-            $priyojonOffers = DB::table('partner_offers as po')
-                ->where('po.is_active',1)
-                ->join('partners as p', 'po.partner_id', '=', 'p.id')
-                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
-                ->orderBy('po.display_order')
-                ->get();
-
-            $priyojonOffers = PartnerOfferResource::collection($priyojonOffers);
-//            return $priyojonOffers;
-//            return $data;
-
-            if (isset($priyojonOffers)) {
-                return response()->success($priyojonOffers, 'Data Found!');
-            }
-
-            return response()->error('Data Not Found!');
-
-        }catch (QueryException $e) {
-            return response()->error('Data Not Found!', $e->getMessage());
-        }
+       return $this->partnerOfferService->priyojonOffers();
     }
 }
