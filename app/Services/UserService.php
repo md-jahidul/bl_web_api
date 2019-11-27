@@ -73,7 +73,10 @@ class UserService extends ApiBaseService
 
         if (!$this->isUserExist($mobile)) {
             $customerInfo = $validationResponse->getData()->data;
-            $this->register($customerInfo, $mobile);
+            $registrationStatus = $this->register($customerInfo, $mobile);
+            if ($registrationStatus['status'] == 'FAIL') {
+                return $this->sendErrorResponse($registrationStatus['data']->message, [], $registrationStatus['status_code']);
+            }
         }
 
         return $this->sendOTP('8801734240825');
@@ -90,17 +93,17 @@ class UserService extends ApiBaseService
         $data['username'] = $request['mobile'];
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
-        $tokenResponse = json_decode($tokenResponse);
-        if (isset($tokenResponse->error)) {
-            return $this->sendErrorResponse('IDP error', $tokenResponse, HttpStatusCode::UNAUTHORIZED);
+        $tokenResponseData = json_decode($tokenResponse['data']);
+        if ($tokenResponse['http_code'] != 200) {
+            return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
             $customerInfo = $this->getCustomerInfo($request['mobile']);
             $profileData = [
-                'token' => $tokenResponse,
+                'token' => $tokenResponseData,
                 'customerInfo' => $customerInfo,
             ];
 
-            return $this->sendSuccessResponse($profileData, "Successfully updated");
+            return $this->sendSuccessResponse($profileData, "Data found");
         }
     }
 
@@ -194,13 +197,13 @@ class UserService extends ApiBaseService
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $idpData = json_decode($response, true);
+        $idpData = json_decode($response['data']);
 
-        if ($idpData['token_status'] != 'Valid') {
+        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
-        $user = $this->getCustomerInfo($idpData['user']['mobile']);
+        $user = $this->getCustomerInfo($idpData->user->mobile);
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
@@ -234,7 +237,7 @@ class UserService extends ApiBaseService
 
         $data['password'] = '15152515';
 
-        $data['password_confirmation'] = '15152515';
+        $data['password_confirmation'] = '15152515'; //TODO:generate random string
 
         $data['username'] = $mobile;
 
@@ -242,22 +245,21 @@ class UserService extends ApiBaseService
 
         $data['customer_account_id'] = $customer_account_id;
 
-        //add data to IDP
-        $response = IdpIntegrationService::registrationRequest($data);
+        $idpCus = IdpIntegrationService::getCustomerInfo($mobile);
 
-        $message_response = "Something went wrong";
-
-        if (!$response) {
-            return $this->sendErrorResponse($message_response, [], HttpStatusCode::INTERNAL_ERROR);
+        if ($idpCus['http_code'] != 200) {
+            //If customer is not exist add data to IDP
+            $response = IdpIntegrationService::registrationRequest($data);
+            if ($response['http_code'] != 201) {
+                $errorData = json_decode($response['data']);
+                return ['status' => 'FAIL', 'data' => $errorData, 'status_code' => $response['http_code']];
+            }
         }
 
-        if (isset(json_decode($response)->status) == "Success") {
-            $this->userRepository->create($data);
+        $user = $this->userRepository->create($data);
 
-            return $this->sendSuccessResponse([], 'Registration', [], HttpStatusCode::SUCCESS);
-        }
+        return ['status' => 'SUCCESS', 'data' => $user];;
 
-        return $this->sendErrorResponse(json_decode($response), [], HttpStatusCode::INTERNAL_ERROR);
     }
 
     public function updateProfile($request)
@@ -266,18 +268,18 @@ class UserService extends ApiBaseService
 
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+        $idpData = json_decode($response['data']);
 
-        $idpData = json_decode($response, true);
-
-        if ($idpData['token_status'] != 'Valid') {
+        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
-        $user = $this->userRepository->findOneBy(['phone' => $idpData['user']['mobile']]);
-
-
+        $user = $this->userRepository->findOneBy(['phone' => $idpData->user->mobile]);
+        if (!$user) {
+            return $this->sendErrorResponse('User not found in the system');
+        }
         $data = $request->all();
-        $data['msisdn'] = '+880' . $idpData['user']['mobile'];
+        $data['msisdn'] = '+880' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
             $path = $this->uploadImage($request);
@@ -293,16 +295,14 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
 
-
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+        $idpData = json_decode($response['data']);
 
-        $idpData = json_decode($response, true);
-
-        if ($idpData['token_status'] != 'Valid') {
+        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
-        $user = $this->userRepository->findOneBy(['phone' => $idpData['user']['mobile']]);
+        $user = $this->userRepository->findOneBy(['phone' => $idpData->user->mobile]);
 
         $path = $this->uploadImage($request);
 
@@ -326,7 +326,7 @@ class UserService extends ApiBaseService
                 $fileName,
                 'public'
             );
-            return '/storage/uploads/profile-images/'.$fileName;
+            return '/storage/uploads/profile-images/' . $fileName;
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }

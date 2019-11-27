@@ -37,7 +37,7 @@ class IdpIntegrationService
 
         $response = static::post('/oauth/token', $data_param, static::makeHeader(false));
 
-        $response_data = json_decode($response);
+        $response_data = json_decode($response['data']);
 
 
         if (isset($response_data->access_token)) {
@@ -242,15 +242,18 @@ class IdpIntegrationService
         $headers = $headers ?: static::makeHeader();
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
         static::makeRequest($ch, $url, $body, $headers);
-        $result = curl_exec($ch);
+        $data = curl_exec($ch);
 
         $info = curl_getinfo($ch);
 
         if ($info['http_code'] == 401) {
             self::setToken();
             static::makeRequest($ch, $url, $body, $headers);
-            $result = curl_exec($ch);
+            $data = curl_exec($ch);
         }
+
+        $info = curl_getinfo($ch);
+        $result = ['data' => $data, 'http_code' => $info['http_code']];
 
         curl_close($ch);
 
