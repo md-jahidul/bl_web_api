@@ -23,14 +23,14 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('header-footer','API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page','API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-    Route::get('partner-offers','API\V1\OfferCategoryController@index');
-    Route::get('offers/{type}','API\V1\OfferCategoryController@offers');
-    Route::get('offers-categories','API\V1\OfferCategoryController@offerCategories');
-    Route::get('product-details/{type}/{id}/{otherType?}','API\V1\OfferCategoryController@productDetails');
+    Route::get('partner-offers','API\V1\PartnerOfferController@index');
+    Route::get('offers/{type}','API\V1\ProductController@simPackageOffers');
+    Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
+    Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers','API\V1\PriyojonController@priyojonOffers');
 
-    Route::get('offer-details/{id}','API\V1\OfferCategoryController@offerDetails');
+    Route::get('offer-details/{id}','API\V1\PartnerOfferController@offerDetails');
 
     Route::get('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
@@ -45,6 +45,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('macro','API\V1\HomePageController@macro');
 
     Route::get('user/profile/view','API\V1\UserProfileController@view');
+    Route::post('user/profile/update','API\V1\UserProfileController@update');
+    Route::post('user/profile/image/update','API\V1\UserProfileController@updateProfileImage');
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 });

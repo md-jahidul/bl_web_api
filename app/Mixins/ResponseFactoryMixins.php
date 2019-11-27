@@ -21,13 +21,12 @@ class ResponseFactoryMixins
         return function ($error = 'Validation Error', $errorMessages = [], $code = 404) {
             $response = [
                 'success' => false,
-                'status' => 404,
+                'status' => $code,
                 'message' => $error,
-                'data' => []
             ];    
     
             if(!empty($errorMessages)){
-                $response['error'] = $errorMessages;
+                $response['error'] = explode('|', $errorMessages->getMessage());
             }    
     
             return response()->json($response, $code);

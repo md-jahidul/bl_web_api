@@ -101,7 +101,9 @@ class HomePageController extends Controller
 
             $products = Product::where('show_in_home', 1)
                 ->where('status', 1)
-                ->where('start_date', '<=', $currentSecends)->where('end_date', '>=', $currentSecends)
+                ->where('start_date', '<=', $currentSecends)
+                ->whereNull('end_date')
+                ->orwhere('end_date', '>=', $currentSecends)
                 ->orderBy('display_order')
                 ->get();
 

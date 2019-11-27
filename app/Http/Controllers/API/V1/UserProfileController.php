@@ -9,9 +9,11 @@
 namespace App\Http\Controllers\API\V1;
 
 
+use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserProfileController extends Controller
 {
@@ -29,8 +31,21 @@ class UserProfileController extends Controller
 
     public function view(Request $request)
     {
-        $mobile = $request['mobile'];
-        $userDetails = $this->userService->viewProfile($mobile);
+        $userDetails = $this->userService->viewProfile($request);
         return $userDetails;
+    }
+
+    public function update(Request $request)
+    {
+        return $this->userService->updateProfile($request);
+    }
+
+    public function updateProfileImage(Request $request)
+    {
+        if ($request->hasFile('profile_photo')) {
+            return $this->userService->uploadProfileImage($request);
+        } else {
+            return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);
+        }
     }
 }
