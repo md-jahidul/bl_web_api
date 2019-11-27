@@ -26,7 +26,7 @@ class PartnerOfferResource extends JsonResource
             "get_offer_msg_bn" => $this->get_offer_msg_bn ?? null  ,
             "btn_text_en"  => $this->btn_text_en ?? null ,
             "btn_text_bn" => $this->btn_text_bn ?? null ,
-            "campaign_img" => ($this->campaign_img != '') ? env("APP_URL") . "/" . $this->campaign_img : null,
+            "campaign_img" => ($this->campaign_img != '') ? env("IMAGE_HOST_URL") . "/" . $this->campaign_img : null,
             "is_campaign" => $this->is_campaign ?? null,
             "show_in_home" => $this->show_in_home ?? null,
             "is_active" => $this->is_active,
