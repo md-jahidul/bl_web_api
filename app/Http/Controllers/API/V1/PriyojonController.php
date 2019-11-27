@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -38,8 +39,9 @@ class PriyojonController extends Controller
                 ->orderBy('po.display_order')
                 ->get();
 
-
-            return $priyojonOffers;
+            $priyojonOffers = PartnerOfferResource::collection($priyojonOffers);
+//            return $priyojonOffers;
+//            return $data;
 
             if (isset($priyojonOffers)) {
                 return response()->success($priyojonOffers, 'Data Found!');

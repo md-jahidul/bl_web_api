@@ -2,27 +2,33 @@
 
 namespace App\Services;
 
+use App\Models\PartnerCategory;
+use App\Repositories\PartnerOfferRepository;
+use App\Repositories\ProductDetailRepository;
 use App\Repositories\ProductRepository;
 use App\Traits\CrudTrait;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Response;
+use phpDocumentor\Reflection\Types\Null_;
 
-class ProductService extends ApiBaseService
+class PartnerOfferService extends ApiBaseService
 {
     use CrudTrait;
 
     /**
      * @var $partnerOfferRepository
      */
-    protected $productRepository;
+    protected $partnerOfferRepository;
 
     /***
      * ProductService constructor.
      * @param ProductRepository $productRepository
      */
-    public function __construct(ProductRepository $productRepository)
+    public function __construct(PartnerOfferRepository $partnerOfferRepository)
     {
-        $this->productRepository = $productRepository;
-        $this->setActionRepository($productRepository);
+        $this->partnerOfferRepository = $partnerOfferRepository;
+        $this->setActionRepository($partnerOfferRepository);
     }
 
     /**
@@ -55,27 +61,6 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    /**
-     * @param $type
-     * @return mixed
-     */
-    public function simTypeOffers($type)
-    {
-        try {
-            $products = $this->productRepository->simTypeProduct($type);
-
-            if ($products) {
-                foreach ($products as $product) {
-                    $this->bindDynamicValues($product, 'offer_info');
-                }
-                return response()->success($products, 'Data Found!');
-            }
-            return response()->error("Data Not Found!");
-
-        } catch (QueryException $exception) {
-            return response()->error("Data Not Found!", $exception);
-        }
-    }
 
     /**
      * @param $type
@@ -99,7 +84,7 @@ class ProductService extends ApiBaseService
                 unset($productDetail->other_related_product);
                 unset($productDetail->related_product);
 
-                return response()->success($productDetail, 'Data Found!');
+                return response()->success($productDetail, 'Data Receved');
             }
 
             return response()->error("Data Not Found!");

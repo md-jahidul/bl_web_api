@@ -17,7 +17,7 @@ use App\Models\Product;
 use DB;
 use Carbon\Carbon;
 
-class OfferCategoryController extends Controller
+class PartnerOfferController extends Controller
 {
     protected $response = [];
 
@@ -31,15 +31,6 @@ class OfferCategoryController extends Controller
         ];
     }
 
-//    public function bindDynamicValues($obj, $json_data = 'other_attributes')
-//    {
-//        if (!empty($obj->{$json_data})) {
-//            foreach ($obj->{$json_data} as $key => $value) {
-//                $obj->{$key} = $value;
-//            }
-//        }
-//        unset($obj->{$json_data});
-//    }
 
     public function getPartnerOffersData()
     {
@@ -57,34 +48,7 @@ class OfferCategoryController extends Controller
         return $data;
     }
 
-    public function offers($type)
-    {
-        $mytime = Carbon::now('Asia/Dhaka');
-        $dateTime = $mytime->toDateTimeString();
-        $currentSecends = strtotime($dateTime);
 
-
-//        $query = Product::query();
-//
-//        $query->where('status', 1);
-//        $query->where('start_date', '<=', $currentSecends);
-//        $query->whereNull('end_date');
-//        $products =  $query->orWhere('end_date', '>=', $currentSecends)->category($type)->get();
-        // $products =  $query->whereNull('end_date')->category($type)->get();
-
-        $products = Product::where('status', 1)
-            ->where('start_date', '<=', $currentSecends)
-            ->whereNull('end_date')
-            ->orWhere('end_date', '>=', $currentSecends)
-            ->category($type)
-            ->get();
-
-        foreach ($products as $product) {
-            $this->bindDynamicValues($product, 'offer_info');
-        }
-        $this->response['data'] = $products;
-        return response()->json($this->response);
-    }
 
     public function index()
     {

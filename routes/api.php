@@ -24,7 +24,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('home-page','API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
     Route::get('partner-offers','API\V1\OfferCategoryController@index');
-    Route::get('offers/{type}','API\V1\OfferCategoryController@offers');
+    Route::get('offers/{type}','API\V1\ProductController@simPackageOffers');
     Route::get('offers-categories','API\V1\OfferCategoryController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
