@@ -53,7 +53,7 @@ class SslCommerzController extends Controller
         $post_data = array();
         $post_data['store_id'] = "bangl5da2f2be91898";
         $post_data['store_passwd'] = "bangl5da2f2be91898@ssl";
-        $post_data['total_amount'] = "15000";
+        $post_data['total_amount'] = "450";
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
         $post_data['success_url'] = $this->base_url . "/success";
@@ -72,35 +72,27 @@ class SslCommerzController extends Controller
         $post_data['cus_phone'] = '0188376655';
         $post_data['cus_fax'] = "";
 
-        # SHIPMENT INFORMATION
-        $post_data['ship_name'] = "Store Test";
-        $post_data['ship_add1 '] = "Dhaka";
-        $post_data['ship_add2'] = "Dhaka";
-        $post_data['ship_city'] = "Dhaka";
-        $post_data['ship_state'] = "Dhaka";
-        $post_data['ship_postcode'] = "1000";
-        $post_data['ship_country'] = "Bangladesh";
+        # PRODUCT INFORMATION
+        $post_data['product_name'] = "TOP UP";
+        $post_data['product_category'] = "top up";
+        $post_data['product_profile'] = "telecom-vertical ";
+        $post_data['product_type'] = "Prepaid";
+        $post_data['topup_number'] = "8801923774442,8801911416205";
 
-        # OPTIONAL PARAMETERS
-        $post_data['value_a'] = "ref001";
-        $post_data['value_b '] = "ref002";
-        $post_data['value_c'] = "ref003";
-        $post_data['value_d'] = "ref004";
+
+        # SHIPMENT INFORMATION
+        $post_data['shipping_method'] = "NO";
+        $post_data['num_of_item'] = "2";
 
         # EMI STATUS
-        $post_data['emi_option'] = "1";
+        $post_data['emi_option'] = "0";
 
         # CART PARAMETERS
         $post_data['cart'] = json_encode(array(
-            array("product" => "DHK TO BRS AC A1", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A2", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A3", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A4", "amount" => "200.00")
+            array("product" => "8801923774442", "amount" => "200.00"),
+            array("product" => "8801911416205", "amount" => "250.00")
         ));
-        $post_data['product_amount'] = "100";
-        $post_data['vat'] = "5";
-        $post_data['discount_amount'] = "5";
-        $post_data['convenience_fee'] = "3";
+        $post_data['product_amount'] = "450";
 
         return $post_data;
     }
