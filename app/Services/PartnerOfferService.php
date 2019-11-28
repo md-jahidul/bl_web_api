@@ -73,7 +73,7 @@ class PartnerOfferService extends ApiBaseService
             $partnerOffers = $this->partnerOfferRepository->offers();
 
             if ($partnerOffers) {
-//                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
+                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
                 return response()->success($partnerOffers, 'Data Found!');
             }
             return response()->error("Data Not Found!");
