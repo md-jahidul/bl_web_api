@@ -89,32 +89,32 @@ class PartnerOfferService extends ApiBaseService
      * @param $id
      * @return mixed
      */
-    public function details($type, $id)
-    {
-        try {
-
-            $productDetail = $this->productRepository->detailProducts($type, $id);
-
-            if ($productDetail) {
-                $this->bindDynamicValues($productDetail, 'offer_info');
-
-                $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
-                $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
-
-                $this->bindDynamicValues($productDetail->related_products, 'offer_info');
-
-                unset($productDetail->other_related_product);
-                unset($productDetail->related_product);
-
-                return response()->success($productDetail, 'Data Found!');
-            }
-
-            return response()->error("Data Not Found!");
-
-        } catch (QueryException $exception) {
-            return response()->error("Something wrong", $exception);
-        }
-    }
+//    public function details($type, $id)
+//    {
+//        try {
+//
+//            $productDetail = $this->productRepository->detailProducts($type, $id);
+//
+//            if ($productDetail) {
+//                $this->bindDynamicValues($productDetail, 'offer_info');
+//
+//                $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
+//                $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
+//
+//                $this->bindDynamicValues($productDetail->related_products, 'offer_info');
+//
+//                unset($productDetail->other_related_product);
+//                unset($productDetail->related_product);
+//
+//                return response()->success($productDetail, 'Data Found!');
+//            }
+//
+//            return response()->error("Data Not Found!");
+//
+//        } catch (QueryException $exception) {
+//            return response()->error("Something wrong", $exception);
+//        }
+//    }
 
 
 

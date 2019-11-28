@@ -32,7 +32,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::get('offer-details/{id}','API\V1\PartnerOfferController@offerDetails');
 
-    Route::get('ssl','API\V1\SslCommerzController@ssl');
+    Route::post('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
     Route::post('success','API\V1\SslCommerzController@success');
     Route::post('failure','API\V1\SslCommerzController@failure');

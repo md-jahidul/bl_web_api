@@ -48,12 +48,12 @@ class SslCommerzController extends Controller
         }
     }
 
-    public function getPostData()
+    public function getPostData($data)
     {
         $post_data = array();
-        $post_data['store_id'] = "bangl5da2f2be91898";
-        $post_data['store_passwd'] = "bangl5da2f2be91898@ssl";
-        $post_data['total_amount'] = "15000";
+        $post_data['store_id'] = env('STORE_ID');
+        $post_data['store_passwd'] = env('STORE_PASSWORD');
+        $post_data['total_amount'] = $data['total_amount'];
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
         $post_data['success_url'] = $this->base_url . "/success";
@@ -61,63 +61,52 @@ class SslCommerzController extends Controller
         $post_data['cancel_url'] = $this->base_url . "/cancel";
 
         # CUSTOMER INFORMATION
-        $post_data['cus_name'] = "Jahidul Islam";
+        $post_data['cus_name'] = isset($data['cus_name']) ? $data['cus_name'] : 'N/A';
         $post_data['cus_email'] = "jahidul@gmail.com";
-        $post_data['cus_add1'] = "Dhaka";
-        $post_data['cus_add2'] = "Dhaka";
-        $post_data['cus_city'] = "Dhaka";
-        $post_data['cus_state'] = "Dhaka";
-        $post_data['cus_postcode'] = "1000";
+
+        $post_data['cus_add1'] = isset($data['cus_add1']) ? $data['cus_name'] : 'N/A';
+        $post_data['cus_city'] = "N/A";
+        $post_data['cus_postcode'] = "N/A";
         $post_data['cus_country'] = "Bangladesh";
-        $post_data['cus_phone'] = '0188376655';
-        $post_data['cus_fax'] = "";
+        $post_data['cus_phone'] = isset($data['cus_phone']) ? $data['cus_phone'] : 'N/A';
+
+        # PRODUCT INFORMATION
+        $post_data['product_name'] = "TOP UP";
+        $post_data['product_category'] = "top up";
+        $post_data['product_profile'] = "telecom-vertical ";
+        $post_data['product_type'] = $data['product_type'];
+        $post_data['topup_number'] = $data['topup_number'];
+        $post_data['country_topup'] = "Bangladesh";
+
 
         # SHIPMENT INFORMATION
-        $post_data['ship_name'] = "Store Test";
-        $post_data['ship_add1 '] = "Dhaka";
-        $post_data['ship_add2'] = "Dhaka";
-        $post_data['ship_city'] = "Dhaka";
-        $post_data['ship_state'] = "Dhaka";
-        $post_data['ship_postcode'] = "1000";
-        $post_data['ship_country'] = "Bangladesh";
-
-        # OPTIONAL PARAMETERS
-        $post_data['value_a'] = "ref001";
-        $post_data['value_b '] = "ref002";
-        $post_data['value_c'] = "ref003";
-        $post_data['value_d'] = "ref004";
+        $post_data['shipping_method'] = "NO";
+        $post_data['num_of_item'] = $data['num_of_item'];
 
         # EMI STATUS
-        $post_data['emi_option'] = "1";
+        $post_data['emi_option'] = "0";
 
         # CART PARAMETERS
-        $post_data['cart'] = json_encode(array(
-            array("product" => "DHK TO BRS AC A1", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A2", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A3", "amount" => "200.00"),
-            array("product" => "DHK TO BRS AC A4", "amount" => "200.00")
-        ));
-        $post_data['product_amount'] = "100";
-        $post_data['vat'] = "5";
-        $post_data['discount_amount'] = "5";
-        $post_data['convenience_fee'] = "3";
+        $post_data['cart'] = json_encode($data['cart']);
+        $post_data['product_amount'] = $data['product_amount'];
 
         return $post_data;
     }
 
-    public function ssl()
+    public function ssl(Request $request)
     {
 //     <----------cred: Banglalink account------------->
-        $url = 'https://sandbox.sslcommerz.com/gwprocess/v3/api.php';
-        $store_id = 'bangl5da2f2be91898';
-        $store_passwd = 'bangl5da2f2be91898@ssl';
+        $url = env('STORE_URL');
+        $store_id = env('STORE_ID');
+        $store_passwd = env('STORE_PASSWORD');
 
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
-        $returnResult = $this->calltoapiAction($this->getPostData(), $setLocalhost = true, $direct_api_url);
-
+        $requestData = $this->getPostData($request->all());
+        $returnResult = $this->calltoapiAction($requestData, $setLocalhost = true, $direct_api_url);
 
         $sslReturnResult = json_decode($returnResult, true);
+//        dd($sslReturnResult);
         $sessionkey = '';
         $GatewayURL = '';
         $GatewayStatus = '200';
@@ -136,7 +125,6 @@ class SslCommerzController extends Controller
         );
 
         $response = new \stdClass();
-        $response->response_code = (!empty($orderId)) ? 100 : 400;
         $response->errors = array();
         $request['sessionkey'] = $sessionkey;
         $request['gateway_url'] = $GatewayURL;
@@ -215,12 +203,6 @@ class SslCommerzController extends Controller
     }
 
 
-
-
-    // $post_data['success_url'] =  $this->base_url . "/en/payment-success";
-    // $post_data['fail_url'] =  $this->base_url . "/en/payment-fail";
-    // $post_data['cancel_url'] = $this->base_url . "/en/cancel";
-
     public function success(Request $request)
     {
         $successData = request()->all();
@@ -242,6 +224,7 @@ class SslCommerzController extends Controller
     {
         $cancelData = request()->all();
         $this->apiFormatter($cancelData);
+        return redirect('http://172.16.229.242/en/payment-cancel');
     }
 
 }
