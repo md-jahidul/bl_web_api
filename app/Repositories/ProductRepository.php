@@ -23,10 +23,10 @@ class ProductRepository extends BaseRepository
         $currentSecends = strtotime($dateTime);
 
         return Product::where('status', 1)
-            ->whereNull('start_date')
-            ->orwhere('start_date', '<=', $currentSecends)
-            ->whereNull('end_date')
-            ->orWhere('end_date', '>=', $currentSecends)
+//            ->whereNull('start_date')
+//            ->where('start_date', '<=', $currentSecends)
+//            ->whereNull('end_date')
+//            ->orWhere('end_date', '>=', $currentSecends)
             ->category($type)
             ->get();
     }

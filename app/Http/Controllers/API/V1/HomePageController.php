@@ -79,6 +79,7 @@ class HomePageController extends Controller
 
     public function getMultipleSliderData($id)
     {
+
         $slider = AlSlider::find($id);
         $this->bindDynamicValues($slider);
 
@@ -101,11 +102,13 @@ class HomePageController extends Controller
 
             $products = Product::where('show_in_home', 1)
                 ->where('status', 1)
-                ->where('start_date', '<=', $currentSecends)
-                ->whereNull('end_date')
-                ->orwhere('end_date', '>=', $currentSecends)
+//                ->whereNull('start_date')
+//                ->orwhere('start_date', '<=', $currentSecends)
+//                ->whereNull('end_date')
+//                ->orwhere('end_date', '>=', $currentSecends)
                 ->orderBy('display_order')
                 ->get();
+
 
             foreach ( $products as $product){
                 $this->bindDynamicValues($product, 'offer_info');
@@ -144,6 +147,7 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
+
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
