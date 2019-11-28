@@ -51,8 +51,8 @@ class SslCommerzController extends Controller
     public function getPostData($data)
     {
         $post_data = array();
-        $post_data['store_id'] = "bangl5da2f2be91898";
-        $post_data['store_passwd'] = "bangl5da2f2be91898@ssl";
+        $post_data['store_id'] = env('STORE_ID');
+        $post_data['store_passwd'] = env('STORE_PASSWORD');
         $post_data['total_amount'] = $data['total_amount'];
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
@@ -62,11 +62,11 @@ class SslCommerzController extends Controller
 
         # CUSTOMER INFORMATION
         $post_data['cus_name'] = isset($data['cus_name']) ? $data['cus_name'] : 'N/A';
-        if (isset($data['cus_email'])) {
-            $post_data['cus_email'] = "jahidul@gmail.com";
-        }
+        $post_data['cus_email'] = "jahidul@gmail.com";
 
         $post_data['cus_add1'] = isset($data['cus_add1']) ? $data['cus_name'] : 'N/A';
+        $post_data['cus_city'] = "N/A";
+        $post_data['cus_postcode'] = "N/A";
         $post_data['cus_country'] = "Bangladesh";
         $post_data['cus_phone'] = isset($data['cus_phone']) ? $data['cus_phone'] : 'N/A';
 
@@ -87,7 +87,7 @@ class SslCommerzController extends Controller
         $post_data['emi_option'] = "0";
 
         # CART PARAMETERS
-        $post_data['cart'] = $data['cart'];
+        $post_data['cart'] = json_encode($data['cart']);
         $post_data['product_amount'] = $data['product_amount'];
 
         return $post_data;
@@ -102,10 +102,11 @@ class SslCommerzController extends Controller
 
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
-        $returnResult = $this->calltoapiAction($this->getPostData($request->all()), $setLocalhost = true, $direct_api_url);
-
+        $requestData = $this->getPostData($request->all());
+        $returnResult = $this->calltoapiAction($requestData, $setLocalhost = true, $direct_api_url);
 
         $sslReturnResult = json_decode($returnResult, true);
+//        dd($sslReturnResult);
         $sessionkey = '';
         $GatewayURL = '';
         $GatewayStatus = '200';
@@ -124,7 +125,6 @@ class SslCommerzController extends Controller
         );
 
         $response = new \stdClass();
-        $response->response_code = (!empty($orderId)) ? 100 : 400;
         $response->errors = array();
         $request['sessionkey'] = $sessionkey;
         $request['gateway_url'] = $GatewayURL;
