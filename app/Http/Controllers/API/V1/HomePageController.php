@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
-use Carbon\Carbon;
+
 
 class HomePageController extends Controller
 {
@@ -96,19 +96,11 @@ class HomePageController extends Controller
                                     ->orderBy('po.display_order')
                                     ->get();
         }else {
-            $bdTimeZone = Carbon::now('Asia/Dhaka');
-            $dateTime = $bdTimeZone->toDateTimeString();
-            $currentSecends = strtotime($dateTime);
-
             $products = Product::where('show_in_home', 1)
                 ->where('status', 1)
-//                ->whereNull('start_date')
-//                ->orwhere('start_date', '<=', $currentSecends)
-//                ->whereNull('end_date')
-//                ->orwhere('end_date', '>=', $currentSecends)
+                ->startEndDate()
                 ->orderBy('display_order')
                 ->get();
-
 
             foreach ( $products as $product){
                 $this->bindDynamicValues($product, 'offer_info');
@@ -147,7 +139,6 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
-
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
