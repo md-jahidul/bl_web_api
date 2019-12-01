@@ -33,11 +33,14 @@ class Product extends Model
         $bdTimeZone = Carbon::now('Asia/Dhaka');
         $dateTime = $bdTimeZone->toDateTimeString();
 
-        return $query->where('start_date', '<=', $dateTime)
-            ->where(function ($query) use ($dateTime) {
-                $query->where('end_date', '>=', $dateTime)
-                    ->orWhereNull('end_date');
-            });
+        return $query->where(function ($query) use ($dateTime) {
+            $query->where('start_date', '<=', $dateTime)
+                ->orWhereNull('start_date');
+        })
+        ->where(function ($query) use ($dateTime) {
+            $query->where('end_date', '>=', $dateTime)
+                ->orWhereNull('end_date');
+        });
     }
 
     public function product_details()
