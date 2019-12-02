@@ -11,22 +11,14 @@ class ProductRepository extends BaseRepository
      */
     public $modelName = Product::class;
 
-
     /**
      * @param $type
      * @return mixed
      */
     public function simTypeProduct($type)
     {
-        $mytime = Carbon::now('Asia/Dhaka');
-        $dateTime = $mytime->toDateTimeString();
-        $currentSecends = strtotime($dateTime);
-
-        return Product::where('status', 1)
-//            ->whereNull('start_date')
-//            ->where('start_date', '<=', $currentSecends)
-//            ->whereNull('end_date')
-//            ->orWhere('end_date', '>=', $currentSecends)
+        return $this->model->where('status', 1)
+            ->startEndDate()
             ->category($type)
             ->get();
     }
