@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
+use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkOtpService;
-use Exception;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
 use Illuminate\Support\Facades\Crypt;
@@ -42,6 +42,11 @@ class UserService extends ApiBaseService
      */
     protected $otpConfigRepository;
 
+    /*
+     * @var BalanceService
+     */
+    protected $balanceService;
+
 
     /**
      * UserService constructor.
@@ -53,20 +58,20 @@ class UserService extends ApiBaseService
      * @param OtpConfigRepository $otpConfigRepository
      */
     public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository)
+                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository, BalanceService $balanceService)
     {
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
         $this->otpRepository = $otpRepository;
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
+        $this->balanceService = $balanceService;
     }
 
     public function otpLoginRequest($request)
     {
         $mobile = $request->mobile;
         $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
-
         if ($validationResponse->getData()->status == 'FAIL') {
             return $validationResponse;
         }
@@ -111,8 +116,14 @@ class UserService extends ApiBaseService
     {
         $customerInfo = array();
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
+        if (!$user)
+            return null;
+
         $customerInfo['personal_data'] = $user;
-        $customerInfo['balance_data'] = 'balance data';
+
+        //Balance Info
+//        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
+        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary(8494);
 
         return $customerInfo;
 
@@ -205,22 +216,6 @@ class UserService extends ApiBaseService
 
         $user = $this->getCustomerInfo($idpData->user->mobile);
         return $this->sendSuccessResponse($user, 'Data found', []);
-    }
-
-    private function transformUserData($user)
-    {
-        $data = [];
-        $data['first_name'] = $user['name'];
-        $data['last_name'] = $user['name'];
-        $data['gender'] = 'Male';
-        $data['mobile'] = $user['mobile'];
-        $data['alt_mobile'] = '01722445625';
-        $data['dob'] = $user['birth_date'];
-        $data['profile_picture'] = $user['profile_image'];
-        $data['email'] = $user['email'];
-        $data['address'] = 'Mohakhali Dhaka';
-
-        return $data;
     }
 
     public function isUserExist($mobile)

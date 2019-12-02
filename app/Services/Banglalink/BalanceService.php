@@ -53,7 +53,12 @@ class BalanceService extends BaseService
         return $user;
     }
 
-    private function prepareBalanceSummary($response)
+    private function isEligibleToLoan($balance)
+    {
+        return random_int(0, 1) && $balance < self::MINIMUM_BALANCE_FOR_LOAN ? true : false;
+    }
+
+    private function prepareBalanceSummary($response, $customer_id)
     {
         $balance_data = collect($response->money);
 
@@ -61,46 +66,55 @@ class BalanceService extends BaseService
             return $item->type == 'MAIN';
         });
 
+        $is_eligible_to_loan =  $this->isEligibleToLoan($customer_id);
         $data['balance'] = [
-            'amount' => $main_balance->amount,
-            'unit' => $main_balance->unit,
-            'expires_in' => Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
+            'amount' => isset($main_balance->amount) ? $main_balance->amount : 0 ,
+            'unit' => isset($main_balance->unit) ? $main_balance->unit : 'Tk.',
+            'expires_in' => isset($main_balance->expiryDateTime) ?
+                Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null,
             'loan' => [
-                'is_eligible' => $main_balance->amount < self::MINIMUM_BALANCE_FOR_LOAN,
-                'amount' => ($main_balance->amount < self::MINIMUM_BALANCE_FOR_LOAN) ? rand(10, 20) : 0
+                'is_eligible' => $is_eligible_to_loan,
+                'amount'      => ($is_eligible_to_loan) ? 30 : 0
             ]
         ];
 
+
         $talk_time = collect($response->voice);
 
-        $total_remaining_talk_time = $talk_time->sum('amount');
-        $total_talk_time = $talk_time->sum('totalAmount');
-        $data['minutes'] = [
-            'total' => $total_talk_time,
-            'remaining' => $total_remaining_talk_time,
-            'unit' => 'MIN'
-        ];
+        if ($talk_time) {
+            $total_remaining_talk_time = $talk_time->sum('amount');
+            $total_talk_time = $talk_time->sum('totalAmount');
+            $data['minutes'] = [
+                'total' => $total_talk_time,
+                'remaining' => $total_remaining_talk_time,
+                'unit' => 'MIN'
+            ];
+        }
 
         $sms = collect($response->sms);
 
-        $total_remaining_sms = $sms->sum('amount');
-        $total_sms = $sms->sum('totalAmount');
-        $data['sms'] = [
-            'total' => $total_sms,
-            'remaining' => $total_remaining_sms,
-            'unit' => 'SMS'
-        ];
+        if ($sms) {
+            $total_remaining_sms = $sms->sum('amount');
+            $total_sms = $sms->sum('totalAmount');
+            $data['sms'] = [
+                'total' => $total_sms,
+                'remaining' => $total_remaining_sms,
+                'unit' => 'SMS'
+            ];
+        }
+
 
         $internet = collect($response->data);
 
-        $total_remaining_internet = $internet->sum('amount');
-        $total_internet = $internet->sum('totalAmount');
-        $data['internet'] = [
-            'total' => $total_internet,
-            'remaining' => ($total_remaining_internet >= 1024 ) ?
-                round($total_remaining_internet / 1024, 1) : $total_remaining_internet,
-            'unit' => ($total_remaining_internet >= 1024 ) ? 'GB' : 'MB'
-        ];
+        if ($internet) {
+            $total_remaining_internet = $internet->sum('amount');
+            $total_internet = $internet->sum('totalAmount');
+            $data['internet'] = [
+                'total' => $total_internet,
+                'remaining' => $total_remaining_internet,
+                'unit' => 'MB'
+            ];
+        }
 
         return $this->responseFormatter->sendSuccessResponse($data, 'User Balance Summary');
     }
@@ -109,15 +123,10 @@ class BalanceService extends BaseService
      * @param Request $request
      * @return JsonResponse
      */
-    public function getBalanceSummary(Request $request)
+    public function getBalanceSummary($customerAccountId)
     {
-        $user = $this->getAuthenticateUser($request);
-
-        if (!$user) {
-            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
-        }
-
-        $response = $this->get($this->getBalanceUrl($user->id));
+        $customer_id = $customerAccountId;
+        $response = $this->get($this->getBalanceUrl($customer_id));
         $response = json_decode($response['response']);
 
         if (isset($response->error)) {
@@ -128,7 +137,7 @@ class BalanceService extends BaseService
             );
         }
 
-        return $this->prepareBalanceSummary($response);
+        return $this->prepareBalanceSummary($response, $customer_id);
     }
 
     private function getInternetBalance($response)
@@ -201,14 +210,15 @@ class BalanceService extends BaseService
 
         $data = [
             'remaining_balance' => [
-                'amount' => $main_balance->amount,
-                'currency' => $main_balance->unit,
-                'expires_in' => Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString()
+                'amount' => isset($main_balance->amount) ? $main_balance->amount : 0,
+                'currency' => 'Tk.',
+                'expires_in' => isset($main_balance->expiryDateTime) ?
+                    Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
             ],
             'roaming_balance' => [
-                'amount' => 20,
+                'amount' => 0,
                 'currency' => 'USD',
-                'expires_in' => Carbon::now('UTC')->addDays(90)->toDateTimeString()
+                'expires_in' => null
             ]
         ];
 
@@ -224,8 +234,8 @@ class BalanceService extends BaseService
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
         }
 
-
-        $response = $this->get($this->getBalanceUrl($user->id));
+        $customer_id = ($user->customer_account_id) ? $user->customer_account_id : 8494;
+        $response = $this->get($this->getBalanceUrl($customer_id));
         $response = json_decode($response['response']);
 
         if (isset($response->error)) {
