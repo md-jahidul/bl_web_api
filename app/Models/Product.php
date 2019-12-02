@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SimCategory;
 
@@ -20,6 +21,25 @@ class Product extends Model
     {
         return $query->whereHas('sim_category', function ($q) use ($type) {
             $q->where('alias', $type);
+        });
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeStartEndDate($query)
+    {
+        $bdTimeZone = Carbon::now('Asia/Dhaka');
+        $dateTime = $bdTimeZone->toDateTimeString();
+
+        return $query->where(function ($query) use ($dateTime) {
+            $query->where('start_date', '<=', $dateTime)
+                ->orWhereNull('start_date');
+        })
+        ->where(function ($query) use ($dateTime) {
+            $query->where('end_date', '>=', $dateTime)
+                ->orWhereNull('end_date');
         });
     }
 

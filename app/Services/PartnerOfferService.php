@@ -3,15 +3,10 @@
 namespace App\Services;
 
 use App\Http\Resources\PartnerOfferResource;
-use App\Models\PartnerCategory;
 use App\Repositories\PartnerOfferRepository;
-use App\Repositories\ProductDetailRepository;
-use App\Repositories\ProductRepository;
 use App\Traits\CrudTrait;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Response;
-use phpDocumentor\Reflection\Types\Null_;
+
 
 class PartnerOfferService extends ApiBaseService
 {
@@ -82,40 +77,5 @@ class PartnerOfferService extends ApiBaseService
             return response()->error("Something wrong", $exception);
         }
     }
-
-
-    /**
-     * @param $type
-     * @param $id
-     * @return mixed
-     */
-//    public function details($type, $id)
-//    {
-//        try {
-//
-//            $productDetail = $this->productRepository->detailProducts($type, $id);
-//
-//            if ($productDetail) {
-//                $this->bindDynamicValues($productDetail, 'offer_info');
-//
-//                $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
-//                $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
-//
-//                $this->bindDynamicValues($productDetail->related_products, 'offer_info');
-//
-//                unset($productDetail->other_related_product);
-//                unset($productDetail->related_product);
-//
-//                return response()->success($productDetail, 'Data Found!');
-//            }
-//
-//            return response()->error("Data Not Found!");
-//
-//        } catch (QueryException $exception) {
-//            return response()->error("Something wrong", $exception);
-//        }
-//    }
-
-
 
 }
