@@ -139,15 +139,6 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
-
-        $products = Product::where('show_in_home', 1)
-            ->where('status', 1)
-            ->startEndDate()
-            ->orderBy('display_order')
-            ->get();
-
-        return $products;
-
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
