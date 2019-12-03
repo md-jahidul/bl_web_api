@@ -116,7 +116,7 @@ class BalanceService extends BaseService
             ];
         }
 
-        return $this->responseFormatter->sendSuccessResponse($data, 'User Balance Summary');
+        return $data;
     }
 
     /**
@@ -130,14 +130,10 @@ class BalanceService extends BaseService
         $response = json_decode($response['response']);
 
         if (isset($response->error)) {
-            return $this->responseFormatter->sendErrorResponse(
-                $response->message,
-                [],
-                $response->status
-            );
+            return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
         }
-
-        return $this->prepareBalanceSummary($response, $customer_id);
+        $balanceSummary = $this->prepareBalanceSummary($response, $customer_id);
+        return ['status' => 'SUCCESS', 'data' => $balanceSummary];
     }
 
     private function getInternetBalance($response)

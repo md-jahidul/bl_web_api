@@ -123,7 +123,8 @@ class UserService extends ApiBaseService
 
         //Balance Info
 //        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary(8494);
+        $balanceData = $this->balanceService->getBalanceSummary(8494); //TODO: remove hard codded customer id
+        $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         return $customerInfo;
 
@@ -253,7 +254,7 @@ class UserService extends ApiBaseService
 
         $user = $this->userRepository->create($data);
 
-        return ['status' => 'SUCCESS', 'data' => $user];;
+        return ['status' => 'SUCCESS', 'data' => $user];
 
     }
 
