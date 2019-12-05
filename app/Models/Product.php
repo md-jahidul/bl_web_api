@@ -24,7 +24,6 @@ class Product extends Model
         });
     }
 
-
     /**
      * @param $query
      * @return mixed
