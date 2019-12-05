@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Services\ProductDetailService;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 
 class ProductController extends Controller
 {
@@ -30,7 +31,6 @@ class ProductController extends Controller
     public function __construct(
         ProductService $productService,
         ProductDetailService $productDetailService
-
     ) {
         $this->productService = $productService;
         $this->productDetailService = $productDetailService;
@@ -54,4 +54,18 @@ class ProductController extends Controller
     {
        return $productDetail = $this->productService->details($type, $id);
     }
+
+    public function productLike($productId)
+    {
+        try {
+            $products = Product::where('product_core_code', $productId)->first();
+            if ($products) {
+                $products['like'] = $products['like'] + 1;
+                $products->update();
+            }
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }
+    }
+
 }

@@ -27,6 +27,12 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers/{type}','API\V1\ProductController@simPackageOffers');
     Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
+
+
+    Route::get('product-like/{id}','API\V1\ProductController@productLike');
+
+
+
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers','API\V1\PriyojonController@priyojonOffers');
 
