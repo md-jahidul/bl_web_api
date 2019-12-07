@@ -12,9 +12,40 @@ class Product extends Model
         'offer_info' => 'array'
     ];
 
+    public function product_core()
+    {
+        return $this->belongsTo(ProductCore::class, 'product_core_code', 'code');
+    }
+
     public function sim_category()
     {
         return $this->belongsTo(SimCategory::class);
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeProductCore($query)
+    {
+        return $query->with(['product_core' => function ($q) {
+            $q->select(
+                'code',
+                'activation_ussd',
+                'balance_check_ussd',
+                'price',
+                'vat',
+                'mrp_price',
+                'validity',
+                'validity_unit',
+                'data_volume_unit',
+                'internet_volume_mb',
+                'sms_volume',
+                'minute_volume',
+                'call_rate',
+                'sms_rate'
+            );
+        }]);
     }
 
     public function scopeCategory($query, $type)
