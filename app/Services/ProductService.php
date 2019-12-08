@@ -56,6 +56,7 @@ class ProductService extends ApiBaseService
                 $obj->{$key} = $value;
             }
         }
+        // Product Core Data BindDynamicValues
         $data = json_decode($data);
         if (!empty($data)) {
             foreach ($data as $key => $value) {
@@ -103,11 +104,11 @@ class ProductService extends ApiBaseService
             $products = $this->productRepository->simTypeProduct($type);
             $viewAbleProducts = $products;
 
-//            if ($this->isUserLoggedIn($request)) {
-//                $customer = $this->customerService->getCustomerDetails($request);
-//                $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
-//                $viewAbleProducts = $this->filterProductsByUser($availableProducts);
-//            }
+            if ($this->isUserLoggedIn($request)) {
+                $customer = $this->customerService->getCustomerDetails($request);
+                $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
+                $viewAbleProducts = $this->filterProductsByUser($viewAbleProducts, $availableProducts);
+            }
 
             if ($viewAbleProducts) {
                 foreach ($viewAbleProducts as $product) {
