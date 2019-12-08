@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\ProductCoreResource;
+use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
@@ -28,19 +29,29 @@ class ProductService extends ApiBaseService
     protected $customerService;
 
     /**
+     * @var ProductBookmarkRepository
+     */
+    protected $productBookmarkRepository;
+
+    /**
      * ProductService constructor.
      * @param ProductRepository $productRepository
      * @param BanglalinkProductService $blProductService
      * @param CustomerService $customerService
+     * @param ProductBookmarkRepository $productBookmarkRepository
      */
-    public function __construct(
+    public function __construct
+    (
         ProductRepository $productRepository,
         BanglalinkProductService $blProductService,
-        CustomerService $customerService)
+        CustomerService $customerService,
+        ProductBookmarkRepository $productBookmarkRepository
+    )
     {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
+        $this->productBookmarkRepository = $productBookmarkRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -74,7 +85,6 @@ class ProductService extends ApiBaseService
     {
         $data = [];
         foreach ($products as $product) {
-
             $findProduct = $this->findOne($product->related_product_id);
             array_push($data, $findProduct);
         }
@@ -142,7 +152,6 @@ class ProductService extends ApiBaseService
         if ($request->header('authorization')) {
             return true;
         }
-
         return false;
     }
 
@@ -186,8 +195,17 @@ class ProductService extends ApiBaseService
         foreach ($customerProducts as $product) {
             array_push($productIds, $product['code']);
         }
-
         return $productIds;
+    }
+
+    /**
+     * @param $request
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    public function customerProductSave($request)
+    {
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $this->productBookmarkRepository->saveProduct($customerInfo->phone, $request);
     }
 
 }
