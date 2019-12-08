@@ -39,17 +39,18 @@ class ProductController extends Controller
      */
     private $blProductService;
 
-    /***
+    /**
      * ProductController constructor.
      * @param ProductService $productService
      * @param ProductDetailService $productDetailService
+     * @param PurchaseService $purchaseService
+     * @param BanglalinkProductService $blProductService
      */
     public function __construct(
         ProductService $productService,
         ProductDetailService $productDetailService,
         PurchaseService $purchaseService,
         BanglalinkProductService $blProductService
-
     )
     {
         $this->productService = $productService;
@@ -59,8 +60,10 @@ class ProductController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param $type
      * @return mixed
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function simPackageOffers(Request $request, $type)
     {
@@ -95,7 +98,7 @@ class ProductController extends Controller
     public function productLike($productId)
     {
         try {
-            $products = Product::where('product_core_code', $productId)->first();
+            $products = Product::where('product_code', $productId)->first();
             if ($products) {
                 $products['like'] = $products['like'] + 1;
                 $products->update();

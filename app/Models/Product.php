@@ -14,7 +14,7 @@ class Product extends Model
 
     public function product_core()
     {
-        return $this->belongsTo(ProductCore::class, 'product_core_code', 'code');
+        return $this->belongsTo(ProductCore::class, 'product_code', 'product_code');
     }
 
     public function sim_category()
@@ -30,7 +30,7 @@ class Product extends Model
     {
         return $query->with(['product_core' => function ($q) {
             $q->select(
-                'code',
+                'product_code',
                 'activation_ussd',
                 'balance_check_ussd',
                 'price',

@@ -64,7 +64,8 @@ class CustomerService extends ApiBaseService
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return mixed
+     * @throws AuthenticationException
      */
     public function getCustomerDetails(Request $request)
     {
@@ -75,13 +76,13 @@ class CustomerService extends ApiBaseService
         $idpData = json_decode($response['data']);
 
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
-            throw new AuthenticationException($idpData->token_status, $response['http_code']);
+            throw new AuthenticationException($idpData->token_status);
         }
 
         $customer = $this->getCustomerInfo($idpData->user->mobile);
 
         if (!$customer)
-            throw new AuthenticationException('Customer not found', 404);
+            throw new AuthenticationException('Customer not found');
 
         return $this->getCustomerInfo($idpData->user->mobile);
     }

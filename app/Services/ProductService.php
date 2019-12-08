@@ -26,12 +26,16 @@ class ProductService extends ApiBaseService
      */
     protected $customerService;
 
-    /***
+    /**
      * ProductService constructor.
      * @param ProductRepository $productRepository
+     * @param BanglalinkProductService $blProductService
+     * @param CustomerService $customerService
      */
-    public function __construct(ProductRepository $productRepository, BanglalinkProductService $blProductService,
-                                CustomerService $customerService)
+    public function __construct(
+        ProductRepository $productRepository,
+        BanglalinkProductService $blProductService,
+        CustomerService $customerService)
     {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -77,14 +81,17 @@ class ProductService extends ApiBaseService
 
     /**
      * @param $type
+     * @param $request
      * @return mixed
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function simTypeOffers($type, $request)
     {
         try {
-
             $products = $this->productRepository->simTypeProduct($type);
             $viewAbleProducts = $products;
+
+//            return $viewAbleProducts;
 
             if ($this->isUserLoggedIn($request)) {
                 $customer = $this->customerService->getCustomerDetails($request);
