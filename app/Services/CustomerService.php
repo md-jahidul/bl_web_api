@@ -45,8 +45,6 @@ class CustomerService extends ApiBaseService
 
 
     /**
-     *
-     *
      * @param $request
      * @return JsonResponse
      */
@@ -79,12 +77,14 @@ class CustomerService extends ApiBaseService
             throw new AuthenticationException($idpData->token_status);
         }
 
-        $customer = $this->getCustomerInfo($idpData->user->mobile);
+//        $customer = $this->getCustomerInfo($idpData->user->mobile);
+        $customer = $this->customerRepository->findBy(['phone' => $idpData->user->mobile]);
 
         if (!$customer)
             throw new AuthenticationException('Customer not found');
 
-        return $this->getCustomerInfo($idpData->user->mobile);
+//        return $this->getCustomerInfo($idpData->user->mobile);
+        return $this->customerRepository->findBy(['phone' => $idpData->user->mobile]);
     }
 
 
