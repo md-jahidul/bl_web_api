@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
 
@@ -15,13 +16,26 @@ class ProductService extends ApiBaseService
      */
     protected $productRepository;
 
+    /**
+     * @var BanglalinkProductService
+     */
+    protected $blProductService;
+
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
     /***
      * ProductService constructor.
      * @param ProductRepository $productRepository
      */
-    public function __construct(ProductRepository $productRepository)
+    public function __construct(ProductRepository $productRepository, BanglalinkProductService $blProductService,
+                                CustomerService $customerService)
     {
         $this->productRepository = $productRepository;
+        $this->blProductService = $blProductService;
+        $this->customerService = $customerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -59,22 +73,53 @@ class ProductService extends ApiBaseService
      * @param $type
      * @return mixed
      */
-    public function simTypeOffers($type)
+    public function simTypeOffers($type, $request)
     {
         try {
+
             $products = $this->productRepository->simTypeProduct($type);
 
-            if ($products) {
-                foreach ($products as $product) {
+            $viewAbleProducts = $products;
+
+            if ($this->isUserLoggedIn($request)) {
+                $customer = $this->customerService->getCustomerDetails($request);
+                $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
+                $viewAbleProducts = $this->filterProductsByUser($availableProducts);
+            }
+
+            if ($viewAbleProducts) {
+                foreach ($viewAbleProducts as $product) {
                     $this->bindDynamicValues($product, 'offer_info');
                 }
-                return response()->success($products, 'Data Found!');
+                return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    private function filterProductsByUser($allProducts, $availableProductIds)
+    {
+        $viewableProducts = [];
+
+        foreach ($allProducts as $product) {
+            if (in_array($product->product_code, $availableProductIds)) {
+                array_push($viewableProducts, $product);
+            }
+        }
+
+        return $availableProductIds;
+    }
+
+    private function isUserLoggedIn($request)
+    {
+        if ($request->header('authorization')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -107,6 +152,18 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    public function getProductCodesByCustomerId($customerId)
+    {
+        $customerProducts = $this->blProductService->getCustomerProducts($customerId);
+        $productIds = [];
+
+        foreach ($customerProducts as $product) {
+            array_push($productIds, $product['code']);
+        }
+
+        return $this->sendSuccessResponse($productIds, 'Product List');
     }
 
 }

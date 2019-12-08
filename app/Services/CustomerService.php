@@ -8,6 +8,8 @@ use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\Banglalink\CustomerPackageService;
+use http\Exception\RuntimeException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -66,27 +68,22 @@ class CustomerService extends ApiBaseService
      */
     public function getCustomerDetails(Request $request)
     {
-        // validate the token and get details info
         $bearerToken = ['token' => $request->header('authorization')];
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $data = json_decode($response, true);
+        $idpData = json_decode($response['data']);
 
-        if ($data['token_status'] != 'Valid') {
-            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
+            throw new AuthenticationException($idpData->token_status, $response['http_code']);
         }
 
-        $msisdn_key = 'mobile';
+        $customer = $this->getCustomerInfo($idpData->user->mobile);
 
-        $user = Customer::where('phone', $data['user'][$msisdn_key])->first();
+        if (!$customer)
+            throw new AuthenticationException('Customer not found', 404);
 
-
-        if (!$user) {
-            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
-        }
-
-        return $this->sendSuccessResponse(new CustomerResource($user), 'Customer Details Info');
+        return $this->getCustomerInfo($idpData->user->mobile);
     }
 
 

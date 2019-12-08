@@ -7,11 +7,17 @@
  */
 
 namespace App\Http\Controllers\API\V1;
+
+use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\Banglalink\BanglalinkProductService;
+use App\Services\Banglalink\PurchaseService;
 use App\Services\ProductDetailService;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -22,6 +28,16 @@ class ProductController extends Controller
     private $productService;
     private $productDetailService;
 
+    /**
+     * @var PurchaseService
+     */
+    private $purchaseService;
+
+    /**
+     * @var BanglalinkProductService
+     */
+    private $blProductService;
+
     /***
      * ProductController constructor.
      * @param ProductService $productService
@@ -29,20 +45,25 @@ class ProductController extends Controller
      */
     public function __construct(
         ProductService $productService,
-        ProductDetailService $productDetailService
+        ProductDetailService $productDetailService,
+        PurchaseService $purchaseService,
+         BanglalinkProductService $blProductService
 
-    ) {
+    )
+    {
         $this->productService = $productService;
         $this->productDetailService = $productDetailService;
+        $this->purchaseService = $purchaseService;
+        $this->blProductService = $blProductService;
     }
 
     /**
      * @param $type
      * @return mixed
      */
-    public function simPackageOffers($type)
+    public function simPackageOffers(Request $request, $type)
     {
-        return $this->productService->simTypeOffers($type);
+        return $this->productService->simTypeOffers($type, $request);
     }
 
     /**
@@ -52,6 +73,21 @@ class ProductController extends Controller
      */
     public function productDetails($type, $id)
     {
-       return $productDetail = $this->productService->details($type, $id);
+        return $productDetail = $this->productService->details($type, $id);
+    }
+
+    public function purchase(Request $request)
+    {
+        $validator = Validator::make($request->all(), ['product_code' => 'required']);
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+        }
+
+        return $this->purchaseService->purchaseItem($request);
+    }
+
+    public function getProducts($customerId)
+    {
+        return $this->productService->getProductCodesByCustomerId(8479);
     }
 }

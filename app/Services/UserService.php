@@ -216,6 +216,7 @@ class UserService extends ApiBaseService
         }
 
         $user = $this->getCustomerInfo($idpData->user->mobile);
+
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
