@@ -10,7 +10,9 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
+use App\Models\AlProductBookmark;
 use App\Models\Product;
+use App\Models\ProductBookmark;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Services\Banglalink\PurchaseService;
 use App\Services\ProductDetailService;
@@ -95,6 +97,18 @@ class ProductController extends Controller
         return $this->productService->getProductCodesByCustomerId(8479);
     }
 
+    public function saveProduct(Request $request)
+    {
+//        dd($request->all());
+
+        $validator = Validator::make($request->all(), ['product_code' => 'required', 'operation_type' => 'required']);
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+        }
+        return $this->productService->customerProductSave($request);
+    }
+
+
     public function productLike($productId)
     {
         try {
@@ -107,5 +121,4 @@ class ProductController extends Controller
             return response()->error("Data Not Found!", $exception);
         }
     }
-
 }
