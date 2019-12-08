@@ -18,6 +18,7 @@ use App\Services\ProductService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 
 class ProductController extends Controller
 {
@@ -47,7 +48,7 @@ class ProductController extends Controller
         ProductService $productService,
         ProductDetailService $productDetailService,
         PurchaseService $purchaseService,
-         BanglalinkProductService $blProductService
+        BanglalinkProductService $blProductService
 
     )
     {
@@ -90,4 +91,18 @@ class ProductController extends Controller
     {
         return $this->productService->getProductCodesByCustomerId(8479);
     }
+
+    public function productLike($productId)
+    {
+        try {
+            $products = Product::where('product_core_code', $productId)->first();
+            if ($products) {
+                $products['like'] = $products['like'] + 1;
+                $products->update();
+            }
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }
+    }
+
 }

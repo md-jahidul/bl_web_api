@@ -44,10 +44,16 @@ class ProductService extends ApiBaseService
      * @param string $json_data
      * In PHP, By default objects are passed as reference copy to a new Object.
      */
-    public function bindDynamicValues($obj, $json_data = 'other_attributes')
+    public function bindDynamicValues($obj, $json_data = 'other_attributes', $data)
     {
         if (!empty($obj->{$json_data})) {
             foreach ($obj->{$json_data} as $key => $value) {
+                $obj->{$key} = $value;
+            }
+        }
+        $data = json_decode($data);
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
                 $obj->{$key} = $value;
             }
         }
@@ -78,7 +84,6 @@ class ProductService extends ApiBaseService
         try {
 
             $products = $this->productRepository->simTypeProduct($type);
-
             $viewAbleProducts = $products;
 
             if ($this->isUserLoggedIn($request)) {
@@ -89,12 +94,13 @@ class ProductService extends ApiBaseService
 
             if ($viewAbleProducts) {
                 foreach ($viewAbleProducts as $product) {
-                    $this->bindDynamicValues($product, 'offer_info');
+                    $data = $product->product_core;
+                    $this->bindDynamicValues($product, 'offer_info', $data);
+                    unset($product->product_core);
                 }
                 return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
-
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
