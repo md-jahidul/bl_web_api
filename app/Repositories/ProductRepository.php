@@ -17,8 +17,7 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type)
     {
-        return $this->model->where('status', 1)
-            ->productCore()
+        return $this->model->with('productCore')->where('status', 1)
             ->startEndDate()
             ->category($type)
             ->get();

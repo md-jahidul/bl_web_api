@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ProductCoreResource;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
@@ -91,20 +92,21 @@ class ProductService extends ApiBaseService
             $products = $this->productRepository->simTypeProduct($type);
             $viewAbleProducts = $products;
 
-//            return $viewAbleProducts;
-
-            if ($this->isUserLoggedIn($request)) {
-                $customer = $this->customerService->getCustomerDetails($request);
-                $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
-                $viewAbleProducts = $this->filterProductsByUser($availableProducts);
-            }
+//            if ($this->isUserLoggedIn($request)) {
+//                $customer = $this->customerService->getCustomerDetails($request);
+//                $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
+//                $viewAbleProducts = $this->filterProductsByUser($availableProducts);
+//            }
 
             if ($viewAbleProducts) {
                 foreach ($viewAbleProducts as $product) {
-                    $data = $product->product_core;
+                    $data = $product->productCore;
                     $this->bindDynamicValues($product, 'offer_info', $data);
-                    unset($product->product_core);
+                    unset($product->productCore);
                 }
+
+                $viewAbleProducts = ProductCoreResource::collection($viewAbleProducts);
+
                 return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
