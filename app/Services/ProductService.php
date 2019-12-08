@@ -116,8 +116,7 @@ class ProductService extends ApiBaseService
                     $this->bindDynamicValues($product, 'offer_info', $data);
                     unset($product->productCore);
                 }
-
-                $viewAbleProducts = ProductCoreResource::collection($viewAbleProducts);
+                $viewAbleProducts = ProductCoreResource::collection(collect($viewAbleProducts));
 
                 return response()->success($viewAbleProducts, 'Data Found!');
             }
@@ -130,14 +129,12 @@ class ProductService extends ApiBaseService
     private function filterProductsByUser($allProducts, $availableProductIds)
     {
         $viewableProducts = [];
-
         foreach ($allProducts as $product) {
             if (in_array($product->product_code, $availableProductIds)) {
                 array_push($viewableProducts, $product);
             }
         }
-
-        return $availableProductIds;
+        return $viewableProducts;
     }
 
     private function isUserLoggedIn($request)
@@ -190,7 +187,7 @@ class ProductService extends ApiBaseService
             array_push($productIds, $product['code']);
         }
 
-        return $this->sendSuccessResponse($productIds, 'Product List');
+        return $productIds;
     }
 
 }
