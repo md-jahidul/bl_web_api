@@ -80,6 +80,17 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
+    public function trandingProduct()
+    {
+        $products = $this->productRepository->showTrandingProduct();
+        foreach ( $products as $product){
+            $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+            unset($product->productCore);
+        }
+        $products = ProductCoreResource::collection($products);
+        return $products;
+    }
+
     /**
      * @param $type
      * @param $request

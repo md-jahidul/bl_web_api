@@ -23,6 +23,16 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    public function showTrandingProduct()
+    {
+       return $this->model->where('show_in_home', 1)
+            ->with('productCore')
+            ->where('status', 1)
+            ->startEndDate()
+            ->orderBy('display_order')
+            ->get();
+    }
+
     /**
      * @param $type
      * @param $id

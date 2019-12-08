@@ -38,7 +38,7 @@ class ProductCoreResource extends JsonResource
             "validity_days" => $this->validity ?? null,
             "validity_unit" => $this->validity_unit ?? null,
             "data_volume_unit" => $this->data_volume_unit ?? null,
-            "internet_volume_mb" =>  $this->company_name_bn,
+            "internet_volume_mb" =>  $this->internet_volume_mb,
             "sms_volume" =>  $this->sms_volume,
             "minute_volume" =>  $this->minute_volume,
             "call_rate" =>  $this->call_rate,
