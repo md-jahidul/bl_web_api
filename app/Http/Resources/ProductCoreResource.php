@@ -15,7 +15,6 @@ class ProductCoreResource extends JsonResource
     public function toArray($request)
     {
         return [
-
             "id" =>  $this->id ?? null,
             "product_code" => $this->product_code ?? null,
             "name_en" => $this->name_en ?? null,

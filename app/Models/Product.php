@@ -29,14 +29,15 @@ class Product extends Model
      */
     public function scopeProductCore($query)
     {
-        return $query->with(['product_core' => function ($q) {
+        return $query->with(['productCore' => function ($q) {
             $q->select(
-                'activation_ussd',
+                'product_code',
+                'activation_ussd as ussd_en',
                 'balance_check_ussd',
-                'price',
+                'price as price_tk',
                 'vat',
                 'mrp_price',
-                'validity',
+                'validity as validity_days',
                 'validity_unit',
                 'data_volume_unit',
                 'internet_volume_mb',
