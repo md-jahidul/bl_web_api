@@ -13,9 +13,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Services\Banglalink\PurchaseService;
+use App\Services\CustomerService;
 use App\Services\ProductDetailService;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
@@ -28,6 +30,11 @@ class ProductController extends Controller
      */
     private $productService;
     private $productDetailService;
+
+    /**
+     * @var CustomerService;
+     */
+    private $customerService;
 
     /**
      * @var PurchaseService
@@ -48,7 +55,8 @@ class ProductController extends Controller
         ProductService $productService,
         ProductDetailService $productDetailService,
         PurchaseService $purchaseService,
-        BanglalinkProductService $blProductService
+        BanglalinkProductService $blProductService,
+        CustomerService $customerService
 
     )
     {
@@ -56,6 +64,7 @@ class ProductController extends Controller
         $this->productDetailService = $productDetailService;
         $this->purchaseService = $purchaseService;
         $this->blProductService = $blProductService;
+        $this->customerService = $customerService;
     }
 
     /**
@@ -103,6 +112,17 @@ class ProductController extends Controller
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    public function customerLoanProducts(Request $request)
+    {
+        $customer = $this->customerService->getCustomerInfoByPhone($request['mobile']);
+        if ($customer) {
+            $customerId = 8479; //TODO:Implement real time customer id
+            return $this->productService->getCustomerLoanProducts($customerId);
+        }
+
+        throw new \InvalidArgumentException('Customer not found');
     }
 
 }

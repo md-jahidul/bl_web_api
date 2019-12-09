@@ -8,6 +8,7 @@ use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\Banglalink\CustomerPackageService;
+use App\Traits\CrudTrait;
 use http\Exception\RuntimeException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 class CustomerService extends ApiBaseService
 {
 
-
+    use CrudTrait;
     /**
      * @var CustomerRepository
      */
@@ -41,6 +42,7 @@ class CustomerService extends ApiBaseService
     {
         $this->customerRepository = $customerRepository;
         $this->CustomerPackageService = $customerPackageService;
+        $this->setActionRepository($this->customerRepository);
     }
 
 
@@ -81,7 +83,7 @@ class CustomerService extends ApiBaseService
         $customer = $this->getCustomerInfo($idpData->user->mobile);
 
         if (!$customer)
-            throw new AuthenticationException('Customer not found', 404);
+            throw new AuthenticationException('Customer not found');
 
         return $this->getCustomerInfo($idpData->user->mobile);
     }
@@ -176,18 +178,8 @@ class CustomerService extends ApiBaseService
     }
 
 
-    /**
-     * Saving device token
-     * @param DeviceTokenRequest $request
-     * @return JsonResponse
-     */
-    public function saveDeviceToken($request)
+    public function getCustomerInfoByPhone($phone)
     {
-        try {
-            $data = $this->customerRepository->saveDeviceToken($request);
-            return $this->sendSuccessResponse($data, 'Customer Device Token Saved');
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), [], $exception->getStatusCode());
-        }
+        return $this->customerRepository->getCustomerInfoByPhone($phone);
     }
 }

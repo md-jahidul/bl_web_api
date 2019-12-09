@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\ProductCore;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
@@ -25,6 +27,11 @@ class ProductService extends ApiBaseService
      * @var CustomerService
      */
     protected $customerService;
+
+    /**
+     * @var BanglalinkLoanService
+     */
+    protected $blLoanProductService;
 
     /***
      * ProductService constructor.
@@ -170,6 +177,20 @@ class ProductService extends ApiBaseService
         }
 
         return $this->sendSuccessResponse($productIds, 'Product List');
+    }
+
+    public function getCustomerLoanProducts($customerId)
+    {
+        $availableLoanProducts = [];
+        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
+
+        foreach ($loanProducts as $loan) {
+            $product = ProductCore::where('product_code', $loan->code)->first();
+            if ($product)
+                array_push($availableLoanProducts, $product);
+        }
+
+        return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
     }
 
 }
