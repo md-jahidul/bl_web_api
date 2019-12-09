@@ -114,8 +114,7 @@ class HomePageController extends Controller
                                     ->get();
         }else {
 
-            $products = $this->productService->trandingProduct();
-
+            $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
 

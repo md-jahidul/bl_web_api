@@ -10,7 +10,9 @@ use App\Repositories\ProductRepository;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 
 class ProductService extends ApiBaseService
 {
@@ -70,8 +72,9 @@ class ProductService extends ApiBaseService
      * @param $obj
      * @param string $json_data
      * In PHP, By default objects are passed as reference copy to a new Object.
+     * @param null $data
      */
-    public function bindDynamicValues($obj, $json_data = 'other_attributes', $data)
+    public function bindDynamicValues($obj, $json_data = 'other_attributes', $data = null)
     {
         if (!empty($obj->{$json_data})) {
             foreach ($obj->{$json_data} as $key => $value) {
@@ -102,9 +105,9 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    public function trandingProduct()
+    public function trendingProduct()
     {
-        $products = $this->productRepository->showTrandingProduct();
+        $products = $this->productRepository->showTrendingProduct();
         foreach ($products as $product) {
             $this->bindDynamicValues($product, 'offer_info', $product->productCore);
             unset($product->productCore);
@@ -117,7 +120,7 @@ class ProductService extends ApiBaseService
      * @param $type
      * @param $request
      * @return mixed
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws AuthenticationException
      */
     public function simTypeOffers($type, $request)
     {
@@ -137,7 +140,7 @@ class ProductService extends ApiBaseService
                     $this->bindDynamicValues($product, 'offer_info', $data);
                     unset($product->productCore);
                 }
-                $viewAbleProducts = ProductCoreResource::collection(collect($viewAbleProducts));
+//                $viewAbleProducts = ProductCoreResource::collection(collect($viewAbleProducts));
 
                 return response()->success($viewAbleProducts, 'Data Found!');
             }
@@ -211,12 +214,28 @@ class ProductService extends ApiBaseService
 
     /**
      * @param $request
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @return JsonResponse
+     * @throws AuthenticationException
      */
-    public function customerProductSave($request)
+    public function customerProductBookmark($request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $this->productBookmarkRepository->saveProduct($customerInfo->phone, $request);
+
+        $operationType = $request->operation_type;
+        $productCode = $request->product_code;
+
+        if ($operationType == 'save') {
+            $this->productBookmarkRepository->save([
+                'mobile' => $customerInfo->phone,
+                'product_code' => $productCode,
+            ]);
+            return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
+
+        } else if ($operationType == 'delete') {
+            $this->productRepository->delete();
+            return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+        }
+        return $this->sendErrorResponse('Invalid operation');
     }
 
     public function getCustomerLoanProducts($customerId)
@@ -232,4 +251,42 @@ class ProductService extends ApiBaseService
         return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
     }
 
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function allRechargeOffers($type)
+    {
+        try {
+            $rechargeOffers = $this->productRepository->rechargeOffers($type);
+            if ($rechargeOffers) {
+                foreach ($rechargeOffers as $product) {
+                    $data = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $data);
+                    unset($product->productCore);
+                }
+
+                return response()->success($rechargeOffers, 'Data Found!');
+            }
+            return response()->error("Data Not Found!");
+
+        } catch (QueryException $exception) {
+            return response()->error("Something is Wrong!", $exception);
+        }
+    }
+
+    /**
+     * @param $request
+     * @return mixed
+     * @throws AuthenticationException
+     */
+    public function findCustomerSaveProducts($request)
+    {
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
+        if ($bookmarkProduct) {
+            return response()->success($bookmarkProduct, 'Data Found!');
+        }
+        return response()->error("Data Not Found!");
+    }
 }

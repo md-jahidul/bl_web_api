@@ -20,6 +20,8 @@ use App\Services\ProductDetailService;
 use App\Services\ProductService;
 use Carbon\Carbon;
 use http\Exception\InvalidArgumentException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
@@ -54,6 +56,7 @@ class ProductController extends Controller
      * @param ProductDetailService $productDetailService
      * @param PurchaseService $purchaseService
      * @param BanglalinkProductService $blProductService
+     * @param CustomerService $customerService
      */
     public function __construct(
         ProductService $productService,
@@ -74,7 +77,7 @@ class ProductController extends Controller
      * @param Request $request
      * @param $type
      * @return mixed
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws AuthenticationException
      */
     public function simPackageOffers(Request $request, $type)
     {
@@ -106,15 +109,18 @@ class ProductController extends Controller
         return $this->productService->getProductCodesByCustomerId(8479);
     }
 
-    public function saveProduct(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse|void
+     * @throws AuthenticationException
+     */
+    public function bookmarkProduct(Request $request)
     {
-//        dd($request->all());
-
         $validator = Validator::make($request->all(), ['product_code' => 'required', 'operation_type' => 'required']);
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
         }
-        return $this->productService->customerProductSave($request);
+        return $this->productService->customerProductBookmark($request);
     }
 
 
@@ -137,5 +143,19 @@ class ProductController extends Controller
 //        $customerId = $customer->customer_account_id;
         $customerId = 8494; //TODO:Remove from production
         return $this->productService->getCustomerLoanProducts($customerId);
+    }
+
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function rechargeOffers($type)
+    {
+        return $this->productService->allRechargeOffers($type);
+    }
+
+    public function getCustomerBookmarkProducts(Request $request)
+    {
+        return $this->productService->findCustomerSaveProducts($request);
     }
 }

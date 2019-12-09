@@ -30,8 +30,10 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
-    Route::post('product/save','API\V1\ProductController@saveProduct');
+    Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
+    Route::get('customer/product/bookmark','API\V1\ProductController@getCustomerBookmarkProducts');
 
+    Route::get('recharge-offers/{type}', 'API\V1\ProductController@rechargeOffers');
 
 
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
