@@ -99,9 +99,14 @@ class ProductService extends ApiBaseService
     {
         $data = [];
         foreach ($products as $product) {
-            $findProduct = $this->findOne($product->related_product_id);
+            $findProduct = $this->productRepository->relatedProducts($product->related_product_id);
             array_push($data, $findProduct);
         }
+        foreach ($data as $product) {
+            $this->bindDynamicValues($product, '', $product->productCore);
+            unset($product->productCore);
+        }
+
         return $data;
     }
 
