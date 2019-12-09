@@ -48,12 +48,11 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
-    public function rechargeOffers($type)
+    public function rechargeOffers()
     {
         return $this->model->where('is_recharge', 1)
             ->productCore()
             ->where('status', 1)
-            ->category($type)
             ->get();
     }
 
