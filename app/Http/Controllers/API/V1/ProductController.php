@@ -154,6 +154,11 @@ class ProductController extends Controller
         return $this->productService->allRechargeOffers($type);
     }
 
+    public function rechargeOfferByAmount($amount)
+    {
+        return $this->productService->rechargeOfferByAmount($amount);
+    }
+
     public function getCustomerBookmarkProducts(Request $request)
     {
         return $this->productService->findCustomerSaveProducts($request);

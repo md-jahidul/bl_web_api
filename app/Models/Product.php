@@ -39,7 +39,6 @@ class Product extends Model
                 'mrp_price',
                 'validity as validity_days',
                 'validity_unit',
-
                 'internet_volume_mb',
                 'sms_volume',
                 'minute_volume',
@@ -48,6 +47,7 @@ class Product extends Model
             );
         }]);
     }
+
 
     public function scopeCategory($query, $type)
     {
