@@ -64,7 +64,6 @@ class ProductRepository extends BaseRepository
              product_cores.mrp_price, product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
             ->where('products.is_recharge', 1)
             ->where('products.status', 1)
-            ->whereDateBetween('products.status', 1)
             ->where('product_cores.price', '>', $amount)
             ->orderBy('product_cores.price')
             ->first();
