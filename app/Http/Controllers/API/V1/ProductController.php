@@ -133,7 +133,9 @@ class ProductController extends Controller
 
     public function customerLoanProducts(Request $request)
     {
-        $customerId = 8494; //TODO:Implement real time customer id based on token
+//        $customer = $this->customerService->getCustomerDetails($request);
+//        $customerId = $customer->customer_account_id;
+        $customerId = 8494; //TODO:Remove from production
         return $this->productService->getCustomerLoanProducts($customerId);
     }
 }
