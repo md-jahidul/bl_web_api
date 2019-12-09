@@ -252,6 +252,10 @@ class IdpIntegrationService
             $data = curl_exec($ch);
         }
 
+        if ($info['http_code'] == 0) {
+            throw new \RuntimeException('Sorry, some problem has occurred unexpectedly');
+        }
+
         $info = curl_getinfo($ch);
         $result = ['data' => $data, 'http_code' => $info['http_code']];
 

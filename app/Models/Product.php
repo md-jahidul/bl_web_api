@@ -12,15 +12,16 @@ class Product extends Model
         'offer_info' => 'array'
     ];
 
-    public function product_core()
+    public function productCore()
     {
-        return $this->belongsTo(ProductCore::class, 'product_core_code', 'code');
+        return $this->belongsTo(ProductCore::class, 'product_code', 'product_code');
     }
 
     public function sim_category()
     {
         return $this->belongsTo(SimCategory::class);
     }
+
 
     /**
      * @param $query
@@ -30,7 +31,6 @@ class Product extends Model
     {
         return $query->with(['product_core' => function ($q) {
             $q->select(
-                'code',
                 'activation_ussd',
                 'balance_check_ussd',
                 'price',

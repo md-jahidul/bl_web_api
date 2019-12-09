@@ -10,7 +10,9 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
+use App\Models\AlProductBookmark;
 use App\Models\Product;
+use App\Models\ProductBookmark;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Services\Banglalink\PurchaseService;
 use App\Services\CustomerService;
@@ -46,10 +48,12 @@ class ProductController extends Controller
      */
     private $blProductService;
 
-    /***
+    /**
      * ProductController constructor.
      * @param ProductService $productService
      * @param ProductDetailService $productDetailService
+     * @param PurchaseService $purchaseService
+     * @param BanglalinkProductService $blProductService
      */
     public function __construct(
         ProductService $productService,
@@ -57,7 +61,6 @@ class ProductController extends Controller
         PurchaseService $purchaseService,
         BanglalinkProductService $blProductService,
         CustomerService $customerService
-
     )
     {
         $this->productService = $productService;
@@ -68,8 +71,10 @@ class ProductController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param $type
      * @return mixed
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function simPackageOffers(Request $request, $type)
     {
@@ -101,10 +106,22 @@ class ProductController extends Controller
         return $this->productService->getProductCodesByCustomerId(8479);
     }
 
+    public function saveProduct(Request $request)
+    {
+//        dd($request->all());
+
+        $validator = Validator::make($request->all(), ['product_code' => 'required', 'operation_type' => 'required']);
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+        }
+        return $this->productService->customerProductSave($request);
+    }
+
+
     public function productLike($productId)
     {
         try {
-            $products = Product::where('product_core_code', $productId)->first();
+            $products = Product::where('product_code', $productId)->first();
             if ($products) {
                 $products['like'] = $products['like'] + 1;
                 $products->update();
@@ -124,5 +141,4 @@ class ProductController extends Controller
 
         throw new \InvalidArgumentException('Customer not found');
     }
-
 }

@@ -30,6 +30,7 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
+    Route::post('product/save','API\V1\ProductController@saveProduct');
 
 
 

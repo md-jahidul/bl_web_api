@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+
 use App\Models\ProductCore;
+use App\Http\Resources\ProductCoreResource;
+use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
@@ -34,15 +37,29 @@ class ProductService extends ApiBaseService
     protected $blLoanProductService;
 
     /***
+     * @var ProductBookmarkRepository
+     */
+    protected $productBookmarkRepository;
+
+    /**
      * ProductService constructor.
      * @param ProductRepository $productRepository
+     * @param BanglalinkProductService $blProductService
+     * @param CustomerService $customerService
+     * @param ProductBookmarkRepository $productBookmarkRepository
      */
-    public function __construct(ProductRepository $productRepository, BanglalinkProductService $blProductService,
-                                CustomerService $customerService)
+    public function __construct
+    (
+        ProductRepository $productRepository,
+        BanglalinkProductService $blProductService,
+        CustomerService $customerService,
+        ProductBookmarkRepository $productBookmarkRepository
+    )
     {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
+        $this->productBookmarkRepository = $productBookmarkRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -58,6 +75,7 @@ class ProductService extends ApiBaseService
                 $obj->{$key} = $value;
             }
         }
+        // Product Core Data BindDynamicValues
         $data = json_decode($data);
         if (!empty($data)) {
             foreach ($data as $key => $value) {
@@ -75,36 +93,49 @@ class ProductService extends ApiBaseService
     {
         $data = [];
         foreach ($products as $product) {
-
             $findProduct = $this->findOne($product->related_product_id);
             array_push($data, $findProduct);
         }
         return $data;
     }
 
+    public function trandingProduct()
+    {
+        $products = $this->productRepository->showTrandingProduct();
+        foreach ($products as $product) {
+            $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+            unset($product->productCore);
+        }
+        $products = ProductCoreResource::collection($products);
+        return $products;
+    }
+
     /**
      * @param $type
+     * @param $request
      * @return mixed
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function simTypeOffers($type, $request)
     {
         try {
-
             $products = $this->productRepository->simTypeProduct($type);
             $viewAbleProducts = $products;
 
             if ($this->isUserLoggedIn($request)) {
                 $customer = $this->customerService->getCustomerDetails($request);
                 $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
-                $viewAbleProducts = $this->filterProductsByUser($availableProducts);
+                $viewAbleProducts = $this->filterProductsByUser($viewAbleProducts, $availableProducts);
             }
 
             if ($viewAbleProducts) {
                 foreach ($viewAbleProducts as $product) {
-                    $data = $product->product_core;
+                    $data = $product->productCore;
                     $this->bindDynamicValues($product, 'offer_info', $data);
-                    unset($product->product_core);
+                    unset($product->productCore);
                 }
+                $viewAbleProducts = ProductCoreResource::collection(collect($viewAbleProducts));
+
                 return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
@@ -116,14 +147,12 @@ class ProductService extends ApiBaseService
     private function filterProductsByUser($allProducts, $availableProductIds)
     {
         $viewableProducts = [];
-
         foreach ($allProducts as $product) {
             if (in_array($product->product_code, $availableProductIds)) {
                 array_push($viewableProducts, $product);
             }
         }
-
-        return $availableProductIds;
+        return $viewableProducts;
     }
 
     private function isUserLoggedIn($request)
@@ -131,7 +160,6 @@ class ProductService extends ApiBaseService
         if ($request->header('authorization')) {
             return true;
         }
-
         return false;
     }
 
@@ -175,8 +203,17 @@ class ProductService extends ApiBaseService
         foreach ($customerProducts as $product) {
             array_push($productIds, $product['code']);
         }
+        return $productIds;
+    }
 
-        return $this->sendSuccessResponse($productIds, 'Product List');
+    /**
+     * @param $request
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    public function customerProductSave($request)
+    {
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $this->productBookmarkRepository->saveProduct($customerInfo->phone, $request);
     }
 
     public function getCustomerLoanProducts($customerId)
