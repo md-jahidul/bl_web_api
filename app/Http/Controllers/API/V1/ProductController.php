@@ -15,9 +15,11 @@ use App\Models\Product;
 use App\Models\ProductBookmark;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Services\Banglalink\PurchaseService;
+use App\Services\CustomerService;
 use App\Services\ProductDetailService;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
@@ -30,6 +32,11 @@ class ProductController extends Controller
      */
     private $productService;
     private $productDetailService;
+
+    /**
+     * @var CustomerService;
+     */
+    private $customerService;
 
     /**
      * @var PurchaseService
@@ -52,13 +59,15 @@ class ProductController extends Controller
         ProductService $productService,
         ProductDetailService $productDetailService,
         PurchaseService $purchaseService,
-        BanglalinkProductService $blProductService
+        BanglalinkProductService $blProductService,
+        CustomerService $customerService
     )
     {
         $this->productService = $productService;
         $this->productDetailService = $productDetailService;
         $this->purchaseService = $purchaseService;
         $this->blProductService = $blProductService;
+        $this->customerService = $customerService;
     }
 
     /**
@@ -120,5 +129,11 @@ class ProductController extends Controller
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    public function customerLoanProducts(Request $request)
+    {
+        $customerId = 8494; //TODO:Implement real time customer id based on token
+        return $this->productService->getCustomerLoanProducts($customerId);
     }
 }

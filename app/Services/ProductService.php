@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+
+use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
@@ -29,6 +32,11 @@ class ProductService extends ApiBaseService
     protected $customerService;
 
     /**
+     * @var BanglalinkLoanService
+     */
+    protected $blLoanProductService;
+
+    /***
      * @var ProductBookmarkRepository
      */
     protected $productBookmarkRepository;
@@ -39,19 +47,22 @@ class ProductService extends ApiBaseService
      * @param BanglalinkProductService $blProductService
      * @param CustomerService $customerService
      * @param ProductBookmarkRepository $productBookmarkRepository
+     * @param BanglalinkLoanService $blLoanProductService
      */
     public function __construct
     (
         ProductRepository $productRepository,
         BanglalinkProductService $blProductService,
         CustomerService $customerService,
-        ProductBookmarkRepository $productBookmarkRepository
+        ProductBookmarkRepository $productBookmarkRepository,
+        BanglalinkLoanService $blLoanProductService
     )
     {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
         $this->productBookmarkRepository = $productBookmarkRepository;
+        $this->blLoanProductService = $blLoanProductService;
         $this->setActionRepository($productRepository);
     }
 
@@ -94,7 +105,7 @@ class ProductService extends ApiBaseService
     public function trandingProduct()
     {
         $products = $this->productRepository->showTrandingProduct();
-        foreach ( $products as $product){
+        foreach ($products as $product) {
             $this->bindDynamicValues($product, 'offer_info', $product->productCore);
             unset($product->productCore);
         }
@@ -206,6 +217,19 @@ class ProductService extends ApiBaseService
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $this->productBookmarkRepository->saveProduct($customerInfo->phone, $request);
+    }
+
+    public function getCustomerLoanProducts($customerId)
+    {
+        $availableLoanProducts = [];
+        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
+        foreach ($loanProducts as $loan) {
+            $product = ProductCore::where('product_code', $loan['code'])->first();
+            if ($product)
+                array_push($availableLoanProducts, $product);
+        }
+
+        return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
     }
 
 }
