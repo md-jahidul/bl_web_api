@@ -114,13 +114,13 @@ class ProductController extends Controller
      * @return JsonResponse|void
      * @throws AuthenticationException
      */
-    public function saveProduct(Request $request)
+    public function bookmarkProduct(Request $request)
     {
         $validator = Validator::make($request->all(), ['product_code' => 'required', 'operation_type' => 'required']);
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
         }
-        return $this->productService->customerProductSave($request);
+        return $this->productService->customerProductBookmark($request);
     }
 
 
@@ -152,5 +152,10 @@ class ProductController extends Controller
     public function rechargeOffers($type)
     {
         return $this->productService->allRechargeOffers($type);
+    }
+
+    public function getCustomerBookmarkProducts(Request $request)
+    {
+        return $this->productService->findCustomerSaveProducts($request);
     }
 }

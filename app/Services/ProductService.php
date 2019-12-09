@@ -12,6 +12,7 @@ use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 
 class ProductService extends ApiBaseService
 {
@@ -213,12 +214,28 @@ class ProductService extends ApiBaseService
 
     /**
      * @param $request
+     * @return JsonResponse
      * @throws AuthenticationException
      */
-    public function customerProductSave($request)
+    public function customerProductBookmark($request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $this->productBookmarkRepository->saveProduct($customerInfo->phone, $request);
+
+        $operationType = $request->operation_type;
+        $productCode = $request->product_code;
+
+        if ($operationType == 'save') {
+            $this->productBookmarkRepository->save([
+                'mobile' => $customerInfo->phone,
+                'product_code' => $productCode,
+            ]);
+            return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
+
+        } else if ($operationType == 'delete') {
+            $this->productRepository->delete();
+            return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+        }
+        return $this->sendErrorResponse('Invalid operation');
     }
 
     public function getCustomerLoanProducts($customerId)
@@ -258,4 +275,18 @@ class ProductService extends ApiBaseService
         }
     }
 
+    /**
+     * @param $request
+     * @return mixed
+     * @throws AuthenticationException
+     */
+    public function findCustomerSaveProducts($request)
+    {
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
+        if ($bookmarkProduct) {
+            return response()->success($bookmarkProduct, 'Data Found!');
+        }
+        return response()->error("Data Not Found!");
+    }
 }
