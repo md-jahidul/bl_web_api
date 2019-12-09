@@ -41,8 +41,11 @@ class ProductRepository extends BaseRepository
      */
     public function detailProducts($type, $id)
     {
-        return $this->model->where('id', $id)
+//        dd($id);
+
+        return $data = $this->model->where('id', $id)
             ->category($type)
+            ->productCore()
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }
