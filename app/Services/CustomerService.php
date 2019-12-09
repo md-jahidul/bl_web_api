@@ -73,10 +73,13 @@ class CustomerService extends ApiBaseService
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $idpData = json_decode($response['data']);
+        if ($response['http_code'] != 200) {
+            throw new AuthenticationException('Invalid authentication');
+        }
 
-        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
-            throw new AuthenticationException($idpData->token_status);
+        $idpData = json_decode($response['data']);
+        if ($idpData->token_status != 'Valid') {
+            throw new AuthenticationException('Invalid customer authentication token');
         }
 
         $customer = $this->customerRepository->getCustomerInfoByPhone($idpData->user->mobile);
