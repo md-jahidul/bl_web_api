@@ -257,6 +257,7 @@ class ProductService extends ApiBaseService
      */
     public function allRechargeOffers($type)
     {
+        //TODO:Filter by user while logged in
         try {
             $rechargeOffers = $this->productRepository->rechargeOffers($type);
             if ($rechargeOffers) {
