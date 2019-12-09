@@ -104,7 +104,7 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    public function trendingsProduct()
+    public function trendingProduct()
     {
         $products = $this->productRepository->showTrendingProduct();
         foreach ($products as $product) {
