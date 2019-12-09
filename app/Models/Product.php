@@ -39,7 +39,7 @@ class Product extends Model
                 'mrp_price',
                 'validity as validity_days',
                 'validity_unit',
-                'data_volume_unit',
+
                 'internet_volume_mb',
                 'sms_volume',
                 'minute_volume',

@@ -41,8 +41,6 @@ class ProductRepository extends BaseRepository
      */
     public function detailProducts($type, $id)
     {
-//        dd($id);
-
         return $data = $this->model->where('id', $id)
             ->category($type)
             ->productCore()
@@ -57,6 +55,13 @@ class ProductRepository extends BaseRepository
             ->where('status', 1)
             ->category($type)
             ->get();
+    }
+
+    public function relatedProducts($id)
+    {
+        return $this->model->where('id', $id)
+            ->productCore()
+            ->first();
     }
 
 }
