@@ -149,9 +149,9 @@ class ProductController extends Controller
      * @param $type
      * @return mixed
      */
-    public function rechargeOffers($type)
+    public function rechargeOffers()
     {
-        return $this->productService->allRechargeOffers($type);
+        return $this->productService->allRechargeOffers();
     }
 
     public function rechargeOfferByAmount($amount)

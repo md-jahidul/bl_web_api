@@ -260,11 +260,11 @@ class ProductService extends ApiBaseService
      * @param $type
      * @return mixed
      */
-    public function allRechargeOffers($type)
+    public function allRechargeOffers()
     {
         //TODO:Filter by user while logged in
         try {
-            $rechargeOffers = $this->productRepository->rechargeOffers($type);
+            $rechargeOffers = $this->productRepository->rechargeOffers();
             if ($rechargeOffers) {
                 foreach ($rechargeOffers as $product) {
                     $data = $product->productCore;
