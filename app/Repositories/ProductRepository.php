@@ -17,16 +17,17 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type)
     {
-        return $this->model->with('productCore')->where('status', 1)
+        return $this->model->where('status', 1)
+            ->productCore()
             ->startEndDate()
             ->category($type)
             ->get();
     }
 
-    public function showTrandingProduct()
+    public function showTrendingProduct()
     {
        return $this->model->where('show_in_home', 1)
-            ->with('productCore')
+            ->productCore()
             ->where('status', 1)
             ->startEndDate()
             ->orderBy('display_order')
@@ -44,6 +45,15 @@ class ProductRepository extends BaseRepository
             ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
+    }
+
+    public function rechargeOffers($type)
+    {
+        return $this->model->where('is_recharge', 1)
+            ->productCore()
+            ->where('status', 1)
+            ->category($type)
+            ->get();
     }
 
 }
