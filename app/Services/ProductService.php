@@ -262,6 +262,7 @@ class ProductService extends ApiBaseService
      */
     public function allRechargeOffers()
     {
+        //TODO:Filter by user while logged in
         try {
             $rechargeOffers = $this->productRepository->rechargeOffers();
             if ($rechargeOffers) {
@@ -278,6 +279,13 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Something is Wrong!", $exception);
         }
+    }
+
+    public function rechargeOfferByAmount($amount)
+    {
+        $amount = (double)$amount;
+        $rechargeOffer = $this->productRepository->rechargeOfferByAmount($amount);
+        return $this->sendSuccessResponse($rechargeOffer, '');
     }
 
     /**

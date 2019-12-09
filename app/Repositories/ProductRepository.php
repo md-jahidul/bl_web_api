@@ -56,6 +56,20 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    public function rechargeOfferByAmount($amount)
+    {
+        //TODO:add filter by start and end date
+        return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
+            ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.price as price_tk,
+             product_cores.mrp_price, product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
+            ->where('products.is_recharge', 1)
+            ->where('products.status', 1)
+            ->whereDateBetween('products.status', 1)
+            ->where('product_cores.price', '>', $amount)
+            ->orderBy('product_cores.price')
+            ->first();
+    }
+
     public function relatedProducts($id)
     {
         return $this->model->where('id', $id)
