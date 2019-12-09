@@ -133,12 +133,7 @@ class ProductController extends Controller
 
     public function customerLoanProducts(Request $request)
     {
-        $customer = $this->customerService->getCustomerInfoByPhone($request['mobile']);
-        if ($customer) {
-            $customerId = 8479; //TODO:Implement real time customer id
-            return $this->productService->getCustomerLoanProducts($customerId);
-        }
-
-        throw new \InvalidArgumentException('Customer not found');
+        $customerId = 8494; //TODO:Implement real time customer id based on token
+        return $this->productService->getCustomerLoanProducts($customerId);
     }
 }

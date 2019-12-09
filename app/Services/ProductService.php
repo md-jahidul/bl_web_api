@@ -47,19 +47,22 @@ class ProductService extends ApiBaseService
      * @param BanglalinkProductService $blProductService
      * @param CustomerService $customerService
      * @param ProductBookmarkRepository $productBookmarkRepository
+     * @param BanglalinkLoanService $blLoanProductService
      */
     public function __construct
     (
         ProductRepository $productRepository,
         BanglalinkProductService $blProductService,
         CustomerService $customerService,
-        ProductBookmarkRepository $productBookmarkRepository
+        ProductBookmarkRepository $productBookmarkRepository,
+        BanglalinkLoanService $blLoanProductService
     )
     {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
         $this->productBookmarkRepository = $productBookmarkRepository;
+        $this->blLoanProductService = $blLoanProductService;
         $this->setActionRepository($productRepository);
     }
 
@@ -220,9 +223,8 @@ class ProductService extends ApiBaseService
     {
         $availableLoanProducts = [];
         $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
-
         foreach ($loanProducts as $loan) {
-            $product = ProductCore::where('product_code', $loan->code)->first();
+            $product = ProductCore::where('product_code', $loan['code'])->first();
             if ($product)
                 array_push($availableLoanProducts, $product);
         }
