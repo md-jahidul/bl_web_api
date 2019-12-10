@@ -76,4 +76,11 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
+    public function bookmarkProduct($productCode)
+    {
+        return $this->model->where('product_code', $productCode)
+            ->productCore()
+            ->first();
+    }
+
 }

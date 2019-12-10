@@ -117,7 +117,6 @@ class ProductService extends ApiBaseService
             $this->bindDynamicValues($product, 'offer_info', $product->productCore);
             unset($product->productCore);
         }
-        $products = ProductCoreResource::collection($products);
         return $products;
     }
 
@@ -235,10 +234,14 @@ class ProductService extends ApiBaseService
                 'product_code' => $productCode,
             ]);
             return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
-
         } else if ($operationType == 'delete') {
-            $this->productRepository->delete();
-            return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+            $bookmarkProducts = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
+            foreach ($bookmarkProducts as $bookmarkProduct) {
+                if ($bookmarkProduct->product_code == $productCode) {
+                    $bookmarkProduct->delete();
+                    return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+                }
+            }
         }
         return $this->sendErrorResponse('Invalid operation');
     }
@@ -299,6 +302,34 @@ class ProductService extends ApiBaseService
         $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
         if ($bookmarkProduct) {
             return response()->success($bookmarkProduct, 'Data Found!');
+        }
+        return response()->error("Data Not Found!");
+    }
+
+
+    /**
+     * @param $request
+     * @return mixed
+     * @throws AuthenticationException
+     */
+    public function findCustomerProducts($request)
+    {
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
+
+        $customerBookmarkProducts = [];
+        foreach ($bookmarkProduct as $item)
+        {
+            $product = $this->productRepository->bookmarkProduct($item->product_code);
+            array_push($customerBookmarkProducts, $product);
+        }
+        foreach ($customerBookmarkProducts as $productCore) {
+            $data = $productCore['productCore'];
+            $this->bindDynamicValues($productCore, 'offer_info', $data);
+            unset($productCore['productCore']);
+        }
+        if ($bookmarkProduct) {
+            return response()->success($customerBookmarkProducts, 'Data Found!');
         }
         return response()->error("Data Not Found!");
     }
