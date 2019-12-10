@@ -43,7 +43,7 @@ class IdpIntegrationService
         if (isset($response_data->access_token)) {
             // set this token in redis
 //            Redis::set(self::IDP_TOKEN_REDIS_KEY, $response_data->access_token);
-            static::$token = $response_data->access_token;
+            static::$token = 'Bearer '.$response_data->access_token;
         }
     }
 
