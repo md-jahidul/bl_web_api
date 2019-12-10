@@ -94,8 +94,8 @@ class UserService extends ApiBaseService
     {
         $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
-        $data['client_id'] = env('IDP_CLIENT_ID');
-        $data['client_secret'] = env('IDP_CLIENT_SECRET');
+        $data['client_id'] = env('IDP_OTP_CLIENT_ID');
+        $data['client_secret'] = env('IDP_OTP_CLIENT_SECRET');
         $data['username'] = $request['mobile'];
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
