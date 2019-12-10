@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\BLApiHubException;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
@@ -85,7 +86,7 @@ class UserService extends ApiBaseService
             }
         }
 
-        return $this->sendOTP('88'.$mobile);
+        return $this->sendOTP($mobile);
 
     }
 
@@ -139,19 +140,11 @@ class UserService extends ApiBaseService
      */
     public function sendOTP($number)
     {
+        $otp_bl = $this->blOtpService->sendOtp($number);
 
-        $otp_config = $this->otpConfigRepository->getOtpConfig();
-
-        $conf = $otp_config->toArray();
-
-        if (isset($conf[0]['validation_time'])) {
-            $validation_time = $conf[0]['validation_time'];
-            $otp_bl = $this->blOtpService->sendOtp($number, $conf[0]['token_length_string'], "#", $validation_time);
-        } else {
-            $validation_time = 300;
-            $otp_bl = $this->blOtpService->sendOtp($number);
+        if ($otp_bl['status_code'] != 202) {
+            throw new BLApiHubException('Cannot send otp');
         }
-
 
         $token = $this->generateOtpToken(18);
 
@@ -162,7 +155,7 @@ class UserService extends ApiBaseService
         $this->otpRepository->createOtp($number, $otp, $encrypted_token);
 
         $data = [
-            'validation_time' => $validation_time,
+            'validation_time' => 300,
             'otp_token' => $encrypted_token
         ];
 
@@ -328,7 +321,8 @@ class UserService extends ApiBaseService
         }
     }
 
-    public function generateRandomString($length = 8) {
+    public function generateRandomString($length = 8)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
