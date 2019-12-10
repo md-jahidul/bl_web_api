@@ -199,7 +199,6 @@ class UserService extends ApiBaseService
     public function viewProfile($request)
     {
         $bearerToken = ['token' => $request->header('authorization')];
-
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
         $idpData = json_decode($response['data']);
