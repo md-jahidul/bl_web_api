@@ -15,13 +15,10 @@ class PartnerOfferResource extends JsonResource
     public function toArray($request)
     {
         return [
-
             "id" =>  $this->id ?? null,
             "partner_id" => $this->partner_id ?? null,
             "validity_en" => $this->validity_en ?? null,
             "validity_bn" => $this->validity_bn ?? null,
-            "offer_en" => $this->offer_en ,
-            "offer_bn" => $this->offer_bn,
             "get_offer_msg_en" => $this->get_offer_msg_en ?? null,
             "get_offer_msg_bn" => $this->get_offer_msg_bn ?? null  ,
             "btn_text_en"  => $this->btn_text_en ?? null ,

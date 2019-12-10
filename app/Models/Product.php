@@ -42,8 +42,8 @@ class Product extends Model
                 'internet_volume_mb',
                 'sms_volume',
                 'minute_volume',
-                'call_rate',
-                'sms_rate'
+                'call_rate as callrate_offer',
+                'sms_rate as sms_rate_offer'
             );
         }]);
     }

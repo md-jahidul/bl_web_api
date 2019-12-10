@@ -163,4 +163,9 @@ class ProductController extends Controller
     {
         return $this->productService->findCustomerSaveProducts($request);
     }
+
+    public function customerSavedBookmarkProduct(Request $request)
+    {
+        return $this->productService->findCustomerProducts($request);
+    }
 }
