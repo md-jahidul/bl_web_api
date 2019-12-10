@@ -182,11 +182,10 @@ class ProductService extends ApiBaseService
     public function details($type, $id)
     {
         try {
-
             $productDetail = $this->productRepository->detailProducts($type, $id);
-
             if ($productDetail) {
-                $this->bindDynamicValues($productDetail, 'offer_info');
+
+                $this->bindDynamicValues($productDetail, 'offer_info', $productDetail->productCore);
 
                 $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
@@ -195,6 +194,7 @@ class ProductService extends ApiBaseService
 
                 unset($productDetail->other_related_product);
                 unset($productDetail->related_product);
+                unset($productDetail->productCore);
 
                 return response()->success($productDetail, 'Data Found!');
             }
