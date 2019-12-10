@@ -238,9 +238,12 @@ class ProductService extends ApiBaseService
 
         } else if ($operationType == 'delete') {
 
-//            $this->productBookmarkRepository->findByProperties(['mobile' => ])
+            $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
 
-            dd($customerInfo->phone);
+//            if ($bookmarkProduct)
+//
+//
+//            return $bookmarkProduct;
 
             $this->productRepository->delete();
             return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
@@ -326,7 +329,7 @@ class ProductService extends ApiBaseService
             array_push($customerBookmarkProducts, $product);
         }
         foreach ($customerBookmarkProducts as $productCore) {
-            $data = $productCore->productCore;
+            $data = $productCore['productCore'];
             $this->bindDynamicValues($productCore, 'offer_info', $data);
             unset($productCore->productCore);
         }
