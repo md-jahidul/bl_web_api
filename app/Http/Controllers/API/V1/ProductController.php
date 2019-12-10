@@ -139,9 +139,9 @@ class ProductController extends Controller
 
     public function customerLoanProducts(Request $request)
     {
-//        $customer = $this->customerService->getCustomerDetails($request);
-//        $customerId = $customer->customer_account_id;
-        $customerId = 8494; //TODO:Remove from production
+        $customer = $this->customerService->getCustomerDetails($request);
+        $customerId = $customer->customer_account_id;
+//        $customerId = 8494;
         return $this->productService->getCustomerLoanProducts($customerId);
     }
 

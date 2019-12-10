@@ -10,6 +10,7 @@ use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
 use Illuminate\Support\Facades\Crypt;
+use Ramsey\Uuid\Generator\RandomBytesGenerator;
 
 /**
  * Class BannerService
@@ -90,8 +91,7 @@ class UserService extends ApiBaseService
 
     public function otpLogin($request)
     {
-        //Todo: Check otp session
-        $data['otp'] = "1234";
+        $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
         $data['client_id'] = "690848d0-0f37-11ea-8ab4-8d71fb6b7fa1";
         $data['client_secret'] = "fEnetOLLSdVLT4xe1ARH95l6dKEpiPl6AnIQelkv";
@@ -123,7 +123,7 @@ class UserService extends ApiBaseService
 
         //Balance Info
 //        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        $balanceData = $this->balanceService->getBalanceSummary(8494); //TODO: remove hard codded customer id
+        $balanceData = $this->balanceService->getBalanceSummary($user->customer_account_id);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         return $customerInfo;
@@ -231,10 +231,9 @@ class UserService extends ApiBaseService
     {
         $data['mobile'] = $mobile;
         $data['phone'] = $mobile;
-
-        $data['password'] = '15152515';
-
-        $data['password_confirmation'] = '15152515'; //TODO:generate random string
+        $randomPass = $this->generateRandomString();
+        $data['password'] = $randomPass;
+        $data['password_confirmation'] = $randomPass;
 
         $data['username'] = $mobile;
 
@@ -327,5 +326,15 @@ class UserService extends ApiBaseService
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }
+    }
+
+    public function generateRandomString($length = 8) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
