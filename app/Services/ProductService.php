@@ -117,7 +117,6 @@ class ProductService extends ApiBaseService
             $this->bindDynamicValues($product, 'offer_info', $product->productCore);
             unset($product->productCore);
         }
-        $products = ProductCoreResource::collection($products);
         return $products;
     }
 
