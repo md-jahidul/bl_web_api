@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\IdpAuthException;
 use App\Http\Requests\DeviceTokenRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
@@ -65,7 +66,7 @@ class CustomerService extends ApiBaseService
     /**
      * @param Request $request
      * @return mixed
-     * @throws AuthenticationException
+     * @throws IdpAuthException
      */
     public function getCustomerDetails(Request $request)
     {
@@ -79,13 +80,13 @@ class CustomerService extends ApiBaseService
 
         $idpData = json_decode($response['data']);
         if ($idpData->token_status != 'Valid') {
-            throw new AuthenticationException('Invalid customer authentication token');
+            throw new IdpAuthException('Invalid customer authentication token');
         }
 
         $customer = $this->customerRepository->getCustomerInfoByPhone($idpData->user->mobile);
 
         if (!$customer)
-            throw new AuthenticationException('Customer not found');
+            throw new IdpAuthException('Customer not found');
 
         return $customer;
     }
