@@ -117,7 +117,6 @@ class ProductService extends ApiBaseService
             $this->bindDynamicValues($product, 'offer_info', $product->productCore);
             unset($product->productCore);
         }
-        $products = ProductCoreResource::collection($products);
         return $products;
     }
 
@@ -235,18 +234,14 @@ class ProductService extends ApiBaseService
                 'product_code' => $productCode,
             ]);
             return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
-
         } else if ($operationType == 'delete') {
-
-            $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
-
-//            if ($bookmarkProduct)
-//
-//
-//            return $bookmarkProduct;
-
-            $this->productRepository->delete();
-            return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+            $bookmarkProducts = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
+            foreach ($bookmarkProducts as $bookmarkProduct) {
+                if ($bookmarkProduct->product_code == $productCode) {
+                    $bookmarkProduct->delete();
+                    return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+                }
+            }
         }
         return $this->sendErrorResponse('Invalid operation');
     }
@@ -331,7 +326,7 @@ class ProductService extends ApiBaseService
         foreach ($customerBookmarkProducts as $productCore) {
             $data = $productCore['productCore'];
             $this->bindDynamicValues($productCore, 'offer_info', $data);
-            unset($productCore->productCore);
+            unset($productCore['productCore']);
         }
         if ($bookmarkProduct) {
             return response()->success($customerBookmarkProducts, 'Data Found!');
