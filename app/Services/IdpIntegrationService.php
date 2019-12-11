@@ -101,7 +101,7 @@ class IdpIntegrationService
      */
     public static function tokenValidationRequest($token)
     {
-        return static::post('/api/check/user/token', $token);
+        return static::post('/api/v1/check/user/token', $token);
     }
 
 
@@ -168,7 +168,7 @@ class IdpIntegrationService
         ];
 
         if ($isAuthorizationRequired) {
-            array_push($header, 'Authorization: ' . static::getToken());
+            array_push($header, 'Authorization: Bearer ' . static::getToken());
         }
 
         return $header;

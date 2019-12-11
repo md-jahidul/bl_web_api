@@ -48,4 +48,9 @@ class UserProfileController extends Controller
             return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);
         }
     }
+
+    public function removeProfileImage(Request $request)
+    {
+        return $this->userService->removeProfileImage($request);
+    }
 }
