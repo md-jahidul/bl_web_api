@@ -10,7 +10,9 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Generator\RandomBytesGenerator;
 
 /**
@@ -49,6 +51,11 @@ class UserService extends ApiBaseService
      */
     protected $balanceService;
 
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
 
     /**
      * UserService constructor.
@@ -60,7 +67,8 @@ class UserService extends ApiBaseService
      * @param OtpConfigRepository $otpConfigRepository
      */
     public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository, BalanceService $balanceService)
+                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository,
+                                BalanceService $balanceService, CustomerService $customerService)
     {
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
@@ -68,6 +76,7 @@ class UserService extends ApiBaseService
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
+        $this->customerService = $customerService;
     }
 
     public function otpLoginRequest($request)
@@ -318,6 +327,17 @@ class UserService extends ApiBaseService
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }
+    }
+
+    public function removeProfileImage(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        $imagePath = $customer->profile_image;//TODO: Remove image from disk
+        $customer->profile_image = null;
+        $customer->update();
+
+        return $this->sendSuccessResponse([], 'Profile image removed successfully');
+
     }
 
     public function generateRandomString($length = 8)

@@ -70,12 +70,12 @@ class PurchaseService extends BaseService
         $idpData = json_decode($response['data']);
 
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
-            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
+            return $this->apiBaseService->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
         $customer = $this->customerRepository->getCustomerInfoByPhone($idpData->user->mobile);
         if (!$customer)
-            return $this->sendErrorResponse("Customer not found", [], HttpStatusCode::UNAUTHORIZED);
+            return $this->apiBaseService->sendErrorResponse("Customer not found", [], HttpStatusCode::UNAUTHORIZED);
 
         $mobile = "88" . $customer->phone;
         $product_code = $request->input('product_code');
