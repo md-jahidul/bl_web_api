@@ -101,7 +101,7 @@ class IdpIntegrationService
      */
     public static function tokenValidationRequest($token)
     {
-        return static::post('/api/check/user/token', $token);
+        return static::post('/api/v1/check/user/token', $token);
     }
 
 
@@ -168,7 +168,7 @@ class IdpIntegrationService
         ];
 
         if ($isAuthorizationRequired) {
-            array_push($header, 'Authorization: ' . static::getToken());
+            array_push($header, 'Authorization: Bearer ' . static::getToken());
         }
 
         return $header;
@@ -250,6 +250,10 @@ class IdpIntegrationService
             self::setToken();
             static::makeRequest($ch, $url, $body, $headers);
             $data = curl_exec($ch);
+        }
+
+        if ($info['http_code'] == 0) {
+            throw new \RuntimeException('Sorry, some problem has occurred unexpectedly');
         }
 
         $info = curl_getinfo($ch);

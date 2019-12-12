@@ -14,14 +14,19 @@ class MenuController extends Controller
     public function getHeaderFooterMenus()
     {
         try {
-            $headerMenus = Menu::with('children')->where('parent_id', 0)
+            $headerMenus = Menu::where('parent_id', 0)
                 ->where('status', 1)
+                ->with(['children' => function($query){
+                    $query->where('status', 1);
+                }])
                 ->orderBy('display_order')
                 ->get();
 
-            $footerMenu = FooterMenu::with('children')
-                ->where('parent_id', 0)
+            $footerMenu = FooterMenu::where('parent_id', 0)
                 ->where('status', 1)
+                ->with(['children' => function($query){
+                    $query->where('status', 1);
+                }])
                 ->orderBy('display_order')
                 ->get();
 

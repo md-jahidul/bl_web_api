@@ -3,11 +3,15 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\IdpAuthException;
 use App\Http\Requests\DeviceTokenRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\Banglalink\CustomerPackageService;
+use App\Traits\CrudTrait;
+use http\Exception\RuntimeException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +23,7 @@ use Illuminate\Support\Facades\Storage;
 class CustomerService extends ApiBaseService
 {
 
-
+    use CrudTrait;
     /**
      * @var CustomerRepository
      */
@@ -39,12 +43,11 @@ class CustomerService extends ApiBaseService
     {
         $this->customerRepository = $customerRepository;
         $this->CustomerPackageService = $customerPackageService;
+        $this->setActionRepository($this->customerRepository);
     }
 
 
     /**
-     *
-     *
      * @param $request
      * @return JsonResponse
      */
@@ -62,31 +65,30 @@ class CustomerService extends ApiBaseService
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return mixed
+     * @throws IdpAuthException
      */
     public function getCustomerDetails(Request $request)
     {
-        // validate the token and get details info
         $bearerToken = ['token' => $request->header('authorization')];
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $data = json_decode($response, true);
-
-        if ($data['token_status'] != 'Valid') {
-            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        if ($response['http_code'] != 200) {
+            throw new AuthenticationException('Invalid authentication');
         }
 
-        $msisdn_key = 'mobile';
-
-        $user = Customer::where('phone', $data['user'][$msisdn_key])->first();
-
-
-        if (!$user) {
-            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        $idpData = json_decode($response['data']);
+        if ($idpData->token_status != 'Valid') {
+            throw new IdpAuthException('Invalid customer authentication token');
         }
 
-        return $this->sendSuccessResponse(new CustomerResource($user), 'Customer Details Info');
+        $customer = $this->customerRepository->getCustomerInfoByPhone($idpData->user->mobile);
+
+        if (!$customer)
+            throw new IdpAuthException('Customer not found');
+
+        return $customer;
     }
 
 
@@ -118,7 +120,6 @@ class CustomerService extends ApiBaseService
         // Customer Update
 
         // if any profile_image added
-
         $path = null;
 
         if ($request->hasFile('profile_image')) {
@@ -179,18 +180,8 @@ class CustomerService extends ApiBaseService
     }
 
 
-    /**
-     * Saving device token
-     * @param DeviceTokenRequest $request
-     * @return JsonResponse
-     */
-    public function saveDeviceToken($request)
+    public function getCustomerInfoByPhone($phone)
     {
-        try {
-            $data = $this->customerRepository->saveDeviceToken($request);
-            return $this->sendSuccessResponse($data, 'Customer Device Token Saved');
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), [], $exception->getStatusCode());
-        }
+        return $this->customerRepository->getCustomerInfoByPhone($phone);
     }
 }

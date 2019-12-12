@@ -49,7 +49,7 @@ class AuthenticationController extends Controller
 
     private function getLoginValidationRules()
     {
-        return ['mobile' => 'required', 'otp_session' => 'required'];
+        return ['mobile' => 'required', 'otp_session' => 'required', 'otp' => 'required'];
     }
 
     private function getRequestLoginValidationRules()

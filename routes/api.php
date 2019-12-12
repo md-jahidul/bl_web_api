@@ -27,8 +27,20 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers/{type}','API\V1\ProductController@simPackageOffers');
     Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
+
+
+    Route::get('product-like/{id}','API\V1\ProductController@productLike');
+    Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
+    Route::get('customer/product/bookmark','API\V1\ProductController@getCustomerBookmarkProducts');
+    Route::get('customer/products','API\V1\ProductController@customerSavedBookmarkProduct');
+
+
+    Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');
+    Route::get('recharge-offers', 'API\V1\ProductController@rechargeOffers');
+
     Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers','API\V1\PriyojonController@priyojonOffers');
+    Route::get('about-priyojon','API\V1\PriyojonController@aboutPriyojon');
 
     Route::get('offer-details/{id}','API\V1\PartnerOfferController@offerDetails');
 
@@ -47,6 +59,14 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('user/profile/view','API\V1\UserProfileController@view');
     Route::post('user/profile/update','API\V1\UserProfileController@update');
     Route::post('user/profile/image/update','API\V1\UserProfileController@updateProfileImage');
+    Route::get('user/profile/image/remove','API\V1\UserProfileController@removeProfileImage');
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
+
+    Route::post('product/purchase', 'API\V1\ProductController@purchase');
+    Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
+    Route::get('product/loan', 'API\V1\ProductController@customerLoanProducts');
+
+    //Loyalty or Priyojon section
+    Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
 });

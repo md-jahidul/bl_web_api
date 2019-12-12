@@ -11,6 +11,7 @@ use App\Models\ShortCode;
 use App\Models\PartnerOffer;
 use App\Models\Product;
 use App\Models\MetaTag;
+use App\Services\ProductService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,23 @@ use Validator;
 
 class HomePageController extends Controller
 {
+
+    /**
+     * @var ProductService
+     */
+    private $productService;
+
+    /**
+     * ProductController constructor.
+     * @param ProductService $productService
+     */
+    public function __construct(
+        ProductService $productService
+    )
+    {
+        $this->productService = $productService;
+    }
+
     // In PHP, By default objects are passed as reference copy to a new Object.
     public function bindDynamicValues($obj, $json_data = 'other_attributes')
     {
@@ -79,7 +97,6 @@ class HomePageController extends Controller
 
     public function getMultipleSliderData($id)
     {
-
         $slider = AlSlider::find($id);
         $this->bindDynamicValues($slider);
 
@@ -96,16 +113,8 @@ class HomePageController extends Controller
                                     ->orderBy('po.display_order')
                                     ->get();
         }else {
-            $products = Product::where('show_in_home', 1)
-                ->where('status', 1)
-                ->startEndDate()
-                ->orderBy('display_order')
-                ->get();
 
-            foreach ( $products as $product){
-                $this->bindDynamicValues($product, 'offer_info');
-            }
-
+            $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
 
@@ -139,15 +148,6 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
-
-        $products = Product::where('show_in_home', 1)
-            ->where('status', 1)
-            ->startEndDate()
-            ->orderBy('display_order')
-            ->get();
-
-        return $products;
-
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
@@ -193,7 +193,7 @@ class HomePageController extends Controller
     }
 
     /**
-     *  Macro & mixin sample output for 
+     *  Macro & mixin sample output for
      */
 
     public function macro(){
@@ -207,13 +207,13 @@ class HomePageController extends Controller
 
 
         if($validator->fails()){
-            return response()->error('Validation Error.', $validator->errors());       
+            return response()->error('Validation Error.', $validator->errors());
         }
 
         $result  = [
-            ['id' => 1], 
+            ['id' => 1],
             ['id' => 2]
-        ]; 
+        ];
 
         return response()->success($result, "Data Success");
     }
