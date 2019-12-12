@@ -249,12 +249,18 @@ class ProductService extends ApiBaseService
     public function getCustomerLoanProducts($customerId)
     {
         $availableLoanProducts = [];
-        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
-        foreach ($loanProducts as $loan) {
-            $product = ProductCore::where('product_code', $loan['code'])->first();
-            if ($product)
-                array_push($availableLoanProducts, $product);
-        }
+//        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
+//        foreach ($loanProducts as $loan) {
+//            $product = ProductCore::where('product_code', $loan['code'])->first();
+//            if ($product)
+//                array_push($availableLoanProducts, $product);
+//        }
+
+        $availableLoanProducts = ProductCore::
+            where(function ($query) {
+                $query->where('content_type', 'ma loan')
+                    ->orWhere('content_type', 'data loan');
+            })->get();
 
         return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
     }
