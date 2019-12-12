@@ -3,13 +3,17 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\BLApiHubException;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
+use Ramsey\Uuid\Generator\RandomBytesGenerator;
 
 /**
  * Class BannerService
@@ -47,6 +51,11 @@ class UserService extends ApiBaseService
      */
     protected $balanceService;
 
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
 
     /**
      * UserService constructor.
@@ -58,7 +67,8 @@ class UserService extends ApiBaseService
      * @param OtpConfigRepository $otpConfigRepository
      */
     public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository, BalanceService $balanceService)
+                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository,
+                                BalanceService $balanceService, CustomerService $customerService)
     {
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
@@ -66,6 +76,7 @@ class UserService extends ApiBaseService
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
+        $this->customerService = $customerService;
     }
 
     public function otpLoginRequest($request)
@@ -84,21 +95,21 @@ class UserService extends ApiBaseService
             }
         }
 
-        return $this->sendOTP('88'.$mobile);
+        return $this->sendOTP($mobile);
 
     }
 
     public function otpLogin($request)
     {
-        //Todo: Check otp session
-        $data['otp'] = "1234";
+        $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
-        $data['client_id'] = "690848d0-0f37-11ea-8ab4-8d71fb6b7fa1";
-        $data['client_secret'] = "fEnetOLLSdVLT4xe1ARH95l6dKEpiPl6AnIQelkv";
+        $data['client_id'] = env('IDP_OTP_CLIENT_ID');
+        $data['client_secret'] = env('IDP_OTP_CLIENT_SECRET');
         $data['username'] = $request['mobile'];
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
         $tokenResponseData = json_decode($tokenResponse['data']);
+        Illuminate\Support\Facades\Log::info($tokenResponse->toString());
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
@@ -123,7 +134,7 @@ class UserService extends ApiBaseService
 
         //Balance Info
 //        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        $balanceData = $this->balanceService->getBalanceSummary(8494); //TODO: remove hard codded customer id
+        $balanceData = $this->balanceService->getBalanceSummary($user->customer_account_id);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         return $customerInfo;
@@ -139,19 +150,11 @@ class UserService extends ApiBaseService
      */
     public function sendOTP($number)
     {
+        $otp_bl = $this->blOtpService->sendOtp($number);
 
-        $otp_config = $this->otpConfigRepository->getOtpConfig();
-
-        $conf = $otp_config->toArray();
-
-        if (isset($conf[0]['validation_time'])) {
-            $validation_time = $conf[0]['validation_time'];
-            $otp_bl = $this->blOtpService->sendOtp($number, $conf[0]['token_length_string'], "#", $validation_time);
-        } else {
-            $validation_time = 300;
-            $otp_bl = $this->blOtpService->sendOtp($number);
+        if ($otp_bl['status_code'] != 202) {
+            throw new BLApiHubException('Cannot send otp');
         }
-
 
         $token = $this->generateOtpToken(18);
 
@@ -162,7 +165,7 @@ class UserService extends ApiBaseService
         $this->otpRepository->createOtp($number, $otp, $encrypted_token);
 
         $data = [
-            'validation_time' => $validation_time,
+            'validation_time' => 300,
             'otp_token' => $encrypted_token
         ];
 
@@ -206,7 +209,6 @@ class UserService extends ApiBaseService
     public function viewProfile($request)
     {
         $bearerToken = ['token' => $request->header('authorization')];
-
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
         $idpData = json_decode($response['data']);
@@ -231,10 +233,9 @@ class UserService extends ApiBaseService
     {
         $data['mobile'] = $mobile;
         $data['phone'] = $mobile;
-
-        $data['password'] = '15152515';
-
-        $data['password_confirmation'] = '15152515'; //TODO:generate random string
+        $randomPass = $this->generateRandomString();
+        $data['password'] = $randomPass;
+        $data['password_confirmation'] = $randomPass;
 
         $data['username'] = $mobile;
 
@@ -327,5 +328,27 @@ class UserService extends ApiBaseService
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }
+    }
+
+    public function removeProfileImage(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        $imagePath = $customer->profile_image;//TODO: Remove image from disk
+        $customer->profile_image = null;
+        $customer->update();
+
+        return $this->sendSuccessResponse([], 'Profile image removed successfully');
+
+    }
+
+    public function generateRandomString($length = 8)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
