@@ -43,5 +43,12 @@ class LoyaltyController extends Controller
         return $this->loyaltyService->getPriyojonStatus($customer->phone);
     }
 
+    public function redeemOptions(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+
+        return $this->loyaltyService->getRedeemOptions($customer->phone);
+    }
+
 
 }
