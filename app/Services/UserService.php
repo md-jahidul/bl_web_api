@@ -109,7 +109,6 @@ class UserService extends ApiBaseService
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
         $tokenResponseData = json_decode($tokenResponse['data']);
-        Illuminate\Support\Facades\Log::info($tokenResponse->toString());
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
