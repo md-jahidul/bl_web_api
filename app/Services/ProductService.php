@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Exceptions\IdpAuthException;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Repositories\ProductBookmarkRepository;
@@ -300,7 +301,7 @@ class ProductService extends ApiBaseService
     /**
      * @param $request
      * @return mixed
-     * @throws AuthenticationException
+     * @throws IdpAuthException
      */
     public function findCustomerSaveProducts($request)
     {
@@ -316,7 +317,7 @@ class ProductService extends ApiBaseService
     /**
      * @param $request
      * @return mixed
-     * @throws AuthenticationException
+     * @throws IdpAuthException
      */
     public function findCustomerProducts($request)
     {
@@ -338,5 +339,23 @@ class ProductService extends ApiBaseService
             return response()->success($customerBookmarkProducts, 'Data Found!');
         }
         return response()->error("Data Not Found!");
+    }
+
+    /**
+     * @param $productId
+     * @return JsonResponse
+     */
+    public function like($productId)
+    {
+        try {
+            $products = $this->productRepository->findOneByProperties(['product_code' => $productId]);
+            if ($products) {
+                $products['like'] = $products['like'] + 1;
+                $products->update();
+                return $this->sendSuccessResponse([], 'Product liked successfully!');
+            }
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }
     }
 }

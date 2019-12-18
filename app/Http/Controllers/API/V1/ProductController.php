@@ -123,18 +123,13 @@ class ProductController extends Controller
         return $this->productService->customerProductBookmark($request);
     }
 
-
+    /**
+     * @param $productId
+     * @return JsonResponse
+     */
     public function productLike($productId)
     {
-        try {
-            $products = Product::where('product_code', $productId)->first();
-            if ($products) {
-                $products['like'] = $products['like'] + 1;
-                $products->update();
-            }
-        } catch (QueryException $exception) {
-            return response()->error("Data Not Found!", $exception);
-        }
+        return $this->productService->like($productId);
     }
 
     public function customerLoanProducts(Request $request)
