@@ -141,12 +141,13 @@ class ProductController extends Controller
     }
 
     /**
-     * @param $type
+     * @param Request $request
      * @return mixed
+     * @throws \App\Exceptions\IdpAuthException
      */
-    public function rechargeOffers()
+    public function rechargeOffers(Request $request)
     {
-        return $this->productService->allRechargeOffers();
+        return $this->productService->allRechargeOffers($request);
     }
 
     public function rechargeOfferByAmount($amount)
