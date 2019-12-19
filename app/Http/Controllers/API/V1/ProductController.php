@@ -106,7 +106,7 @@ class ProductController extends Controller
 
     public function getProducts($customerId)
     {
-        return $this->productService->getProductCodesByCustomerId(8479);
+        return $this->productService->getProductCodesByCustomerId($customerId);
     }
 
     /**
