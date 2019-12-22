@@ -31,16 +31,25 @@ class LoyaltyService extends ApiBaseService
 
     public function getPriyojonStatus($mobile)
     {
-        //TODO:Prepare subscriber id from mobile number
-        $subscriberId = '1903303978';
+        $subscriberId = substr($mobile, 1);
+        $subscriberId = '1903303978'; //TODO: Remove from production
 
         $result = $this->blLoyaltyService->getPriyojonStatus($subscriberId);
-        if ($result['responseMessage'] == 'SUCCESS') {
-            return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
-        } else {
-            $this->sendErrorResponse($result['responseMessage'], [], HttpStatusCode::VALIDATION_ERROR);
-        }
+        return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
     }
 
+    public function getRedeemOptions($mobile)
+    {
+        $subscriberId = substr($mobile, 1);
+        $subscriberId = '1903303978'; //TODO: Remove from production
+
+        $result = $this->blLoyaltyService->getRedeemOptions($subscriberId);
+        return $this->sendSuccessResponse($result['data'], 'Loyalty data');
+    }
+
+    public function redeemOffer($mobile)
+    {
+
+    }
 
 }

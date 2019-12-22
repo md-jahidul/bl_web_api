@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
-use App\Services\AboutPriyojonService;
+use App\Services\AboutPageService;
 use App\Services\PartnerOfferService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -22,11 +22,11 @@ class PriyojonController extends Controller
     /**
      * PriyojonController constructor.
      * @param PartnerOfferService $partnerOfferService
-     * @param AboutPriyojonService $aboutPriyojonService
+     * @param AboutPageService $aboutPriyojonService
      */
     public function __construct(
         PartnerOfferService $partnerOfferService,
-        AboutPriyojonService $aboutPriyojonService
+        AboutPageService $aboutPriyojonService
     ) {
         $this->partnerOfferService = $partnerOfferService;
         $this->aboutPriyojonService = $aboutPriyojonService;
@@ -61,8 +61,8 @@ class PriyojonController extends Controller
        return $this->partnerOfferService->priyojonOffers();
     }
 
-    public function aboutPriyojon()
+    public function getAboutPage($slug)
     {
-        return $this->aboutPriyojonService->aboutDetails();
+        return $this->aboutPriyojonService->aboutDetails($slug);
     }
 }

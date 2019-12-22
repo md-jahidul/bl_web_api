@@ -106,7 +106,7 @@ class ProductController extends Controller
 
     public function getProducts($customerId)
     {
-        return $this->productService->getProductCodesByCustomerId(8479);
+        return $this->productService->getProductCodesByCustomerId($customerId);
     }
 
     /**
@@ -123,18 +123,13 @@ class ProductController extends Controller
         return $this->productService->customerProductBookmark($request);
     }
 
-
+    /**
+     * @param $productId
+     * @return JsonResponse
+     */
     public function productLike($productId)
     {
-        try {
-            $products = Product::where('product_code', $productId)->first();
-            if ($products) {
-                $products['like'] = $products['like'] + 1;
-                $products->update();
-            }
-        } catch (QueryException $exception) {
-            return response()->error("Data Not Found!", $exception);
-        }
+        return $this->productService->like($productId);
     }
 
     public function customerLoanProducts(Request $request)
@@ -146,12 +141,13 @@ class ProductController extends Controller
     }
 
     /**
-     * @param $type
+     * @param Request $request
      * @return mixed
+     * @throws \App\Exceptions\IdpAuthException
      */
-    public function rechargeOffers()
+    public function rechargeOffers(Request $request)
     {
-        return $this->productService->allRechargeOffers();
+        return $this->productService->allRechargeOffers($request);
     }
 
     public function rechargeOfferByAmount($amount)
