@@ -15,6 +15,9 @@ class SearchRepository
 {
     public function getSearchResult($keyWord)
     {
-        return Product::whereRaw("MATCH(name_bn, name_en) AGAINST(? IN NATURAL LANGUAGE MODE)", $keyWord)->get();
+        return Product::selectRaw('products.*, product_details.details_en, product_details.details_bn, 
+        product_details.offer_details_bn, product_details.offer_details_en')
+            ->whereRaw("MATCH(products.name_bn, products.name_en) AGAINST(? IN NATURAL LANGUAGE MODE)", $keyWord)
+            ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')->get();
     }
 }
