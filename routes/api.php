@@ -71,4 +71,7 @@ Route::group(['prefix' => '/v1'], function () {
     //Loyalty or Priyojon section
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
+
+
+    Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
 });
