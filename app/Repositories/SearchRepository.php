@@ -9,6 +9,8 @@
 namespace App\Repositories;
 
 
+use App\Models\Menu;
+use App\Models\PartnerOffer;
 use App\Models\Product;
 
 class SearchRepository
@@ -29,11 +31,15 @@ class SearchRepository
 
     public function getMenuResult($keyWord)
     {
-        return null;
+        return Menu::whereRaw("MATCH(en_label_text, en_label_text) AGAINST(? IN NATURAL LANGUAGE MODE)", $keyWord)->get();
     }
 
     public function getPartnerOfferResult($keyWord)
     {
-        return null;
+        return PartnerOffer::selectRaw('partner_offers.*, partner_offer_details.details_en, partner_offer_details.details_bn, 
+        partner_offer_details.offer_details_bn, partner_offer_details.offer_details_en')
+            ->whereRaw("MATCH(partner_offer_details.details_en, partner_offer_details.details_bn, 
+        partner_offer_details.offer_details_bn, partner_offer_details.offer_details_en) AGAINST(? IN NATURAL LANGUAGE MODE)", $keyWord)
+            ->join('partner_offer_details', 'partner_offers.id', '=', 'partner_offer_details.partner_offer_id')->get();
     }
 }
