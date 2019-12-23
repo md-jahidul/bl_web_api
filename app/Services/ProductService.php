@@ -200,11 +200,18 @@ class ProductService extends ApiBaseService
                 $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
 
+                
+
                 $this->bindDynamicValues($productDetail->related_products, 'offer_info');
 
                 unset($productDetail->other_related_product);
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
+
+                if( !empty($productDetail->product_details->banner_image_url) ){
+                    $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
+                }
+                
 
                 return response()->success($productDetail, 'Data Found!');
             }
