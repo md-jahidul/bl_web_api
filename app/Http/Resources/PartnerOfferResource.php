@@ -22,7 +22,7 @@ class PartnerOfferResource extends JsonResource
             "validity_bn" => $this->validity_bn ?? null,
             "offer_unit" => $this->offer_unit ?? null,
             "offer_value" => $this->offer_value ?? null,
-            "offer_scale" => $this->validity_bn ?? null,
+            "offer_scale" => $this->offer_scale ?? null,
             "get_offer_msg_en" => $this->get_offer_msg_en ?? null,
             "get_offer_msg_bn" => $this->get_offer_msg_bn ?? null  ,
             "btn_text_en"  => $this->btn_text_en ?? null ,
