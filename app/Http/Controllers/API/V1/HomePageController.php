@@ -77,8 +77,9 @@ class HomePageController extends Controller
 
     public function makeResource($requests) {
         {
-            $data = [];
+            $result = [];
             foreach ($requests as $request) {
+                $data = [];
                 $data["id"] = $request->id ?? null;
                 $data["slider_id"] = $request->slider_id ?? null;
                 $data["title_en"] = $request->title_en ?? null;
@@ -92,8 +93,10 @@ class HomePageController extends Controller
                 foreach ($request->other_attributes as $key => $value) {
                     $data[$key] = $value;
                 }
+
+                array_push($result, (object)$data);
             }
-            return  $data;
+            return  $result;
         }
     }
 
