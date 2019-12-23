@@ -65,5 +65,5 @@ return [
         ],
 
     ],
-
+    'image_host_url' => env('IMAGE_HOST_URL', '/uploads/')
 ];
