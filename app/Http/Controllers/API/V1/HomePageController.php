@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Resources\PartnerOfferResource;
+use App\Http\Resources\QuickLaunchResource;
+use App\Http\Resources\SliderImageResource;
 use App\Models\QuickLaunch;
 use App\Models\QuickLaunchItem;
 use App\Models\AlSlider;
@@ -41,13 +44,13 @@ class HomePageController extends Controller
     // In PHP, By default objects are passed as reference copy to a new Object.
     public function bindDynamicValues($obj, $json_data = 'other_attributes')
     {
+
         if(!empty($obj->{ $json_data }))
         {
             foreach ($obj->{ $json_data } as $key => $value){
                 $obj->{$key} = $value;
             }
         }
-
         unset($obj->{ $json_data });
     }
 
@@ -64,9 +67,7 @@ class HomePageController extends Controller
 
         $slider_images =  $limit ? $query->limit($limit)->get() : $query->get();
 
-        foreach ($slider_images as $slider_image){
-           $this->bindDynamicValues($slider_image);
-        }
+        $slider_images = $this->makeResource($slider_images);
 
         $this->bindDynamicValues($slider);
 
@@ -75,11 +76,37 @@ class HomePageController extends Controller
         return $slider;
     }
 
+    public function makeResource($requests) {
+        {
+            $result = [];
+            foreach ($requests as $request) {
+                $data = [];
+                $data["id"] = $request->id ?? null;
+                $data["slider_id"] = $request->slider_id ?? null;
+                $data["title_en"] = $request->title_en ?? null;
+                $data["title_bn"] = $request->title_bn ?? null;
+                $data["start_date"] = $request->start_date ?? null;
+                $data["end_date"] = $request->end_date ?? null;
+                $data["image_url"] = env("IMAGE_HOST_URL") . $request->image_url;
+                $data["alt_text"] = $request->alt_text ?? null;
+                $data["display_order"] = $request->display_order ?? null;
+                $data["is_active"] = $request->is_active ?? null;
+                foreach ($request->other_attributes as $key => $value) {
+                    $data[$key] = $value;
+                }
+
+                array_push($result, (object)$data);
+            }
+            return  $result;
+        }
+    }
+
     public function getQuickLaunchData()
     {
+        $quickLaunchItem = QuickLaunchItem::orderBy('display_order')->get();
         return  [
             "component"=> "QuickLaunch",
-            "data" =>  QuickLaunchItem::orderBy('display_order')->get()
+            "data" => QuickLaunchResource::collection($quickLaunchItem)
         ];
     }
 
@@ -104,16 +131,20 @@ class HomePageController extends Controller
 
 
         if($id == 4){
-            $slider->data = DB::table('partner_offers as po')
-                                    ->where('po.show_in_home',1)
-                                    ->where('po.is_active',1)
-                                    ->join('partners as p', 'po.partner_id', '=', 'p.id')
-                                    ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                                    ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
-                                    ->orderBy('po.display_order')
-                                    ->get();
-        }else {
 
+            $partnerOffers =  DB::table('partner_offers as po')
+                ->where('po.show_in_home',1)
+                ->where('po.is_active',1)
+                ->join('partners as p', 'po.partner_id', '=', 'p.id')
+                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
+                ->orderBy('po.display_order')
+                ->get();
+
+//            dd($partnerOffers);
+
+            $slider->data = PartnerOfferResource::collection($partnerOffers);
+        }else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
