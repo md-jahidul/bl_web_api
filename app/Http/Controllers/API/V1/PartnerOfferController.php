@@ -68,6 +68,20 @@ class PartnerOfferController extends Controller
         $tags = TagCategory::all();
         $sim = SimCategory::all();
         $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        
+
+        if( !empty($offer) ){
+            $offer_final = array_map(function($value){
+            if( !empty($value['banner_image_url']) ){
+                $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+            }
+            return $value;
+            }, $offer->toArray());
+        }
+        else{
+            $offer_final = [];
+        }
+
         $duration = DurationCategory::all();
 
         return response()->json(
@@ -78,7 +92,7 @@ class PartnerOfferController extends Controller
                 'data' => [
                     'tag' => $tags,
                     'sim' => $sim,
-                    'offer' => $offer,
+                    'offer' => $offer_final,
                     'duration' => $duration
                 ]
             ]
