@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Resources\PartnerOfferResource;
 use App\Http\Resources\QuickLaunchResource;
 use App\Http\Resources\SliderImageResource;
 use App\Models\QuickLaunch;
@@ -77,8 +78,9 @@ class HomePageController extends Controller
 
     public function makeResource($requests) {
         {
-            $data = [];
+            $result = [];
             foreach ($requests as $request) {
+                $data = [];
                 $data["id"] = $request->id ?? null;
                 $data["slider_id"] = $request->slider_id ?? null;
                 $data["title_en"] = $request->title_en ?? null;
@@ -92,8 +94,10 @@ class HomePageController extends Controller
                 foreach ($request->other_attributes as $key => $value) {
                     $data[$key] = $value;
                 }
+
+                array_push($result, (object)$data);
             }
-            return  $data;
+            return  $result;
         }
     }
 
@@ -127,16 +131,20 @@ class HomePageController extends Controller
 
 
         if($id == 4){
-            $slider->data = DB::table('partner_offers as po')
-                                    ->where('po.show_in_home',1)
-                                    ->where('po.is_active',1)
-                                    ->join('partners as p', 'po.partner_id', '=', 'p.id')
-                                    ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                                    ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
-                                    ->orderBy('po.display_order')
-                                    ->get();
-        }else {
 
+            $partnerOffers =  DB::table('partner_offers as po')
+                ->where('po.show_in_home',1)
+                ->where('po.is_active',1)
+                ->join('partners as p', 'po.partner_id', '=', 'p.id')
+                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
+                ->orderBy('po.display_order')
+                ->get();
+
+//            dd($partnerOffers);
+
+            $slider->data = PartnerOfferResource::collection($partnerOffers);
+        }else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
@@ -172,31 +180,6 @@ class HomePageController extends Controller
     public function getHomePageData()
     {
         try{
-//            $dataSliderImg = AlSliderImage::all();
-
-//            SliderImageResource::withoutWrapping();
-//            $dataSliderImg = SliderImageResource::collection($dataSliderImg);
-
-//            foreach ($dataSliderImg as $slider_image){
-//                $this->bindDynamicValues($slider_image);
-//            }
-
-//            return $dataSliderImg;
-
-//            $d = [];
-//            foreach ($dataSliderImg as $img)
-//            {
-////              dd($img);
-//                $sliderResource = new SliderImageResource();
-//                $d[] = $sliderResource->data($img);
-//            }
-//
-//            foreach ($d as $slider_image){
-//                $this->bindDynamicValues((object)$slider_image);
-//            }
-//
-//            return $d;
-
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
                                         ->get();
