@@ -118,6 +118,9 @@ class PartnerOfferController extends Controller
                 ->first();
 
             if (isset($productDetail)) {
+
+                $productDetail->partner_offer_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
+
                 return response()->success($productDetail, 'Data Found!');
             }
 
