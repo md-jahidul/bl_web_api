@@ -232,6 +232,7 @@ class UserService extends ApiBaseService
     {
         $data['mobile'] = $mobile;
         $data['phone'] = $mobile;
+        $data['msisdn'] = '88'.$mobile;
         $randomPass = $this->generateRandomString();
         $data['password'] = $randomPass;
         $data['password_confirmation'] = $randomPass;
@@ -276,7 +277,7 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('User not found in the system');
         }
         $data = $request->all();
-        $data['msisdn'] = '+880' . $idpData->user->mobile;
+        $data['msisdn'] = '88' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
             $path = $this->uploadImage($request);
