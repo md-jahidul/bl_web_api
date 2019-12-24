@@ -9,6 +9,8 @@
 namespace App\Exceptions;
 
 
+use Illuminate\Support\Facades\Log;
+
 class BLApiHubException extends \Exception
 {
     /**
@@ -18,6 +20,7 @@ class BLApiHubException extends \Exception
      */
     public function render()
     {
+        Log::error('BL API HUB Error: code - '.$this->getCode(). 'Error message: ' . $this->getMessage());
         $response = [
             'status' => 'FAIL',
             'status_code' => 500,
