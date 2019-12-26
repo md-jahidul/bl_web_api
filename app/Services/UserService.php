@@ -293,14 +293,12 @@ class UserService extends ApiBaseService
 
     public function uploadProfileImage($request)
     {
-        $bearerToken = ['token' => $request->header('authorization')];
-
         $path = $this->uploadImage($request);
 
         $update_data [] = [
             'Content-type' => 'multipart/form-data',
             'name' => 'profile_photo',
-            'contents' => fopen($path, 'r')
+            'contents' => fopen(storage_path($path), 'r')
         ];
 
         $client = new Client();
@@ -320,7 +318,7 @@ class UserService extends ApiBaseService
         $response = json_decode($response->getBody()->getContents(), true);
         try {
             if ($path) {
-                unlink(public_path($path));
+                unlink(storage_path($path));
             }
         } catch (Exception $e) {
             Log::error('Error in saving profile photo');
