@@ -10,6 +10,7 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -101,6 +102,7 @@ class UserService extends ApiBaseService
 
     public function otpLogin($request)
     {
+        //TODO: Check otp session with database
         $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
         $data['client_id'] = env('IDP_OTP_CLIENT_ID');
@@ -232,6 +234,7 @@ class UserService extends ApiBaseService
     {
         $data['mobile'] = $mobile;
         $data['phone'] = $mobile;
+        $data['msisdn'] = '88' . $mobile;
         $randomPass = $this->generateRandomString();
         $data['password'] = $randomPass;
         $data['password_confirmation'] = $randomPass;
@@ -263,7 +266,7 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
 
-
+        //TODO: update data to IDP
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
         $idpData = json_decode($response['data']);
 
@@ -276,7 +279,7 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('User not found in the system');
         }
         $data = $request->all();
-        $data['msisdn'] = '+880' . $idpData->user->mobile;
+        $data['msisdn'] = '88' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
             $path = $this->uploadImage($request);
@@ -292,20 +295,38 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
 
-        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
-        $idpData = json_decode($response['data']);
-
-        if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
-            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
-        }
-
-        $user = $this->userRepository->findOneBy(['phone' => $idpData->user->mobile]);
-
         $path = $this->uploadImage($request);
 
-        $user->update(['profile_image' => $path]);
+        $update_data [] = [
+            'Content-type' => 'multipart/form-data',
+            'name' => 'profile_photo',
+            'contents' => fopen($path, 'r')
+        ];
 
-        return $this->sendSuccessResponse(['image_path' => $path], 'Profile picture updated successfully');
+        $client = new Client();
+        $response = $client->post(
+            env('IDP_HOST') . '/api/v1/customers/update/perform',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => $request->header('authorization'),
+                ],
+                'multipart' => $update_data
+            ]
+        );
+        if ($response->getStatusCode() != HttpStatusCode::SUCCESS) {
+            return $this->sendErrorResponse("Cannot update profile. try again later", [], $response->getStatusCode());
+        }
+        $response = json_decode($response->getBody()->getContents(), true);
+        try {
+            if ($path) {
+                unlink(public_path($path));
+            }
+        } catch (Exception $e) {
+            Log::error('Error in saving profile photo');
+        }
+
+        return $this->sendSuccessResponse(['image_path' => $response->data->profile_image], 'Profile picture updated successfully');
     }
 
     private function uploadImage($request)
@@ -323,7 +344,7 @@ class UserService extends ApiBaseService
                 $fileName,
                 'public'
             );
-            return '/storage/uploads/profile-images/' . $fileName;
+            return 'uploads/profile-images/' . $fileName;
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }
@@ -331,12 +352,20 @@ class UserService extends ApiBaseService
 
     public function removeProfileImage(Request $request)
     {
-        $customer = $this->customerService->getCustomerDetails($request);
-        $imagePath = $customer->profile_image;//TODO: Remove image from disk
-        $customer->profile_image = null;
-        $customer->update();
+        $client = new Client();
+        $response = $client->get(
+            env('IDP_HOST') . '/api/v1/customers/profile/photo/remove',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => $request->header('authorization'),
+                ],
+            ]
+        );
+        if ($response->getStatusCode() == HttpStatusCode::SUCCESS)
+            return $this->sendSuccessResponse([], 'Profile image removed successfully');
 
-        return $this->sendSuccessResponse([], 'Profile image removed successfully');
+        return $this->sendErrorResponse('Cannot remove photo', [], $response->getStatusCode());
 
     }
 
