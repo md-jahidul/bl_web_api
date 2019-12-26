@@ -298,7 +298,7 @@ class UserService extends ApiBaseService
         $update_data [] = [
             'Content-type' => 'multipart/form-data',
             'name' => 'profile_photo',
-            'contents' => fopen(storage_path($path), 'r')
+            'contents' => fopen(storage_path('app/public/'.$path), 'r')
         ];
 
         $client = new Client();
@@ -318,7 +318,7 @@ class UserService extends ApiBaseService
         $response = json_decode($response->getBody()->getContents(), true);
         try {
             if ($path) {
-                unlink(storage_path($path));
+                unlink(storage_path('app/public/'.$path));
             }
         } catch (Exception $e) {
             Log::error('Error in saving profile photo');
