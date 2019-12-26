@@ -344,7 +344,7 @@ class UserService extends ApiBaseService
                 $fileName,
                 'public'
             );
-            return '/storage/uploads/profile-images/' . $fileName;
+            return 'uploads/profile-images/' . $fileName;
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), [], 500);
         }
@@ -353,7 +353,7 @@ class UserService extends ApiBaseService
     public function removeProfileImage(Request $request)
     {
         $client = new Client();
-        $response = $client->post(
+        $response = $client->get(
             env('IDP_HOST') . '/api/v1/customers/profile/photo/remove',
             [
                 'headers' => [
