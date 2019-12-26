@@ -10,6 +10,9 @@ return [
     'idp_otp_client_id' => env('IDP_OTP_CLIENT_ID', '0465bd90-1005-11ea-a2b6-efa1f2aff4ff'),
 
     'idp_otp_client_secret' => env('IDP_OTP_CLIENT_SECRET', 'zVN8wYHp5Ei5Wkyu6PT975tgMnWaYuCBY2tc7QqQ'),
+
+
+    'bl_api_host' => env('BL_API_HOST', 'http://172.16.254.157:7081'),
 ];
 
 ?>

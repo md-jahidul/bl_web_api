@@ -105,8 +105,8 @@ class UserService extends ApiBaseService
         //TODO: Check otp session with database
         $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
-        $data['client_id'] = env('IDP_OTP_CLIENT_ID');
-        $data['client_secret'] = env('IDP_OTP_CLIENT_SECRET');
+        $data['client_id'] = config('apiurl.idp_otp_client_id');
+        $data['client_secret'] = config('apiurl.idp_otp_client_secret');
         $data['username'] = $request['mobile'];
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
@@ -115,9 +115,8 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
             $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
-            $customerInfo = $this->getCustomerInfo($request['mobile'], $idpCus);
 
-            // dd($customerInfo);
+            $customerInfo = $this->getCustomerInfo($request['mobile'], (object)$idpCus);
 
             $profileData = [
                 'token' => $tokenResponseData,
@@ -136,17 +135,26 @@ class UserService extends ApiBaseService
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
         if (!$user)
             return null;
-
+        
         $user_data = [];
         if( !empty($idpUserData) ){
-            $user_data["id"] = $idpUserData->id;
+
+            if( isset($idpUserData->data) ){
+                $idpUserData = json_decode($idpUserData->data);
+                $idpUserData = $idpUserData->data;
+            }
+            else{
+                $idpUserData = json_decode($idpUserData);
+            }
+            
+            $user_data["id"] = !empty($user->id) ? $user->id : null;
             $user_data["phone"] = !empty($user->phone) ? $user->phone : null;
             $user_data["customer_account_id"] = !empty($user->customer_account_id) ? $user->customer_account_id : null;
             $user_data["name"] = !empty($idpUserData->name) ? $idpUserData->name : null;
             $user_data["email"] = !empty($idpUserData->email) ? $idpUserData->email : null;
             $user_data["msisdn"] = !empty($idpUserData->msisdn) ? $idpUserData->msisdn : null;
             $user_data["birth_date"] = !empty($idpUserData->birth_date) ? $idpUserData->birth_date : null;
-            $user_data["profile_image"] = !empty($idpUserData->profile_image) ? config('filesystems.image_host_url') . $idpUserData->profile_image : null;
+            $user_data["profile_image"] = !empty($idpUserData->profile_image) ? $idpUserData->profile_image : null;
             $user_data["first_name"] = !empty($idpUserData->first_name) ? $idpUserData->first_name : null;
             $user_data["last_name"] = !empty($idpUserData->last_name) ? $idpUserData->last_name : null;
             $user_data["gender"] = !empty($idpUserData->gender) ? $idpUserData->gender : null;
@@ -251,13 +259,11 @@ class UserService extends ApiBaseService
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
-
+        
         $idpUser = $idpData->user;
+        $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
         
-        $user = $this->getCustomerInfo($idpData->user->mobile, $idpUser);
-        
-        // dd($user);
-        
+    
 
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
