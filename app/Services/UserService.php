@@ -114,7 +114,8 @@ class UserService extends ApiBaseService
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
-            $customerInfo = $this->getCustomerInfo($request['mobile']);
+            $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
+            $customerInfo = $this->getCustomerInfo($request['mobile'], $idpCus);
             $profileData = [
                 'token' => $tokenResponseData,
                 'customerInfo' => $customerInfo,
@@ -124,10 +125,14 @@ class UserService extends ApiBaseService
         }
     }
 
-    public function getCustomerInfo($mobile)
+    public function getCustomerInfo($mobile, $idpUserData = null)
     {
         $customerInfo = array();
+
+        //Todo : merge idp user data and local data and send to front end
+
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
+
         if (!$user)
             return null;
 
@@ -218,7 +223,9 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
-        $user = $this->getCustomerInfo($idpData->user->mobile);
+        $idpUser = $idpData->user;
+
+        $user = $this->getCustomerInfo($idpData->user->mobile, $idpUser);
 
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
@@ -293,19 +300,17 @@ class UserService extends ApiBaseService
 
     public function uploadProfileImage($request)
     {
-        $bearerToken = ['token' => $request->header('authorization')];
-
         $path = $this->uploadImage($request);
 
         $update_data [] = [
             'Content-type' => 'multipart/form-data',
             'name' => 'profile_photo',
-            'contents' => fopen($path, 'r')
+            'contents' => fopen(storage_path('app/public/' . $path), 'r')
         ];
 
         $client = new Client();
         $response = $client->post(
-            env('IDP_HOST') . '/api/v1/customers/update/perform',
+            env('IDP_HOST') . '/api/v1/customers/profile/photo/set',
             [
                 'headers' => [
                     'Accept' => 'application/json',
@@ -314,19 +319,20 @@ class UserService extends ApiBaseService
                 'multipart' => $update_data
             ]
         );
+
         if ($response->getStatusCode() != HttpStatusCode::SUCCESS) {
             return $this->sendErrorResponse("Cannot update profile. try again later", [], $response->getStatusCode());
         }
         $response = json_decode($response->getBody()->getContents(), true);
         try {
             if ($path) {
-                unlink(public_path($path));
+                unlink(storage_path('app/public/' . $path));
             }
         } catch (Exception $e) {
             Log::error('Error in saving profile photo');
         }
 
-        return $this->sendSuccessResponse(['image_path' => $response->data->profile_image], 'Profile picture updated successfully');
+        return $this->sendSuccessResponse(['image_path' => $response['data']['image_path']], 'Profile picture updated successfully');
     }
 
     private function uploadImage($request)
