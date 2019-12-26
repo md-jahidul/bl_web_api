@@ -22,7 +22,7 @@ class IdpIntegrationService
      */
     public static function getHost()
     {
-        return env('IDP_HOST');
+        return config('apiurl.idp_host');
     }
 
     public static function setToken()
@@ -30,8 +30,8 @@ class IdpIntegrationService
         // get token and set
         $data_param = [
             'grant_type' => 'client_credentials',
-            'client_id' => env('IDP_CLIENT_ID'),
-            'client_secret' => env('IDP_CLIENT_SECRET'),
+            'client_id' => config('apiurl.idp_client_id'),
+            'client_secret' => config('apiurl.idp_client_secret'),
             'provider' => 'users'
         ];
 

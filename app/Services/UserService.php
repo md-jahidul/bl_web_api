@@ -116,6 +116,9 @@ class UserService extends ApiBaseService
         } else {
             $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
             $customerInfo = $this->getCustomerInfo($request['mobile'], $idpCus);
+
+            // dd($customerInfo);
+
             $profileData = [
                 'token' => $tokenResponseData,
                 'customerInfo' => $customerInfo,
@@ -130,13 +133,38 @@ class UserService extends ApiBaseService
         $customerInfo = array();
 
         //Todo : merge idp user data and local data and send to front end
-
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
-
         if (!$user)
             return null;
 
-        $customerInfo['personal_data'] = $user;
+        $user_data = [];
+        if( !empty($idpUserData) ){
+            $user_data["id"] = $idpUserData->id;
+            $user_data["phone"] = !empty($user->phone) ? $user->phone : null;
+            $user_data["customer_account_id"] = !empty($user->customer_account_id) ? $user->customer_account_id : null;
+            $user_data["name"] = !empty($idpUserData->name) ? $idpUserData->name : null;
+            $user_data["email"] = !empty($idpUserData->email) ? $idpUserData->email : null;
+            $user_data["msisdn"] = !empty($idpUserData->msisdn) ? $idpUserData->msisdn : null;
+            $user_data["birth_date"] = !empty($idpUserData->birth_date) ? $idpUserData->birth_date : null;
+            $user_data["profile_image"] = !empty($idpUserData->profile_image) ? config('filesystems.image_host_url') . $idpUserData->profile_image : null;
+            $user_data["first_name"] = !empty($idpUserData->first_name) ? $idpUserData->first_name : null;
+            $user_data["last_name"] = !empty($idpUserData->last_name) ? $idpUserData->last_name : null;
+            $user_data["gender"] = !empty($idpUserData->gender) ? $idpUserData->gender : null;
+            $user_data["alternate_phone"] = !empty($idpUserData->alternate_phone) ? $idpUserData->alternate_phone : null;
+            $user_data["mobile"] = !empty($idpUserData->mobile) ? $idpUserData->mobile : null;
+            $user_data["address"] = !empty($idpUserData->address) ? $idpUserData->address : null;
+            $user_data["district"] = !empty($user->district) ? $user->district : null;
+            $user_data["thana"] = !empty($user->thana) ? $user->thana : null;
+        }
+        else{
+            $user->profile_image = !empty($user->profile_image) ? config('filesystems.image_host_url') . $user->profile_image : null;
+            $user_data = $user;
+        }
+
+        
+
+
+        $customerInfo['personal_data'] = $user_data;
 
         //Balance Info
 //        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
@@ -216,6 +244,7 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+        
 
         $idpData = json_decode($response['data']);
 
@@ -224,8 +253,11 @@ class UserService extends ApiBaseService
         }
 
         $idpUser = $idpData->user;
-
+        
         $user = $this->getCustomerInfo($idpData->user->mobile, $idpUser);
+        
+        // dd($user);
+        
 
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
