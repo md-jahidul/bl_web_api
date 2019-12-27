@@ -224,7 +224,6 @@ class SslCommerzController extends Controller
     public function success(Request $request)
     {
         $successData = request()->all();
-        dd($successData);
         $this->apiFormatter($successData);
         return redirect(env('ASSET_WEB_URL').'/payment-success?ptype='.$successData['ptype']);
 
