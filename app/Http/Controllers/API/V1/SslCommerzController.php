@@ -223,26 +223,26 @@ class SslCommerzController extends Controller
 
     public function success(Request $request)
     {
-        $successData = request()->all();
+        $successData = $request->all();
         $this->apiFormatter($successData);
-        return redirect(env('ASSET_WEB_URL').'/payment-success?ptype='.$successData['ptype']);
+        return redirect(env('ASSET_WEB_URL').'/payment-success/en?ptype='.$successData['ptype']);
 
     }
 
     public function failure(Request $request)
     {
 
-        $failureData = request()->all();
+        $failureData = $request->all();
         $this->apiFormatter($failureData);
-        return redirect(env('ASSET_WEB_URL').'/payment-fail?ptype='.$failureData['ptype']);
+        return redirect(env('ASSET_WEB_URL').'/payment-fail/en?ptype='.$failureData['ptype']);
 
     }
 
     public function cancel(Request $request)
     {
-        $cancelData = request()->all();
+        $cancelData = $request->all();
         $this->apiFormatter($cancelData);
-        return redirect(env('ASSET_WEB_URL').'/payment-cancel?ptype='.$cancelData['ptype']);
+        return redirect(env('ASSET_WEB_URL').'/payment-cancel/en?ptype='.$cancelData['ptype']);
     }
 
 }
