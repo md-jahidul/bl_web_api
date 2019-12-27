@@ -11,6 +11,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
+use App\Services\NumberValidationService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -23,12 +24,23 @@ class AuthenticationController extends Controller
     protected $userService;
 
     /**
+     * @var NumberValidationService
+     */
+    protected $numberValidationService;
+
+    /**
      * AuthenticationController constructor.
      * @param UserService $userService
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, NumberValidationService $numberValidationService)
     {
         $this->userService = $userService;
+        $this->numberValidationService = $numberValidationService;
+    }
+
+    public function numberValidation($mobile)
+    {
+        return $this->numberValidationService->validateNumberWithResponse($mobile);
     }
 
 

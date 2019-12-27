@@ -81,7 +81,7 @@ class NumberValidationService extends ApiBaseService
 
         if ($customer->getData()->status == "FAIL") {
             return $this->sendErrorResponse(
-                "Something went wrong",
+                "Not a Valid Banglalink Number",
                 [],
                 HttpStatusCode::INTERNAL_ERROR
             );
@@ -96,7 +96,7 @@ class NumberValidationService extends ApiBaseService
             );
         } else {
             return $this->sendErrorResponse(
-                "Number is Not Valid",
+                "Number is Not Valid. Status: ". $customer->getData()->data->status == "active",
                 [],
                 HttpStatusCode::VALIDATION_ERROR
             );

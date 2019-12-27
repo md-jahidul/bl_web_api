@@ -60,6 +60,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('user/profile/update','API\V1\UserProfileController@update');
     Route::post('user/profile/image/update','API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove','API\V1\UserProfileController@removeProfileImage');
+    Route::get('user/number/validation/{mobile}','API\V1\AuthenticationController@numberValidation');
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 
