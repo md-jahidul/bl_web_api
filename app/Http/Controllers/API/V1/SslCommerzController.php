@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use App\Services\SslCommerzService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,10 +12,16 @@ class SslCommerzController extends Controller
 
     protected $base_url = '';
 
+    /**
+     * @var SslCommerzService
+     */
+    protected $sslCommerzService;
 
-    public function __construct()
+
+    public function __construct(SslCommerzService $sslCommerzService)
     {
         $this->base_url = url('/') . '/api/v1'; // 'http://localhost:3030';
+        $this->sslCommerzService = $sslCommerzService;
     }
 
     public function apiFormatter($response)
@@ -86,6 +93,7 @@ class SslCommerzController extends Controller
         # EMI STATUS
         $post_data['emi_option'] = "0";
 
+        //TODO: Validate cart params
         # CART PARAMETERS
         $post_data['cart'] = json_encode($data['cart']);
         $post_data['product_amount'] = $data['product_amount'];
@@ -100,9 +108,19 @@ class SslCommerzController extends Controller
         $store_id = env('STORE_ID');
         $store_passwd = env('STORE_PASSWORD');
 
+
+        # Validate Request
+        $data = $request->all();
+        $validationResponse = $this->sslCommerzService->validateMobiles($data['topup_number']);
+        if ($validationResponse->getData()->status == 'FAIL') {
+            return $validationResponse;
+        } else {
+            $data['product_type'] = $validationResponse->getData()->data->connectionType;
+        }
+
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
-        $requestData = $this->getPostData($request->all());
+        $requestData = $this->getPostData($data);
         $returnResult = $this->calltoapiAction($requestData, $setLocalhost = true, $direct_api_url);
 
         $sslReturnResult = json_decode($returnResult, true);
