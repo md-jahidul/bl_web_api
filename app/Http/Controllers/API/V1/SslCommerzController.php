@@ -63,9 +63,9 @@ class SslCommerzController extends Controller
         $post_data['total_amount'] = $data['total_amount'];
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
-        $post_data['success_url'] = $this->base_url . "/success";
-        $post_data['fail_url'] = $this->base_url . "/failure";
-        $post_data['cancel_url'] = $this->base_url . "/cancel";
+        $post_data['success_url'] = $this->base_url . "/success?ptype=".$data['product_type'];
+        $post_data['fail_url'] = $this->base_url . "/failure?ptype=".$data['product_type'];
+        $post_data['cancel_url'] = $this->base_url . "/cancel?ptype=".$data['product_type'];
 
         # CUSTOMER INFORMATION
         $post_data['cus_name'] = isset($data['cus_name']) ? $data['cus_name'] : 'N/A';
