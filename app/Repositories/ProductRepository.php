@@ -83,4 +83,11 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
+    public function bondhoSimOffer()
+    {
+        return $this->model->where('offer_info->other_offer_type_id',  13)
+            ->productCore()
+            ->get();
+    }
+
 }
