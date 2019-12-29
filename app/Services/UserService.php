@@ -329,7 +329,7 @@ class UserService extends ApiBaseService
             ];
         }
         
-        // dd($request->all());
+        
         $requested_input = ['name', 'email', 'first_name', 'last_name', 'birth_date', 'gender', 'alternate_phone' ];
 
         foreach ($request->all() as $request_key => $request_value) {
@@ -343,27 +343,6 @@ class UserService extends ApiBaseService
             
 
         }
-
-        // $update_data [] = [
-        //     'name' => 'name',
-        //     'contents' => ($request->filled('name')) ? $request->input('name') : null
-        // ];
-
-        // $update_data [] = [
-        //     'name' => 'name',
-        //     'contents' => ($request->filled('name')) ? $request->input('name') : null
-        // ];
-
-        // dd($update_data);
-
-        // $form_params = [
-        //     'name' => ($request->filled('name')) ? $request->input('name') : null,
-        //     'email' => ($request->filled('email')) ? $request->input('email') : null,
-        //     'first_name' => ($request->filled('first_name')) ? $request->input('first_name') : null,
-        //     'last_name' => ($request->filled('last_name')) ? $request->input('last_name') : null,
-        //     'birth_date' => ($request->filled('birth_date')) ? $request->input('birth_date') : null,
-        //     'gender' => ($request->filled('gender')) ? $request->input('gender') : null,
-        // ];
 
         $client = new Client(); 
         $response = $client->post(
@@ -401,7 +380,7 @@ class UserService extends ApiBaseService
         $data['msisdn'] = '88' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
-            // $path = $this->uploadImage($request);
+            
             $data['profile_image'] = isset($path) ? $path : null;
         }
 
