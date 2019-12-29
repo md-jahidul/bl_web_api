@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Exceptions\IdpAuthException;
+use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Repositories\ProductBookmarkRepository;
@@ -107,7 +108,23 @@ class ProductService extends ApiBaseService
             $this->bindDynamicValues($product, '', $product->productCore);
             unset($product->productCore);
         }
+        return $data;
+    }
 
+    /**
+     * @param $products
+     * @return array
+     * @bindBondhoSimOffres
+     */
+    public function bindBondhoSimOffres($products)
+    {
+        $data = [];
+        foreach ($products as $product) {
+            $this->bindDynamicValues($product, 'offer_info');
+            $this->bindDynamicValues($product, '', $product->productCore);
+            array_push($data, $product);
+            unset($product->productCore);
+        }
         return $data;
     }
 
@@ -193,14 +210,19 @@ class ProductService extends ApiBaseService
     {
         try {
             $productDetail = $this->productRepository->detailProducts($type, $id);
+
+            $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
+
+
             if ($productDetail) {
-
                 $this->bindDynamicValues($productDetail, 'offer_info', $productDetail->productCore);
-
                 $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
+
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
 
-                
+                if (!empty($bondhoSImOffers)){
+                    $productDetail->other_related_products = $this->bindBondhoSimOffres($bondhoSImOffers);
+                }
 
                 $this->bindDynamicValues($productDetail->related_products, 'offer_info');
 
@@ -211,12 +233,12 @@ class ProductService extends ApiBaseService
                 if( !empty($productDetail->product_details->banner_image_url) ){
                     $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
                 }
-                
 
                 return response()->success($productDetail, 'Data Found!');
             }
 
             return response()->error("Data Not Found!");
+
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
@@ -290,7 +312,6 @@ class ProductService extends ApiBaseService
      */
     public function allRechargeOffers($request)
     {
-//        TODO:Filter by user while logged in
         try {
             $rechargeOffers = $this->productRepository->rechargeOffers();
 

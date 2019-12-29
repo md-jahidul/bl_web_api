@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
 use App\Models\AlProductBookmark;
 use App\Models\Product;
@@ -77,7 +78,7 @@ class ProductController extends Controller
      * @param Request $request
      * @param $type
      * @return mixed
-     * @throws AuthenticationException
+     * @throws IdpAuthException
      */
     public function simPackageOffers(Request $request, $type)
     {
@@ -111,8 +112,8 @@ class ProductController extends Controller
 
     /**
      * @param Request $request
-     * @return JsonResponse|void
-     * @throws AuthenticationException
+     * @return JsonResponse
+     * @throws IdpAuthException
      */
     public function bookmarkProduct(Request $request)
     {
@@ -143,7 +144,7 @@ class ProductController extends Controller
     /**
      * @param Request $request
      * @return mixed
-     * @throws \App\Exceptions\IdpAuthException
+     * @throws IdpAuthException
      */
     public function rechargeOffers(Request $request)
     {

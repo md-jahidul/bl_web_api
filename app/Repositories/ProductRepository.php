@@ -50,7 +50,7 @@ class ProductRepository extends BaseRepository
 
     public function rechargeOffers()
     {
-        return $this->model->where('is_recharge', 1)
+        return $this->model->whereIn('purchase_option', ['all', 'recharge'])
             ->productCore()
             ->where('status', 1)
             ->get();
@@ -81,6 +81,13 @@ class ProductRepository extends BaseRepository
         return $this->model->where('product_code', $productCode)
             ->productCore()
             ->first();
+    }
+
+    public function bondhoSimOffer()
+    {
+        return $this->model->where('offer_info->other_offer_type_id',  13)
+            ->productCore()
+            ->get();
     }
 
 }
