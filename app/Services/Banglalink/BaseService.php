@@ -12,7 +12,7 @@ class BaseService
      */
     protected function getHost()
     {
-        return env('BL_API_HOST');
+        return config('apiurl.bl_api_host');
     }
 
     /**

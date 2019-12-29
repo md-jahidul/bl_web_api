@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use App\Services\SslCommerzService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,10 +12,16 @@ class SslCommerzController extends Controller
 
     protected $base_url = '';
 
+    /**
+     * @var SslCommerzService
+     */
+    protected $sslCommerzService;
 
-    public function __construct()
+
+    public function __construct(SslCommerzService $sslCommerzService)
     {
         $this->base_url = url('/') . '/api/v1'; // 'http://localhost:3030';
+        $this->sslCommerzService = $sslCommerzService;
     }
 
     public function apiFormatter($response)
@@ -56,9 +63,9 @@ class SslCommerzController extends Controller
         $post_data['total_amount'] = $data['total_amount'];
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid();
-        $post_data['success_url'] = $this->base_url . "/success";
-        $post_data['fail_url'] = $this->base_url . "/failure";
-        $post_data['cancel_url'] = $this->base_url . "/cancel";
+        $post_data['success_url'] = $this->base_url . "/success?ptype=".$data['product_type'];
+        $post_data['fail_url'] = $this->base_url . "/failure?ptype=".$data['product_type'];
+        $post_data['cancel_url'] = $this->base_url . "/cancel?ptype=".$data['product_type'];
 
         # CUSTOMER INFORMATION
         $post_data['cus_name'] = isset($data['cus_name']) ? $data['cus_name'] : 'N/A';
@@ -86,6 +93,7 @@ class SslCommerzController extends Controller
         # EMI STATUS
         $post_data['emi_option'] = "0";
 
+        //TODO: Validate cart params
         # CART PARAMETERS
         $post_data['cart'] = json_encode($data['cart']);
         $post_data['product_amount'] = $data['product_amount'];
@@ -100,9 +108,19 @@ class SslCommerzController extends Controller
         $store_id = env('STORE_ID');
         $store_passwd = env('STORE_PASSWORD');
 
+
+        # Validate Request
+        $data = $request->all();
+        $validationResponse = $this->sslCommerzService->validateMobiles($data['topup_number']);
+        if ($validationResponse->getData()->status == 'FAIL') {
+            return $validationResponse;
+        } else {
+            $data['product_type'] = $validationResponse->getData()->data->connectionType;
+        }
+
         # REQUEST SEND TO SSLCOMMERZ
         $direct_api_url = $url;
-        $requestData = $this->getPostData($request->all());
+        $requestData = $this->getPostData($data);
         $returnResult = $this->calltoapiAction($requestData, $setLocalhost = true, $direct_api_url);
 
         $sslReturnResult = json_decode($returnResult, true);
@@ -205,26 +223,26 @@ class SslCommerzController extends Controller
 
     public function success(Request $request)
     {
-        $successData = request()->all();
+        $successData = $request->all();
         $this->apiFormatter($successData);
-        return redirect(env('ASSET_WEB_URL').'/payment-success');
+        return redirect(env('ASSET_WEB_URL').'/payment-success?ptype='.$successData['ptype']);
 
     }
 
     public function failure(Request $request)
     {
 
-        $failureData = request()->all();
+        $failureData = $request->all();
         $this->apiFormatter($failureData);
-        return redirect(env('ASSET_WEB_URL').'/payment-fail');
+        return redirect(env('ASSET_WEB_URL').'/payment-fail?ptype='.$failureData['ptype']);
 
     }
 
     public function cancel(Request $request)
     {
-        $cancelData = request()->all();
+        $cancelData = $request->all();
         $this->apiFormatter($cancelData);
-        return redirect(env('ASSET_WEB_URL').'/payment-cancel');
+        return redirect(env('ASSET_WEB_URL').'/payment-cancel?ptype='.$cancelData['ptype']);
     }
 
 }

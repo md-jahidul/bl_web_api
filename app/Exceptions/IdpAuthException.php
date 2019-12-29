@@ -9,6 +9,8 @@
 namespace App\Exceptions;
 
 
+use Illuminate\Support\Facades\Log;
+
 class IdpAuthException extends \Exception
 {
     /**
@@ -18,6 +20,8 @@ class IdpAuthException extends \Exception
      */
     public function render()
     {
+        Log::error('IDP Error: code - '.$this->getCode(). 'Error message: ' . $this->getMessage());
+
         $response = [
             'status' => 'FAIL',
             'status_code' => 401,

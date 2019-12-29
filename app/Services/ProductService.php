@@ -216,8 +216,8 @@ class ProductService extends ApiBaseService
 
             if ($productDetail) {
                 $this->bindDynamicValues($productDetail, 'offer_info', $productDetail->productCore);
-
                 $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
+
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
 
                 if (!empty($bondhoSImOffers)){
@@ -230,10 +230,15 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
+                if( !empty($productDetail->product_details->banner_image_url) ){
+                    $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
+                }
+
                 return response()->success($productDetail, 'Data Found!');
             }
 
             return response()->error("Data Not Found!");
+
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
