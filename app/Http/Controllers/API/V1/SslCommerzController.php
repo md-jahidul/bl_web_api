@@ -223,7 +223,7 @@ class SslCommerzController extends Controller
 
     public function success(Request $request)
     {
-        $successData = request()->all();
+        $successData = $request->all();
         $this->apiFormatter($successData);
         return redirect(env('ASSET_WEB_URL').'/payment-success?ptype='.$successData['ptype']);
 
@@ -232,7 +232,7 @@ class SslCommerzController extends Controller
     public function failure(Request $request)
     {
 
-        $failureData = request()->all();
+        $failureData = $request->all();
         $this->apiFormatter($failureData);
         return redirect(env('ASSET_WEB_URL').'/payment-fail?ptype='.$failureData['ptype']);
 
@@ -240,7 +240,7 @@ class SslCommerzController extends Controller
 
     public function cancel(Request $request)
     {
-        $cancelData = request()->all();
+        $cancelData = $request->all();
         $this->apiFormatter($cancelData);
         return redirect(env('ASSET_WEB_URL').'/payment-cancel?ptype='.$cancelData['ptype']);
     }
