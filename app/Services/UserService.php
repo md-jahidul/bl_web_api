@@ -102,15 +102,26 @@ class UserService extends ApiBaseService
 
     public function otpLogin($request)
     {
-        //TODO: Check otp session with database
+        //TODO: Done Check otp session with database
+        $getOtpInfo = $this->otpRepository->validateOtpToken($request['mobile'], $request['otp_session']);
+
+        if( empty($getOtpInfo) ){
+            return $this->sendErrorResponse('Token is Invalid or Expired', [], HttpStatusCode::UNAUTHORIZED);
+        }
+        
         $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
         $data['client_id'] = config('apiurl.idp_otp_client_id');
         $data['client_secret'] = config('apiurl.idp_otp_client_secret');
         $data['username'] = $request['mobile'];
+        // $data['otp_session'] = $request['otp_session'];
+
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
         $tokenResponseData = json_decode($tokenResponse['data']);
+
+        
+
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         } else {
