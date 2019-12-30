@@ -103,4 +103,17 @@ class OtpRepository
     {
         return $this->model->where('phone', $phone)->first();
     }
+
+    /**
+     * Validate otp token with phone number
+     * @param  [number] $phone     [phone]
+     * @param  [string] $otp_token [otp_session key]
+     * @return [mixed]            [description]
+     */
+    public function validateOtpToken($phone, $otp_token){
+        return $this->model->where('phone', $phone)
+                ->where('token', $otp_token)
+                ->where('expires_at', '>', Carbon::now())
+                ->first();
+    }
 }

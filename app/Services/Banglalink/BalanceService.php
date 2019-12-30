@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Repositories\CustomerRepository;
 use App\Services\ApiBaseService;
 use App\Services\IdpIntegrationService;
+use App\Services\NumberValidationService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,11 @@ class BalanceService extends BaseService
      * @var ApiBaseService
      */
     public $responseFormatter;
+    /**
+     * [$numberValidationService for customer info]
+     */
+    public $numberValidationService;
+
     protected const BALANCE_API_ENDPOINT = "/customer-information/customer-information";
     protected const MINIMUM_BALANCE_FOR_LOAN = 20;
     /**
@@ -23,15 +29,21 @@ class BalanceService extends BaseService
      */
     protected $customerRepository;
 
-    public function __construct()
+    public function __construct(NumberValidationService $numberValidationService)
     {
         $this->responseFormatter = new ApiBaseService();
         $this->customerRepository = new CustomerRepository();
+        $this->numberValidationService = $numberValidationService;
     }
 
     private function getBalanceUrl($customer_id)
     {
         return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/prepaid-balances' . '?sortType=SERVICE_TYPE';
+    }
+
+    private function getBalanceUrlPostpaid($customer_id)
+    {
+        return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/postpaid-info';
     }
 
     private function getAuthenticateUser($request)
@@ -120,19 +132,44 @@ class BalanceService extends BaseService
     }
 
     /**
-     * @param Request $request
+     * @param param changed from $customerAccountId to mobile
      * @return JsonResponse
      */
-    public function getBalanceSummary($customerAccountId)
+    public function getBalanceSummary($mobile)
     {
-        $customer_id = $customerAccountId;
-        $response = $this->get($this->getBalanceUrl($customer_id));
-        $response = json_decode($response['response']);
-
-        if (isset($response->error)) {
-            return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
+        
+        $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
+        if ($validationResponse->getData()->status == 'FAIL') {
+            return $validationResponse;
         }
-        $balanceSummary = $this->prepareBalanceSummary($response, $customer_id);
+
+        $customerInfo = $validationResponse->getData()->data;
+        $customer_id = $customerInfo->package->customerId;
+
+        # Postpaid balance summery
+        if( $customerInfo->connectionType == 'POSTPAID' ){
+
+            $response = $this->get($this->getBalanceUrlPostpaid($customer_id));
+            $response = json_decode($response['response']);
+            if (isset($response->error)) {
+                return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
+            }
+
+            $balanceSummary = $this->prepareBalanceSummaryPostpaid($response, $customer_id);
+
+        }
+        # Prepaid balance summery
+        else{
+            $response = $this->get($this->getBalanceUrl($customer_id));
+            $response = json_decode($response['response']);
+            if (isset($response->error)) {
+                return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
+            }
+            $balanceSummary = $this->prepareBalanceSummary($response, $customer_id);
+        }
+
+        $balanceSummary['connection_type'] = isset($customerInfo->connectionType) ? $customerInfo->connectionType : null;
+
         return ['status' => 'SUCCESS', 'data' => $balanceSummary];
     }
 
@@ -257,5 +294,60 @@ class BalanceService extends BaseService
                 404
             );
         }
+    }
+
+    /**
+     * [prepareBalanceSummaryPostpaid Balance summery for postpaid]
+     * @param  [mixed] $response    [description]
+     * @param  [int] $customer_id [description]
+     * @return [mixed]              [description]
+     */
+    private function prepareBalanceSummaryPostpaid($response, $customer_id)
+    {
+        $balance_data = collect($response);
+
+        $data = [];
+        $balance_data_roaming = null;
+        $balance_data_local = null;
+        foreach ($balance_data as $item) {
+            
+            if( $item->billingAccountType == 'ROAMING' ){
+                
+                $balance_data_roaming = $item;
+            }
+            elseif( $item->billingAccountType == 'LOCAL' ){
+                $balance_data_local = $item;
+            }
+        }
+
+        
+        //$is_eligible_to_loan =  $this->isEligibleToLoan($customer_id);
+        $data['balance'] = [
+            'amount' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0 ,
+            'unit' => isset($balance_data_local->unit) ? $balance_data_local->unit : 'BDT',
+            'expires_in' => isset($balance_data_local->nextPaymentDate) ?
+                Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            // 'loan' => [
+            //     'is_eligible' => $is_eligible_to_loan,
+            //     'amount'      => ($is_eligible_to_loan) ? 30 : 0
+            // ]
+        ];
+
+        $data['local'] = [
+            'billingAccountType' => isset($balance_data_local->billingAccountType) ? $balance_data_local->billingAccountType : null,
+            'totalOutstanding' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0,
+            'creditLimit' => isset($balance_data_local->creditLimit) ? $balance_data_local->creditLimit : 0,
+            'overPayment' => isset($balance_data_local->overPayment) ? $balance_data_local->overPayment : 0,
+            'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+        ];
+        $data['roaming'] = [
+            'billingAccountType' => isset($balance_data_roaming->billingAccountType) ? $balance_data_roaming->billingAccountType : null,
+            'totalOutstanding' => isset($balance_data_roaming->totalOutstanding) ? $balance_data_roaming->totalOutstanding : 0,
+            'creditLimit' => isset($balance_data_roaming->creditLimit) ? $balance_data_roaming->creditLimit : 0,
+            'overPayment' => isset($balance_data_roaming->overPayment) ? $balance_data_roaming->overPayment : 0,
+            'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+        ];
+
+        return $data;
     }
 }
