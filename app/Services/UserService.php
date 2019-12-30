@@ -114,8 +114,6 @@ class UserService extends ApiBaseService
         $data['client_id'] = config('apiurl.idp_otp_client_id');
         $data['client_secret'] = config('apiurl.idp_otp_client_secret');
         $data['username'] = $request['mobile'];
-        // $data['otp_session'] = $request['otp_session'];
-
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
         $tokenResponseData = json_decode($tokenResponse['data']);
