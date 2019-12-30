@@ -140,7 +140,7 @@ class UserService extends ApiBaseService
     {
         $customerInfo = array();
 
-        //Todo : merge idp user data and local data and send to front end
+        //Todo : Done merge idp user data and local data and send to front end
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
         if (!$user)
             return null;
@@ -179,13 +179,12 @@ class UserService extends ApiBaseService
         }
 
         
-
-
         $customerInfo['personal_data'] = $user_data;
 
         //Balance Info
-//        $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        $balanceData = $this->balanceService->getBalanceSummary($user->customer_account_id);
+        // $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
+        // $balanceData = $this->balanceService->getBalanceSummary($user->customer_account_id);
+        $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         return $customerInfo;
@@ -272,8 +271,6 @@ class UserService extends ApiBaseService
         $idpUser = $idpData->user;
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
         
-    
-
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
