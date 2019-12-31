@@ -11,8 +11,9 @@ return [
 
     'idp_otp_client_secret' => env('IDP_OTP_CLIENT_SECRET', 'zVN8wYHp5Ei5Wkyu6PT975tgMnWaYuCBY2tc7QqQ'),
 
-
     'bl_api_host' => env('BL_API_HOST', 'http://172.16.254.157:7081'),
+
+    'ssl_api_host' => env('SSL_API_HOST', 'https://easy.com.bd/blweb'),
 ];
 
 ?>

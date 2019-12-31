@@ -24,6 +24,11 @@ class SslCommerzController extends Controller
         $this->sslCommerzService = $sslCommerzService;
     }
 
+    public function getRequestDetails(Request $request)
+    {
+        return $this->sslCommerzService->getRequestDetails($request->all());
+    }
+
     public function apiFormatter($response)
     {
         try {
@@ -219,7 +224,6 @@ class SslCommerzController extends Controller
             return "FAILED TO CONNECT WITH SSLCOMMERZ API";
         }
     }
-
 
     public function success(Request $request)
     {
