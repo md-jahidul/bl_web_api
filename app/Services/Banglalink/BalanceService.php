@@ -306,6 +306,8 @@ class BalanceService extends BaseService
     {
         $balance_data = collect($response);
 
+        // dd($balance_data);
+
         $data = [];
         $balance_data_roaming = null;
         $balance_data_local = null;
@@ -316,6 +318,7 @@ class BalanceService extends BaseService
                 $balance_data_roaming = $item;
             }
             elseif( $item->billingAccountType == 'LOCAL' ){
+
                 $balance_data_local = $item;
             }
         }
@@ -340,6 +343,51 @@ class BalanceService extends BaseService
             'overPayment' => isset($balance_data_local->overPayment) ? $balance_data_local->overPayment : 0,
             'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
         ];
+
+        // dd($balance_data_local->productUsage);
+        $local_product_usage = [];
+        if( !empty($balance_data_local) && !empty($balance_data_local->productUsage) ){
+            foreach ($balance_data_local->productUsage as $local_product ) {
+
+                if( !empty($local_product->code) && !empty($local_product->commercialName && !empty($local_product->usages) )  ){
+
+                    foreach ($local_product->usages as $usages) {
+                        
+                        if( $usages->serviceType == 'VOICE' ){
+
+                            $local_product_usage['minutes'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'MIN'
+                            ];
+
+                        }
+                        elseif( $usages->serviceType == 'SMS' ){
+
+                            $local_product_usage['sms'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'SMS'
+                            ];
+
+                        }
+                        elseif( $usages->serviceType == 'DATA' ){
+                            $local_product_usage['internet'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'MB'
+                            ];
+
+                        }
+
+                    }
+                }
+                
+            }
+        }
+
+        $data['local']['product_usages'] = $local_product_usage;
+
         $data['roaming'] = [
             'billingAccountType' => isset($balance_data_roaming->billingAccountType) ? $balance_data_roaming->billingAccountType : null,
             'totalOutstanding' => isset($balance_data_roaming->totalOutstanding) ? $balance_data_roaming->totalOutstanding : 0,
@@ -348,6 +396,60 @@ class BalanceService extends BaseService
             'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
         ];
 
+        $roming_product_usage = [];
+        if( !empty($balance_data_roaming) && !empty($balance_data_roaming->productUsage) ){
+            foreach ($balance_data_roaming->productUsage as $roaming_product ) {
+
+                if( !empty($roaming_product->code) && !empty($roaming_product->commercialName && !empty($roaming_product->usages) )  ){
+
+                    foreach ($roaming_product->usages as $usages) {
+                        
+                        if( $usages->serviceType == 'VOICE' ){
+
+                            $roming_product_usage['minutes'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'MIN'
+                            ];
+
+                        }
+                        elseif( $usages->serviceType == 'SMS' ){
+
+                            $roming_product_usage['sms'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'SMS'
+                            ];
+
+                        }
+                        elseif( $usages->serviceType == 'DATA' ){
+                            $roming_product_usage['internet'] = [
+                                'total' => !empty($usages->total) ?  $usages->total : 0,
+                                'remaining' => !empty($usages->left) ?  $usages->left : 0,
+                                'unit' => 'MB'
+                            ];
+
+                        }
+
+                    }
+                }
+                
+            }
+        }
+
+        $data['roaming']['product_usages'] = $roming_product_usage;
+
+        # Default local data sending for postpaid
+        $default_minutes = !empty($local_product_usage['minutes']) ? $local_product_usage['minutes'] : ( !empty($roming_product_usage['minutes']) ?  $roming_product_usage['minutes'] : 0 );
+
+        $default_sms = !empty($local_product_usage['sms']) ? $local_product_usage['sms'] : ( !empty($roming_product_usage['sms']) ?  $roming_product_usage['sms'] : 0 );
+
+        $default_internet = !empty($local_product_usage['internet']) ? $local_product_usage['internet'] : ( !empty($roming_product_usage['internet']) ?  $roming_product_usage['internet'] : 0 );
+         
+        $data['minutes'] = $default_minutes;
+        $data['sms'] = $default_sms;
+        $data['internet'] = $default_internet;
+        
         return $data;
     }
 }
