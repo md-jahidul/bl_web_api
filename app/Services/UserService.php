@@ -366,14 +366,16 @@ class UserService extends ApiBaseService
         }
         $response = json_decode($response->getBody()->getContents(), true);
 
-
-        try {
-            if ($path) {
-                unlink(storage_path('app/public/' . $path));
-            }
-        } catch (Exception $e) {
-            Log::error('Error in saving profile photo');
+        if ($request->hasFile('profile_photo')){
+        		try {
+        		    if ($path) {
+        		        unlink(storage_path('app/public/' . $path));
+        		    }
+        		} catch (Exception $e) {
+        		    Log::error('Error in saving profile photo');
+        		}
         }
+        
 
 
         # update customer table
