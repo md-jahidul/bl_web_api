@@ -324,6 +324,7 @@ class UserService extends ApiBaseService
         }
 
         #update data to ID
+        $path = null;
         if ($request->hasFile('profile_photo')){
             $path = $this->uploadImage($request);
 
@@ -366,7 +367,7 @@ class UserService extends ApiBaseService
         }
         $response = json_decode($response->getBody()->getContents(), true);
 
-        if ($request->hasFile('profile_photo')){
+        if ( $request->hasFile('profile_photo') && !empty($path) ){
         		try {
         		    if ($path) {
         		        unlink(storage_path('app/public/' . $path));
