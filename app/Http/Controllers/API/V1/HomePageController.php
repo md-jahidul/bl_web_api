@@ -87,7 +87,7 @@ class HomePageController extends Controller
                 $data["title_bn"] = $request->title_bn ?? null;
                 $data["start_date"] = $request->start_date ?? null;
                 $data["end_date"] = $request->end_date ?? null;
-                $data["image_url"] = env("IMAGE_HOST_URL") . $request->image_url;
+                $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
