@@ -260,7 +260,6 @@ class UserService extends ApiBaseService
     {
         $bearerToken = ['token' => $request->header('authorization')];
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
-        
 
         $idpData = json_decode($response['data']);
 
@@ -325,6 +324,7 @@ class UserService extends ApiBaseService
         }
 
         #update data to ID
+        $path = null;
         if ($request->hasFile('profile_photo')){
             $path = $this->uploadImage($request);
 
@@ -367,14 +367,16 @@ class UserService extends ApiBaseService
         }
         $response = json_decode($response->getBody()->getContents(), true);
 
-
-        try {
-            if ($path) {
-                unlink(storage_path('app/public/' . $path));
-            }
-        } catch (Exception $e) {
-            Log::error('Error in saving profile photo');
+        if ( $request->hasFile('profile_photo') && !empty($path) ){
+        		try {
+        		    if ($path) {
+        		        unlink(storage_path('app/public/' . $path));
+        		    }
+        		} catch (Exception $e) {
+        		    Log::error('Error in saving profile photo');
+        		}
         }
+        
 
 
         # update customer table
