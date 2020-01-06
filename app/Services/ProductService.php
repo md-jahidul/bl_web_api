@@ -339,6 +339,9 @@ class ProductService extends ApiBaseService
     {
         $amount = (double)$amount;
         $rechargeOffer = $this->productRepository->rechargeOfferByAmount($amount);
+
+        // dd($rechargeOffer);
+
         return $this->sendSuccessResponse($rechargeOffer, '');
     }
 
