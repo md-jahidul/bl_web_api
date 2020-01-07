@@ -13,6 +13,8 @@ class IdpIntegrationService
 
     const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
 
+    static $token = null;
+
     /**
      * Get Host from env file
      *
@@ -40,7 +42,9 @@ class IdpIntegrationService
 
         if (isset($response_data->access_token)) {
             // set this token in redis
-            Redis::set(self::IDP_TOKEN_REDIS_KEY, $response_data->access_token);
+            //Redis::set(self::IDP_TOKEN_REDIS_KEY, $response_data->access_token);
+            //
+            static::$token = $response_data->access_token;
         }
     }
 
@@ -52,11 +56,18 @@ class IdpIntegrationService
     public static function getToken()
     {
 
-        if (!Redis::get(self::IDP_TOKEN_REDIS_KEY)) {
+        // if (!Redis::get(self::IDP_TOKEN_REDIS_KEY)) {
+        //     static::setToken();
+        // }
+
+        // return Redis::get(self::IDP_TOKEN_REDIS_KEY);
+        
+        if (!static::$token) {
             static::setToken();
         }
 
-        return Redis::get(self::IDP_TOKEN_REDIS_KEY);
+        return static::$token;
+        
     }
 
 
