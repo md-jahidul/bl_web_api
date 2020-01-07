@@ -19,8 +19,8 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type)
     {
         return $this->model->where('status', 1)
-            ->productCore()
             ->startEndDate()
+            ->productCore()
             ->category($type)
             ->get();
     }
@@ -43,8 +43,8 @@ class ProductRepository extends BaseRepository
     public function detailProducts($type, $id)
     {
         return $data = $this->model->where('id', $id)
-            ->category($type)
             ->productCore()
+            ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }
@@ -52,8 +52,8 @@ class ProductRepository extends BaseRepository
     public function rechargeOffers()
     {
         return $this->model->whereIn('purchase_option', ['all', 'recharge'])
-            ->productCore()
             ->where('status', 1)
+            ->productCore()
             ->get();
     }
 
