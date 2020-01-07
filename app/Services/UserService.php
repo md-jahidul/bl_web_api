@@ -270,8 +270,6 @@ class UserService extends ApiBaseService
         $idpUser = $idpData->user;
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
 
-        dd($user);
-
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
@@ -372,7 +370,7 @@ class UserService extends ApiBaseService
         }
         $response = json_decode($response->getBody()->getContents(), true);
 
-        
+
         if ( $request->hasFile('profile_photo') && isset($path) ){
         		try {
         		    if ($path) {
