@@ -375,6 +375,8 @@ class ProductService extends ApiBaseService
         foreach ($bookmarkProduct as $item)
         {
             $product = $this->productRepository->bookmarkProduct($item->product_code);
+
+            dd($product);
             array_push($customerBookmarkProducts, $product);
         }
         foreach ($customerBookmarkProducts as $productCore) {

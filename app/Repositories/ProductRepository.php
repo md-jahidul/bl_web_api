@@ -62,9 +62,10 @@ class ProductRepository extends BaseRepository
         //TODO:add filter by start and end date
         //
         # check price range
-        $check_range = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first()->id;        
-    
-        
+        $check_range = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first()->id;
+
+        dd();
+
         return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
             ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
              product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
