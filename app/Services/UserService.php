@@ -108,7 +108,7 @@ class UserService extends ApiBaseService
         if( empty($getOtpInfo) ){
             return $this->sendErrorResponse('Token is Invalid or Expired', [], HttpStatusCode::UNAUTHORIZED);
         }
-        
+
         $data['otp'] = $request['otp'];
         $data['grant_type'] = "otp_grant";
         $data['client_id'] = config('apiurl.idp_otp_client_id');
@@ -118,7 +118,7 @@ class UserService extends ApiBaseService
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
         $tokenResponseData = json_decode($tokenResponse['data']);
 
-        
+
 
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
@@ -144,7 +144,7 @@ class UserService extends ApiBaseService
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
         if (!$user)
             return null;
-        
+
         $user_data = [];
         if( !empty($idpUserData) ){
 
@@ -155,7 +155,7 @@ class UserService extends ApiBaseService
             else{
                 $idpUserData = json_decode($idpUserData);
             }
-            
+
             $user_data["id"] = !empty($user->id) ? $user->id : null;
             $user_data["phone"] = !empty($user->phone) ? $user->phone : null;
             $user_data["customer_account_id"] = !empty($user->customer_account_id) ? $user->customer_account_id : null;
@@ -178,7 +178,7 @@ class UserService extends ApiBaseService
             $user_data = $user;
         }
 
-        
+
         $customerInfo['personal_data'] = $user_data;
 
         //Balance Info
@@ -266,10 +266,10 @@ class UserService extends ApiBaseService
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
-        
+
         $idpUser = $idpData->user;
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
-        
+
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
 
@@ -337,8 +337,8 @@ class UserService extends ApiBaseService
                 'contents' => fopen(storage_path('app/public/' . $path), 'r')
             ];
         }
-        
-        
+
+
         $requested_input = ['name', 'email', 'first_name', 'last_name', 'birth_date', 'gender', 'alternate_phone' ];
 
         foreach ($request->all() as $request_key => $request_value) {
@@ -349,11 +349,11 @@ class UserService extends ApiBaseService
                     'contents' => ($request->filled($request_key)) ? $request->input($request_key) : null
                 ];
             }
-            
+
 
         }
 
-        $client = new Client(); 
+        $client = new Client();
         $response = $client->post(
             config('apiurl.idp_host') . '/api/v1/customers/update/perform',
             [
@@ -370,7 +370,7 @@ class UserService extends ApiBaseService
         }
         $response = json_decode($response->getBody()->getContents(), true);
 
-        
+
         if ( $request->hasFile('profile_photo') && isset($path) ){
         		try {
         		    if ($path) {
@@ -380,7 +380,7 @@ class UserService extends ApiBaseService
         		    Log::error('Error in saving profile photo');
         		}
         }
-        
+
 
 
         # update customer table
@@ -392,7 +392,7 @@ class UserService extends ApiBaseService
         $data['msisdn'] = '88' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
-            
+
             $data['profile_image'] = isset($path) ? $path : null;
         }
 
