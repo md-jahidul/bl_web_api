@@ -66,6 +66,7 @@ class ProductRepository extends BaseRepository
 
         $check_product_code = !empty($check_product_code) ? $check_product_code : null;
         
+
         return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
             ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
              product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
