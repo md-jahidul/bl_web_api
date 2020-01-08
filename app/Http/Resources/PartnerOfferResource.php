@@ -27,7 +27,7 @@ class PartnerOfferResource extends JsonResource
             "get_offer_msg_bn" => $this->get_offer_msg_bn ?? null  ,
             "btn_text_en"  => $this->btn_text_en ?? null ,
             "btn_text_bn" => $this->btn_text_bn ?? null ,
-            "campaign_img" => (!empty($this->campaign_img)) ? env("IMAGE_HOST_URL") . $this->campaign_img : null,
+            "campaign_img" => (!empty($this->campaign_img)) ? config("filesystems.image_host_url") . $this->campaign_img : null,
             "is_campaign" => $this->is_campaign ?? null,
             "show_in_home" => $this->show_in_home ?? null,
             "is_active" => $this->is_active,
@@ -38,9 +38,7 @@ class PartnerOfferResource extends JsonResource
             "offer_type_bn" => $this->offer_type_bn ?? null,
             "company_name_en" => $this->company_name_en ?? null,
             "company_name_bn" =>  $this->company_name_bn,
-            "company_logo" => (!empty($this->company_logo)) ? env("IMAGE_HOST_URL") . $this->company_logo : null
-            // created_at: "2019-11-26 13:35:38", Optional
-            // updated_at: "2019-11-26 13:35:38", Optional
+            "company_logo" => (!empty($this->company_logo)) ? config("filesystems.image_host_url") . $this->company_logo : null
         ];
     }
 }
