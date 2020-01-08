@@ -213,15 +213,16 @@ class ProductService extends ApiBaseService
 
             $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
 
-
             if ($productDetail) {
                 $this->bindDynamicValues($productDetail, 'offer_info', $productDetail->productCore);
                 $productDetail->other_related_products = $this->findRelatedProduct($productDetail->other_related_product);
 
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
 
-                if (!empty($bondhoSImOffers)){
-                    $productDetail->other_related_products = $this->bindBondhoSimOffres($bondhoSImOffers);
+                if ($productDetail->other_offer_type_id == 13){
+                    if (!empty($bondhoSImOffers)){
+                        $productDetail->other_related_products = $this->bindBondhoSimOffres($bondhoSImOffers);
+                    }
                 }
 
                 $this->bindDynamicValues($productDetail->related_products, 'offer_info');
@@ -238,7 +239,6 @@ class ProductService extends ApiBaseService
             }
 
             return response()->error("Data Not Found!");
-
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
@@ -372,7 +372,7 @@ class ProductService extends ApiBaseService
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
-        
+
         $customerBookmarkProducts = [];
         foreach ($bookmarkProduct as $item)
         {
