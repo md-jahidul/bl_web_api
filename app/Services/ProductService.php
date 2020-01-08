@@ -339,6 +339,9 @@ class ProductService extends ApiBaseService
     {
         $amount = (double)$amount;
         $rechargeOffer = $this->productRepository->rechargeOfferByAmount($amount);
+
+        // dd($rechargeOffer);
+
         return $this->sendSuccessResponse($rechargeOffer, '');
     }
 
@@ -367,12 +370,14 @@ class ProductService extends ApiBaseService
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $bookmarkProduct = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
-
+        
         $customerBookmarkProducts = [];
         foreach ($bookmarkProduct as $item)
         {
             $product = $this->productRepository->bookmarkProduct($item->product_code);
-            array_push($customerBookmarkProducts, $product);
+            if( !empty($product) ){
+                array_push($customerBookmarkProducts, $product);
+            }
         }
         foreach ($customerBookmarkProducts as $productCore) {
             $data = $productCore['productCore'];
