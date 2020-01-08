@@ -337,10 +337,12 @@ class ProductService extends ApiBaseService
 
     public function rechargeOfferByAmount($amount)
     {
-        $amount = (double)$amount;
+        $amount = (int)$amount;
         $rechargeOffer = $this->productRepository->rechargeOfferByAmount($amount);
 
-        // dd($rechargeOffer);
+        if( !empty($rechargeOffer) ){
+            $rechargeOffer->price_tk = !empty($rechargeOffer->price_tk) ? (int)$rechargeOffer->price_tk : 0;
+        }
 
         return $this->sendSuccessResponse($rechargeOffer, '');
     }
