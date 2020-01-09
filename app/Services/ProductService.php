@@ -315,6 +315,8 @@ class ProductService extends ApiBaseService
         try {
             $rechargeOffers = $this->productRepository->rechargeOffers();
 
+            // dd($rechargeOffers);
+
             if ($this->isUserLoggedIn($request)) {
                 $rechargeOffers = $this->checkCustomerProduct($request, $rechargeOffers);
             }
