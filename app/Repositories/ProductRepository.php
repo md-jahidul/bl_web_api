@@ -53,7 +53,11 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->whereIn('purchase_option', ['all', 'recharge'])
             ->where('status', 1)
-            ->productCore()
+            ->whereHas('productCore', function($query){
+                $query->whereNotNull('recharge_product_code')
+                ->whereIn('platform', ['all', 'web']);
+            })
+            // ->productCore()
             ->get();
     }
 
