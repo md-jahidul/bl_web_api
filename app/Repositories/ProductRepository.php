@@ -72,7 +72,7 @@ class ProductRepository extends BaseRepository
              product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
             ->whereIn('products.purchase_option', ['recharge'])
             ->where('products.status', 1)
-            ->where('product_cores.platform', '=', 'web')
+            ->whereIn('product_cores.platform', '=', ['all', 'web'])
             // ->where('products.sim_category_id', 1) // Check prepaid sim type
             ->whereHas('sim_category', function ($query) {
                 $query->where('alias', 'prepaid');
