@@ -96,7 +96,6 @@ class ProductRepository extends BaseRepository
                 else{
                     return $query->where('product_cores.mrp_price', '=', $amount);
                 }
-                
 
             })
             ->orderBy('product_cores.mrp_price')
