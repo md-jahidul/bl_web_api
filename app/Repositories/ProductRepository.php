@@ -51,7 +51,7 @@ class ProductRepository extends BaseRepository
 
     public function rechargeOffers()
     {
-        return $this->model->whereIn('purchase_option', ['all', 'recharge'])
+        return $this->model->select('*')->whereIn('purchase_option', ['all', 'recharge'])
             ->where('status', 1)
             ->whereHas('productCore', function($query){
                 $query->whereNotNull('recharge_product_code')
