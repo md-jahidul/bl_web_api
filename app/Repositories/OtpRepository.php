@@ -48,7 +48,8 @@ class OtpRepository
 
             $otp->starts_at = Carbon::now();
 
-            $otp->expires_at = Carbon::now()->addMinutes(5);
+            // $otp->expires_at = Carbon::now()->addMinutes(5);
+            $otp->expires_at = Carbon::now()->addSeconds(30);  // otp expire change to 30 sec
 
             $otp->save();
 
@@ -63,7 +64,8 @@ class OtpRepository
 
         $this->model->starts_at = Carbon::now();
 
-        $this->model->expires_at = Carbon::now()->addMinutes(5);
+        // $this->model->expires_at = Carbon::now()->addMinutes(5);
+        $this->model->expires_at = Carbon::now()->addSeconds(30); // otp expire change to 30 sec
 
         return $this->model->save();
     }

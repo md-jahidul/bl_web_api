@@ -51,10 +51,21 @@ class ProductRepository extends BaseRepository
 
     public function rechargeOffers()
     {
-        return $this->model->whereIn('purchase_option', ['all', 'recharge'])
-            ->where('status', 1)
-            ->productCore()
+        return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
+            ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
+             product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
+            ->whereIn('products.purchase_option', ['all', 'recharge'])
+            ->where('products.status', 1)
+            ->whereIn('product_cores.platform', ['all', 'web'])
+            ->whereNotNull('product_cores.recharge_product_code')
             ->get();
+
+
+
+        // return $this->model->whereIn('purchase_option', ['all', 'recharge'])
+        //         ->where('status', 1)
+        //         ->productCore()
+        //         ->get();
     }
 
     public function rechargeOfferByAmount($amount)
@@ -62,17 +73,22 @@ class ProductRepository extends BaseRepository
         //TODO:add filter by start and end date
         //
         # check price range
-        $check_product_code = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first()->product_code;
+        $check_product_code = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first();
 
+<<<<<<< HEAD
         $check_product_code = !empty($check_product_code) ? $check_product_code : null;
 
+=======
+        $check_product_code = !empty($check_product_code->product_code) ? $check_product_code->product_code : null;
+        
+>>>>>>> f4a942c1df37b2a5355229ac4ee4a203c1726816
 
         return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
             ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
              product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate as callrate_offer,product_cores.sms_rate')
             ->whereIn('products.purchase_option', ['recharge'])
             ->where('products.status', 1)
-            ->where('product_cores.platform', '=', 'web')
+            ->whereIn('product_cores.platform', ['all', 'web'])
             // ->where('products.sim_category_id', 1) // Check prepaid sim type
             ->whereHas('sim_category', function ($query) {
                 $query->where('alias', 'prepaid');
