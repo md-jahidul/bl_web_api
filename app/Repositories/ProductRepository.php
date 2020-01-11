@@ -65,11 +65,11 @@ class ProductRepository extends BaseRepository
         $check_product_code = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first()->product_code;
 
         $check_product_code = !empty($check_product_code) ? $check_product_code : null;
-        
+
 
         return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
             ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
-             product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
+             product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate as callrate_offer,product_cores.sms_rate')
             ->whereIn('products.purchase_option', ['recharge'])
             ->where('products.status', 1)
             ->where('product_cores.platform', '=', 'web')
@@ -85,7 +85,7 @@ class ProductRepository extends BaseRepository
                 else{
                     return $query->where('product_cores.mrp_price', '=', $amount);
                 }
-                
+
 
             })
             ->orderBy('product_cores.mrp_price')
