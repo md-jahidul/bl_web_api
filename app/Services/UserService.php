@@ -215,7 +215,7 @@ class UserService extends ApiBaseService
         $this->otpRepository->createOtp($number, $otp, $encrypted_token);
 
         $data = [
-            'validation_time' => 300,
+            'validation_time' => 30,
             'otp_token' => $encrypted_token
         ];
 
