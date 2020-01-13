@@ -44,7 +44,6 @@ class HomePageController extends Controller
     // In PHP, By default objects are passed as reference copy to a new Object.
     public function bindDynamicValues($obj, $json_data = 'other_attributes')
     {
-
         if(!empty($obj->{ $json_data }))
         {
             foreach ($obj->{ $json_data } as $key => $value){
@@ -130,6 +129,7 @@ class HomePageController extends Controller
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
 
 
+
         if($id == 4){
 
             $partnerOffers =  DB::table('partner_offers as po')
@@ -141,9 +141,8 @@ class HomePageController extends Controller
                 ->orderBy('po.display_order')
                 ->get();
 
-//            dd($partnerOffers);
-
             $slider->data = PartnerOfferResource::collection($partnerOffers);
+
         }else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
@@ -189,6 +188,7 @@ class HomePageController extends Controller
 
             $homePageData = [];
             foreach ($componentList as $component) {
+
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
             }
 
