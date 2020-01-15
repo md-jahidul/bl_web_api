@@ -46,7 +46,7 @@ class UserProfileController extends Controller
 
             // TODO: Done:check file size validation
             $validator = Validator::make($request->all(), [
-                'profile_photo' => 'required|mimes:jpeg,png|size:2000' // 2M
+                'profile_photo' => 'required|mimes:jpeg,png|max:2000' // 2M
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
