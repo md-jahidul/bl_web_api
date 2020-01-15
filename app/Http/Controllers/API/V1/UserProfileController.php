@@ -43,6 +43,16 @@ class UserProfileController extends Controller
     public function updateProfileImage(Request $request)
     {
         if ($request->hasFile('profile_photo')) {
+
+            // TODO: Done:check file size validation
+            $validator = Validator::make($request->all(), [
+                'profile_photo' => 'required|mimes:jpeg,png|size:2000' // 2M
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
+            }
+            
+
             return $this->userService->uploadProfileImage($request);
         } else {
             return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);

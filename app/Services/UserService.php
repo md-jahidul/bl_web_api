@@ -84,6 +84,7 @@ class UserService extends ApiBaseService
     {
         $mobile = $request->mobile;
         $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
+        
         if ($validationResponse->getData()->status == 'FAIL') {
             return $validationResponse;
         }
@@ -116,9 +117,8 @@ class UserService extends ApiBaseService
         $data['username'] = $request['mobile'];
 
         $tokenResponse = IdpIntegrationService::otpGrantTokenRequest($data);
+
         $tokenResponseData = json_decode($tokenResponse['data']);
-
-
 
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
@@ -210,12 +210,14 @@ class UserService extends ApiBaseService
 
         $encrypted_token = Crypt::encryptString($token);
 
-        $otp = $this->generateNumericOTP(6);
+        //$otp = $this->generateNumericOTP(6);
+        // OTP now send from BL services
+        $otp = null;
 
         $this->otpRepository->createOtp($number, $otp, $encrypted_token);
 
         $data = [
-            'validation_time' => 30,
+            'validation_time' => config('apiconfig.opt_token_expiry'),
             'otp_token' => $encrypted_token
         ];
 
@@ -257,7 +259,7 @@ class UserService extends ApiBaseService
 
 
     public function viewProfile($request)
-    {
+    {   
         $bearerToken = ['token' => $request->header('authorization')];
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
@@ -268,6 +270,7 @@ class UserService extends ApiBaseService
         }
 
         $idpUser = $idpData->user;
+        // dd($idpUser);
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
 
         return $this->sendSuccessResponse($user, 'Data found', []);
