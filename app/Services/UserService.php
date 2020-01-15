@@ -257,7 +257,7 @@ class UserService extends ApiBaseService
 
 
     public function viewProfile($request)
-    {
+    {   
         $bearerToken = ['token' => $request->header('authorization')];
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
@@ -268,6 +268,7 @@ class UserService extends ApiBaseService
         }
 
         $idpUser = $idpData->user;
+        // dd($idpUser);
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
 
         return $this->sendSuccessResponse($user, 'Data found', []);
