@@ -32,7 +32,7 @@ class LoyaltyService extends ApiBaseService
     public function getPriyojonStatus($mobile)
     {
         $subscriberId = substr($mobile, 1);
-        $subscriberId = '1903303978'; //TODO: Remove from production
+        //$subscriberId = '1903303978'; //TODO: Remove from production
 
         $result = $this->blLoyaltyService->getPriyojonStatus($subscriberId);
         return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
@@ -41,7 +41,7 @@ class LoyaltyService extends ApiBaseService
     public function getRedeemOptions($mobile)
     {
         $subscriberId = substr($mobile, 1);
-        $subscriberId = '1903303978'; //TODO: Remove from production
+        //$subscriberId = '1903303978'; //TODO: Remove from production
 
         $result = $this->blLoyaltyService->getRedeemOptions($subscriberId);
         return $this->sendSuccessResponse($result['data'], 'Loyalty data');
