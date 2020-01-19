@@ -37,6 +37,8 @@ class BanglalinkOtpService extends BaseService
         $message = "Your OTP is #"
     ) {
 
+        $validity = config('apiconfig.opt_token_expiry');
+
         $expire = number_format(($validity / 60));
 
         $message =  "Your OTP is " . $tokenChar . ". This OTP will be expired within " . $expire . " minutes.";
