@@ -211,6 +211,10 @@ class ProductService extends ApiBaseService
         try {
             $productDetail = $this->productRepository->detailProducts($type, $id);
 
+            $rechargeBenefitsId = $productDetail->product_details->other_attributes['recharge_benefits_code'];
+
+            $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeBenefitsId);
+
             $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
 
             if ($productDetail) {
@@ -223,6 +227,10 @@ class ProductService extends ApiBaseService
                     if (!empty($bondhoSImOffers)){
                         $productDetail->other_related_products = $this->bindBondhoSimOffres($bondhoSImOffers);
                     }
+                }
+
+                if ($rechargeBenefitOffer){
+                    $productDetail->recharge_benefit = $rechargeBenefitOffer;
                 }
 
                 $this->bindDynamicValues($productDetail->related_products, 'offer_info');

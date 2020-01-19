@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use App\Models\ProductCore;
 use App\Models\ProductPriceSlab;
 use Carbon\Carbon;
 
@@ -44,6 +45,7 @@ class ProductRepository extends BaseRepository
     {
         return $data = $this->model->where('id', $id)
             ->productCore()
+            ->select('id', 'product_code', 'name_en', 'name_bn', 'ussd_bn', 'offer_info', 'status', 'purchase_option', 'like')
             ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
@@ -117,6 +119,29 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->where('product_code', $productCode)
             ->productCore()
+            ->first();
+    }
+
+    public function rechargeBenefitsOffer($productCode)
+    {
+        return ProductCore::where('recharge_product_code', $productCode)
+            ->select(
+                'product_code',
+                'activation_ussd as ussd_en',
+                'balance_check_ussd',
+                'price',
+                'vat',
+                'mrp_price as price_tk',
+                'validity as validity_days',
+                'validity_unit',
+                'internet_volume_mb',
+                'sms_volume',
+                'minute_volume',
+                'call_rate as callrate_offer',
+                'sms_rate as sms_rate_offer',
+                'renew_product_code',
+                'recharge_product_code'
+            )
             ->first();
     }
 
