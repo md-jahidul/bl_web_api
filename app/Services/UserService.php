@@ -328,8 +328,8 @@ class UserService extends ApiBaseService
 
         #update data to ID
         $path = null;
-        Log::info(print_r($path));
-        Log::info('eeeee');
+        // Log::info(print_r($path));
+        // Log::info('eeeee');
 
         if ($request->hasFile('profile_photo')){
             $path = $this->uploadImage($request);
