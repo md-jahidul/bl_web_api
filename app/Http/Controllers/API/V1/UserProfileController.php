@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\API\V1\ConfigController;
 
 class UserProfileController extends Controller
 {
@@ -37,12 +38,37 @@ class UserProfileController extends Controller
 
     public function update(Request $request)
     {
+        # Image validation check
+        $image_upload_size = ConfigController::customerImageUploadSize();
+        $image_upload_type = ConfigController::customerImageUploadType();
+
+        $validator = Validator::make($request->all(), [
+            'profile_photo' => 'required|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
+        ]);
+        if ($validator->fails()) {
+            // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+            return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+        }
+
         return $this->userService->updateProfile($request);
     }
 
     public function updateProfileImage(Request $request)
     {
         if ($request->hasFile('profile_photo')) {
+
+            // TODO: Done:check file size validation
+            $image_upload_size = ConfigController::customerImageUploadSize();
+            $image_upload_type = ConfigController::customerImageUploadType();
+
+            $validator = Validator::make($request->all(), [
+                'profile_photo' => 'required|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+            }
+            
+
             return $this->userService->uploadProfileImage($request);
         } else {
             return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);

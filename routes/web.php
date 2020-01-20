@@ -1,4 +1,5 @@
 <?php
+//header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
 /*
 |--------------------------------------------------------------------------
 | Web Routes

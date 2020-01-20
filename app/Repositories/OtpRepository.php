@@ -40,6 +40,8 @@ class OtpRepository
     public function createOtp($phone, $otp_token, $encrypted_token)
     {
         $otp = $this->model->where('phone', $phone)->first();
+        # OTP expiry in sec
+        $otp_expiry = config('apiconfig.opt_token_expiry');
 
         if ($otp) {
             $otp->otp = $otp_token;
@@ -49,7 +51,7 @@ class OtpRepository
             $otp->starts_at = Carbon::now();
 
             // $otp->expires_at = Carbon::now()->addMinutes(5);
-            $otp->expires_at = Carbon::now()->addSeconds(30);  // otp expire change to 30 sec
+            $otp->expires_at = Carbon::now()->addSeconds($otp_expiry);  // otp expire changed
 
             $otp->save();
 
@@ -65,7 +67,7 @@ class OtpRepository
         $this->model->starts_at = Carbon::now();
 
         // $this->model->expires_at = Carbon::now()->addMinutes(5);
-        $this->model->expires_at = Carbon::now()->addSeconds(30); // otp expire change to 30 sec
+        $this->model->expires_at = Carbon::now()->addSeconds($otp_expiry); // otp expire changed
 
         return $this->model->save();
     }
@@ -80,6 +82,8 @@ class OtpRepository
      */
     public function updateOtpInfo($phone, $otp_token, $encrypted_token)
     {
+        $otp_expiry = config('apiconfig.opt_token_expiry');
+        
         $otp = $this->model->where('phone', $phone)->first();
 
         $otp->otp = $otp_token;
@@ -88,7 +92,7 @@ class OtpRepository
 
         $otp->starts_at = Carbon::now();
 
-        $otp->expires_at = Carbon::now()->addMinutes(5);
+        $otp->expires_at = Carbon::now()->addSeconds($otp_expiry);
 
         $otp->save();
 

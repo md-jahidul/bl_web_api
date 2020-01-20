@@ -1,4 +1,7 @@
 <?php
+//header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
+//header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
