@@ -240,7 +240,7 @@ class RegistrationService extends ApiBaseService
             $validation_time = $conf[0]['validation_time'];
             $otp_bl = $this->blOtpService->sendOtp($number, $conf[0]['token_length_string'], "#", $validation_time);
         } else {
-            $validation_time = 300;
+            $validation_time = config('apiconfig.opt_token_expiry');
             $otp_bl = $this->blOtpService->sendOtp($number);
         }
 

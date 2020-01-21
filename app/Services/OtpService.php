@@ -39,7 +39,7 @@ class OtpService extends ApiBaseService
                 $data = collect([
                     (object) [
                         'token_length_number'  => 6,
-                        'validation_time'      => 300
+                        'validation_time'      => config('apiconfig.opt_token_expiry')
                     ]
                 ]);
             }
