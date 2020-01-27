@@ -47,7 +47,7 @@ class UserProfileController extends Controller
         ]);
         if ($validator->fails()) {
             // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
-            return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
         }
 
         return $this->userService->updateProfile($request);
