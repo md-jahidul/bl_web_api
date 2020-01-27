@@ -54,7 +54,8 @@ class UserProfileController extends Controller
     }
 
     public function updateProfileImage(Request $request)
-    {
+    {   
+
         if ($request->hasFile('profile_photo')) {
 
             // TODO: Done:check file size validation
@@ -65,7 +66,8 @@ class UserProfileController extends Controller
                 'profile_photo' => 'required|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+                // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+                return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
             }
             
 
