@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Enums\OfferType;
 use App\Exceptions\IdpAuthException;
 use App\Models\Product;
 use App\Models\ProductCore;
@@ -70,11 +71,11 @@ class ProductService extends ApiBaseService
         $this->setActionRepository($productRepository);
     }
 
-    /**
+    /***
      * @param $obj
      * @param string $json_data
-     * In PHP, By default objects are passed as reference copy to a new Object.
      * @param null $data
+     * @return mixed
      */
     public function bindDynamicValues($obj, $json_data = 'other_attributes', $data = null)
     {
@@ -82,28 +83,31 @@ class ProductService extends ApiBaseService
             foreach ($obj->{$json_data} as $key => $value) {
                 $obj->{$key} = $value;
             }
+            unset($obj->{$json_data});
         }
         // Product Core Data BindDynamicValues
         $data = json_decode($data);
+
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $obj->{$key} = $value;
             }
+            return $obj;
         }
-        unset($obj->{$json_data});
     }
 
     /**
      * @param $products
      * @return array
      */
-    public function findRelatedProduct($products)
+    public function findRelatedProduct($products = null, $otherProduct = null)
     {
         $data = [];
         foreach ($products as $product) {
             $findProduct = $this->productRepository->relatedProducts($product->related_product_id);
             array_push($data, $findProduct);
         }
+
         foreach ($data as $product) {
             $this->bindDynamicValues($product, '', $product->productCore);
             unset($product->productCore);
@@ -212,9 +216,20 @@ class ProductService extends ApiBaseService
         try {
             $productDetail = $this->productRepository->detailProducts($type, $id);
 
-            $rechargeBenefitsId = $productDetail->product_details->other_attributes['recharge_benefits_code'];
+            $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
+            $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
 
-            $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeBenefitsId);
+
+            $specialProductOffers = isset($productDetail->product_details->other_attributes['special_product_id']) ? $productDetail->product_details->other_attributes['special_product_id'] : null;
+
+            if ($specialProductOffers){
+                foreach ($specialProductOffers as $productId)
+                {
+                    $specialProducts[] = $this->productRepository->relatedProducts($productId);
+                }
+            }
+
+
 
             $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
 
@@ -224,7 +239,7 @@ class ProductService extends ApiBaseService
 
                 $productDetail->related_products = $this->findRelatedProduct($productDetail->related_product);
 
-                if ($productDetail->other_offer_type_id == 13){
+                if ($productDetail->other_offer_type_id == OfferType::BONDHO_SIM_OFFER){
                     if (!empty($bondhoSImOffers)){
                         $productDetail->other_related_products = $this->bindBondhoSimOffres($bondhoSImOffers);
                     }
@@ -232,6 +247,14 @@ class ProductService extends ApiBaseService
 
                 if ($rechargeBenefitOffer){
                     $productDetail->recharge_benefit = $rechargeBenefitOffer;
+                }
+
+                if (isset($specialProducts)){
+                    foreach ($specialProducts as $specialProduct) {
+                        $product[] = $this->bindDynamicValues($specialProduct, 'offer_info', $specialProduct->productCore);
+                        unset($specialProduct->productCore);
+                    }
+                    $productDetail->special_products = $product;
                 }
 
                 $this->bindDynamicValues($productDetail->related_products, 'offer_info');

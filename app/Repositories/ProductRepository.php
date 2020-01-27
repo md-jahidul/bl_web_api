@@ -53,15 +53,6 @@ class ProductRepository extends BaseRepository
 
     public function rechargeOffers()
     {
-//        return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
-//            ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
-//             product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate,product_cores.sms_rate')
-//            ->whereIn('products.purchase_option', ['all', 'recharge'])
-//            ->where('products.status', 1)
-//            ->whereIn('product_cores.platform', ['all', 'web'])
-//            ->whereNotNull('product_cores.recharge_product_code')
-//            ->get();
-
          return $this->model->where('purchase_option', 'recharge')
                  ->where('status', 1)
                  ->productCore()
@@ -108,6 +99,7 @@ class ProductRepository extends BaseRepository
     public function relatedProducts($id)
     {
         return $this->model->where('id', $id)
+            ->select('id', 'product_code', 'name_en', 'name_bn', 'ussd_bn', 'tag_category_id', 'sim_category_id', 'offer_category_id', 'like')
             ->productCore()
             ->first();
     }
@@ -121,25 +113,27 @@ class ProductRepository extends BaseRepository
 
     public function rechargeBenefitsOffer($productCode)
     {
-        return ProductCore::where('recharge_product_code', $productCode)
-            ->select(
-                'product_code',
-                'activation_ussd as ussd_en',
-                'balance_check_ussd',
-                'price',
-                'vat',
-                'mrp_price as price_tk',
-                'validity as validity_days',
-                'validity_unit',
-                'internet_volume_mb',
-                'sms_volume',
-                'minute_volume',
-                'call_rate as callrate_offer',
-                'sms_rate as sms_rate_offer',
-                'renew_product_code',
-                'recharge_product_code'
-            )
-            ->first();
+        if ($productCode) {
+            return ProductCore::where('recharge_product_code', $productCode)
+                ->select(
+                    'product_code',
+                    'activation_ussd as ussd_en',
+                    'balance_check_ussd',
+                    'price',
+                    'vat',
+                    'mrp_price as price_tk',
+                    'validity as validity_days',
+                    'validity_unit',
+                    'internet_volume_mb',
+                    'sms_volume',
+                    'minute_volume',
+                    'call_rate as callrate_offer',
+                    'sms_rate as sms_rate_offer',
+                    'renew_product_code',
+                    'recharge_product_code'
+                )
+                ->first();
+        }
     }
 
     public function bondhoSimOffer()
