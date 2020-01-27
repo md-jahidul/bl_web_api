@@ -43,7 +43,7 @@ class UserProfileController extends Controller
         $image_upload_type = ConfigController::customerImageUploadType();
 
         $validator = Validator::make($request->all(), [
-            'profile_photo' => 'required|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
+            'profile_photo' => 'nullable|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
         ]);
         if ($validator->fails()) {
             // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
@@ -73,7 +73,8 @@ class UserProfileController extends Controller
 
             return $this->userService->uploadProfileImage($request);
         } else {
-            return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);
+            // return response()->json(['profile_photo' => 'Profile photo is required'], HttpStatusCode::VALIDATION_ERROR);
+            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  'Profile photo is required', 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
         }
     }
 
