@@ -107,10 +107,9 @@ class HomePageController extends Controller
 
     public function getQuickLaunchData()
     {
-        $quickLaunchItems = $this->quickLaunchService->itemList('panel');
         return  [
             "component"=> "QuickLaunch",
-            "data" => QuickLaunchResource::collection($quickLaunchItems)
+            "data" => $quickLaunchItems = $this->quickLaunchService->itemList('panel')
         ];
     }
 
