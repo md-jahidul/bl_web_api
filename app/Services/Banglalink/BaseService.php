@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Services\Banglalink;
+use Illuminate\Support\Facades\Redis;
 
 class BaseService
 {
+
+    const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
 
     /**
      * Return BL API Host
@@ -22,9 +25,14 @@ class BaseService
      */
     protected function makeHeader()
     {
+        $client_token = Redis::get(self::IDP_TOKEN_REDIS_KEY);
+        $customer_token = app('request')->bearerToken();
+
         $header = [
             'Accept: application/vnd.banglalink.apihub-v1.0+json',
-            'Content-Type: application/vnd.banglalink.apihub-v1.0+json'
+            'Content-Type: application/vnd.banglalink.apihub-v1.0+json',
+            'client_authorization:' . $client_token,
+            'customer_authorization:' . $customer_token
         ];
 
         return $header;

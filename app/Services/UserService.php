@@ -270,7 +270,7 @@ class UserService extends ApiBaseService
         }
 
         $idpUser = $idpData->user;
-        // dd($idpUser);
+        
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
 
         return $this->sendSuccessResponse($user, 'Data found', []);
