@@ -30,6 +30,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
 
+    // QUICK LAUNCH  ====================================
+    Route::get('quick-launch/button', 'API\V1\QuickLaunchController@getQuickLaunchItems');
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
     Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
@@ -50,7 +52,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
     Route::get('ssl/request/details','API\V1\SslCommerzController@getRequestDetails');
-    Route::post('success','API\V1\SslCommerzController@success');   
+    Route::post('success','API\V1\SslCommerzController@success');
     Route::post('failure','API\V1\SslCommerzController@failure');
     Route::post('cancel','API\V1\SslCommerzController@cancel');
 
