@@ -33,6 +33,9 @@ Route::group(['prefix' => '/v1'], function () {
     // QUICK LAUNCH  ====================================
     Route::get('quick-launch/button', 'API\V1\QuickLaunchController@getQuickLaunchItems');
 
+    //AMAR OFFER ========================================
+    Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
+
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
     Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
     Route::get('customer/product/bookmark','API\V1\ProductController@getCustomerBookmarkProducts');

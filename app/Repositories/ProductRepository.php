@@ -143,4 +143,12 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    public function amarOffers()
+    {
+        return $this->model->where('is_amar_offer',  1)
+            ->select('id', 'product_code', 'name_en', 'name_bn', 'ussd_bn', 'tag_category_id', 'sim_category_id', 'offer_category_id', 'like', 'is_amar_offer')
+            ->productCore()
+            ->get();
+    }
+
 }
