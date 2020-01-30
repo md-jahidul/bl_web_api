@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\AmarOfferBuyException;
+use App\Exceptions\IdpAuthException;
 use App\Exceptions\TokenInvalidException;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
@@ -57,8 +58,6 @@ class AmarOfferService extends BaseService
         return "/product-offer/offer/purchase-offer";
     }
 
-
-
     public function prepareAmarOfferList($data)
     {
         $offers = [];
@@ -83,6 +82,11 @@ class AmarOfferService extends BaseService
         return $viewableProducts;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws IdpAuthException
+     */
     public function getAmarOfferList(Request $request)
     {
         $amarOffers = $this->productRepository->amarOffers();
