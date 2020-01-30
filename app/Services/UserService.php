@@ -508,8 +508,6 @@ class UserService extends ApiBaseService
 
         $tokenResponseData = json_decode($tokenResponse['data']);
 
-        dd($tokenResponseData);
-
         if ($tokenResponse['http_code'] != 200) {
             return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
         }
