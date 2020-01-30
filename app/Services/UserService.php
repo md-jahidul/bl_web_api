@@ -491,4 +491,60 @@ class UserService extends ApiBaseService
         }
         return $randomString;
     }
+
+
+    public function getRefreshToken($request)
+    {
+        // $bearerToken = $request->bearerToken();
+        $request = $request->all();
+        
+        $data['grant_type'] = "refresh_token";
+        $data['client_id'] = config('apiurl.idp_client_id');
+        $data['client_secret'] = config('apiurl.idp_client_secret');
+        // $data['refresh_token'] = $bearerToken;
+        $data['refresh_token'] = $request['refresh_token'];
+
+        $tokenResponse = IdpIntegrationService::otpRefreshTokenRequest($data);
+
+        $tokenResponseData = json_decode($tokenResponse['data']);
+
+        dd($tokenResponseData);
+
+        if ($tokenResponse['http_code'] != 200) {
+            return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
+        }
+        else {
+           // $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
+
+           // $customerInfo = $this->getCustomerInfo($request['mobile'], (object)$idpCus);
+
+           $profileData = [
+               'token' => $tokenResponseData,
+               // 'customerInfo' => $customerInfo,
+           ];
+
+           return $this->sendSuccessResponse($profileData, "Data found");
+        }
+
+
+        
+
+        // if (isset($response['error'])) {
+        //     return $this->sendErrorResponse(
+        //         $response['message'],
+        //         [
+        //             'message' => "The refresh token is invalid."
+        //         ],
+        //         HttpStatusCode::UNAUTHORIZED
+        //     );
+        // }
+
+        // return $this->sendSuccessResponse(
+        //     json_decode($token['response']),
+        //     "Refresh Token",
+        //     [],
+        //     HttpStatusCode::SUCCESS
+        // );
+    }
+
 }

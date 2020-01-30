@@ -68,6 +68,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 
+    // Refresh token
+    Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
+
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan', 'API\V1\ProductController@customerLoanProducts');
@@ -78,4 +81,7 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
+
+
+
 });
