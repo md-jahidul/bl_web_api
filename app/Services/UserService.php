@@ -495,14 +495,13 @@ class UserService extends ApiBaseService
 
     public function getRefreshToken($request)
     {
-        // $bearerToken = $request->bearerToken();
+        $bearerToken = $request->bearerToken();
         $request = $request->all();
         
         $data['grant_type'] = "refresh_token";
-        $data['client_id'] = config('apiurl.idp_client_id');
-        $data['client_secret'] = config('apiurl.idp_client_secret');
-        // $data['refresh_token'] = $bearerToken;
-        $data['refresh_token'] = $request['refresh_token'];
+        $data['client_id'] = config('apiurl.idp_otp_client_id');
+        $data['client_secret'] = config('apiurl.idp_otp_client_secret');
+        $data['refresh_token'] = $bearerToken;
 
         $tokenResponse = IdpIntegrationService::otpRefreshTokenRequest($data);
 
