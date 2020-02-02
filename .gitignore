@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
+/nbproject
 .env
 .phpunit.result.cache
 Homestead.json
@@ -11,3 +12,4 @@ npm-debug.log
 yarn-error.log
 .idea
 /public/slider-images
+/nbproject/private/
