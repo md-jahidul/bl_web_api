@@ -71,17 +71,11 @@ class AmarOfferService extends BaseService
         return $offers;
     }
 
-    public function findByProductOfferId($allProducts, $availableProductIds)
-    {
-        $viewableProducts = [];
-        foreach ($allProducts as $product) {
-            if (in_array($product->productCore['offer_id'], $availableProductIds)) {
-                array_push($viewableProducts, $product);
-            }
-        }
-        return $viewableProducts;
-    }
-
+    /**
+     * @param $offer
+     * @param bool $include_details
+     * @return array
+     */
     private function parseOfferData($offer, $include_details = true)
     {
         $offer_details = [];
@@ -150,24 +144,11 @@ class AmarOfferService extends BaseService
      */
     public function getAmarOfferList(Request $request)
     {
-//        $amarOffers = $this->productRepository->amarOffers();
-
         $customerInfo = $this->customerService->getCustomerDetails($request);
 
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
 
         $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-
-
-//        foreach (json_decode($response_data['response']) as $key=> $item){
-//            $offerID[] = $item->offerID;
-//        }
-//        $amarOfferList = $this->findByProductOfferId($amarOffers, $offerID);
-//
-//        foreach ($amarOfferList as $product) {
-//            $this->productService->bindDynamicValues($product, '', $product->productCore);
-//            unset($product->productCore);
-//        }
 
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
     }
