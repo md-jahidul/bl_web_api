@@ -82,6 +82,67 @@ class AmarOfferService extends BaseService
         return $viewableProducts;
     }
 
+    private function parseOfferData($offer, $include_details = true)
+    {
+        $offer_details = [];
+        $offer_description = $offer->offerDescriptionWeb;
+        $offers = explode(';', $offer_description);
+        $is_tariff_offer = false;
+
+        $offer_details ['offer_id'] = $offer->offerID;
+
+        if ($include_details) {
+            $offer_details ['offer_name'] = $offer->offerName;
+            $offer_details ['description'] = $offer->offerLongDescription;
+        }
+
+        foreach ($offers as $segment) {
+            $data = explode('|', $segment);
+            $type = $data[0];
+            switch ($type) {
+                case "VOICE":
+                    $offer_details ['minutes'] = (int)$data[1];
+                    break;
+                case "SMS":
+                    $offer_details ['sms'] = (int)$data[1];
+                    break;
+                case "DATA":
+                    if (strtolower($data[2]) == 'gb') {
+                        $mb = (int)$data[1] * 1024 ;
+                    } else {
+                        $mb = (int)$data[1];
+                    }
+                    $offer_details ['internet'] = $mb;
+                    break;
+                case "TK":
+                    $offer_details ['price'] = (int)$data[1];
+                    break;
+                case "VAL":
+                    $offer_details ['validity'] = (int)$data[1];
+                    $offer_details ['validity_unit'] = ucfirst(strtolower($data[2]));
+                    break;
+                case "CAT":
+                    if ($data[1] == "DAT"){
+                        $offerType = "data";
+                    } elseif ($data[1] == "VOI"){
+                        $offerType = "voice";
+                    } else{
+                        $offerType = $data[1];
+                    }
+                    $offer_details['offer_type'] = strtolower($offerType);
+                    if ($data[1] == 'TAR') {
+                        $is_tariff_offer = true;
+                    };
+                    break;
+            }
+        }
+
+        if (!$is_tariff_offer) {
+            $offer_details ['tag'] = null;
+            return $offer_details;
+        }
+    }
+
     /**
      * @param Request $request
      * @return JsonResponse
@@ -89,24 +150,26 @@ class AmarOfferService extends BaseService
      */
     public function getAmarOfferList(Request $request)
     {
-        $amarOffers = $this->productRepository->amarOffers();
+//        $amarOffers = $this->productRepository->amarOffers();
 
         $customerInfo = $this->customerService->getCustomerDetails($request);
 
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
 
-        foreach (json_decode($response_data['response']) as $key=> $item){
-            $offerID[] = $item->offerID;
-        }
+        $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
 
-        $amarOfferList = $this->findByProductOfferId($amarOffers, $offerID);
 
-        foreach ($amarOfferList as $product) {
-            $this->productService->bindDynamicValues($product, '', $product->productCore);
-            unset($product->productCore);
-        }
+//        foreach (json_decode($response_data['response']) as $key=> $item){
+//            $offerID[] = $item->offerID;
+//        }
+//        $amarOfferList = $this->findByProductOfferId($amarOffers, $offerID);
+//
+//        foreach ($amarOfferList as $product) {
+//            $this->productService->bindDynamicValues($product, '', $product->productCore);
+//            unset($product->productCore);
+//        }
 
-        return $this->responseFormatter->sendSuccessResponse($amarOfferList, 'Amar Offer List');
+        return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
     }
 
     public function getAmarOfferDetails(Request $request)
