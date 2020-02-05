@@ -2,39 +2,46 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
-use App\Models\AmarOfferDetails;
-//use App\Http\Requests\AmarOfferDetailsRequest;
-//use App\Http\Requests\BuyAmarOfferRequest;
-//use App\Http\Requests\UsageHistoryRequest;
 use App\Services\Banglalink\AmarOfferService;
-//use App\Services\Banglalink\CustomerSmsUsageService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use DB;
 
 class AmarOfferController extends Controller
 {
-    protected $service;
-    private $offerDetails;
+    /**
+     * @var AmarOfferService
+     */
+    protected $amarOfferService;
 
-    public function __construct(AmarOfferService $service, AmarOfferDetails $offerDetails)
+    /**
+     * AmarOfferController constructor.
+     * @param AmarOfferService $amarOfferService
+     */
+    public function __construct(AmarOfferService $amarOfferService)
     {
-        $this->service = $service;
-        $this->offerDetails = $offerDetails;
-//        $this->middleware('idp.verify');
+        $this->amarOfferService = $amarOfferService;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws IdpAuthException
+     */
     public function getAmarOfferList(Request $request)
     {
-        return $this->service->getAmarOfferList($request);
+        return $this->amarOfferService->getAmarOfferList($request);
     }
-    
-    public function getAmarOfferDetails($type){
-        $details = $this->offerDetails
-                ->select(DB::raw('details_en, details_bn, CASE type WHEN 1 THEN "Internet" WHEN 2 THEN "Voice" ELSE "Bundle" END as type'))
-                ->where('type', $type)->first();
-        
-        return $details;
+
+    /**
+     * @param $type
+     * @return JsonResponse
+     */
+    public function getAmarOfferDetails($type)
+    {
+        return $this->amarOfferService->getAmarOfferDetails($type);
     }
 
 //    public function buyAmarOffer(BuyAmarOfferRequest $request)
