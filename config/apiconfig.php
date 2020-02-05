@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'opt_token_expiry' => 30, // In secconds
+    'opt_token_expiry' => 300, // In secconds
 ];
 
 ?>

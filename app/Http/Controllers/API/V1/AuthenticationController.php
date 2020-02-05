@@ -68,4 +68,12 @@ class AuthenticationController extends Controller
     {
         return ['mobile' => 'required'];
     }
+
+
+    public function getRefreshToken(Request $request){
+
+        return $this->userService->getRefreshToken($request);
+
+    }
+
 }

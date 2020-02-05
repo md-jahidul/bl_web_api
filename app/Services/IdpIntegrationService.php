@@ -133,6 +133,18 @@ class IdpIntegrationService
 
 
     /**
+     * Send request for user login
+     *
+     * @param $data
+     * @return string
+     */
+    public static function otpRefreshTokenRequest($data)
+    {
+        return static::post('/oauth/token', $data);
+    }
+
+
+    /**
      * Send Request for update password
      *
      * @param $data
@@ -239,7 +251,7 @@ class IdpIntegrationService
      * @return string
      */
     private static function makeMethod($method, $url, $body = [], $headers = null)
-    {
+    {   
         $ch = curl_init();
         $headers = $headers ?: static::makeHeader();
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));

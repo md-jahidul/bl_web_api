@@ -35,6 +35,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     //AMAR OFFER ========================================
     Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
+    Route::get('amar-offer-details/{type}', 'API\V1\AmarOfferController@getAmarOfferDetails');
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
     Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
@@ -73,6 +74,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 
+    // Refresh token
+    Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
+
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan', 'API\V1\ProductController@customerLoanProducts');
@@ -83,4 +87,12 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
+    
+    //Easy payment card
+     Route::get('easy-payment-cards', 'API\V1\EasyPaymentCardController@cardList');
+     Route::get('easy-payment-area-list', 'API\V1\EasyPaymentCardController@getAreaList');
+   
+
+
+
 });
