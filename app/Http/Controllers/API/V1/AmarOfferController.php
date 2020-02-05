@@ -35,15 +35,6 @@ class AmarOfferController extends Controller
         return $this->amarOfferService->getAmarOfferList($request);
     }
 
-    /**
-     * @param $type
-     * @return JsonResponse
-     */
-    public function getAmarOfferDetails($type)
-    {
-        return $this->amarOfferService->getAmarOfferDetails($type);
-    }
-
 //    public function buyAmarOffer(BuyAmarOfferRequest $request)
 //    {
 //        return $this->service->buyAmarOffer($request);

@@ -16,6 +16,8 @@ class AmarOfferDetailsRepository extends BaseRepository
      */
     public function offerDetails($type)
     {
-        return $this->model->where('type', $type)->first();
+        return $this->model->where('type', $type)
+            ->select('details_en', 'details_bn', 'type')
+            ->first();
     }
 }

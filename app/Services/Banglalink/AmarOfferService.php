@@ -120,17 +120,13 @@ class AmarOfferService extends BaseService
                         $offerType = $data[1];
                     }
                     $offer_details['offer_type'] = strtolower($offerType);
-                    if ($data[1] == 'TAR') {
-                        $is_tariff_offer = true;
-                    };
+
+                    $offer_details['offer_details'] = $this->getAmarOfferDetails($offerType);
                     break;
             }
         }
 
-        if (!$is_tariff_offer) {
-            $offer_details ['tag'] = null;
-            return $offer_details;
-        }
+        return $offer_details;
     }
 
     /**
@@ -148,8 +144,7 @@ class AmarOfferService extends BaseService
 
     public function getAmarOfferDetails($type)
     {
-        $offerDetails = $this->amarOfferDetailsRepository->offerDetails($type);
-        return $this->responseFormatter->sendSuccessResponse($offerDetails, 'Amar Offer Details');
+        return $this->amarOfferDetailsRepository->offerDetails($type);
     }
 
 //    private function prepareBuyOfferResponse($response)
