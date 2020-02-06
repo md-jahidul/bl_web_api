@@ -89,8 +89,11 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
     
     //Easy payment card
-     Route::get('easy-payment-cards', 'API\V1\EasyPaymentCardController@cardList');
-     Route::get('easy-payment-area-list', 'API\V1\EasyPaymentCardController@getAreaList');
+     Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
+     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
+     
+    //Device offer
+     Route::get('device-offers/{brand?}/', 'API\V1\DeviceOfferController@offerList');
    
 
 
