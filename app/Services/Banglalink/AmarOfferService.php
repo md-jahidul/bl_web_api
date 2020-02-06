@@ -58,7 +58,6 @@ class AmarOfferService extends BaseService
     {
         $offers = [];
         $sorted_data = collect($data)->sortBy('offerRank');
-
         foreach ($sorted_data as $offer) {
             if ($data = $this->parseOfferData($offer)) {
                 $offers [] = $data;
