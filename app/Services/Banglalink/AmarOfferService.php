@@ -104,7 +104,7 @@ class AmarOfferService extends BaseService
                     $offer_details ['internet'] = $mb;
                     break;
                 case "TK":
-                    $offer_details ['price'] = (int)$data[1];
+                    $offer_details ['price_tk'] = (int)$data[1];
                     break;
                 case "VAL":
                     $offer_details ['validity'] = (int)$data[1];
