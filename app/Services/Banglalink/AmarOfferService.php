@@ -90,10 +90,10 @@ class AmarOfferService extends BaseService
             $type = $data[0];
             switch ($type) {
                 case "VOICE":
-                    $offer_details ['minutes'] = (int)$data[1];
+                    $offer_details ['minute_volume'] = (int)$data[1];
                     break;
                 case "SMS":
-                    $offer_details ['sms'] = (int)$data[1];
+                    $offer_details ['sms_volume'] = (int)$data[1];
                     break;
                 case "DATA":
                     if (strtolower($data[2]) == 'gb') {
@@ -101,7 +101,7 @@ class AmarOfferService extends BaseService
                     } else {
                         $mb = (int)$data[1];
                     }
-                    $offer_details ['internet'] = $mb;
+                    $offer_details ['internet_volume_mb'] = $mb;
                     break;
                 case "TK":
                     $offer_details ['price_tk'] = (int)$data[1];
