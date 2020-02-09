@@ -107,7 +107,7 @@ class AmarOfferService extends BaseService
                     $offer_details ['price_tk'] = (int)$data[1];
                     break;
                 case "VAL":
-                    $offer_details ['validity'] = (int)$data[1];
+                    $offer_details ['validity_days'] = (int)$data[1];
                     $offer_details ['validity_unit'] = ucfirst(strtolower($data[2]));
                     break;
                 case "CAT":
