@@ -23,7 +23,7 @@ class AboutUsRepository extends BaseRepository
     }
 
     /**
-     * Retrieve Banner info
+     * Retrieve About Banglalink
      *
      * @return mixed
      */
