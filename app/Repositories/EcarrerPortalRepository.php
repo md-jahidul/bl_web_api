@@ -42,4 +42,14 @@ class EcarrerPortalRepository extends BaseRepository
     public function getSectionDataByID($id){
         return $this->model::where('id', $id)->whereNull('deleted_at')->first();
     }
+
+    /**
+     * Retrieve eCareerInfo
+     *
+     * @return mixed
+     */
+    public function getEcareersInfo()
+    {
+        return $this->model->with('portalItems')->get();
+    }
 }
