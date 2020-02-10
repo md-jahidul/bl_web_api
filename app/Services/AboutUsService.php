@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Http\Resources\AboutUsEcareerResource;
 use App\Http\Resources\AboutUsResource;
 use App\Http\Resources\ManagementResource;
 use App\Repositories\AboutUsRepository;
-use App\Repositories\EcareerRepository;
+use App\Repositories\EcarrerPortalRepository;
 use App\Repositories\ManagementRepository;
 
 class AboutUsService extends ApiBaseService
@@ -22,6 +23,9 @@ class AboutUsService extends ApiBaseService
      */
     protected $managementRepository;
 
+    /**
+     * @var EcarrerPortalRepository
+     */
     protected $eCareerRepository;
 
 
@@ -29,11 +33,11 @@ class AboutUsService extends ApiBaseService
      * AboutUsService constructor.
      * @param AboutUsRepository $aboutUsRepository
      * @param ManagementRepository $managementRepository
-     * @param EcareerRepository $eCareerRepository
+     * @param EcarrerPortalRepository $eCareerRepository
      */
     public function __construct(AboutUsRepository $aboutUsRepository,
         ManagementRepository $managementRepository,
-        EcareerRepository $eCareerRepository
+        EcarrerPortalRepository $eCareerRepository
 )
     {
         $this->aboutUsRepository = $aboutUsRepository;
@@ -71,12 +75,15 @@ class AboutUsService extends ApiBaseService
         }
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getEcareersInfo()
     {
         try {
             $data = $this->eCareerRepository->getEcareersInfo();
-           // $formatted_data = ManagementResource::collection($data);
-            return $this->sendSuccessResponse($data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
+            $formatted_data = AboutUsEcareerResource::collection($data);
+            return $this->sendSuccessResponse($formatted_data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
