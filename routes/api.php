@@ -94,4 +94,5 @@ Route::group(['prefix' => '/v1'], function () {
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcarrerController@topBannerContact');
+     Route::get('ecarrer/life-at-bl', 'API\V1\EcarrerController@lifeAtBanglalink');
 });

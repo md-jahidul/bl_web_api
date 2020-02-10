@@ -100,7 +100,6 @@ class EcarrerController extends Controller
     							$connct_social = [];
 
     							$connct_social['title_en'] = $social_item->title_en;
-    							$connct_social['image'] = $social_item->image;
     							$connct_social['image'] = !empty($social_item->image) ? config('filesystems.image_host_url') . $social_item->image : null;
     							$connct_social['alt_text'] = $social_item->alt_text;
     							$connct_social['alt_links'] = $social_item->alt_links;
@@ -127,6 +126,172 @@ class EcarrerController extends Controller
     	
 
     }
+
+
+    /**
+     * eCarrer life at banglalink page
+     * @return [type] [description]
+     */
+    public function lifeAtBanglalink(){
+
+    	$data = [];
+
+
+    	// Life at banglalink 3 general section
+    	$life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
+    	
+    	if(!empty($life_at_bl_general) && count($life_at_bl_general) > 0){
+    		foreach ($life_at_bl_general as $general_value) {
+
+    			if( $general_value->category_type == 'news_on_top' ){
+
+    				$data['news_on_top'] = $this->lifeAtBanglalinkData($general_value);
+
+
+    			}
+    			elseif( $general_value->category_type == 'values_section' ){
+    				$data['values_section'] = $this->lifeAtBanglalinkData($general_value);
+    			}
+    			elseif( $general_value->category_type == 'campus_section' ){
+    				$data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
+    			}
+
+
+    		}
+    	}
+    	
+
+
+    	# Life at banglalink Diversity section
+    	$life_at_bl_diversity = $this->ecarrerService->ecarrerSectionsList('life_at_bl_diversity');
+
+    	if(!empty($life_at_bl_diversity) && count($life_at_bl_diversity) > 0){
+    		foreach ($life_at_bl_diversity as $diversity_value) {
+
+    			$sub_data = [];
+    			$sub_data['title_en'] = $diversity_value->title_en; 
+    			$sub_data['title_bn'] = $diversity_value->title_bn; 
+    			$sub_data['slug'] = $diversity_value->slug; 
+    			$sub_data['description_en'] = $diversity_value->description_en; 
+    			$sub_data['description_bn'] = $diversity_value->description_bn; 
+
+    			if( !empty($diversity_value->portalItems) ){
+
+    				foreach ($diversity_value->portalItems as $portal_items) {
+    					$sub_items = [];
+
+    					$sub_items['title_en'] = $portal_items->title_en;
+    					$sub_items['title_bn'] = $portal_items->title_bn;
+    					$sub_items['description_en'] = $portal_items->description_en;
+    					$sub_items['description_bn'] = $portal_items->description_bn;
+    					$sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+    					$sub_items['alt_text'] = $portal_items->alt_text;
+
+    					$sub_data['item_list'][] = $sub_items;
+
+    				}
+
+    			}
+
+    			$data['diversity'] = $sub_data;
+
+
+    		} // Foreach end
+    	}
+    	else{
+    		$data['diversity'] = null;
+    	}
+    	// endif
+
+    	
+    	# Life at banglalink Events and Activites section
+    	$life_at_bl_events = $this->ecarrerService->ecarrerSectionsList('life_at_bl_events');
+
+    	
+
+    	if(!empty($life_at_bl_events) && count($life_at_bl_events) > 0  ){
+
+    		foreach ($life_at_bl_events as $events_value) {
+
+    			$sub_data = [];
+    			$sub_data['title_en'] = $events_value->title_en; 
+    			$sub_data['title_bn'] = $events_value->title_bn; 
+    			$sub_data['slug'] = $events_value->slug; 
+    			$sub_data['description_en'] = $events_value->description_en; 
+    			$sub_data['description_bn'] = $events_value->description_bn; 
+
+    			if( !empty($events_value->portalItems) ){
+
+    				foreach ($events_value->portalItems as $portal_items) {
+    					$sub_items = [];
+
+    					$sub_items['title_en'] = $portal_items->title_en;
+    					$sub_items['title_bn'] = $portal_items->title_bn;
+    					$sub_items['description_en'] = $portal_items->description_en;
+    					$sub_items['description_bn'] = $portal_items->description_bn;
+    					$sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+    					$sub_items['alt_text'] = $portal_items->alt_text;
+
+    					$sub_data['item_list'][] = $sub_items;
+
+    				}
+
+    			}
+
+    			$data['events_activites'] = $sub_data;
+
+
+    		} // Foreach end
+    	}
+    	else{
+    		$data['events_activites'] = null;
+    	}
+
+
+
+
+    	// dd($data);
+
+
+    	return response()->success($data, 'Data Found!');
+
+    }
+
+    /**
+     * private function for life at banglalink data manupulation
+     * @return [type] [description]
+     */
+    private function lifeAtBanglalinkData($general_value){
+
+    	$sub_data_news = [];
+    	$sub_data_news['title_en'] = $general_value->title_en; 
+    	$sub_data_news['title_bn'] = $general_value->title_bn; 
+    	
+
+    	if( !empty($general_value->portalItems) ){
+
+    		foreach ($general_value->portalItems as $portal_items) {
+    			$sub_data_news_item = [];
+
+    			$sub_data_news_item['title_en'] = $portal_items->title_en;
+    			$sub_data_news_item['title_bn'] = $portal_items->title_bn;
+    			$sub_data_news_item['description_en'] = $portal_items->description_en;
+    			$sub_data_news_item['description_bn'] = $portal_items->description_bn;
+
+    			$sub_data_news_item['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+    			$sub_data_news_item['alt_text'] = $portal_items->alt_text;
+    			$sub_data_news_item['alt_links'] = $portal_items->alt_links;
+
+    			$sub_data_news['item_list'][] = $sub_data_news_item;
+
+    		}
+
+    	}
+
+    	return $sub_data_news;
+
+    }
+
 
 
 
