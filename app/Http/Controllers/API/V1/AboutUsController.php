@@ -48,5 +48,15 @@ class AboutUsController extends Controller
         return $this->aboutUsService->getAboutManagement($request);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws IdpAuthException
+     */
+    public function getEcareersInfo(Request $request)
+    {
+        return $this->aboutUsService->getEcareersInfo($request);
+    }
+
 
 }

@@ -142,7 +142,7 @@ class AmarOfferService extends BaseService
         if(substr($customerInfo->msisdn, 3) == "01409900110"){
             $formatted_data = [];
         }
-        
+
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
     }
 
