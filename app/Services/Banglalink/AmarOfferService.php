@@ -116,7 +116,7 @@ class AmarOfferService extends BaseService
                     } elseif ($data[1] == "VOI") {
                         $offerType = "voice";
                     } elseif ($data[1] == "MIX"){
-                        $offerType = "bundle";
+                        $offerType = "bundles";
                     } else{
                         $offerType = $data[1];
                     }
@@ -138,8 +138,7 @@ class AmarOfferService extends BaseService
     public function getAmarOfferList(Request $request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $response_data = $this->get($this->getAmarOfferListUrl(1932287502));
-//        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
+        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
         $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
 
         if(substr($customerInfo->msisdn, 3) == "01409900110"){
