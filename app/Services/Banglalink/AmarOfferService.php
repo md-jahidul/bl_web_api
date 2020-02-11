@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 
+use App\Exceptions\AmarOfferBuyException;
 use App\Exceptions\IdpAuthException;
 
 use App\Repositories\AmarOfferDetailsRepository;
@@ -153,27 +154,38 @@ class AmarOfferService extends BaseService
         return $this->amarOfferDetailsRepository->offerDetails($type);
     }
 
-//    private function prepareBuyOfferResponse($response)
-//    {
-//        if (isset($response->Status) && $response->Status == 'success') {
-//            return [
-//              'purchase_id' => $response->ID
-//            ];
-//        }
-//
-//        throw new AmarOfferBuyException();
-//    }
+    /**
+     * @param $response
+     * @return array
+     * @throws AmarOfferBuyException
+     */
+    private function prepareBuyOfferResponse($response)
+    {
+        if (isset($response->Status) && $response->Status == 'success') {
+            return [
+              'purchase_id' => $response->ID
+            ];
+        }
 
-//    public function buyAmarOffer(Request $request)
-//    {
-//        $customer = $this->getCustomerInfo($request);
-//        $response_data = $this->post($this->getBuyAmarOfferUrl(), [
-//            'msisdn'  => substr($customer->msisdn, 3),
-//            'offerID' => $request->offer_id
-//        ]);
-//        $offer_data = json_decode($response_data['response']);
-//        $formatted_data = $this->prepareBuyOfferResponse($offer_data);
-//
-//        return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
-//    }
+        throw new AmarOfferBuyException();
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws AmarOfferBuyException
+     * @throws IdpAuthException
+     */
+    public function buyAmarOffer(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        $response_data = $this->post($this->getBuyAmarOfferUrl(), [
+            'msisdn'  => substr($customer->msisdn, 3),
+            'offerID' => $request->offer_id
+        ]);
+        $offer_data = json_decode($response_data['response']);
+        $formatted_data = $this->prepareBuyOfferResponse($offer_data);
+
+        return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
+    }
 }

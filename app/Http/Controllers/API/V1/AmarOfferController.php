@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BuyAmarOfferRequest;
 use App\Services\Banglalink\AmarOfferService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,8 +36,8 @@ class AmarOfferController extends Controller
         return $this->amarOfferService->getAmarOfferList($request);
     }
 
-//    public function buyAmarOffer(BuyAmarOfferRequest $request)
-//    {
-//        return $this->service->buyAmarOffer($request);
-//    }
+    public function buyAmarOffer(BuyAmarOfferRequest $request)
+    {
+        return $this->amarOfferService->buyAmarOffer($request);
+    }
 }
