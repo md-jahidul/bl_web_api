@@ -262,9 +262,7 @@ class EcarrerController extends Controller
     	}
 
 
-    	#
-
-    	// dd($data);
+    	# ecarrer Teams section 
 
 
     	return response()->success($data, 'Data Found!');
