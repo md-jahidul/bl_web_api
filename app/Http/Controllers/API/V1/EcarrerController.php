@@ -262,9 +262,70 @@ class EcarrerController extends Controller
     	}
 
 
-    	#
+    	# ecarrer Teams section 
+    	# 
+    	$life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
 
-    	// dd($data);
+    	if(!empty($life_at_bl_teams) && count($life_at_bl_teams) > 0  ){
+
+    		$teams = [];
+    		foreach ($life_at_bl_teams as $teams_value) {
+
+    			if( $teams_value->category_type == 'teams_title' ){
+
+    				$sub_data = [];
+    				$sub_data['title_en'] = $teams_value->title_en; 
+    				$sub_data['title_bn'] = $teams_value->title_bn; 
+
+    				$teams['teams_title'] = $sub_data;
+    			}
+    			else{
+
+    				$sub_data = [];
+    				$sub_data['title_en'] = $teams_value->title_en; 
+    				$sub_data['title_bn'] = $teams_value->title_bn; 
+    				$sub_data['slug'] = $teams_value->slug; 
+    				if( !empty($teams_value->additional_info) ){
+    					$sub_data['sider_info'] = json_decode($teams_value->additional_info)->sider_info;
+    				}
+
+    				if( !empty($teams_value->portalItems) && count($teams_value->portalItems) > 0 ){
+
+    					foreach ($teams_value->portalItems as $portal_items) {
+    						$sub_items = [];
+
+    						$sub_items['title_en'] = $portal_items->title_en;
+    						$sub_items['description_en'] = $portal_items->description_en;
+    						$sub_items['description_bn'] = $portal_items->description_bn;
+    						$sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+    						$sub_items['alt_text'] = $portal_items->alt_text;
+
+    						#teams tab content buttons
+    						$sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;		
+
+    						$sub_data['tab_item_contant'] = $sub_items;
+
+    					}
+
+    				}
+    				else{
+    					$sub_data['tab_item_contant']['call_to_action_buttons'] = null;
+    				}
+
+    				$teams['teams_tab'][] = $sub_data;
+    			}
+
+
+    		} // Foreach end
+
+    		$data['teams'] = $teams;
+
+
+    	}
+    	else{
+    		$data['teams'] = null;
+    	}
+    	
 
 
     	return response()->success($data, 'Data Found!');
