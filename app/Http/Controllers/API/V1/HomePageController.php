@@ -11,12 +11,10 @@ use App\Models\AlSlider;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
-use App\Models\PartnerOffer;
-use App\Models\Product;
 use App\Models\MetaTag;
 use App\Services\ProductService;
+use App\Services\QuickLaunchService;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
@@ -29,16 +27,20 @@ class HomePageController extends Controller
      * @var ProductService
      */
     private $productService;
+    private $quickLaunchService;
 
     /**
-     * ProductController constructor.
+     * HomePageController constructor.
      * @param ProductService $productService
+     * @param QuickLaunchService $quickLaunchService
      */
     public function __construct(
-        ProductService $productService
+        ProductService $productService,
+        QuickLaunchService $quickLaunchService
     )
     {
         $this->productService = $productService;
+        $this->quickLaunchService = $quickLaunchService;
     }
 
     // In PHP, By default objects are passed as reference copy to a new Object.
@@ -87,6 +89,7 @@ class HomePageController extends Controller
                 $data["start_date"] = $request->start_date ?? null;
                 $data["end_date"] = $request->end_date ?? null;
                 $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
+                $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
@@ -102,10 +105,9 @@ class HomePageController extends Controller
 
     public function getQuickLaunchData()
     {
-        $quickLaunchItem = QuickLaunchItem::orderBy('display_order')->get();
         return  [
             "component"=> "QuickLaunch",
-            "data" => QuickLaunchResource::collection($quickLaunchItem)
+            "data" => $quickLaunchItems = $this->quickLaunchService->itemList('panel')
         ];
     }
 
@@ -131,7 +133,6 @@ class HomePageController extends Controller
 
 
         if($id == 4){
-
             $partnerOffers =  DB::table('partner_offers as po')
                 ->where('po.show_in_home',1)
                 ->where('po.is_active',1)

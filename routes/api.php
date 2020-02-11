@@ -1,6 +1,6 @@
 <?php
 //header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
-header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
+//header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +30,11 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
 
+    // QUICK LAUNCH  ====================================
+    Route::get('quick-launch/button', 'API\V1\QuickLaunchController@getQuickLaunchItems');
+
+    //AMAR OFFER ========================================
+    Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
     Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
@@ -50,7 +55,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('ssl','API\V1\SslCommerzController@ssl');
     Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
     Route::get('ssl/request/details','API\V1\SslCommerzController@getRequestDetails');
-    Route::post('success','API\V1\SslCommerzController@success');   
+    Route::post('success','API\V1\SslCommerzController@success');
     Route::post('failure','API\V1\SslCommerzController@failure');
     Route::post('cancel','API\V1\SslCommerzController@cancel');
 
@@ -68,6 +73,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
     Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
 
+    // Refresh token
+    Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
+
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan', 'API\V1\ProductController@customerLoanProducts');
@@ -78,4 +86,20 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
+
+    //Easy payment card
+     Route::get('easy-payment-cards', 'API\V1\EasyPaymentCardController@cardList');
+     Route::get('easy-payment-area-list', 'API\V1\EasyPaymentCardController@getAreaList');
+
+
+     // eCarrer api
+     Route::get('ecarrer/banner-contact', 'API\V1\EcarrerController@topBannerContact');
+     Route::get('ecarrer/life-at-bl', 'API\V1\EcarrerController@lifeAtBanglalink');
+
+
+    // AboutUsBanglalink
+    Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
+    Route::get('about-us-management', 'API\V1\AboutUsController@getAboutManagement');
+    Route::get('about-us-eCareer', 'API\V1\AboutUsController@getEcareersInfo');
+
 });

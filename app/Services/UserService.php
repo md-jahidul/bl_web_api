@@ -270,7 +270,7 @@ class UserService extends ApiBaseService
         }
 
         $idpUser = $idpData->user;
-        // dd($idpUser);
+        
         $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
 
         return $this->sendSuccessResponse($user, 'Data found', []);
@@ -328,8 +328,8 @@ class UserService extends ApiBaseService
 
         #update data to ID
         $path = null;
-        Log::info(print_r($path));
-        Log::info('eeeee');
+        // Log::info(print_r($path));
+        // Log::info('eeeee');
 
         if ($request->hasFile('profile_photo')){
             $path = $this->uploadImage($request);
@@ -491,4 +491,57 @@ class UserService extends ApiBaseService
         }
         return $randomString;
     }
+
+
+    public function getRefreshToken($request)
+    {
+        $bearerToken = $request->bearerToken();
+        $request = $request->all();
+        
+        $data['grant_type'] = "refresh_token";
+        $data['client_id'] = config('apiurl.idp_otp_client_id');
+        $data['client_secret'] = config('apiurl.idp_otp_client_secret');
+        $data['refresh_token'] = $bearerToken;
+
+        $tokenResponse = IdpIntegrationService::otpRefreshTokenRequest($data);
+
+        $tokenResponseData = json_decode($tokenResponse['data']);
+
+        if ($tokenResponse['http_code'] != 200) {
+            return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
+        }
+        else {
+           // $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
+
+           // $customerInfo = $this->getCustomerInfo($request['mobile'], (object)$idpCus);
+
+           $profileData = [
+               'token' => $tokenResponseData,
+               // 'customerInfo' => $customerInfo,
+           ];
+
+           return $this->sendSuccessResponse($profileData, "Data found");
+        }
+
+
+        
+
+        // if (isset($response['error'])) {
+        //     return $this->sendErrorResponse(
+        //         $response['message'],
+        //         [
+        //             'message' => "The refresh token is invalid."
+        //         ],
+        //         HttpStatusCode::UNAUTHORIZED
+        //     );
+        // }
+
+        // return $this->sendSuccessResponse(
+        //     json_decode($token['response']),
+        //     "Refresh Token",
+        //     [],
+        //     HttpStatusCode::SUCCESS
+        // );
+    }
+
 }
