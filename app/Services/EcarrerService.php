@@ -8,11 +8,20 @@ use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
+use App\Enums\HttpStatusCode;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+
+
 
 class EcarrerService
 {
     use CrudTrait;
     use FileTrait;
+
+    # GuzzleHttp\Exception\ClientException for 400-level errors
+    # GuzzleHttp\Exception\ServerException for 500-level errors
+    # GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
 
     /**
      * @var $ecarrerPortalService
@@ -480,7 +489,92 @@ class EcarrerService
     * Ecarrer vacancy job offers with lever api
     * @return [type] [description]
     */
-   public function getVacancyJobOffers(){
+   public function getVacancyLeverJobOffers(){
+
+      $results = [];
+
+      # get job offer titles
+      $vacancy_job_offer_title = $this->getProgramsByCateogryType('vacancy_pioneer', 'job_offers_title');
+      $job_offer_title = [];
+      if( !empty($vacancy_job_offer_title) && count($vacancy_job_offer_title) > 0 ){
+         foreach ($vacancy_job_offer_title as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            
+            $job_offer_title = $sub_data;
+
+
+         } // Foreach end
+      }
+      else{
+         $job_offer_title = null;
+      }
+
+      $results['job_offers_title'] = $job_offer_title;
+
+      # end job offer title
+
+
+      # Get vacancy job offers from liver api
+      # LEVER API:
+      # Use this one: https://api.lever.co/v0/postings/vimpelcom/?skip=1&limit=3&mode=json
+      #  (No key required)
+      #  Otherwise:
+      # https://api.lever.co/v0/postings/lever to get paginated results from the API
+      # For Demo:
+      # https://api.lever.co/v0/postings/leverdemo?skip=1&limit=3&mode=json
+
+      $lever_content = [];
+      $client = new Client();
+      try{
+         $response = $client->get(
+             config('apiurl.lever_api_host') . '/postings/'.config('apiurl.lever_api_client').'/?skip=0&limit=6&mode=json'
+         );
+
+         if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
+
+             $response = json_decode($response->getBody()->getContents(), true);
+
+            $mod_response = array_map(function($ar){
+
+               if( isset($ar['description']) ){
+                  unset($ar['description']);
+               }
+
+               if( isset($ar['descriptionPlain']) ){
+                  unset($ar['descriptionPlain']);
+               }
+
+               if( isset($ar['additional']) ){
+                  unset($ar['additional']);
+               }
+
+               return $ar;
+
+             }, $response);
+
+            $lever_content = $mod_response;
+
+         }
+         
+      }
+
+      catch(BadResponseException  $e){
+         // $response = $e->getResponse();
+         $lever_content = null;
+      }
+      catch(\Exception $e){
+         $lever_content = null;
+      };
+
+      $results['job_offers_content'] = $lever_content;
+      # lever api end
+
+
+      return $results;
 
    }
 
