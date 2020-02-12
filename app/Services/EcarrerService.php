@@ -125,9 +125,9 @@ class EcarrerService
      * Life at bl teams sections
      * @return [type] [description]
      */
-    public function ecarrerSectionsList($categoryTypes){
+    public function ecarrerSectionsList($category, $categoryTypes = null){
 
-        return $this->ecarrerPortalRepository->getSectionsByCategory($categoryTypes);
+        return $this->ecarrerPortalRepository->getSectionsByCategory($category, $categoryTypes);
 
     }
 
@@ -213,4 +213,280 @@ class EcarrerService
         
     }
 
+
+   /**
+   * Get programs SAP service
+   * category
+   * => programs_news_section
+   * category types
+   * => sap
+   * Additional types
+   * => programs_news_section
+   * @return [type] [mixed]
+   */
+   public function getProgramsSap(){
+      
+
+      $results = [];
+   
+      $results['sap_news_section'] = $this->getProgramsSapNewsSections();
+
+      // $results['sap_news_section'] = $this->getProgramsSapStepsSections();
+
+
+      return $results;
+      
+
+      # Programs Steps sections
+      # 
+      
+      
+        
+   }
+
+
+   /**
+    * Get programs general section by category type
+    * @param  [type] $category [description]
+    * @param  [type] $category_type [description]
+    * @param  [type] $additional_category [description]
+    * Available category types
+    * => sap, ennovators, aip
+    * Available additional category
+    * => programs_news_section, programs_steps, programs_events, programs_testimonial
+    * @return [type]                [description]
+    */
+   private function getProgramsByCateogryType($category, $category_type, $additional_category = null){
+
+      $programs_general = $this->ecarrerSectionsList($category, $category_type);
+
+      $resutls = [];
+      if( !empty($programs_general) && count($programs_general) > 0 ){
+
+         if( !empty($additional_category) ){
+            foreach ($programs_general as $value) {
+               if( !empty($value->additional_info) && json_decode($value->additional_info)->additional_type == $additional_category ){
+
+                  $resutls[] =  $value; 
+
+               }
+               
+            }
+
+         }
+         else{
+            $resutls = $programs_general;
+         }
+
+      }
+
+      return $resutls;
+
+   }
+
+
+   /**
+    * Programs SAP news sections
+    * @return [type] [description]
+    */
+   private function getProgramsSapNewsSections(){
+
+      # Ecarrer programs news section
+      $get_sap_news = $this->getProgramsByCateogryType('programs_progeneral', 'sap', 'programs_news_section');
+
+      $sub_data = [];
+      if( !empty($get_sap_news) ){
+         foreach ($get_sap_news as $value) {
+
+            if( !empty($value->portalItems) && count($value->portalItems) > 0 ){
+               foreach ($value->portalItems as $items_value){
+                  $sub_data['title_en'] = $items_value->title_en;
+                  $sub_data['title_bn'] = $items_value->title_bn;
+                  $sub_data['description_en'] = $items_value->description_bn;
+                  $sub_data['description_bn'] = $items_value->description_bn;
+
+                  $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+
+                  $sub_data['alt_text'] = $items_value->alt_text;
+                  $sub_data['alt_links'] = $items_value->alt_links;
+
+                  #teams tab content buttons
+                  $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+               }
+            }
+
+         }
+
+      }
+
+      return $sub_data;
+
+   }
+
+   /**
+    * [getProgramsSapStepsSections description]
+    * @return [type] [description]
+    */
+   public function getProgramsSapStepsSections(){
+
+      $get_sap_news = $this->getProgramsByCateogryType('programs_progeneral', 'sap', 'programs_steps');
+
+      $sub_data = [];
+
+      foreach ($life_at_bl_events as $events_value) {
+
+         $sub_data = [];
+         $sub_data['title_en'] = $events_value->title_en; 
+         $sub_data['title_bn'] = $events_value->title_bn; 
+         $sub_data['slug'] = $events_value->slug; 
+         if( !empty($events_value->additional_info) ){
+            $sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
+         }
+
+         if( !empty($events_value->portalItems) ){
+
+            foreach ($events_value->portalItems as $portal_items) {
+               $sub_items = [];
+
+               $sub_items['title_en'] = $portal_items->title_en;
+               $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+               $sub_items['alt_text'] = $portal_items->alt_text;
+
+               $sub_data['item_list'][] = $sub_items;
+
+            }
+
+         }
+
+         $data['events_activites'] = $sub_data;
+
+
+      } // Foreach end
+
+
+      return $results;
+
+   }
+
+
+   /**
+    * Get Vacancy Hire section
+    * @return [type] [description]
+    */
+   public function getVacancyHire(){
+
+      $vacancy_hire = $this->getProgramsByCateogryType('vacancy_pioneer', 'how_we_hire');
+      $results = [];
+      if( !empty($vacancy_hire) && count($vacancy_hire) > 0 ){
+         foreach ($vacancy_hire as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['alt_text'] = $parent_value->alt_text;
+            
+
+            // if( !empty($events_value->portalItems) ){
+
+            //    foreach ($events_value->portalItems as $portal_items) {
+            //       $sub_items = [];
+
+            //       $sub_items['title_en'] = $portal_items->title_en;
+            //       $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+            //       $sub_items['alt_text'] = $portal_items->alt_text;
+
+            //       $sub_data['item_list'][] = $sub_items;
+
+            //    }
+
+            // }
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Get vacancy bottom news media section
+    * @return [type] [description]
+    */
+   public function getVacancyNewsMedia(){
+
+      $vacancy_news_media = $this->getProgramsByCateogryType('vacancy_pioneer', 'bottom_news_media');
+      $results = [];
+      if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
+         foreach ($vacancy_news_media as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['video'] = $parent_value->video;
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Get ecarrer vacancy box icons
+    * @return [type] [description]
+    */
+   public function getVacancyBoxIcon(){
+
+      $vacancy_news_media = $this->ecarrerSectionsList('vacancy_viconbox');
+      
+      $results = [];
+      if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
+         foreach ($vacancy_news_media as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['alt_text'] = $parent_value->alt_text;
+
+            $results[] = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Ecarrer vacancy job offers with lever api
+    * @return [type] [description]
+    */
+   public function getVacancyJobOffers(){
+
+   }
+
+
+
 }
+
+
+   

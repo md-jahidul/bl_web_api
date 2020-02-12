@@ -368,6 +368,53 @@ class EcarrerController extends Controller
     }
 
 
+  	/**
+  	 * [eCarrer Programs category sap, ennovators, aip]
+  	 * @return [type]           [description]
+  	 */
+   	public function getEcarrerPrograms(){
+
+   		try{
+
+   			$data = [];
+
+   			$data['sap']['title_en'] = 'Strategic Assistant Program';
+   			$data['sap']['sections'] = $this->ecarrerService->getProgramsSap();
+
+
+
+
+   			return response()->success($data, 'Data Found!');
+   		}
+   		catch(\Exception $e){
+    		return response()->error('Data Not Found!');
+    	}
+
+   	}
+
+
+   	public function getEcarrerVacancy(){
+
+			try{
+
+				$data = [];
+
+				$data['we_hire'] = $this->ecarrerService->getVacancyHire();
+				$data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
+				$data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
+
+				$data['job_offers'] = $this->ecarrerService->getVacancyJobOffers();
+
+
+
+
+				return response()->success($data, 'Data Found!');
+			}
+			catch(\Exception $e){
+	 		return response()->error('Data Not Found!');
+	 	}
+
+   	}
 
 
 } // Class end
