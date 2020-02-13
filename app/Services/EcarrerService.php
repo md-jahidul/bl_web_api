@@ -407,7 +407,7 @@ class EcarrerService
     */
    private function getProgramsNewsSections($category, $category_type, $additional_category){
 
-      $sub_data = [];
+      $sub_data = null;
 
       if( empty($category) || empty($category_type) || empty($additional_category) ){
          return $sub_data;
@@ -450,7 +450,7 @@ class EcarrerService
     */
    public function getProgramsStepsSections($category, $category_type, $additional_category){
 
-      $results = [];
+      $results = null;
       $get_pro_steps = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
 
       if( empty($category) || empty($category_type) || empty($additional_category) ){
@@ -501,7 +501,7 @@ class EcarrerService
     */
    public function getProgramsPhotoGallerySections($category, $category_type){
 
-      $results = [];
+      $results = null;
 
       if( empty($category) || empty($category_type) ){
          return $results;
@@ -556,7 +556,7 @@ class EcarrerService
     */
    public function getProgramsBoxIconSections($category, $category_type){
 
-      $results = [];
+      $results = null;
       $programs_proiconbox = $this->ecarrerSectionsList($category, $category_type);
 
       if( empty($category) || empty($category_type) ){
@@ -687,7 +687,7 @@ class EcarrerService
 
       $vacancy_news_media = $this->ecarrerSectionsList('vacancy_viconbox');
       
-      $results = [];
+      $results = null;
       if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
          foreach ($vacancy_news_media as $parent_value) {
 
@@ -716,7 +716,7 @@ class EcarrerService
     */
    public function getVacancyLeverJobOffers(){
 
-      $results = [];
+      $results = null;
 
       # get job offer titles
       $vacancy_job_offer_title = $this->getProgramsByCateogryType('vacancy_pioneer', 'job_offers_title');
@@ -812,7 +812,7 @@ class EcarrerService
    private function getProgramsPreviousBatchSections($category){
 
 
-      $results = [];
+      $results = null;
 
       if( empty($category) ){
          return $results;
