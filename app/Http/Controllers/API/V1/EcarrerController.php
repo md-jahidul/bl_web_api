@@ -405,8 +405,8 @@ class EcarrerController extends Controller
 
  			$data = [];
  			$data[]['sap'] = $this->ecarrerService->getProgramsSap();
- 			$data[]['ennovators'] = $this->ecarrerService->getProgramsSap();
- 			$data[]['aip'] = $this->ecarrerService->getProgramsSap();
+ 			$data[]['ennovators'] = $this->ecarrerService->getProgramsEnnovators();
+ 			// $data[]['aip'] = $this->ecarrerService->getProgramsSap();
 
  			return response()->success($data, 'Data Found!');
  		}

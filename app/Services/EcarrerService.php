@@ -224,9 +224,13 @@ class EcarrerService
 
 
    /**
-   * Get programs SAP service
+   * Get programs SAP service sections
    * category
-   * => programs_news_section
+   * => programs_top_tab_title
+   * => programs_progeneral
+   * => programs_proiconbox
+   * => programs_photogallery
+   * => programs_sapbatches
    * category types
    * => sap
    * Additional types
@@ -258,8 +262,56 @@ class EcarrerService
          return $results;
       };   
       
-        
    }
+
+
+
+   /**
+   * Get programs SAP service sections
+   * category
+   * => programs_top_tab_title
+   * => programs_progeneral
+   * => programs_proiconbox
+   * => programs_photogallery
+   * => programs_sapbatches
+   * category types
+   * => sap
+   * Additional types
+   * => programs_news_section
+   * @return [type] [mixed]
+   */
+   public function getProgramsEnnovators(){
+      
+
+      $results = [];
+
+      try{
+
+         # get sap title for tab
+         $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
+         $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+         $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'ennovators');
+         $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'ennovators', 'programs_steps');
+         $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
+         $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', 'ennovators', 'programs_events');
+         $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'ennovators');
+         
+
+         $results['sections'] = $sections;
+
+
+         return $results;
+
+      }
+      catch(\Exception $e){
+         return $results;
+      };   
+      
+   }
+
+
+
+
 
 
    /**
@@ -748,7 +800,7 @@ class EcarrerService
             // $sub_data['description_bn'] = $parent_value->description_bn;
             // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             // $sub_data['alt_text'] = $parent_value->alt_text;
-            if( !empty($parent_value->portalItems) ){
+            if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
 
                foreach ($parent_value->portalItems as $portal_items) {
                   $sub_items = [];
@@ -775,7 +827,6 @@ class EcarrerService
             else{
                $sub_data['item_list'] = null;
             }
-
 
             $results['batch_content'][] = $sub_data;
 
@@ -811,6 +862,65 @@ class EcarrerService
       }
 
       return $results;
+   }
+
+
+
+
+   /**
+    * Programs SAP news sections
+    * @return [type] [description]
+    */
+   private function getProgramsEventsSections($category, $category_type, $additional_category){
+
+      $results = [];
+
+      if( empty($category) || empty($category_type) || empty($additional_category) ){
+         return $results;
+      }
+
+      # Ecarrer programs news section
+      $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+      if( !empty($get_sap_news) && count($get_sap_news) > 0 ){
+         foreach ($get_sap_news as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+
+            if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
+               foreach ($parent_value->portalItems as $items_value){
+
+                  $sub_items = [];
+                  $sub_items['title_en'] = $items_value->title_en;
+                  $sub_items['title_bn'] = $items_value->title_bn;
+                  $sub_items['description_en'] = $items_value->description_bn;
+                  $sub_items['description_bn'] = $items_value->description_bn;
+
+                  $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+
+                  $sub_items['alt_text'] = $items_value->alt_text;
+                  // $sub_items['alt_links'] = $items_value->alt_links;
+
+                  #teams tab content buttons
+                  //$sub_items['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+
+                  $sub_data['item_list'][] = $sub_items;
+
+
+               }
+            }
+
+            $results = $sub_data;
+
+         } // endforeach
+
+      }
+
+      return $results;
+
    }
 
 
