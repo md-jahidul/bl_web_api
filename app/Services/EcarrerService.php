@@ -242,11 +242,11 @@ class EcarrerService
 
          # get sap title for tab
          $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
-         $sections['sap_news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
-         $sections['sap_steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
-         $sections['sap_boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
-         $sections['sap_photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
-         $sections['sap_previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_sapbatches');
+         $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+         $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
+         $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
+         $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
+         $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_sapbatches');
 
          $results['sections'] = $sections;
 
