@@ -891,7 +891,7 @@ class EcarrerService
     */
    private function getProgramsTabTitle($category, $category_type){
 
-      $results = [];
+      $results = null;
 
       if( empty($category) || empty($category_type) ){
          return $results;
