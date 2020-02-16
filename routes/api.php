@@ -103,4 +103,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('about-us-management', 'API\V1\AboutUsController@getAboutManagement');
     Route::get('about-us-eCareer', 'API\V1\AboutUsController@getEcareersInfo');
 
+    // App And Service
+    Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+
 });
