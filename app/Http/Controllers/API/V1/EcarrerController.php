@@ -5,9 +5,10 @@ namespace App\Http\Controllers\API\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\EcarrerService;
-use App\Http\Controllers\AssetLite\ConfigController;
+use App\Http\Controllers\API\V1\ConfigController;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Enums\HttpStatusCode;
 
 
 class EcarrerController extends Controller
@@ -410,10 +411,67 @@ class EcarrerController extends Controller
 
  			return response()->success($data, 'Data Found!');
  		}
- 		catch(\Exception $e){
-  		return response()->error('Data Not Found!');
-  	}
+ 		     catch(\Exception $e){
+  		    return response()->error('Data Not Found!');
+  	     }
 
  	}
+
+   /**
+    * eCarrer University list api
+    * @return [type] [description]
+    */
+   public function ecarrerUniversity(){
+
+      try{
+
+         $data = [];
+
+         $data['university_list'] = $this->ecarrerService->getUniversityList();
+
+
+         return response()->success($data, 'Data Found!');
+      }
+      catch(\Exception $e){
+         return response()->error('Data Not Found!');
+      }
+
+   }
+
+
+   public function ecarrerApplicationForm(Request $request){
+
+      try{
+         # Image validation check
+         $image_upload_size = ConfigController::customerImageUploadSize();
+         $image_upload_type = ConfigController::customerImageUploadType();
+
+         $validator = Validator::make($request->all(), [
+             'name' => 'required',
+             'applicant_cv' => 'nullable|mimes:doc,pdf,docx,zip|max:'.$image_upload_size, // 2M
+             'phone' => 'nullable|numeric',
+             'email' => 'nullable|email',
+             'university_id' => 'nullable|integer',
+             'versity_id' => 'nullable|integer',
+         ]);
+         if ($validator->fails()) {
+             // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+             return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+         }
+
+
+         # update application form
+         $this->ecarrerService->updateApplicationForm($request->all());
+
+         return response()->success([], 'Form submittd successfuly.');
+      }
+      catch(\Exception $e){
+         return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $e->getMessage(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+      }
+      
+
+   }
+
+
 
 } // Class end

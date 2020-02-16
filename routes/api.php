@@ -100,6 +100,10 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('ecarrer/programs', 'API\V1\EcarrerController@getEcarrerPrograms');
      Route::get('ecarrer/vacancy', 'API\V1\EcarrerController@getEcarrerVacancy');
 
+     // eCarrer Application form api  =========================================================
+    Route::get('ecarrer/university', 'API\V1\EcarrerController@ecarrerUniversity');
+    Route::post('ecarrer/application-form', 'API\V1\EcarrerController@ecarrerApplicationForm');
+
 
     // AboutUsBanglalink
     Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
