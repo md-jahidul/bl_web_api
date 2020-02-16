@@ -97,6 +97,9 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('ecarrer/banner-contact', 'API\V1\EcarrerController@topBannerContact');
      Route::get('ecarrer/life-at-bl', 'API\V1\EcarrerController@lifeAtBanglalink');
 
+     Route::get('ecarrer/programs', 'API\V1\EcarrerController@getEcarrerPrograms');
+     Route::get('ecarrer/vacancy', 'API\V1\EcarrerController@getEcarrerVacancy');
+
 
     // AboutUsBanglalink
     Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');

@@ -8,11 +8,20 @@ use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
+use App\Enums\HttpStatusCode;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+
+
 
 class EcarrerService
 {
     use CrudTrait;
     use FileTrait;
+
+    # GuzzleHttp\Exception\ClientException for 400-level errors
+    # GuzzleHttp\Exception\ServerException for 500-level errors
+    # GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
 
     /**
      * @var $ecarrerPortalService
@@ -125,9 +134,9 @@ class EcarrerService
      * Life at bl teams sections
      * @return [type] [description]
      */
-    public function ecarrerSectionsList($categoryTypes){
+    public function ecarrerSectionsList($category, $categoryTypes = null){
 
-        return $this->ecarrerPortalRepository->getSectionsByCategory($categoryTypes);
+        return $this->ecarrerPortalRepository->getSectionsByCategory($category, $categoryTypes);
 
     }
 
@@ -213,4 +222,818 @@ class EcarrerService
         
     }
 
-}
+
+   /**
+   * Get programs SAP service sections
+   * category
+   * => programs_top_tab_title
+   * => programs_progeneral
+   * => programs_proiconbox
+   * => programs_photogallery
+   * => programs_sapbatches
+   * category types
+   * => sap
+   * Additional types
+   * => programs_news_section
+   * @return [type] [mixed]
+   */
+   public function getProgramsSap(){
+      
+
+      $results = null;
+
+      try{
+
+         # get sap title for tab
+         $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
+         $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+         $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
+         $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
+         $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
+         $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_sapbatches');
+
+         $results['sections'] = $sections;
+
+
+         return $results;
+
+      }
+      catch(\Exception $e){
+         return $results;
+      };   
+      
+   }
+
+
+
+   /**
+   * Get programs SAP service sections
+   * category
+   * => programs_top_tab_title
+   * => programs_progeneral
+   * => programs_proiconbox
+   * => programs_photogallery
+   * => programs_sapbatches
+   * category types
+   * => ennovators
+   * Additional types
+   * => programs_news_section
+   * => programs_steps
+   * => programs_events
+   * @return [type] [mixed]
+   */
+   public function getProgramsEnnovators(){
+      
+
+      $results = null;
+
+      try{
+
+         # get sap title for tab
+         $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
+         $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+         $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'ennovators');
+         $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'ennovators', 'programs_steps');
+         $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
+         $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', 'ennovators', 'programs_events');
+         $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'ennovators');
+         
+
+         $results['sections'] = $sections;
+
+
+         return $results;
+
+      }
+      catch(\Exception $e){
+         return $results;
+      };   
+      
+   }
+
+   /**
+   * Get programs SAP service sections
+   * category
+   * => programs_top_tab_title
+   * => programs_progeneral
+   * => programs_proiconbox
+   * => programs_photogallery
+   * => programs_sapbatches
+   * category types
+   * => sap
+   * Additional types
+   * => programs_news_section
+   * @return [type] [mixed]
+   */
+   public function getProgramsAip(){
+      
+
+      $results = null;
+
+      try{
+
+         # get sap title for tab
+         $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
+         $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
+         $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'aip');
+         $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'aip', 'programs_steps');
+
+         $sections['programs_testimonial'] = $this->getProgramsTestimonialSections('programs_progeneral', 'aip', 'programs_testimonial');
+
+         $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', 'aip', 'programs_events');
+         $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'aip');
+         
+
+         $results['sections'] = $sections;
+
+
+         return $results;
+
+      }
+      catch(\Exception $e){
+         return $results;
+      };   
+      
+   }
+
+
+
+
+
+
+   /**
+    * Get programs general section by category type
+    * @param  [type] $category [description]
+    * @param  [type] $category_type [description]
+    * @param  [type] $additional_category [description]
+    * Available category types
+    * => sap, ennovators, aip
+    * Available additional category
+    * => programs_news_section, programs_steps, programs_events, programs_testimonial
+    * @return [type]                [description]
+    */
+   private function getProgramsByCateogryType($category, $category_type, $additional_category = null){
+
+      $programs_general = $this->ecarrerSectionsList($category, $category_type);
+
+      $resutls = [];
+      if( !empty($programs_general) && count($programs_general) > 0 ){
+
+         if( !empty($additional_category) ){
+            foreach ($programs_general as $value) {
+               if( !empty($value->additional_info) && json_decode($value->additional_info)->additional_type == $additional_category ){
+
+                  $resutls[] =  $value; 
+
+               }
+               
+            }
+
+         }
+         else{
+            $resutls = $programs_general;
+         }
+
+      }
+
+      return $resutls;
+
+   }
+
+
+   /**
+    * Programs SAP news sections
+    * @return [type] [description]
+    */
+   private function getProgramsNewsSections($category, $category_type, $additional_category){
+
+      $sub_data = null;
+
+      if( empty($category) || empty($category_type) || empty($additional_category) ){
+         return $sub_data;
+      }
+
+      # Ecarrer programs news section
+      $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+      if( !empty($get_sap_news) ){
+         foreach ($get_sap_news as $value) {
+
+            if( !empty($value->portalItems) && count($value->portalItems) > 0 ){
+               foreach ($value->portalItems as $items_value){
+                  $sub_data['title_en'] = $items_value->title_en;
+                  $sub_data['title_bn'] = $items_value->title_bn;
+                  $sub_data['description_en'] = $items_value->description_bn;
+                  $sub_data['description_bn'] = $items_value->description_bn;
+
+                  $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+
+                  $sub_data['alt_text'] = $items_value->alt_text;
+                  // $sub_data['alt_links'] = $items_value->alt_links;
+
+                  #teams tab content buttons
+                  $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+               }
+            }
+
+         }
+
+      }
+
+      return $sub_data;
+
+   }
+
+   /**
+    * [getProgramsSapStepsSections description]
+    * @return [type] [description]
+    */
+   public function getProgramsStepsSections($category, $category_type, $additional_category){
+
+      $results = null;
+      $get_pro_steps = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+      if( empty($category) || empty($category_type) || empty($additional_category) ){
+         return $results;
+      }
+
+
+
+      if( !empty($get_pro_steps) && count($get_pro_steps) > 0 ){
+         foreach ($get_pro_steps as $parents_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parents_value->title_en; 
+            $sub_data['title_bn'] = $parents_value->title_bn;
+            $sub_data['slug'] = $parents_value->slug; 
+            
+
+            if( !empty($parents_value->portalItems) ){
+
+               foreach ($parents_value->portalItems as $portal_items) {
+                  $sub_items = [];
+
+                  // $sub_items['title_en'] = $portal_items->title_en;
+                  $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                  $sub_items['alt_text'] = $portal_items->alt_text;
+
+                  $sub_data['item_list'][] = $sub_items;
+
+               }
+
+            }
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+
+      return $results;
+
+   }
+
+
+   /**
+    * [getProgramsSapStepsSections description]
+    * @return [type] [description]
+    */
+   public function getProgramsPhotoGallerySections($category, $category_type){
+
+      $results = null;
+
+      if( empty($category) || empty($category_type) ){
+         return $results;
+      }
+
+      $programs_photo_gal = $this->getProgramsByCateogryType($category, $category_type);
+
+
+
+
+      if( !empty($programs_photo_gal) && count($programs_photo_gal) > 0 ){
+         foreach ($programs_photo_gal as $parents_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parents_value->title_en; 
+            $sub_data['title_bn'] = $parents_value->title_bn;
+            $sub_data['slug'] = $parents_value->slug; 
+            if( !empty($parents_value->additional_info) ){
+               $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
+            }
+
+            if( !empty($parents_value->portalItems) ){
+
+               foreach ($parents_value->portalItems as $portal_items) {
+                  $sub_items = [];
+
+                  // $sub_items['title_en'] = $portal_items->title_en;
+                  $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                  $sub_items['alt_text'] = $portal_items->alt_text;
+
+                  $sub_data['item_list'][] = $sub_items;
+
+               }
+
+            }
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+
+      return $results;
+
+   }
+
+
+   /**
+    * Programs box icon sections
+    * @return [type] [description]
+    */
+   public function getProgramsBoxIconSections($category, $category_type){
+
+      $results = null;
+      $programs_proiconbox = $this->ecarrerSectionsList($category, $category_type);
+
+      if( empty($category) || empty($category_type) ){
+         return $results;
+      }
+
+      
+      if( !empty($programs_proiconbox) && count($programs_proiconbox) > 0 ){
+         foreach ($programs_proiconbox as $parent_value) {
+
+            $sub_data = [];
+            // $sub_data['title_en'] = $parent_value->title_en; 
+            // $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            // $sub_data['description_en'] = $parent_value->description_en; 
+            // $sub_data['description_bn'] = $parent_value->description_bn;
+            // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            // $sub_data['alt_text'] = $parent_value->alt_text;
+            if( !empty($parent_value->portalItems) ){
+
+               foreach ($parent_value->portalItems as $portal_items) {
+                  $sub_items = [];
+
+                  $sub_items['title_en'] = $portal_items->title_en;
+                  $sub_items['title_bn'] = $portal_items->title_bn;
+                  $sub_items['description_en'] = $portal_items->description_en;
+                  $sub_items['description_bn'] = $portal_items->description_bn;
+                  $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                  $sub_items['alt_text'] = $portal_items->alt_text;
+
+                  $sub_data['item_list'][] = $sub_items;
+
+               }
+
+            }
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+   }
+
+
+   /**
+    * Get Vacancy Hire section
+    * @return [type] [description]
+    */
+   public function getVacancyHire(){
+
+      $vacancy_hire = $this->getProgramsByCateogryType('vacancy_pioneer', 'how_we_hire');
+      $results = [];
+      if( !empty($vacancy_hire) && count($vacancy_hire) > 0 ){
+         foreach ($vacancy_hire as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['alt_text'] = $parent_value->alt_text;
+            
+
+            // if( !empty($events_value->portalItems) ){
+
+            //    foreach ($events_value->portalItems as $portal_items) {
+            //       $sub_items = [];
+
+            //       $sub_items['title_en'] = $portal_items->title_en;
+            //       $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+            //       $sub_items['alt_text'] = $portal_items->alt_text;
+
+            //       $sub_data['item_list'][] = $sub_items;
+
+            //    }
+
+            // }
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Get vacancy bottom news media section
+    * @return [type] [description]
+    */
+   public function getVacancyNewsMedia(){
+
+      $vacancy_news_media = $this->getProgramsByCateogryType('vacancy_pioneer', 'bottom_news_media');
+      $results = [];
+      if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
+         foreach ($vacancy_news_media as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['video'] = $parent_value->video;
+
+            $results = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Get ecarrer vacancy box icons
+    * @return [type] [description]
+    */
+   public function getVacancyBoxIcon(){
+
+      $vacancy_news_media = $this->ecarrerSectionsList('vacancy_viconbox');
+      
+      $results = null;
+      if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
+         foreach ($vacancy_news_media as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['description_bn'] = $parent_value->description_bn;
+            $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            $sub_data['alt_text'] = $parent_value->alt_text;
+
+            $results[] = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Ecarrer vacancy job offers with lever api
+    * @return [type] [description]
+    */
+   public function getVacancyLeverJobOffers(){
+
+      $results = null;
+
+      # get job offer titles
+      $vacancy_job_offer_title = $this->getProgramsByCateogryType('vacancy_pioneer', 'job_offers_title');
+      $job_offer_title = [];
+      if( !empty($vacancy_job_offer_title) && count($vacancy_job_offer_title) > 0 ){
+         foreach ($vacancy_job_offer_title as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            
+            $job_offer_title = $sub_data;
+
+
+         } // Foreach end
+      }
+      else{
+         $job_offer_title = null;
+      }
+
+      $results['job_offers_title'] = $job_offer_title;
+
+      # end job offer title
+
+
+      # Get vacancy job offers from liver api
+      # LEVER API:
+      # Use this one: https://api.lever.co/v0/postings/vimpelcom/?skip=1&limit=3&mode=json
+      #  (No key required)
+      #  Otherwise:
+      # https://api.lever.co/v0/postings/lever to get paginated results from the API
+      # For Demo:
+      # https://api.lever.co/v0/postings/leverdemo?skip=1&limit=3&mode=json
+
+      $lever_content = [];
+      $client = new Client();
+      try{
+         $response = $client->get(
+             config('apiurl.lever_api_host') . '/postings/'.config('apiurl.lever_api_client').'/?skip=0&limit=6&mode=json'
+         );
+
+         if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
+
+             $response = json_decode($response->getBody()->getContents(), true);
+
+            $mod_response = array_map(function($ar){
+
+               if( isset($ar['description']) ){
+                  unset($ar['description']);
+               }
+
+               if( isset($ar['descriptionPlain']) ){
+                  unset($ar['descriptionPlain']);
+               }
+
+               if( isset($ar['additional']) ){
+                  unset($ar['additional']);
+               }
+
+               return $ar;
+
+             }, $response);
+
+            $lever_content = $mod_response;
+
+         }
+         
+      }
+
+      catch(BadResponseException  $e){
+         // $response = $e->getResponse();
+         $lever_content = null;
+         \Log::channel('lever_api_log')->info('Lever api not responding. Client error or Server error');
+      }
+      catch(\Exception $e){
+         $lever_content = null;
+         \Log::channel('lever_api_log')->info('Technical error when lever api parsing data');
+      };
+
+      $results['job_offers_content'] = $lever_content;
+      # lever api end
+
+
+      return $results;
+
+   }
+
+   /**
+    * Get batch title
+    * @return [type] [description]
+    */
+   private function getProgramsPreviousBatchSections($category){
+
+
+      $results = null;
+
+      if( empty($category) ){
+         return $results;
+      }
+
+      # Get Batch main title
+      $batch_title = $this->getProgramsByCateogryType($category, 'batch_title');
+
+      if( !empty($batch_title) && count($batch_title) > 0 ){
+
+         $sub_data['title_en'] = $batch_title->first()->title_en; 
+         $sub_data['title_bn'] = $batch_title->first()->title_bn; 
+         $sub_data['slug'] = $batch_title->first()->slug; 
+
+         $results['batch_main_title'] = $sub_data;
+      }
+      # batch main title end
+      
+      # batch tab content
+      $programs_batch_content = $this->ecarrerSectionsList($category, 'batch_content');
+
+      // dd($programs_batch_content);
+      
+      if( !empty($programs_batch_content) && count($programs_batch_content) > 0 ){
+         foreach ($programs_batch_content as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+            // $sub_data['description_en'] = $parent_value->description_en; 
+            // $sub_data['description_bn'] = $parent_value->description_bn;
+            // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+            // $sub_data['alt_text'] = $parent_value->alt_text;
+            if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
+
+               foreach ($parent_value->portalItems as $portal_items) {
+                  $sub_items = [];
+
+                  $sub_items['title_en'] = $portal_items->title_en;
+                  $sub_items['title_bn'] = $portal_items->title_bn;
+                  $sub_items['description_en'] = $portal_items->description_en;
+                  $sub_items['description_bn'] = $portal_items->description_bn;
+                  $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                  $sub_items['alt_text'] = $portal_items->alt_text;
+
+                  if( isset($portal_items->additional_info) && !empty($portal_items->additional_info) ){
+                     $additional_data = json_decode($portal_items->additional_info);
+
+                     $sub_items['university_en'] = isset($additional_data->testimonial_info->university_en) ? $additional_data->testimonial_info->university_en : null;
+                     $sub_items['university_bn'] = isset($additional_data->testimonial_info->university_bn) ? $additional_data->testimonial_info->university_bn : null;
+                  }
+
+                  $sub_data['item_list'][] = $sub_items;
+
+               }
+
+            }
+            else{
+               $sub_data['item_list'] = null;
+            }
+
+            $results['batch_content'][] = $sub_data;
+
+
+         } // Foreach end
+      }
+
+      return $results;
+
+   }
+
+   /**
+    * Programs tab tile
+    * @return [type] [description]
+    */
+   private function getProgramsTabTitle($category, $category_type){
+
+      $results = null;
+
+      if( empty($category) || empty($category_type) ){
+         return $results;
+      }
+
+      $tab_title = $this->ecarrerSectionsList($category, $category_type);
+
+      if( !empty($tab_title) && count($tab_title) > 0 ){
+
+         $sub_data['title_en'] = $tab_title->first()->title_en; 
+         $sub_data['title_bn'] = $tab_title->first()->title_bn; 
+         $sub_data['slug'] = $tab_title->first()->slug; 
+
+         $results = $sub_data;
+      }
+
+      return $results;
+   }
+
+
+
+
+   /**
+    * Programs SAP news sections
+    * @return [type] [description]
+    */
+   private function getProgramsEventsSections($category, $category_type, $additional_category){
+
+      $results = [];
+
+      if( empty($category) || empty($category_type) || empty($additional_category) ){
+         return $results;
+      }
+
+      # Ecarrer programs news section
+      $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+      if( !empty($get_sap_news) && count($get_sap_news) > 0 ){
+         foreach ($get_sap_news as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+
+            if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
+               foreach ($parent_value->portalItems as $items_value){
+
+                  $sub_items = [];
+                  $sub_items['title_en'] = $items_value->title_en;
+                  $sub_items['title_bn'] = $items_value->title_bn;
+                  $sub_items['description_en'] = $items_value->description_bn;
+                  $sub_items['description_bn'] = $items_value->description_bn;
+
+                  $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+
+                  $sub_items['alt_text'] = $items_value->alt_text;
+                  // $sub_items['alt_links'] = $items_value->alt_links;
+
+                  #teams tab content buttons
+                  //$sub_items['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+
+                  $sub_data['item_list'][] = $sub_items;
+
+
+               }
+            }
+
+            $results = $sub_data;
+
+         } // endforeach
+
+      }
+
+      return $results;
+
+   }
+
+
+   /**
+    * Programs AIP Testimonial Sections
+    * @return [type] [description]
+    */
+   private function getProgramsTestimonialSections($category, $category_type, $additional_category){
+
+      $results = null;
+
+      if( empty($category) || empty($category_type) || empty($additional_category) ){
+         return $results;
+      }
+
+      # Ecarrer programs news section
+      $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+      if( !empty($get_sap_news) && count($get_sap_news) > 0 ){
+         foreach ($get_sap_news as $parent_value) {
+
+            $sub_data = [];
+            $sub_data['title_en'] = $parent_value->title_en; 
+            $sub_data['title_bn'] = $parent_value->title_bn; 
+            $sub_data['slug'] = $parent_value->slug; 
+
+            if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
+               foreach ($parent_value->portalItems as $portal_items){
+
+                  $sub_items = [];
+                  $sub_items['title_en'] = $portal_items->title_en;
+                  $sub_items['title_bn'] = $portal_items->title_bn;
+                  $sub_items['description_en'] = $portal_items->description_bn;
+                  $sub_items['description_bn'] = $portal_items->description_bn;
+
+                  $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+
+                  $sub_items['alt_text'] = $portal_items->alt_text;
+                  // $sub_items['alt_links'] = $portal_items->alt_links;
+
+                  #university names
+                  if( isset($portal_items->additional_info) && !empty($portal_items->additional_info) ){
+                     $additional_data = json_decode($portal_items->additional_info);
+
+                     $sub_items['university_en'] = isset($additional_data->testimonial_info->university_en) ? $additional_data->testimonial_info->university_en : null;
+                     $sub_items['university_bn'] = isset($additional_data->testimonial_info->university_bn) ? $additional_data->testimonial_info->university_bn : null;
+                  }
+
+                  $sub_data['item_list'][] = $sub_items;
+
+
+               }
+            }
+
+            $results = $sub_data;
+
+         } // endforeach
+
+      }
+
+      return $results;
+
+   }
+
+
+} // Class end
+
+
+   

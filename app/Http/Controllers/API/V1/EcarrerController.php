@@ -369,5 +369,51 @@ class EcarrerController extends Controller
 
 
 
+	/**
+	 * eCarrer vacancy page api
+	 * @return [type] [description]
+	 */
+	public function getEcarrerVacancy(){
+
+		try{
+
+			$data = [];
+
+			$data['we_hire'] = $this->ecarrerService->getVacancyHire();
+			$data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
+			$data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
+			$data['job_offers'] = $this->ecarrerService->getVacancyLeverJobOffers();
+
+
+			return response()->success($data, 'Data Found!');
+		}
+		catch(\Exception $e){
+ 			return response()->error('Data Not Found!');
+ 		}
+
+	}
+
+
+
+	/**
+	 * [eCarrer Programs category sap, ennovators, aip]
+	 * @return [type]           [description]
+	 */
+ 	public function getEcarrerPrograms(){
+
+ 		try{
+
+ 			$data = [];
+ 			$data[]['sap'] = $this->ecarrerService->getProgramsSap();
+ 			$data[]['ennovators'] = $this->ecarrerService->getProgramsEnnovators();
+ 			$data[]['aip'] = $this->ecarrerService->getProgramsAip();
+
+ 			return response()->success($data, 'Data Found!');
+ 		}
+ 		catch(\Exception $e){
+  		return response()->error('Data Not Found!');
+  	}
+
+ 	}
 
 } // Class end
