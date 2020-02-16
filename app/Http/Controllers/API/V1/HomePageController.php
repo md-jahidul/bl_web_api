@@ -268,9 +268,6 @@ class HomePageController extends Controller
         $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs');
         $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
 
-        dd($data);
-
-
         return response()->success($data, "Data Success");
 
     }
