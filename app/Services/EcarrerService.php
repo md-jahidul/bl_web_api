@@ -1076,7 +1076,7 @@ class EcarrerService
       $portal_forms->address = isset($request['address']) ? $request['address'] : null;
 
       $portal_forms->save();
-      
+
       return true;
     }
     catch(QueryException $e){
@@ -1088,6 +1088,37 @@ class EcarrerService
    }
 
 
+   /**
+    * Programs tab tile
+    * @return [type] [description]
+    */
+   public function getProgramsAllTabTitle($category, $category_type = null){
+
+      $results = null;
+
+      if( empty($category) ){
+         return $results;
+      }
+
+      $tab_titles = $this->ecarrerSectionsList($category, $category_type);
+
+      if( !empty($tab_titles) && count($tab_titles) > 0 ){
+
+        foreach ($tab_titles as $tab_title) {
+          $sub_data['title_en'] = $tab_title->title_en; 
+          // $sub_data['title_bn'] = $tab_title->title_bn; 
+          $sub_data['route_name'] = $tab_title->slug; 
+          // $sub_data['slug'] = $tab_title->slug; 
+          // $sub_data['route_slug'] = $tab_title->route_slug; 
+
+          $results[] = $sub_data;
+        }
+
+         
+      }
+
+      return $results;
+   }
 
 
 } // Class end

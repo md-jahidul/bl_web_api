@@ -112,5 +112,9 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+    
+    # Frontend route for seo tab
+    Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
+
 
 });

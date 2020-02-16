@@ -18,6 +18,7 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
+use App\Services\EcarrerService;
 
 
 class HomePageController extends Controller
@@ -28,6 +29,7 @@ class HomePageController extends Controller
      */
     private $productService;
     private $quickLaunchService;
+    private $ecarrerService;
 
     /**
      * HomePageController constructor.
@@ -36,11 +38,13 @@ class HomePageController extends Controller
      */
     public function __construct(
         ProductService $productService,
-        QuickLaunchService $quickLaunchService
+        QuickLaunchService $quickLaunchService,
+        EcarrerService $ecarrerService
     )
     {
         $this->productService = $productService;
         $this->quickLaunchService = $quickLaunchService;
+        $this->ecarrerService = $ecarrerService;
     }
 
     // In PHP, By default objects are passed as reference copy to a new Object.
@@ -249,4 +253,26 @@ class HomePageController extends Controller
 
         return response()->success($result, "Data Success");
     }
+
+
+    /**
+     * Frontend dynamic route for seo tab
+     * @return [type] [description]
+     */
+    public function frontendDynamicRoute(){
+
+        $data = [];
+
+
+        # eCarrer frontend route fro programs
+        $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs');
+        $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
+
+        dd($data);
+
+
+        return response()->success($data, "Data Success");
+
+    }
+
 }
