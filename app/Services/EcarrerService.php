@@ -1092,7 +1092,7 @@ class EcarrerService
     * Programs tab tile
     * @return [type] [description]
     */
-   public function getProgramsAllTabTitle($category, $category_type = null){
+   public function getProgramsAllTabTitle($category, $category_type = null, $single = false){
 
       $results = null;
 
@@ -1102,20 +1102,22 @@ class EcarrerService
 
       $tab_titles = $this->ecarrerSectionsList($category, $category_type);
 
-      if( !empty($tab_titles) && count($tab_titles) > 0 ){
+      if( !$single ){
+        if( !empty($tab_titles) && count($tab_titles) > 0 ){
 
-        foreach ($tab_titles as $tab_title) {
-          $sub_data['title_en'] = $tab_title->title_en; 
-          // $sub_data['title_bn'] = $tab_title->title_bn; 
-          $sub_data['route_name'] = $tab_title->slug; 
-          // $sub_data['slug'] = $tab_title->slug; 
-          // $sub_data['route_slug'] = $tab_title->route_slug; 
+          foreach ($tab_titles as $tab_title) {
+            $sub_data['slug'] = $tab_title->slug; 
+            $results[] = $sub_data;
+          }
 
-          $results[] = $sub_data;
+           
         }
-
-         
       }
+      else{
+        $results = isset($tab_titles->first()->slug) ? $tab_titles->first()->slug : null;
+      }
+
+      
 
       return $results;
    }

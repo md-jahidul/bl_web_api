@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use Validator;
 use App\Services\EcarrerService;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 
 class HomePageController extends Controller
@@ -264,22 +265,101 @@ class HomePageController extends Controller
         $data = [];
 
         try{
+            $parent_code = "ECareer";
+            $parent_url = "/e-career";
             # eCarrer frontend route fro programs
-            $programs_title = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs');
+            $ecarrer_data['code'] = $parent_code;
+            $ecarrer_data['url'] = $parent_url;
 
-            // $new_data = array_push($sub_data, $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title'));
-            $programs_tab_title = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
+            # eCarrer children data
 
-            $data[] = array_merge($programs_title, $programs_tab_title);
+            # programs routes
+            $programs_slug = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs', true);
+
+            $extra_slug_data = [$programs_slug];
+
+            $programs_child_data = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
+
+            $programs_child_data_results = $this->formatDynamicRoute($programs_child_data, $parent_code, $parent_url, $extra_slug_data);
+
+
+            # life at banglalink all top banner slug
+            $top_banner_slug = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner');
+
+            $top_banner_data_results = $this->formatDynamicRoute($top_banner_slug, $parent_code, $parent_url, null);
+
+            $child_data = array_merge($top_banner_data_results, $programs_child_data_results );
+
+            $ecarrer_data['children'] = $child_data;
+            
+
+            $data[] = $ecarrer_data;
 
             return response()->success($data, "Data Success");
         }
         catch(\Exception $e){
-         return response()->error('Rote not found.', $e->getMessage());
+         return response()->error('Route not found.', $e->getMessage());
         }
 
         
 
     }
+
+    /**
+     * [formatDynamicRoute description]
+     * @param  [type] $data            [In Array]
+     * @param  [type] $parent_code     [description]
+     * @param  [type] $parent_url      [description]
+     * @param  [type] $extra_slug_data [extra slug added after parent slug]
+     * @return [type]                  [description]
+     */
+    private function formatDynamicRoute($data, $parent_code, $parent_url, $extra_slug_data = null){
+
+      try{
+         $results = null;
+         if( is_array($data) ){
+            
+            if( !empty($extra_slug_data) && is_array($extra_slug_data) ){
+               $additional_url_slug = implode('/', $extra_slug_data);
+            }
+            else{
+               $additional_url_slug = null;
+            }
+
+            foreach ($data as $value) {
+               
+               $sub_data = [];
+
+               $sub_data['code'] = $parent_code;
+
+               if( !empty($additional_url_slug) ){
+                  $sub_data['url'] = $parent_url .'/'. $additional_url_slug .'/'. $value['slug'];
+               }
+               else{
+                  $sub_data['url'] = $parent_url .'/'. $value['slug'];
+               }
+
+               $results[] = $sub_data;
+
+            }
+
+
+         }
+
+         return $results;
+      }
+      catch(\Exception $e){
+         return response()->error('Internal server error.', $e->getMessage());
+      }
+      catch(FatalThrowableError $e) {
+         return response()->error('Internal server error.', $e->getMessage());
+      }
+
+
+      
+
+
+    }
+
 
 }
