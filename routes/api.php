@@ -109,4 +109,7 @@ Route::group(['prefix' => '/v1'], function () {
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
 
+    //Lead Request
+    Route::post('lead-request', 'API\V1\LeadManagementController@leadRequestData');
+
 });

@@ -77,7 +77,6 @@ class AmarOfferService extends BaseService
         $offer_details = [];
         $offer_description = $offer->offerDescriptionWeb;
         $offers = explode(';', $offer_description);
-        $is_tariff_offer = false;
 
         $offer_details ['offer_id'] = $offer->offerID;
 
@@ -87,6 +86,8 @@ class AmarOfferService extends BaseService
         }
 
         foreach ($offers as $segment) {
+
+
             $data = explode('|', $segment);
             $type = $data[0];
             switch ($type) {
@@ -108,8 +109,15 @@ class AmarOfferService extends BaseService
                     $offer_details ['price_tk'] = (int)$data[1];
                     break;
                 case "VAL":
-                    $offer_details ['validity_days'] = (int)$data[1];
-                    $offer_details ['validity_unit'] = ucfirst(strtolower($data[2]));
+                    $valUnit = strtolower($data[2]);
+                    if ($valUnit == "hours"){
+                        $day = $data[1] / 24;
+                        $valUnit = ($day > 1) ? "Days" : "Day";
+                    }else{
+                        $day = $data[1];
+                    }
+                    $offer_details ['validity_days'] = (int)$day;
+                    $offer_details ['validity_unit'] = ucfirst(strtolower($valUnit));
                     break;
                 case "CAT":
                     if ($data[1] == "DAT"){
@@ -138,13 +146,16 @@ class AmarOfferService extends BaseService
      */
     public function getAmarOfferList(Request $request)
     {
-        $customerInfo = $this->customerService->getCustomerDetails($request);
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
+//        $customerInfo = $this->customerService->getCustomerDetails($request);
+
+        $response_data = $this->get($this->getAmarOfferListUrl(1932287502));
+//        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
+
         $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
 
-        if(substr($customerInfo->msisdn, 3) == "01409900110"){
-            $formatted_data = [];
-        }
+//        if(substr($customerInfo->msisdn, 3) == "01409900110"){
+//            $formatted_data = [];
+//        }
 
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
     }

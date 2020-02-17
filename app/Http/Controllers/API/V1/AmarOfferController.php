@@ -38,6 +38,6 @@ class AmarOfferController extends Controller
 
     public function buyAmarOffer(BuyAmarOfferRequest $request)
     {
-        return $this->amarOfferService->buyAmarOffer($request);
+//        return $this->amarOfferService->buyAmarOffer($request);
     }
 }
