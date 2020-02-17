@@ -263,12 +263,22 @@ class HomePageController extends Controller
 
         $data = [];
 
+        try{
+            # eCarrer frontend route fro programs
+            $programs_title = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs');
 
-        # eCarrer frontend route fro programs
-        $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner', 'programs');
-        $data['ecarrer_route'][] = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
+            // $new_data = array_push($sub_data, $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title'));
+            $programs_tab_title = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
 
-        return response()->success($data, "Data Success");
+            $data[] = array_merge($programs_title, $programs_tab_title);
+
+            return response()->success($data, "Data Success");
+        }
+        catch(\Exception $e){
+         return response()->error('Rote not found.', $e->getMessage());
+        }
+
+        
 
     }
 
