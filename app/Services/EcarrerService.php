@@ -11,7 +11,9 @@ use Carbon\Carbon;
 use App\Enums\HttpStatusCode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-
+use App\Models\University;
+use App\Models\EcarrerPortalForm;
+use Illuminate\Database\QueryException;
 
 
 class EcarrerService
@@ -920,7 +922,7 @@ class EcarrerService
     */
    private function getProgramsEventsSections($category, $category_type, $additional_category){
 
-      $results = [];
+      $results = null;
 
       if( empty($category) || empty($category_type) || empty($additional_category) ){
          return $results;
@@ -1030,6 +1032,94 @@ class EcarrerService
 
       return $results;
 
+   }
+
+
+   /**
+    * Get university list
+    * @return [type] [description]
+    */
+   public function getUniversityList(){
+
+      return University::get();
+
+   }
+
+
+   /**
+    * Update application form
+    * @param  [type] $request [description]
+    * @return [type]          [description]
+    */
+   public function updateApplicationForm($request){
+
+
+    try{
+      $data = null;
+
+      $portal_forms = new EcarrerPortalForm;
+
+      $portal_forms->name = isset($request['name']) ? $request['name'] : null;
+      $portal_forms->phone = isset($request['phone']) ? $request['phone'] : null;
+      $portal_forms->email = isset($request['email']) ? $request['email'] : null;
+      $portal_forms->university_id = isset($request['university_id']) ? $request['university_id'] : null;
+      $portal_forms->versity_id = isset($request['versity_id']) ? $request['versity_id'] : null;
+
+      if (!empty($request['applicant_cv'])) {
+        $portal_forms->applicant_cv = $this->upload($request['applicant_cv'], 'assetlite/images/ecarrer/applicant_files');
+      }
+
+      $portal_forms->versity_id = isset($request['versity_id']) ? $request['versity_id'] : null;
+      $portal_forms->gender = isset($request['gender']) ? $request['gender'] : null;
+      $portal_forms->date_of_birth = isset($request['dob']) ? $request['dob'] : null;
+      $portal_forms->cgpa = isset($request['cgpa']) ? $request['cgpa'] : null;
+      $portal_forms->address = isset($request['address']) ? $request['address'] : null;
+
+      $portal_forms->save();
+
+      return true;
+    }
+    catch(QueryException $e){
+      return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $e->getMessage(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+    }
+    
+
+
+   }
+
+
+   /**
+    * Programs tab tile
+    * @return [type] [description]
+    */
+   public function getProgramsAllTabTitle($category, $category_type = null, $single = false){
+
+      $results = null;
+
+      if( empty($category) ){
+         return $results;
+      }
+
+      $tab_titles = $this->ecarrerSectionsList($category, $category_type);
+
+      if( !$single ){
+        if( !empty($tab_titles) && count($tab_titles) > 0 ){
+
+          foreach ($tab_titles as $tab_title) {
+            $sub_data['slug'] = $tab_title->slug; 
+            $results[] = $sub_data;
+          }
+
+           
+        }
+      }
+      else{
+        $results = isset($tab_titles->first()->slug) ? $tab_titles->first()->slug : null;
+      }
+
+      
+
+      return $results;
    }
 
 

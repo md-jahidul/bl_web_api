@@ -24,10 +24,16 @@ class EcarrerPortalRepository extends BaseRepository
     public function getSectionsByCategory($category, $categoryTypes = null){
 
         if( empty($categoryTypes) ){
-    		return $this->model::with('portalItems')->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->get();
+    		return $this->model::with(['portalItems' => function($query){
+
+                $query->where('is_active', 1)->whereNull('deleted_at');
+
+            }])->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->get();
         }
         else{
-            return $this->model::with('portalItems')->where('category', '=', $category)->where('category_type', '=', $categoryTypes)->where('is_active', 1)->whereNull('deleted_at')->get();
+            return $this->model::with(['portalItems' => function($query){
+                $query->where('is_active', 1)->whereNull('deleted_at');
+            }])->where('category', '=', $category)->where('category_type', '=', $categoryTypes)->where('is_active', 1)->whereNull('deleted_at')->get();
         }
     }
 

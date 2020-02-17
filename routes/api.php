@@ -100,6 +100,10 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('ecarrer/programs', 'API\V1\EcarrerController@getEcarrerPrograms');
      Route::get('ecarrer/vacancy', 'API\V1\EcarrerController@getEcarrerVacancy');
 
+     // eCarrer Application form api  =========================================================
+    Route::get('ecarrer/university', 'API\V1\EcarrerController@ecarrerUniversity');
+    Route::post('ecarrer/application-form', 'API\V1\EcarrerController@ecarrerApplicationForm');
+
 
     // AboutUsBanglalink
     Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
@@ -108,6 +112,10 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+    
+    # Frontend route for seo tab
+    Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
+
 
     //Lead Request
     Route::post('lead-request', 'API\V1\LeadManagementController@leadRequestData');
