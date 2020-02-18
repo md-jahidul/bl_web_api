@@ -20,6 +20,7 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type)
     {
         return $this->model->where('status', 1)
+            ->where('special_product', 0)
             ->startEndDate()
             ->productCore()
             ->category($type)
@@ -31,7 +32,7 @@ class ProductRepository extends BaseRepository
        return $this->model->where('show_in_home', 1)
             ->productCore()
             ->where('status', 1)
-//            ->where('special_product', 0)
+            ->where('special_product', 0)
             ->startEndDate()
             ->orderBy('display_order')
             ->get();
@@ -56,6 +57,7 @@ class ProductRepository extends BaseRepository
     {
          return $this->model->where('purchase_option', 'recharge')
                  ->where('status', 1)
+                 ->where('special_product', 0)
                  ->productCore()
                  ->get();
     }
