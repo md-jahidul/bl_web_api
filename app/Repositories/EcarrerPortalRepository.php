@@ -62,6 +62,6 @@ class EcarrerPortalRepository extends BaseRepository
      */
     public function getEcareersInfo()
     {
-        return $this->model->with('portalItems')->get();
+        return $this->model->with('portalItems')->where('category', 'life_at_bl_diversity')->get();
     }
 }
