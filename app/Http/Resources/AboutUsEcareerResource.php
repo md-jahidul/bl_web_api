@@ -16,8 +16,8 @@ class AboutUsEcareerResource extends JsonResource
     {
         return [
             'id'                  => $this->id ?? null,
-            'title_en'            => $this->title_en ?? null,
-            'title_bn'            => $this->title_bn ?? null,
+            'title_en'            => "Career" ?? null,
+            'title_bn'            => "ক্যারিয়ার" ?? null,
             'description_en'      => $this->description_en ?? null,
             'description_bn'      => $this->title_en ?? null,
             'is_active'           => $this->is_active ?? null,
