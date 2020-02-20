@@ -47,7 +47,17 @@ class ProductRepository extends BaseRepository
     {
         return $data = $this->model->where('id', $id)
             ->productCore()
-            ->select('id', 'product_code', 'name_en', 'name_bn', 'ussd_bn', 'offer_info', 'status', 'purchase_option', 'like')
+            ->select(
+                'id',
+                'sim_category_id',
+                'offer_category_id',
+                'offer_info',
+                'product_code',
+                'name_en',
+                'name_bn', 'ussd_bn',
+                'offer_info', 'status',
+                'purchase_option',
+                'like')
             ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
