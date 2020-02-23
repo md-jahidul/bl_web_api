@@ -23,10 +23,10 @@ class SliderRepository extends BaseRepository
     public function getSliderInfo($slider)
     {
         return $this->model->where('short_code', $slider)
-            ->with(['sliderImages' => function ($q) {
-                $q->where('is_active', 1);
-            }])
-            ->get();
+//            ->with(['sliderImages' => function ($q) {
+//                $q->where('is_active', 1);
+//            }])
+            ->first();
     }
 
 
