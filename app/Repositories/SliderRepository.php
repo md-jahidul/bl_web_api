@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\AlSlider;
 use App\Models\Slider;
 
 /**
@@ -10,20 +11,8 @@ use App\Models\Slider;
  */
 class SliderRepository extends BaseRepository
 {
-    /**
-     * @var model
-     */
-    protected $model;
 
-
-    /**
-     * SliderRepository constructor.
-     * @param Slider $model
-     */
-    public function __construct(Slider $model)
-    {
-        $this->model = $model;
-    }
+    public $modelName = AlSlider::class;
 
 
     /**
@@ -31,17 +20,13 @@ class SliderRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function getHomeSliderInfo()
+    public function getSliderInfo($slider)
     {
-        $data = $this->model::whereHas('sliderImages', function ($q) {
-            $q->where('is_active', 1);
-        })->with(['sliderImages' => function ($q) {
-            $q->where('is_active', 1);
-        }])->where('platform', "App")
-            ->where('component_id', 1)
+        return $this->model->where('short_code', $slider)
+            ->with(['sliderImages' => function ($q) {
+                $q->where('is_active', 1);
+            }])
             ->get();
-
-        return $data;
     }
 
 
@@ -52,7 +37,7 @@ class SliderRepository extends BaseRepository
      */
     public function getDashboardSliderInfo()
     {
-        $data = $this->model::whereHas('sliderImages', function ($q) {
+        $data = $this->model->whereHas('sliderImages', function ($q) {
             $q->where('is_active', 1);
         })->with(['sliderImages' => function ($q) {
             $q->where('is_active', 1);
