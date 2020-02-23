@@ -292,6 +292,9 @@ class UserService extends ApiBaseService
         $data['password'] = $randomPass;
         $data['password_confirmation'] = $randomPass;
 
+        # is password_added
+        //$data['is_password_set'] = 1;
+
         $data['username'] = $mobile;
 
         $customer_account_id = $customerInfo->package->customerId;

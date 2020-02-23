@@ -5,9 +5,10 @@ namespace App\Http\Controllers\API\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\EcarrerService;
-use App\Http\Controllers\AssetLite\ConfigController;
+use App\Http\Controllers\API\V1\ConfigController;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Enums\HttpStatusCode;
 
 
 class EcarrerController extends Controller
@@ -262,9 +263,70 @@ class EcarrerController extends Controller
     	}
 
 
-    	#
+    	# ecarrer Teams section 
+    	# 
+    	$life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
 
-    	// dd($data);
+    	if(!empty($life_at_bl_teams) && count($life_at_bl_teams) > 0  ){
+
+    		$teams = [];
+    		foreach ($life_at_bl_teams as $teams_value) {
+
+    			if( $teams_value->category_type == 'teams_title' ){
+
+    				$sub_data = [];
+    				$sub_data['title_en'] = $teams_value->title_en; 
+    				$sub_data['title_bn'] = $teams_value->title_bn; 
+
+    				$teams['teams_title'] = $sub_data;
+    			}
+    			else{
+
+    				$sub_data = [];
+    				$sub_data['title_en'] = $teams_value->title_en; 
+    				$sub_data['title_bn'] = $teams_value->title_bn; 
+    				$sub_data['slug'] = $teams_value->slug; 
+    				if( !empty($teams_value->additional_info) ){
+    					$sub_data['sider_info'] = json_decode($teams_value->additional_info)->sider_info;
+    				}
+
+    				if( !empty($teams_value->portalItems) && count($teams_value->portalItems) > 0 ){
+
+    					foreach ($teams_value->portalItems as $portal_items) {
+    						$sub_items = [];
+
+    						$sub_items['title_en'] = $portal_items->title_en;
+    						$sub_items['description_en'] = $portal_items->description_en;
+    						$sub_items['description_bn'] = $portal_items->description_bn;
+    						$sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+    						$sub_items['alt_text'] = $portal_items->alt_text;
+
+    						#teams tab content buttons
+    						$sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;		
+
+    						$sub_data['tab_item_contant'] = $sub_items;
+
+    					}
+
+    				}
+    				else{
+    					$sub_data['tab_item_contant']['call_to_action_buttons'] = null;
+    				}
+
+    				$teams['teams_tab'][] = $sub_data;
+    			}
+
+
+    		} // Foreach end
+
+    		$data['teams'] = $teams;
+
+
+    	}
+    	else{
+    		$data['teams'] = null;
+    	}
+    	
 
 
     	return response()->success($data, 'Data Found!');
@@ -306,6 +368,109 @@ class EcarrerController extends Controller
 
     }
 
+
+
+	/**
+	 * eCarrer vacancy page api
+	 * @return [type] [description]
+	 */
+	public function getEcarrerVacancy(){
+
+		try{
+
+			$data = [];
+
+			$data['we_hire'] = $this->ecarrerService->getVacancyHire();
+			$data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
+			$data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
+			$data['job_offers'] = $this->ecarrerService->getVacancyLeverJobOffers();
+
+
+			return response()->success($data, 'Data Found!');
+		}
+		catch(\Exception $e){
+ 			return response()->error('Data Not Found!');
+ 		}
+
+	}
+
+
+
+	/**
+	 * [eCarrer Programs category sap, ennovators, aip]
+	 * @return [type]           [description]
+	 */
+ 	public function getEcarrerPrograms(){
+
+ 		try{
+
+ 			$data = [];
+ 			$data[]['sap'] = $this->ecarrerService->getProgramsSap();
+ 			$data[]['ennovators'] = $this->ecarrerService->getProgramsEnnovators();
+ 			$data[]['aip'] = $this->ecarrerService->getProgramsAip();
+
+ 			return response()->success($data, 'Data Found!');
+ 		}
+ 		     catch(\Exception $e){
+  		    return response()->error('Data Not Found!');
+  	     }
+
+ 	}
+
+   /**
+    * eCarrer University list api
+    * @return [type] [description]
+    */
+   public function ecarrerUniversity(){
+
+      try{
+
+         $data = [];
+
+         $data['university_list'] = $this->ecarrerService->getUniversityList();
+
+
+         return response()->success($data, 'Data Found!');
+      }
+      catch(\Exception $e){
+         return response()->error('Data Not Found!');
+      }
+
+   }
+
+
+   public function ecarrerApplicationForm(Request $request){
+
+      try{
+         # Image validation check
+         $image_upload_size = ConfigController::customerImageUploadSize();
+         $image_upload_type = ConfigController::customerImageUploadType();
+
+         $validator = Validator::make($request->all(), [
+             'name' => 'required',
+             'applicant_cv' => 'nullable|mimes:doc,pdf,docx,zip|max:'.$image_upload_size, // 2M
+             'phone' => 'nullable|numeric',
+             'email' => 'nullable|email',
+             'university_id' => 'nullable|integer',
+             'versity_id' => 'nullable|integer',
+         ]);
+         if ($validator->fails()) {
+             // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
+             return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+         }
+
+
+         # update application form
+         $this->ecarrerService->updateApplicationForm($request->all());
+
+         return response()->success([], 'Form submittd successfuly.');
+      }
+      catch(\Exception $e){
+         return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $e->getMessage(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+      }
+      
+
+   }
 
 
 

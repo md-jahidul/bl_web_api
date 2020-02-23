@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 
+use App\Exceptions\AmarOfferBuyException;
 use App\Exceptions\IdpAuthException;
 
 use App\Repositories\AmarOfferDetailsRepository;
@@ -76,7 +77,6 @@ class AmarOfferService extends BaseService
         $offer_details = [];
         $offer_description = $offer->offerDescriptionWeb;
         $offers = explode(';', $offer_description);
-        $is_tariff_offer = false;
 
         $offer_details ['offer_id'] = $offer->offerID;
 
@@ -86,6 +86,8 @@ class AmarOfferService extends BaseService
         }
 
         foreach ($offers as $segment) {
+
+
             $data = explode('|', $segment);
             $type = $data[0];
             switch ($type) {
@@ -107,14 +109,23 @@ class AmarOfferService extends BaseService
                     $offer_details ['price_tk'] = (int)$data[1];
                     break;
                 case "VAL":
-                    $offer_details ['validity_days'] = (int)$data[1];
-                    $offer_details ['validity_unit'] = ucfirst(strtolower($data[2]));
+                    $valUnit = strtolower($data[2]);
+                    if ($valUnit == "hours"){
+                        $day = $data[1] / 24;
+                        $valUnit = ($day > 1) ? "Days" : "Day";
+                    }else{
+                        $day = $data[1];
+                    }
+                    $offer_details ['validity_days'] = (int)$day;
+                    $offer_details ['validity_unit'] = ucfirst(strtolower($valUnit));
                     break;
                 case "CAT":
                     if ($data[1] == "DAT"){
                         $offerType = "data";
-                    } elseif ($data[1] == "VOI"){
+                    } elseif ($data[1] == "VOI") {
                         $offerType = "voice";
+                    } elseif ($data[1] == "MIX"){
+                        $offerType = "bundles";
                     } else{
                         $offerType = $data[1];
                     }
@@ -138,11 +149,6 @@ class AmarOfferService extends BaseService
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
         $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-
-        if(substr($customerInfo->msisdn, 3) == "01409900110"){
-            $formatted_data = [];
-        }
-
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
     }
 
@@ -151,27 +157,38 @@ class AmarOfferService extends BaseService
         return $this->amarOfferDetailsRepository->offerDetails($type);
     }
 
-//    private function prepareBuyOfferResponse($response)
-//    {
-//        if (isset($response->Status) && $response->Status == 'success') {
-//            return [
-//              'purchase_id' => $response->ID
-//            ];
-//        }
-//
-//        throw new AmarOfferBuyException();
-//    }
+    /**
+     * @param $response
+     * @return array
+     * @throws AmarOfferBuyException
+     */
+    private function prepareBuyOfferResponse($response)
+    {
+        if (isset($response->Status) && $response->Status == 'success') {
+            return [
+              'purchase_id' => $response->ID
+            ];
+        }
 
-//    public function buyAmarOffer(Request $request)
-//    {
-//        $customer = $this->getCustomerInfo($request);
-//        $response_data = $this->post($this->getBuyAmarOfferUrl(), [
-//            'msisdn'  => substr($customer->msisdn, 3),
-//            'offerID' => $request->offer_id
-//        ]);
-//        $offer_data = json_decode($response_data['response']);
-//        $formatted_data = $this->prepareBuyOfferResponse($offer_data);
-//
-//        return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
-//    }
+        throw new AmarOfferBuyException();
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws AmarOfferBuyException
+     * @throws IdpAuthException
+     */
+    public function buyAmarOffer(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        $response_data = $this->post($this->getBuyAmarOfferUrl(), [
+            'msisdn'  => substr($customer->msisdn, 3),
+            'offerID' => $request->offer_id
+        ]);
+        $offer_data = json_decode($response_data['response']);
+        $formatted_data = $this->prepareBuyOfferResponse($offer_data);
+
+        return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
+    }
 }
