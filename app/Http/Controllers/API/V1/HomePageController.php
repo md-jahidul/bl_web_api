@@ -99,8 +99,10 @@ class HomePageController extends Controller
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
-                foreach ($request->other_attributes as $key => $value) {
-                    $data[$key] = $value;
+                if ($request->other_attributes){
+                    foreach ($request->other_attributes as $key => $value) {
+                        $data[$key] = $value;
+                    }
                 }
 
                 array_push($result, (object)$data);
