@@ -107,8 +107,12 @@ class AboutUsService extends ApiBaseService
     {
         try {
             $data = $this->eCareerRepository->getEcareersInfo();
-            $formatted_data = AboutUsEcareerResource::collection($data);
-            return $this->sendSuccessResponse($formatted_data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
+
+            $arr_data = AboutUsEcareerResource::make($data);
+
+            $formatted_data = json_decode (json_encode ($arr_data), FALSE);
+
+            return $this->sendSuccessResponse( $formatted_data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }

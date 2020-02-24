@@ -16,6 +16,8 @@ class AboutUsResource extends JsonResource
     {
         return [
             'id'                            => $this->id ?? null,
+            'title_en'                      => $this->title ?? null,
+            'title_bn'                      => $this->title_bn ?? null,
             'banglalink_info_en'            => $this->banglalink_info ?? null,
             'banglalink_info_bn'            => $this->banglalink_info_bn ?? null,
             'banner_image'                  => env('IMAGE_HOST_URL') . $this->banner_image ?? null,
