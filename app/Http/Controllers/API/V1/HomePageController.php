@@ -287,13 +287,26 @@ class HomePageController extends Controller
 
             $programs_child_data_results = $this->formatDynamicRoute($programs_child_data, $parent_code, $parent_url, $extra_slug_data);
 
-
             # life at banglalink all top banner slug
             $top_banner_slug = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner');
 
             $top_banner_data_results = $this->formatDynamicRoute($top_banner_slug, $parent_code, $parent_url, null);
 
-            $child_data = array_merge($top_banner_data_results, $programs_child_data_results );
+            if( !empty($top_banner_data_results) ){
+
+                if( !empty($programs_child_data_results) ){
+                    $child_data = array_merge($top_banner_data_results, $programs_child_data_results );
+                }
+                else{
+                    $child_data = $top_banner_data_results;
+                }
+                
+            }
+            else{
+                $child_data = null;
+            }
+
+
 
             $ecarrer_data['children'] = $child_data;
 
@@ -304,6 +317,9 @@ class HomePageController extends Controller
         }
         catch(\Exception $e){
          return response()->error('Route not found.', $e->getMessage());
+        }
+        catch(FatalThrowableError $e) {
+           return response()->error('Internal server error.', $e->getMessage());
         }
 
 
