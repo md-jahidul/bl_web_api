@@ -18,8 +18,8 @@ class AboutUsResource extends JsonResource
             'id'                            => $this->id ?? null,
             'banglalink_info_en'            => $this->banglalink_info ?? null,
             'banglalink_info_bn'            => $this->banglalink_info_bn ?? null,
-            'banner_image'                  => env('IMAGE_HOST_URL') . "/" . $this->banner_image ?? null,
-            'content_image'                 => env('IMAGE_HOST_URL') . "/" . $this->content_image ?? null
+            'banner_image'                  => env('IMAGE_HOST_URL') . $this->banner_image ?? null,
+            'content_image'                 => env('IMAGE_HOST_URL') . $this->content_image ?? null
             ];
 
     }

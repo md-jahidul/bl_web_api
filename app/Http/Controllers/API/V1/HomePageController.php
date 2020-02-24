@@ -36,6 +36,7 @@ class HomePageController extends Controller
      * HomePageController constructor.
      * @param ProductService $productService
      * @param QuickLaunchService $quickLaunchService
+     * @param EcarrerService $ecarrerService
      */
     public function __construct(
         ProductService $productService,
@@ -184,6 +185,9 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
+
+
+
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
@@ -194,7 +198,6 @@ class HomePageController extends Controller
 
             $homePageData = [];
             foreach ($componentList as $component) {
-
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
             }
 
@@ -291,7 +294,7 @@ class HomePageController extends Controller
             $child_data = array_merge($top_banner_data_results, $programs_child_data_results );
 
             $ecarrer_data['children'] = $child_data;
-            
+
 
             $data[] = $ecarrer_data;
 
@@ -301,24 +304,24 @@ class HomePageController extends Controller
          return response()->error('Route not found.', $e->getMessage());
         }
 
-        
+
 
     }
 
     /**
      * [formatDynamicRoute description]
-     * @param  [type] $data            [In Array]
-     * @param  [type] $parent_code     [description]
-     * @param  [type] $parent_url      [description]
-     * @param  [type] $extra_slug_data [extra slug added after parent slug]
-     * @return [type]                  [description]
+     * @param $data
+     * @param $parent_code
+     * @param $parent_url
+     * @param null $extra_slug_data
+     * @return array|null [type]                  [description]
      */
     private function formatDynamicRoute($data, $parent_code, $parent_url, $extra_slug_data = null){
 
       try{
          $results = null;
          if( is_array($data) ){
-            
+
             if( !empty($extra_slug_data) && is_array($extra_slug_data) ){
                $additional_url_slug = implode('/', $extra_slug_data);
             }
@@ -327,7 +330,7 @@ class HomePageController extends Controller
             }
 
             foreach ($data as $value) {
-               
+
                $sub_data = [];
 
                $sub_data['code'] = $parent_code;
@@ -356,7 +359,7 @@ class HomePageController extends Controller
       }
 
 
-      
+
 
 
     }
