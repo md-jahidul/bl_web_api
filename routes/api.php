@@ -94,6 +94,15 @@ Route::group(['prefix' => '/v1'], function () {
      
     //Device offer
      Route::get('device-offers/{brand?}/', 'API\V1\DeviceOfferController@offerList');
+     
+     
+     //Business Module APIs
+     Route::get('business-home-data', 'API\V1\BusinessController@index');
+     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
+     Route::get('business-packages', 'API\V1\BusinessController@packages');
+     Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
+     Route::get('business-internet-package', 'API\V1\BusinessController@internet');
+     Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
    
 
 
