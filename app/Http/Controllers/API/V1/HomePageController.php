@@ -187,9 +187,6 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
-
-
-
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)

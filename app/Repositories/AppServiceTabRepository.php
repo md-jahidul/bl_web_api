@@ -42,7 +42,7 @@ class AppServiceTabRepository extends BaseRepository
                     }]);
                     $query->select('id', 'app_service_tab_id', 'title_en', 'title_bn');
                 }])
-            ->select('id', 'name_en', 'name_bn', 'banner_image_url', 'banner_alt_text')
+            ->select('id', 'name_en', 'name_bn', 'banner_image_url', 'banner_alt_text', 'alias')
             ->get();
     }
 }
