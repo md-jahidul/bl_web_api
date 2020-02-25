@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Repositories\EcarrerPortalRepository;
-use App\Repositories\EcarrerPortalItemRepository;
+use App\Repositories\EcareerPortalRepository;
+use App\Repositories\EcareerPortalItemRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
 
-class EcarrerItemService
+class EcareerItemService
 {
     use CrudTrait;
     use FileTrait;
@@ -31,7 +31,7 @@ class EcarrerItemService
      * PrizeService constructor.
      * @param PrizeRepository $prizeRepository
      */
-    public function __construct(EcarrerPortalItemRepository $ecarrerPortalItemRepository, EcarrerPortalRepository $ecarrerPortalRepository)
+    public function __construct(EcareerPortalItemRepository $ecarrerPortalItemRepository, EcareerPortalRepository $ecarrerPortalRepository)
     {
         $this->ecarrerPortalItemRepository = $ecarrerPortalItemRepository;
         $this->ecarrerPortalRepository = $ecarrerPortalRepository;
@@ -55,13 +55,13 @@ class EcarrerItemService
 
         $call_to_action_buttons = [];
         if ( isset($data['call_to_action_label_en_1']) && !empty($data['call_to_action_label_en_1']) ) {
-            
+
             if( !empty($data['call_to_action_count'])){
 
-                for ($i=1; $i <= $data['call_to_action_count']; $i++) { 
+                for ($i=1; $i <= $data['call_to_action_count']; $i++) {
 
                     $buttons = [];
-                    
+
                     if( isset($data['call_to_action_label_en_'.$i]) ){
                         $buttons['label_en'] = $data['call_to_action_label_en_'.$i];
                     }
@@ -151,19 +151,19 @@ class EcarrerItemService
         $ecarrer_item = $this->findOne($id);
 
         if (!empty($data['image_url'])) {
-           
+
             $data['image'] = $this->upload($data['image_url'], 'assetlite/images/ecarrer/general_section');
         }
 
         $call_to_action_buttons = [];
         if ( isset($data['call_to_action_label_en_1']) && !empty($data['call_to_action_label_en_1']) ) {
-            
+
             if( !empty($data['call_to_action_count'])){
 
-                for ($i=1; $i <= $data['call_to_action_count']; $i++) { 
+                for ($i=1; $i <= $data['call_to_action_count']; $i++) {
 
                     $buttons = [];
-                    
+
                     if( isset($data['call_to_action_label_en_'.$i]) ){
                         $buttons['label_en'] = $data['call_to_action_label_en_'.$i];
                     }
@@ -194,7 +194,7 @@ class EcarrerItemService
         if( !empty($data['additional_info'])  ){
             $data['additional_info'] = json_encode($data['additional_info']);
         }
-        
+
 
         $ecarrer_item->update($data);
 

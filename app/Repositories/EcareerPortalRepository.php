@@ -9,11 +9,11 @@
 
 namespace App\Repositories;
 
-use App\Models\EcarrerPortal;
+use App\Models\EcareerPortal;
 
-class EcarrerPortalRepository extends BaseRepository
+class EcareerPortalRepository extends BaseRepository
 {
-    public $modelName = EcarrerPortal::class;
+    public $modelName = EcareerPortal::class;
 
 
     /**
@@ -62,6 +62,6 @@ class EcarrerPortalRepository extends BaseRepository
      */
     public function getEcareersInfo()
     {
-        return $this->model->with('portalItems')->where('category', 'life_at_bl_diversity')->get();
+        return $this->model->with('portalItems')->where('category', 'life_at_bl_diversity')->first();
     }
 }

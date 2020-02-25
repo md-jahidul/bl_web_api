@@ -18,7 +18,7 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
-use App\Services\EcarrerService;
+use App\Services\EcareerService;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 
@@ -36,12 +36,12 @@ class HomePageController extends Controller
      * HomePageController constructor.
      * @param ProductService $productService
      * @param QuickLaunchService $quickLaunchService
-     * @param EcarrerService $ecarrerService
+     * @param EcareerService $ecarrerService
      */
     public function __construct(
         ProductService $productService,
         QuickLaunchService $quickLaunchService,
-        EcarrerService $ecarrerService
+        EcareerService $ecarrerService
     )
     {
         $this->productService = $productService;
@@ -99,8 +99,10 @@ class HomePageController extends Controller
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
-                foreach ($request->other_attributes as $key => $value) {
-                    $data[$key] = $value;
+                if ($request->other_attributes){
+                    foreach ($request->other_attributes as $key => $value) {
+                        $data[$key] = $value;
+                    }
                 }
 
                 array_push($result, (object)$data);
@@ -185,9 +187,6 @@ class HomePageController extends Controller
 
     public function getHomePageData()
     {
-
-
-
         try{
             $componentList = ShortCode::where('page_id',1)
                                         ->where('is_active',1)
@@ -298,7 +297,7 @@ class HomePageController extends Controller
                 else{
                     $child_data = $top_banner_data_results;
                 }
-                
+
             }
             else{
                 $child_data = null;

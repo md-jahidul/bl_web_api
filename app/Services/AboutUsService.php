@@ -8,7 +8,7 @@ use App\Http\Resources\AboutUsResource;
 use App\Http\Resources\ManagementResource;
 use App\Http\Resources\SliderImageResource;
 use App\Repositories\AboutUsRepository;
-use App\Repositories\EcarrerPortalRepository;
+use App\Repositories\EcareerPortalRepository;
 use App\Repositories\ManagementRepository;
 use App\Repositories\SliderImageRepository;
 use App\Repositories\SliderRepository;
@@ -29,7 +29,7 @@ class AboutUsService extends ApiBaseService
     protected $managementRepository;
 
     /**
-     * @var EcarrerPortalRepository
+     * @var EcareerPortalRepository
      */
     protected $eCareerRepository;
 
@@ -47,15 +47,15 @@ class AboutUsService extends ApiBaseService
      * AboutUsService constructor.
      * @param AboutUsRepository $aboutUsRepository
      * @param ManagementRepository $managementRepository
-     * @param EcarrerPortalRepository $eCareerRepository
+     * @param EcareerPortalRepository $eCareerRepository
      * @param SliderRepository $sliderRepository
      * @param SliderImageRepository $sliderImageRepository
      */
     public function __construct(AboutUsRepository $aboutUsRepository,
-        ManagementRepository $managementRepository,
-        EcarrerPortalRepository $eCareerRepository,
-        SliderRepository $sliderRepository,
-        SliderImageRepository $sliderImageRepository
+                                ManagementRepository $managementRepository,
+                                EcareerPortalRepository $eCareerRepository,
+                                SliderRepository $sliderRepository,
+                                SliderImageRepository $sliderImageRepository
 )
     {
         $this->aboutUsRepository = $aboutUsRepository;
@@ -107,8 +107,12 @@ class AboutUsService extends ApiBaseService
     {
         try {
             $data = $this->eCareerRepository->getEcareersInfo();
-            $formatted_data = AboutUsEcareerResource::collection($data);
-            return $this->sendSuccessResponse($formatted_data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
+
+            $arr_data = AboutUsEcareerResource::make($data);
+
+            $formatted_data = json_decode (json_encode ($arr_data), FALSE);
+
+            return $this->sendSuccessResponse( $formatted_data, 'Banglalink eCareer', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
