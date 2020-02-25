@@ -8,7 +8,6 @@
 namespace App\Services\Banglalink;
 
 use App\Services\ApiBaseService;
-
 use App\Repositories\BusinessOthersRepository;
 use App\Repositories\BusinessAssignedFeaturesRepository;
 use App\Repositories\BusinessComPhotoTextRepository;
@@ -21,8 +20,6 @@ use App\Repositories\BusinessComPhotoRepository;
 use Illuminate\Http\Response;
 
 class BusinessOthersService {
-
-
 
     /**
      * @var $otherRepo
@@ -37,7 +34,6 @@ class BusinessOthersService {
     protected $videoRepo;
     protected $photoRepo;
     protected $asgnFeatureRepo;
-    
     public $responseFormatter;
 
     /**
@@ -53,8 +49,7 @@ class BusinessOthersService {
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
      */
     public function __construct(
-            ApiBaseService $responseFormatter,
-    BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo, BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo, BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo, BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo
+    ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo, BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo, BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo, BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo
     ) {
         $this->otherRepo = $otherRepo;
         $this->photoTextRepo = $photoTextRepo;
@@ -65,7 +60,7 @@ class BusinessOthersService {
         $this->videoRepo = $videoRepo;
         $this->photoRepo = $photoRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
-        
+
         $this->responseFormatter = $responseFormatter;
     }
 
@@ -79,31 +74,50 @@ class BusinessOthersService {
     }
 
     /**
+     * Get business package by id
+     * @return Response
+     */
+    public function getServiceById($serviceId) {
+        $service = $this->otherRepo->getServiceById($serviceId);
+        
+        $data['service'] = $service;
+        $data['components'] = $this->_getComponents($serviceId);
+        $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
+        return $data;
+    }
+
+    /**
      * Get components by service ID
      * @return Response
      */
-    public function getComponents($serviceId) {
+    private function _getComponents($serviceId) {
 
         $components = [];
         $photoText = $this->photoTextRepo->getComponent($serviceId);
         foreach ($photoText as $v) {
-            $components[$v->position]['type'] = 'Photo with Text';
-            $components[$v->position]['text'] = $v->text;
-            $components[$v->position]['photo_url'] = $v->photo_url;
+            $components[$v->position]['type'] = 'photo-with-text';
+            $components[$v->position]['text_en'] = $v->text;
+            $components[$v->position]['text_bn'] = $v->text_bn;
+            $components[$v->position]['photo_url'] = config('filesystems.image_host_url') . $v->photo_url;
+            $components[$v->position]['alt_text'] = $v->alt_text;
         }
 
         $packageOne = $this->pkOneRepo->getComponent($serviceId);
 
-        foreach ($packageOne as $v) {
-            $components[$v->position]['type'] = 'Package Comparison One';
-            $components[$v->position]['text'] = $v->heads;
-            $components[$v->position]['photo_url'] = "";
+        foreach ($packageOne as $k => $v) {
+            $components[$v->position][$k]['type'] = 'package-comparison-one';
+            $components[$v->position][$k]['table_head_en'] = $v->table_head;
+            $components[$v->position][$k]['table_head_bn'] = $v->table_head_bn;
+            $components[$v->position][$k]['feature_text_en'] = $v->feature_text_en;
+            $components[$v->position][$k]['feature_text_bn'] = $v->feature_text_bn;
+            $components[$v->position][$k]['price_en'] = $v->price;
+            $components[$v->position][$k]['price_bn'] = $v->price_bn;
         }
 
         $packageTwo = $this->pkTwoRepo->getComponent($serviceId);
 
         foreach ($packageTwo as $v) {
-            $components[$v->position]['type'] = 'Package Comparison Two';
+            $components[$v->position]['type'] = 'package-comparison-two';
             $components[$v->position]['text'] = $v->name;
             $components[$v->position]['photo_url'] = "";
         }
@@ -155,22 +169,11 @@ class BusinessOthersService {
         return $components;
     }
 
-  
-
     /**
      * Get business package by id
      * @return Response
      */
-    public function getServiceById($serviceId) {
-        $response = $this->otherRepo->getServiceById($serviceId);
-        return $response;
-    }
-
-    /**
-     * Get business package by id
-     * @return Response
-     */
-    public function getFeaturesByService($serviceType, $serviceId) {
+    private function _getFeaturesByService($serviceType, $serviceId) {
         $types = array("business-solusion" => 2, "iot" => 3, "others" => 4);
         $parentType = $types[$serviceType];
         $response = $this->asgnFeatureRepo->getAssignedFeatures($serviceId, $parentType);

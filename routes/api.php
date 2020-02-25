@@ -103,6 +103,7 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
      Route::get('business-internet-package', 'API\V1\BusinessController@internet');
      Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
+     Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
    
 
 

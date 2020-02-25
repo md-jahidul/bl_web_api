@@ -51,7 +51,7 @@ class BusinessController extends Controller
     }
 
     /**
-     * Get json data for categories
+     * Get category list
      * 
      * @param No
      * @return Factory|View
@@ -75,7 +75,7 @@ class BusinessController extends Controller
     }
 
     /**
-     * Get package category page data
+     * Get package details
      * 
      * @param No
      * @return Factory|View
@@ -87,7 +87,7 @@ class BusinessController extends Controller
     }
 
     /**
-     * Get package category page data
+     * Get Internet package
      * 
      * @param No
      * @return Factory|View
@@ -99,7 +99,7 @@ class BusinessController extends Controller
     }
 
     /**
-     * Get package category page data
+     * Get Enterprise Solution
      * 
      * @param $type (business-solusion,iot,others)
      * @return Factory|View
@@ -108,6 +108,18 @@ class BusinessController extends Controller
     public function enterpriseSolusion($type)
     {
         return $this->enterpriseService->getOtherService($type);
+    }
+    
+    /**
+     * Get Enterprise Solution
+     * 
+     * @param $serviceId
+     * @return Factory|View
+     * @Bulbul Mahmud Nito || 24/02/2020
+     */
+    public function enterpriseProductDetails($serviceId)
+    {
+        return $this->enterpriseService->getServiceById($serviceId);
     }
 
 }
