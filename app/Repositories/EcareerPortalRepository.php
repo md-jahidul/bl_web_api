@@ -26,7 +26,7 @@ class EcareerPortalRepository extends BaseRepository
         if( empty($categoryTypes) ){
     		return $this->model::with(['portalItems' => function($query){
 
-                $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'desc');
+                $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'asc');
 
             }])->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->get();
         }
