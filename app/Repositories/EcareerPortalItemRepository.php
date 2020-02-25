@@ -12,7 +12,7 @@ namespace App\Repositories;
 use App\Models\EcarrerPortalItem;
 use Carbon\Carbon;
 
-class EcarrerPortalItemRepository extends BaseRepository
+class EcareerPortalItemRepository extends BaseRepository
 {
     public $modelName = EcarrerPortalItem::class;
 

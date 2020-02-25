@@ -4,16 +4,16 @@ namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\EcarrerService;
+use App\Services\EcareerService;
 use App\Http\Controllers\API\V1\ConfigController;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Enums\HttpStatusCode;
 
 
-class EcarrerController extends Controller
+class EcareerController extends Controller
 {
-   
+
 
 	/**
 	 * Available eCarrer portals category
@@ -38,7 +38,7 @@ class EcarrerController extends Controller
 	 */
    private $ecarrerService;
 
-    public function __construct(EcarrerService $ecarrerService)
+    public function __construct(EcareerService $ecarrerService)
     {
         $this->ecarrerService = $ecarrerService;
     }
@@ -57,12 +57,12 @@ class EcarrerController extends Controller
     		if(!empty($top_banners)){
     			foreach ($top_banners as $key => $value) {
     				$sub_data_banner = [];
-    				$sub_data_banner['title_en'] = $value->title_en; 
-    				$sub_data_banner['title_bn'] = $value->title_bn; 
-    				$sub_data_banner['slug'] = $value->slug; 
-    				
+    				$sub_data_banner['title_en'] = $value->title_en;
+    				$sub_data_banner['title_bn'] = $value->title_bn;
+    				$sub_data_banner['slug'] = $value->slug;
+
     				$sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
-    				$sub_data_banner['alt_text'] = $value->alt_text; 
+    				$sub_data_banner['alt_text'] = $value->alt_text;
 
     				$data['top_menu_banner'][] = $sub_data_banner;
 
@@ -78,22 +78,22 @@ class EcarrerController extends Controller
 
     				if( $contact_value->category_type == 'contact_us' ){
     					$sub_data_contact = [];
-    					$sub_data_contact['title_en'] = $contact_value->title_en; 
-    					$sub_data_contact['title_bn'] = $contact_value->title_bn; 
-    					$sub_data_contact['slug'] = $contact_value->slug; 
-    					$sub_data_contact['description_en'] = $contact_value->description_en; 
-    					$sub_data_contact['description_bn'] = $contact_value->description_bn; 
-    					
+    					$sub_data_contact['title_en'] = $contact_value->title_en;
+    					$sub_data_contact['title_bn'] = $contact_value->title_bn;
+    					$sub_data_contact['slug'] = $contact_value->slug;
+    					$sub_data_contact['description_en'] = $contact_value->description_en;
+    					$sub_data_contact['description_bn'] = $contact_value->description_bn;
+
     					$data['contact_us'] = $sub_data_contact;
     				}
     				elseif( $contact_value->category_type == 'connect_us_social' ){
 
     					$sub_data_connect = [];
-    					$sub_data_connect['title_en'] = $contact_value->title_en; 
-    					$sub_data_connect['title_bn'] = $contact_value->title_bn; 
-    					$sub_data_connect['slug'] = $contact_value->slug; 
-    					$sub_data_connect['description_en'] = $contact_value->description_en; 
-    					$sub_data_connect['description_bn'] = $contact_value->description_bn; 
+    					$sub_data_connect['title_en'] = $contact_value->title_en;
+    					$sub_data_connect['title_bn'] = $contact_value->title_bn;
+    					$sub_data_connect['slug'] = $contact_value->slug;
+    					$sub_data_connect['description_en'] = $contact_value->description_en;
+    					$sub_data_connect['description_bn'] = $contact_value->description_bn;
 
     					if( !empty($contact_value->portalItems) ){
 
@@ -110,7 +110,7 @@ class EcarrerController extends Controller
     						}
 
     					}
-    					
+
     					$data['connect_us'] = $sub_data_connect;
 
     				}
@@ -118,13 +118,13 @@ class EcarrerController extends Controller
     			}
     		}
 
-    		
+
     		return response()->success($data, 'Data Found!');
     	}
     	catch(\Exception $e){
     		return response()->error('Data Not Found!');
     	}
-    	
+
 
     }
 
@@ -140,7 +140,7 @@ class EcarrerController extends Controller
 
     	// Life at banglalink 3 general section
     	$life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
-    	
+
     	if(!empty($life_at_bl_general) && count($life_at_bl_general) > 0){
     		foreach ($life_at_bl_general as $general_value) {
 
@@ -186,11 +186,11 @@ class EcarrerController extends Controller
     		foreach ($life_at_bl_diversity as $diversity_value) {
 
     			$sub_data = [];
-    			$sub_data['title_en'] = $diversity_value->title_en; 
-    			$sub_data['title_bn'] = $diversity_value->title_bn; 
-    			$sub_data['slug'] = $diversity_value->slug; 
-    			$sub_data['description_en'] = $diversity_value->description_en; 
-    			$sub_data['description_bn'] = $diversity_value->description_bn; 
+    			$sub_data['title_en'] = $diversity_value->title_en;
+    			$sub_data['title_bn'] = $diversity_value->title_bn;
+    			$sub_data['slug'] = $diversity_value->slug;
+    			$sub_data['description_en'] = $diversity_value->description_en;
+    			$sub_data['description_bn'] = $diversity_value->description_bn;
 
     			if( !empty($diversity_value->portalItems) ){
 
@@ -220,7 +220,7 @@ class EcarrerController extends Controller
     	}
     	// endif
 
-    	
+
     	# Life at banglalink Events and Activites section
     	$life_at_bl_events = $this->ecarrerService->ecarrerSectionsList('life_at_bl_events');
 
@@ -231,9 +231,9 @@ class EcarrerController extends Controller
     		foreach ($life_at_bl_events as $events_value) {
 
     			$sub_data = [];
-    			$sub_data['title_en'] = $events_value->title_en; 
-    			$sub_data['title_bn'] = $events_value->title_bn; 
-    			$sub_data['slug'] = $events_value->slug; 
+    			$sub_data['title_en'] = $events_value->title_en;
+    			$sub_data['title_bn'] = $events_value->title_bn;
+    			$sub_data['slug'] = $events_value->slug;
     			if( !empty($events_value->additional_info) ){
     				$sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
     			}
@@ -263,8 +263,8 @@ class EcarrerController extends Controller
     	}
 
 
-    	# ecarrer Teams section 
-    	# 
+    	# ecarrer Teams section
+    	#
     	$life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
 
     	if(!empty($life_at_bl_teams) && count($life_at_bl_teams) > 0  ){
@@ -275,17 +275,17 @@ class EcarrerController extends Controller
     			if( $teams_value->category_type == 'teams_title' ){
 
     				$sub_data = [];
-    				$sub_data['title_en'] = $teams_value->title_en; 
-    				$sub_data['title_bn'] = $teams_value->title_bn; 
+    				$sub_data['title_en'] = $teams_value->title_en;
+    				$sub_data['title_bn'] = $teams_value->title_bn;
 
     				$teams['teams_title'] = $sub_data;
     			}
     			else{
 
     				$sub_data = [];
-    				$sub_data['title_en'] = $teams_value->title_en; 
-    				$sub_data['title_bn'] = $teams_value->title_bn; 
-    				$sub_data['slug'] = $teams_value->slug; 
+    				$sub_data['title_en'] = $teams_value->title_en;
+    				$sub_data['title_bn'] = $teams_value->title_bn;
+    				$sub_data['slug'] = $teams_value->slug;
     				if( !empty($teams_value->additional_info) ){
     					$sub_data['sider_info'] = json_decode($teams_value->additional_info)->sider_info;
     				}
@@ -302,7 +302,7 @@ class EcarrerController extends Controller
     						$sub_items['alt_text'] = $portal_items->alt_text;
 
     						#teams tab content buttons
-    						$sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;		
+    						$sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
 
     						$sub_data['tab_item_contant'] = $sub_items;
 
@@ -326,7 +326,7 @@ class EcarrerController extends Controller
     	else{
     		$data['teams'] = null;
     	}
-    	
+
 
 
     	return response()->success($data, 'Data Found!');
@@ -340,9 +340,9 @@ class EcarrerController extends Controller
     private function lifeAtBanglalinkData($general_value){
 
     	$sub_data_news = [];
-    	$sub_data_news['title_en'] = $general_value->title_en; 
-    	$sub_data_news['title_bn'] = $general_value->title_bn; 
-    	
+    	$sub_data_news['title_en'] = $general_value->title_en;
+    	$sub_data_news['title_bn'] = $general_value->title_bn;
+
 
     	if( !empty($general_value->portalItems) ){
 
@@ -468,7 +468,7 @@ class EcarrerController extends Controller
       catch(\Exception $e){
          return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $e->getMessage(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
       }
-      
+
 
    }
 

@@ -18,7 +18,7 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use DB;
 use Validator;
-use App\Services\EcarrerService;
+use App\Services\EcareerService;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 
@@ -36,12 +36,12 @@ class HomePageController extends Controller
      * HomePageController constructor.
      * @param ProductService $productService
      * @param QuickLaunchService $quickLaunchService
-     * @param EcarrerService $ecarrerService
+     * @param EcareerService $ecarrerService
      */
     public function __construct(
         ProductService $productService,
         QuickLaunchService $quickLaunchService,
-        EcarrerService $ecarrerService
+        EcareerService $ecarrerService
     )
     {
         $this->productService = $productService;
@@ -300,7 +300,7 @@ class HomePageController extends Controller
                 else{
                     $child_data = $top_banner_data_results;
                 }
-                
+
             }
             else{
                 $child_data = null;

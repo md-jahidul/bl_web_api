@@ -8,7 +8,7 @@ use App\Http\Resources\AboutUsResource;
 use App\Http\Resources\ManagementResource;
 use App\Http\Resources\SliderImageResource;
 use App\Repositories\AboutUsRepository;
-use App\Repositories\EcarrerPortalRepository;
+use App\Repositories\EcareerPortalRepository;
 use App\Repositories\ManagementRepository;
 use App\Repositories\SliderImageRepository;
 use App\Repositories\SliderRepository;
@@ -29,7 +29,7 @@ class AboutUsService extends ApiBaseService
     protected $managementRepository;
 
     /**
-     * @var EcarrerPortalRepository
+     * @var EcareerPortalRepository
      */
     protected $eCareerRepository;
 
@@ -47,15 +47,15 @@ class AboutUsService extends ApiBaseService
      * AboutUsService constructor.
      * @param AboutUsRepository $aboutUsRepository
      * @param ManagementRepository $managementRepository
-     * @param EcarrerPortalRepository $eCareerRepository
+     * @param EcareerPortalRepository $eCareerRepository
      * @param SliderRepository $sliderRepository
      * @param SliderImageRepository $sliderImageRepository
      */
     public function __construct(AboutUsRepository $aboutUsRepository,
-        ManagementRepository $managementRepository,
-        EcarrerPortalRepository $eCareerRepository,
-        SliderRepository $sliderRepository,
-        SliderImageRepository $sliderImageRepository
+                                ManagementRepository $managementRepository,
+                                EcareerPortalRepository $eCareerRepository,
+                                SliderRepository $sliderRepository,
+                                SliderImageRepository $sliderImageRepository
 )
     {
         $this->aboutUsRepository = $aboutUsRepository;

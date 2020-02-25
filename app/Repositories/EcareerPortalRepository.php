@@ -9,11 +9,11 @@
 
 namespace App\Repositories;
 
-use App\Models\EcarrerPortal;
+use App\Models\EcareerPortal;
 
-class EcarrerPortalRepository extends BaseRepository
+class EcareerPortalRepository extends BaseRepository
 {
-    public $modelName = EcarrerPortal::class;
+    public $modelName = EcareerPortal::class;
 
 
     /**

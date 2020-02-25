@@ -106,15 +106,15 @@ Route::group(['prefix' => '/v1'], function () {
 
 
      // eCarrer api
-     Route::get('ecarrer/banner-contact', 'API\V1\EcarrerController@topBannerContact');
-     Route::get('ecarrer/life-at-bl', 'API\V1\EcarrerController@lifeAtBanglalink');
+     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
+     Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
 
-     Route::get('ecarrer/programs', 'API\V1\EcarrerController@getEcarrerPrograms');
-     Route::get('ecarrer/vacancy', 'API\V1\EcarrerController@getEcarrerVacancy');
+     Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
+     Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
 
      // eCarrer Application form api  =========================================================
-    Route::get('ecarrer/university', 'API\V1\EcarrerController@ecarrerUniversity');
-    Route::post('ecarrer/application-form', 'API\V1\EcarrerController@ecarrerApplicationForm');
+    Route::get('ecarrer/university', 'API\V1\EcareerController@ecarrerUniversity');
+    Route::post('ecarrer/application-form', 'API\V1\EcareerController@ecarrerApplicationForm');
 
 
     // AboutUsBanglalink
