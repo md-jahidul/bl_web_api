@@ -19,8 +19,17 @@ class BusinessCategoryRepository extends BaseRepository {
                 ->orderBy('home_sort')->get();
         $data = [];
         $count = 0;
+        
+        $slugs = array(
+            1 => 'packages',
+            2 => 'internet',
+            3 => 'business-solutions',
+            4 => 'iot',
+            5 => 'others',
+        );
         foreach($categories as $v){
             $data[$count]['id'] = $v->id;
+             $data[$count]['slug'] = $slugs[$v->id];
             $data[$count]['name_en'] = $v->name;
             $data[$count]['name_bn'] = $v->name_bn;
             $count++;
@@ -33,8 +42,17 @@ class BusinessCategoryRepository extends BaseRepository {
                 ->orderBy('id')->get();
         $data = [];
         $count = 0;
+        
+        $slugs = array(
+            1 => 'packages',
+            2 => 'internet',
+            3 => 'business-solutions',
+            4 => 'iot',
+            5 => 'others',
+        );
         foreach($categories as $v){
             $data[$count]['id'] = $v->id;
+            $data[$count]['slug'] = $slugs[$v->id];
             $data[$count]['name_en'] = $v->name;
             $data[$count]['name_bn'] = $v->name_bn;
             $count++;
