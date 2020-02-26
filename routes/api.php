@@ -134,4 +134,8 @@ Route::group(['prefix' => '/v1'], function () {
     //Lead Request
     Route::post('lead-request', 'API\V1\LeadManagementController@leadRequestData');
 
+    //District Thana
+    Route::get('district', 'API\V1\DistrictThanaController@district');
+    Route::get('thana/{districtId}', 'API\V1\DistrictThanaController@thana');
+
 });
