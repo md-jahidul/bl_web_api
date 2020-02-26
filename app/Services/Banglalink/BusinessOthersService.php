@@ -80,10 +80,10 @@ class BusinessOthersService {
     public function getServiceById($serviceId) {
         $service = $this->otherRepo->getServiceById($serviceId);
 
-        $data['service'] = $service;
+        $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($serviceId);
         $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
-        return $data;
+        return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
     }
 
     /**
@@ -255,7 +255,7 @@ class BusinessOthersService {
      * @return Response
      */
     private function _getFeaturesByService($serviceType, $serviceId) {
-        $types = array("business-solusion" => 2, "iot" => 3, "others" => 4);
+        $types = array("business-solution" => 2, "iot" => 3, "others" => 4);
         $parentType = $types[$serviceType];
         $response = $this->asgnFeatureRepo->getAssignedFeatures($serviceId, $parentType);
         return $response;
