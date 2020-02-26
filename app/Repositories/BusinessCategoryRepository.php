@@ -23,7 +23,7 @@ class BusinessCategoryRepository extends BaseRepository {
         $slugs = array(
             1 => 'packages',
             2 => 'internet',
-            3 => 'business-solutions',
+            3 => 'business-solution',
             4 => 'iot',
             5 => 'others',
         );
@@ -46,7 +46,7 @@ class BusinessCategoryRepository extends BaseRepository {
         $slugs = array(
             1 => 'packages',
             2 => 'internet',
-            3 => 'business-solutions',
+            3 => 'business-solution',
             4 => 'iot',
             5 => 'others',
         );
