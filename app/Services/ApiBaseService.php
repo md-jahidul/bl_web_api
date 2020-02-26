@@ -15,18 +15,18 @@ class ApiBaseService implements ApiBaseServiceInterface
 {
 
     /**
-     * Success response method.
-     *
-     * @param array $result
+     * @param $result
+     * @param null $baseURL
      * @param $message
      * @param array $pagination
      * @param int $http_status
      * @param int $status_code
-     * @return JsonResponse
+     * @return JsonResponse|mixed
      */
     public function sendSuccessResponse(
         $result,
         $message,
+        $baseUrl = [],
         $pagination = [],
         $http_status = HttpStatusCode::SUCCESS,
         $status_code = ApiCustomStatusCode::SUCCESS
@@ -35,7 +35,8 @@ class ApiBaseService implements ApiBaseServiceInterface
             'status' => 'SUCCESS',
             'status_code' => $status_code,
             'message' => $message,
-            'data' => $result
+            'data' => $result,
+            'base_url' => $baseUrl
         ];
 
         if (!empty($pagination)) {
