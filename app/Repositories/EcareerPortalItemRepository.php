@@ -12,7 +12,7 @@ namespace App\Repositories;
 use App\Models\EcarrerPortalItem;
 use Carbon\Carbon;
 
-class EcarrerPortalItemRepository extends BaseRepository
+class EcareerPortalItemRepository extends BaseRepository
 {
     public $modelName = EcarrerPortalItem::class;
 
@@ -24,7 +24,7 @@ class EcarrerPortalItemRepository extends BaseRepository
      */
     public function getItemsByParentID($parent_id){
 
-    	return $this->model::where('ecarrer_portals_id', '=', $parent_id)->whereNull('deleted_at')->get();
+    	return $this->model::where('ecarrer_portals_id', '=', $parent_id)->whereNull('deleted_at')->orderBy('display_order')->get();
 
     }
 

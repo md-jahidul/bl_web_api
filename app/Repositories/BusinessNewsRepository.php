@@ -18,13 +18,13 @@ class BusinessNewsRepository extends BaseRepository {
         $news = $this->model->where('status', 1)->orderBy('sort')->get();
         $count = 0;
         foreach($news as $v){
-            $data[$count]['image'] = config('filesystems.image_host_url'). $v->image_url;
-            $data[$count]['sliding_speed'] = $v->sliding_speed;
-            $data[$count]['alt_text'] = $v->alt_text;
-            $data[$count]['title'] = $v->title;
-            $data[$count]['title_bn'] = $v->title_bn;
-            $data[$count]['body'] = $v->body;
-            $data[$count]['body_bn'] = $v->body_bn;
+            $data['sliding_speed'] = $v->sliding_speed;
+            $data['data'][$count]['image'] = config('filesystems.image_host_url'). $v->image_url;
+            $data['data'][$count]['alt_text'] = $v->alt_text;
+            $data['data'][$count]['title'] = $v->title;
+            $data['data'][$count]['title_bn'] = $v->title_bn;
+            $data['data'][$count]['body'] = $v->body;
+            $data['data'][$count]['body_bn'] = $v->body_bn;
             $count++;
         }
         return $data;

@@ -30,8 +30,7 @@ class BusinessComPkOneRepository extends BaseRepository {
     }
     
        public function getComponent($serviceId) {
-        $component = $this->model->select(DB::raw('group_concat(table_head) heads, position'))
-                        ->where('service_id', $serviceId)->groupBy('position')->get();
+        $component = $this->model->where('service_id', $serviceId)->orderBy('position')->orderBy('id')->get();
         return $component;
     }
     

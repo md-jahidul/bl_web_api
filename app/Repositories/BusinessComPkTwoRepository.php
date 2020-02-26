@@ -32,8 +32,7 @@ class BusinessComPkTwoRepository extends BaseRepository {
     }
 
     public function getComponent($serviceId) {
-        $component = $this->model->select(DB::raw('group_concat(package_name) name, position'))
-                        ->where('service_id', $serviceId)->groupBy('position')->get();
+        $component = $this->model->where('service_id', $serviceId)->orderBy('position')->orderBy('id')->get();
         return $component;
     }
 

@@ -44,7 +44,7 @@ class BusinessOthersRepository extends BaseRepository {
                 $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
                 $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
                 $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
-                $countTop++;
+                $countSlider++;
             }
         }
         return $data;
@@ -67,6 +67,22 @@ class BusinessOthersRepository extends BaseRepository {
 
             $count++;
         }
+        return $data;
+    }
+
+    public function getServiceById($serviceId) {
+        $service = $this->model->where('id', $serviceId)->first();
+        
+        $data['id'] = $service->id;
+        $data['type'] = $service->type;
+        $data['icon'] = config('filesystems.image_host_url') . $service->icon;
+        $data['name_en'] = $service->name;
+        $data['name_bn'] = $service->name_bn;
+        $data['short_details_en'] = $service->short_details;
+        $data['short_details_bn'] = $service->short_details_bn;
+        $data['offer_details_en'] = $service->offer_details;
+        $data['offer_details_bn'] = $service->offer_details_bn;
+        
         return $data;
     }
 

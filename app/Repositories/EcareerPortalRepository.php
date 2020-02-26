@@ -9,11 +9,11 @@
 
 namespace App\Repositories;
 
-use App\Models\EcarrerPortal;
+use App\Models\EcareerPortal;
 
-class EcarrerPortalRepository extends BaseRepository
+class EcareerPortalRepository extends BaseRepository
 {
-    public $modelName = EcarrerPortal::class;
+    public $modelName = EcareerPortal::class;
 
 
     /**
@@ -26,13 +26,13 @@ class EcarrerPortalRepository extends BaseRepository
         if( empty($categoryTypes) ){
     		return $this->model::with(['portalItems' => function($query){
 
-                $query->where('is_active', 1)->whereNull('deleted_at');
+                $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'asc');
 
             }])->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->get();
         }
         else{
             return $this->model::with(['portalItems' => function($query){
-                $query->where('is_active', 1)->whereNull('deleted_at');
+                $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'desc');
             }])->where('category', '=', $category)->where('category_type', '=', $categoryTypes)->where('is_active', 1)->whereNull('deleted_at')->get();
         }
     }
