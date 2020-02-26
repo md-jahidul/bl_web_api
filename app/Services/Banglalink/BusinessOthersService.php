@@ -119,7 +119,7 @@ class BusinessOthersService {
             $components[$position]['type'] = 'package-comparison-one';
             $components[$position]['data'][$pk1Count]['table_head_en'] = $v->table_head;
             $components[$position]['data'][$pk1Count]['table_head_bn'] = $v->table_head_bn;
-            $components[$position]['data'][$pk1Count]['feature_text_en'] = $v->feature_text_en;
+            $components[$position]['data'][$pk1Count]['feature_text_en'] = $v->feature_text;
             $components[$position]['data'][$pk1Count]['feature_text_bn'] = $v->feature_text_bn;
             $components[$position]['data'][$pk1Count]['price_en'] = $v->price;
             $components[$position]['data'][$pk1Count]['price_bn'] = $v->price_bn;
