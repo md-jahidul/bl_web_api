@@ -30,7 +30,7 @@ class BusinessComPkOneRepository extends BaseRepository {
     }
     
        public function getComponent($serviceId) {
-        $component = $this->model->where('service_id', $serviceId)->get();
+        $component = $this->model->where('service_id', $serviceId)->orderBy('position')->orderBy('id')->get();
         return $component;
     }
     

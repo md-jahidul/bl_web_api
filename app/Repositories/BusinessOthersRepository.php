@@ -44,7 +44,7 @@ class BusinessOthersRepository extends BaseRepository {
                 $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
                 $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
                 $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
-                $countTop++;
+                $countSlider++;
             }
         }
         return $data;
