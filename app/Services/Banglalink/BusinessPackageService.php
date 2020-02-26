@@ -53,7 +53,7 @@ class BusinessPackageService {
      */
     public function getPackageById($packageId) {
         $data['packageDetails'] = $this->packageRepo->getPackageById($packageId);
-        $data['packageFeatures'] = $this->_getFeaturesByPackage($packageId);
+        $data['feature'] = $this->_getFeaturesByPackage($packageId);
         return $this->responseFormatter->sendSuccessResponse($data, 'Business Package Details');
     }
 

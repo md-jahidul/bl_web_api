@@ -80,10 +80,10 @@ class BusinessOthersService {
     public function getServiceById($serviceId) {
         $service = $this->otherRepo->getServiceById($serviceId);
 
-        $data['service'] = $service;
+        $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($serviceId);
         $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
-        return $data;
+        return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
     }
 
     /**
@@ -119,7 +119,7 @@ class BusinessOthersService {
             $components[$position]['type'] = 'package-comparison-one';
             $components[$position]['data'][$pk1Count]['table_head_en'] = $v->table_head;
             $components[$position]['data'][$pk1Count]['table_head_bn'] = $v->table_head_bn;
-            $components[$position]['data'][$pk1Count]['feature_text_en'] = $v->feature_text_en;
+            $components[$position]['data'][$pk1Count]['feature_text_en'] = $v->feature_text;
             $components[$position]['data'][$pk1Count]['feature_text_bn'] = $v->feature_text_bn;
             $components[$position]['data'][$pk1Count]['price_en'] = $v->price;
             $components[$position]['data'][$pk1Count]['price_bn'] = $v->price_bn;
@@ -255,7 +255,7 @@ class BusinessOthersService {
      * @return Response
      */
     private function _getFeaturesByService($serviceType, $serviceId) {
-        $types = array("business-solusion" => 2, "iot" => 3, "others" => 4);
+        $types = array("business-solution" => 2, "iot" => 3, "others" => 4);
         $parentType = $types[$serviceType];
         $response = $this->asgnFeatureRepo->getAssignedFeatures($serviceId, $parentType);
         return $response;
