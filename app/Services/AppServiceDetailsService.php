@@ -118,7 +118,7 @@ class AppServiceDetailsService
                     $sub_item['editor_bn'] = $item->editor_bn;
                     $sub_item['image'] = !empty($item->image) ? config('filesystems.image_host_url') . $item->image : null;
                     $sub_item['alt_text'] = $item->alt_text;
-                    $sub_item['video'] = $item->video;
+                    $sub_item['video'] = !empty($item->video) ? config('filesystems.image_host_url') . $item->video : null;
                     $sub_item['alt_links'] = $item->alt_links;
                     $sub_item['multiple_attributes'] = $item->multiple_attributes;
                     $sub_item['other_attributes'] = $item->other_attributes;
