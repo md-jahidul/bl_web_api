@@ -86,14 +86,12 @@ class AppServiceDetailsService
      * @param  [type] $product_id [description]
      * @return [type]             [description]
      */
-    public function getDetailsSectionComponents($product_id)
+    public function getDetailsSectionComponents($product_id, $component_type = [])
     {
 
         $data = null;
 
-        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id);
-
-        dd($results);
+        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id, $component_type);
 
         if( !empty($results) && count($results) > 0 )
         foreach ($results as $value) {
