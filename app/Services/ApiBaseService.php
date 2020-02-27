@@ -16,8 +16,8 @@ class ApiBaseService implements ApiBaseServiceInterface
 
     /**
      * @param $result
-     * @param null $baseURL
      * @param $message
+     * @param array $baseUrl
      * @param array $pagination
      * @param int $http_status
      * @param int $status_code
@@ -36,11 +36,14 @@ class ApiBaseService implements ApiBaseServiceInterface
             'status_code' => $status_code,
             'message' => $message,
             'data' => $result,
-            'base_url' => $baseUrl
         ];
 
         if (!empty($pagination)) {
             $response ['pagination'] = $pagination;
+        }
+
+        if (!empty($baseUrl)) {
+            $response ['base_url'] = $baseUrl;
         }
 
         return response()->json($response, $http_status);

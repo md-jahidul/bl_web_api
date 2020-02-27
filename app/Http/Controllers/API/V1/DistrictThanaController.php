@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
 use App\Services\AboutUsService;
+use App\Services\DistrictThanaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,15 +13,30 @@ use Illuminate\Support\Facades\DB;
 
 class DistrictThanaController extends Controller
 {
-    public function district()
+    /**
+     * @var $districtThanaService
+     */
+    protected $districtThanaService;
+
+    public function __construct(DistrictThanaService $districtThanaService)
     {
-       $district = DB::table('districts')->get();
-       return response()->json($district);
+        $this->districtThanaService = $districtThanaService;
     }
 
+    /**
+     * @return mixed
+     */
+    public function district()
+    {
+       return $this->districtThanaService->district();
+    }
+
+    /**
+     * @param $districtId
+     * @return JsonResponse|mixed
+     */
     public function thana($districtId)
     {
-        $district = DB::table('thanas')->where('district_id', $districtId)->get();
-        return response()->json($district);
+        return $this->districtThanaService->thana($districtId);
     }
 }
