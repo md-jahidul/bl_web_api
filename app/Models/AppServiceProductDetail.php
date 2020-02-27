@@ -23,6 +23,6 @@ class AppServiceProductDetail extends Model
      */
     public function detailsComponent()
     {
-        return $this->hasMany(Component::class, 'section_details_id', 'id')->where('page_type', 'app_services');
+        return $this->hasMany(Component::class, 'section_details_id', 'id')->where('page_type', '=', 'app_services');
     }
 }

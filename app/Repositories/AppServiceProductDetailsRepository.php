@@ -51,12 +51,35 @@ class AppServiceProductDetailsRepository extends BaseRepository
     }
 
 
-    public function getSectionsComponents($product_id)
+    public function getSectionsComponents($product_id, $component_type = [])
     {
-        return $this->model->with('detailsComponent')->where('product_id', $product_id)
-            ->whereNull('category')
-            ->where('status', 1)
-            ->whereNull('deleted_at')
-            ->get();
+        if( empty($component_type) ){
+            return $this->model->with('detailsComponent')->where('product_id', $product_id)
+                ->whereNull('category')
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->get();
+        }
+        else{
+
+            return $this->model->whereHas('detailsComponent', function($query) use ($component_type){
+                
+                foreach ($component_type as $key => $value) {
+                    
+                    if( $key == 0 ){
+                        $query->where('component_type', $value);
+                    }
+                    else{
+                        $query->orWhere('component_type', $value);
+                    }
+                }
+            })->where('product_id', $product_id)
+                ->whereNull('category')
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->get();
+
+        }
+        
     }
 }
