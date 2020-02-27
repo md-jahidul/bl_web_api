@@ -93,6 +93,8 @@ class AppServiceDetailsService
 
         $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id);
 
+        dd($results);
+
         if( !empty($results) && count($results) > 0 )
         foreach ($results as $value) {
             
