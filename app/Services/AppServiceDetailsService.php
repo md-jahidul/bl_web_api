@@ -121,7 +121,9 @@ class AppServiceDetailsService
                     $sub_item['alt_text'] = $item->alt_text;
                     $sub_item['video'] = !empty($item->video) ? config('filesystems.image_host_url') . $item->video : null;
                     $sub_item['alt_links'] = $item->alt_links;
-                    $sub_item['multiple_attributes'] = $item->multiple_attributes;
+
+                    $sub_item['multiple_attributes'] = !empty($item->multiple_attributes) ? json_decode($item->multiple_attributes) : null;
+                    
                     $sub_item['other_attributes'] = $item->other_attributes;
 
                     $sub_data['component'][] = $sub_item;
