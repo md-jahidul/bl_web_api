@@ -26,6 +26,7 @@ class BusinessInternetRepository extends BaseRepository {
         $count = 0;
         foreach($packages as $p){
             $data[$count]['id'] = $p->id;
+            $data[$count]['product_code'] = $p->product_code;
             $data[$count]['internet_volume_mb'] = $p->data_volume;
             $data[$count]['volume_data_unit'] = $p->volume_data_unit;
             $data[$count]['validity_days'] = $p->validity;
