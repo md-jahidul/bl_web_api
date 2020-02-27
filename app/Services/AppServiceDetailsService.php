@@ -112,6 +112,7 @@ class AppServiceDetailsService
                     $sub_item['title_en'] = $item->title_en;
                     $sub_item['title_bn'] = $item->title_bn;
                     $sub_item['slug'] = $item->slug;
+                    $sub_item['component_type'] = $item->component_type;
                     $sub_item['description_en'] = $item->description_en;
                     $sub_item['description_bn'] = $item->description_bn;
                     $sub_item['editor_en'] = $item->editor_en;
