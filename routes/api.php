@@ -89,20 +89,34 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
 
     //Easy payment card
-     Route::get('easy-payment-cards', 'API\V1\EasyPaymentCardController@cardList');
-     Route::get('easy-payment-area-list', 'API\V1\EasyPaymentCardController@getAreaList');
+     Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
+     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
+
+    //Device offer
+     Route::get('device-offers/{brand?}/', 'API\V1\DeviceOfferController@offerList');
+
+
+     //Business Module APIs
+     Route::get('business-home-data', 'API\V1\BusinessController@index');
+     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
+     Route::get('business-packages', 'API\V1\BusinessController@packages');
+     Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
+     Route::get('business-internet-package', 'API\V1\BusinessController@internet');
+     Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
+
+     Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
 
 
      // eCarrer api
-     Route::get('ecarrer/banner-contact', 'API\V1\EcarrerController@topBannerContact');
-     Route::get('ecarrer/life-at-bl', 'API\V1\EcarrerController@lifeAtBanglalink');
+     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
+     Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
 
-     Route::get('ecarrer/programs', 'API\V1\EcarrerController@getEcarrerPrograms');
-     Route::get('ecarrer/vacancy', 'API\V1\EcarrerController@getEcarrerVacancy');
+     Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
+     Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
 
      // eCarrer Application form api  =========================================================
-    Route::get('ecarrer/university', 'API\V1\EcarrerController@ecarrerUniversity');
-    Route::post('ecarrer/application-form', 'API\V1\EcarrerController@ecarrerApplicationForm');
+    Route::get('ecarrer/university', 'API\V1\EcareerController@ecarrerUniversity');
+    Route::post('ecarrer/application-form', 'API\V1\EcareerController@ecarrerApplicationForm');
 
 
     // AboutUsBanglalink
@@ -112,14 +126,19 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
-
     # App and Service details page
     // App and service get details page with product id
     Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
     
-    
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
 
+
+    //Lead Request
+    Route::post('lead-request', 'API\V1\LeadManagementController@leadRequestData');
+
+    //District Thana
+    Route::get('district', 'API\V1\DistrictThanaController@district');
+    Route::get('thana/{districtId}', 'API\V1\DistrictThanaController@thana');
 
 });

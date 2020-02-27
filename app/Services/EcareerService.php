@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\EcarrerPortalRepository;
-use App\Repositories\EcarrerPortalItemRepository;
+use App\Repositories\EcareerPortalRepository;
+use App\Repositories\EcareerPortalItemRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Response;
@@ -12,11 +12,11 @@ use App\Enums\HttpStatusCode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Models\University;
-use App\Models\EcarrerPortalForm;
+use App\Models\EcareerPortalForm;
 use Illuminate\Database\QueryException;
 
 
-class EcarrerService
+class EcareerService
 {
     use CrudTrait;
     use FileTrait;
@@ -40,7 +40,7 @@ class EcarrerService
      * PrizeService constructor.
      * @param PrizeRepository $prizeRepository
      */
-    public function __construct(EcarrerPortalRepository $ecarrerPortalRepository, EcarrerPortalItemRepository $ecarrerPortalItemRepository)
+    public function __construct(EcareerPortalRepository $ecarrerPortalRepository, EcareerPortalItemRepository $ecarrerPortalItemRepository)
     {
         $this->ecarrerPortalRepository = $ecarrerPortalRepository;
         $this->ecarrerPortalItemRepository = $ecarrerPortalItemRepository;
@@ -105,7 +105,7 @@ class EcarrerService
     //     $data['slug'] = str_replace(" ", "_", strtolower($data['slug']));
 
     //     if (!empty($data['image_url'])) {
-           
+
     //         $data['image'] = $this->upload($data['image_url'], 'assetlite/images/ecarrer/general_section');
     //     }
 
@@ -160,7 +160,7 @@ class EcarrerService
         if( !empty($data['slug']) ){
             $data['slug'] = str_replace(" ", "_", strtolower($data['slug']));
         }
-        
+
         if (!empty($data['image_url'])) {
             $data['image'] = $this->upload($data['image_url'], 'assetlite/images/ecarrer/general_section');
         }
@@ -185,9 +185,9 @@ class EcarrerService
         if( !empty($data['slug']) ){
             $data['slug'] = str_replace(" ", "_", strtolower($data['slug']));
         }
-        
+
         if (!empty($data['image_url'])) {
-           
+
             $data['image'] = $this->upload($data['image_url'], 'assetlite/images/ecarrer/general_section');
         }
 
@@ -195,7 +195,7 @@ class EcarrerService
             $data['has_items'] = $data_types['has_items'];
         }
 
-        $data['additional_info'] = !empty($data_types['additional_info']) ? $data_types['additional_info'] : null;        
+        $data['additional_info'] = !empty($data_types['additional_info']) ? $data_types['additional_info'] : null;
 
         $general_section->update($data);
 
@@ -221,7 +221,7 @@ class EcarrerService
         else{
             return null;
         }
-        
+
     }
 
 
@@ -240,7 +240,7 @@ class EcarrerService
    * @return [type] [mixed]
    */
    public function getProgramsSap(){
-      
+
 
       $results = null;
 
@@ -262,8 +262,8 @@ class EcarrerService
       }
       catch(\Exception $e){
          return $results;
-      };   
-      
+      };
+
    }
 
 
@@ -285,7 +285,7 @@ class EcarrerService
    * @return [type] [mixed]
    */
    public function getProgramsEnnovators(){
-      
+
 
       $results = null;
 
@@ -299,7 +299,7 @@ class EcarrerService
          $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
          $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', 'ennovators', 'programs_events');
          $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'ennovators');
-         
+
 
          $results['sections'] = $sections;
 
@@ -309,8 +309,8 @@ class EcarrerService
       }
       catch(\Exception $e){
          return $results;
-      };   
-      
+      };
+
    }
 
    /**
@@ -328,7 +328,7 @@ class EcarrerService
    * @return [type] [mixed]
    */
    public function getProgramsAip(){
-      
+
 
       $results = null;
 
@@ -344,7 +344,7 @@ class EcarrerService
 
          $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', 'aip', 'programs_events');
          $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'aip');
-         
+
 
          $results['sections'] = $sections;
 
@@ -354,8 +354,8 @@ class EcarrerService
       }
       catch(\Exception $e){
          return $results;
-      };   
-      
+      };
+
    }
 
 
@@ -385,10 +385,10 @@ class EcarrerService
             foreach ($programs_general as $value) {
                if( !empty($value->additional_info) && json_decode($value->additional_info)->additional_type == $additional_category ){
 
-                  $resutls[] =  $value; 
+                  $resutls[] =  $value;
 
                }
-               
+
             }
 
          }
@@ -465,10 +465,10 @@ class EcarrerService
          foreach ($get_pro_steps as $parents_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parents_value->title_en; 
+            $sub_data['title_en'] = $parents_value->title_en;
             $sub_data['title_bn'] = $parents_value->title_bn;
-            $sub_data['slug'] = $parents_value->slug; 
-            
+            $sub_data['slug'] = $parents_value->slug;
+
 
             if( !empty($parents_value->portalItems) ){
 
@@ -518,9 +518,9 @@ class EcarrerService
          foreach ($programs_photo_gal as $parents_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parents_value->title_en; 
+            $sub_data['title_en'] = $parents_value->title_en;
             $sub_data['title_bn'] = $parents_value->title_bn;
-            $sub_data['slug'] = $parents_value->slug; 
+            $sub_data['slug'] = $parents_value->slug;
             if( !empty($parents_value->additional_info) ){
                $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
             }
@@ -565,15 +565,15 @@ class EcarrerService
          return $results;
       }
 
-      
+
       if( !empty($programs_proiconbox) && count($programs_proiconbox) > 0 ){
          foreach ($programs_proiconbox as $parent_value) {
 
             $sub_data = [];
-            // $sub_data['title_en'] = $parent_value->title_en; 
-            // $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            // $sub_data['description_en'] = $parent_value->description_en; 
+            // $sub_data['title_en'] = $parent_value->title_en;
+            // $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+            // $sub_data['description_en'] = $parent_value->description_en;
             // $sub_data['description_bn'] = $parent_value->description_bn;
             // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             // $sub_data['alt_text'] = $parent_value->alt_text;
@@ -617,14 +617,14 @@ class EcarrerService
          foreach ($vacancy_hire as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+            $sub_data['description_en'] = $parent_value->description_en;
             $sub_data['description_bn'] = $parent_value->description_bn;
             $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             $sub_data['alt_text'] = $parent_value->alt_text;
-            
+
 
             // if( !empty($events_value->portalItems) ){
 
@@ -663,10 +663,10 @@ class EcarrerService
          foreach ($vacancy_news_media as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+            $sub_data['description_en'] = $parent_value->description_en;
             $sub_data['description_bn'] = $parent_value->description_bn;
             // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             $sub_data['video'] = $parent_value->video;
@@ -688,16 +688,16 @@ class EcarrerService
    public function getVacancyBoxIcon(){
 
       $vacancy_news_media = $this->ecarrerSectionsList('vacancy_viconbox');
-      
+
       $results = null;
       if( !empty($vacancy_news_media) && count($vacancy_news_media) > 0 ){
          foreach ($vacancy_news_media as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+            $sub_data['description_en'] = $parent_value->description_en;
             $sub_data['description_bn'] = $parent_value->description_bn;
             $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             $sub_data['alt_text'] = $parent_value->alt_text;
@@ -727,10 +727,10 @@ class EcarrerService
          foreach ($vacancy_job_offer_title as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+
             $job_offer_title = $sub_data;
 
 
@@ -786,7 +786,7 @@ class EcarrerService
             $lever_content = $mod_response;
 
          }
-         
+
       }
 
       catch(BadResponseException  $e){
@@ -825,27 +825,27 @@ class EcarrerService
 
       if( !empty($batch_title) && count($batch_title) > 0 ){
 
-         $sub_data['title_en'] = $batch_title->first()->title_en; 
-         $sub_data['title_bn'] = $batch_title->first()->title_bn; 
-         $sub_data['slug'] = $batch_title->first()->slug; 
+         $sub_data['title_en'] = $batch_title->first()->title_en;
+         $sub_data['title_bn'] = $batch_title->first()->title_bn;
+         $sub_data['slug'] = $batch_title->first()->slug;
 
          $results['batch_main_title'] = $sub_data;
       }
       # batch main title end
-      
+
       # batch tab content
       $programs_batch_content = $this->ecarrerSectionsList($category, 'batch_content');
 
       // dd($programs_batch_content);
-      
+
       if( !empty($programs_batch_content) && count($programs_batch_content) > 0 ){
          foreach ($programs_batch_content as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
-            // $sub_data['description_en'] = $parent_value->description_en; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
+            // $sub_data['description_en'] = $parent_value->description_en;
             // $sub_data['description_bn'] = $parent_value->description_bn;
             // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
             // $sub_data['alt_text'] = $parent_value->alt_text;
@@ -903,9 +903,9 @@ class EcarrerService
 
       if( !empty($tab_title) && count($tab_title) > 0 ){
 
-         $sub_data['title_en'] = $tab_title->first()->title_en; 
-         $sub_data['title_bn'] = $tab_title->first()->title_bn; 
-         $sub_data['slug'] = $tab_title->first()->slug; 
+         $sub_data['title_en'] = $tab_title->first()->title_en;
+         $sub_data['title_bn'] = $tab_title->first()->title_bn;
+         $sub_data['slug'] = $tab_title->first()->slug;
 
          $results = $sub_data;
       }
@@ -935,9 +935,9 @@ class EcarrerService
          foreach ($get_sap_news as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
 
             if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
                foreach ($parent_value->portalItems as $items_value){
@@ -992,9 +992,9 @@ class EcarrerService
          foreach ($get_sap_news as $parent_value) {
 
             $sub_data = [];
-            $sub_data['title_en'] = $parent_value->title_en; 
-            $sub_data['title_bn'] = $parent_value->title_bn; 
-            $sub_data['slug'] = $parent_value->slug; 
+            $sub_data['title_en'] = $parent_value->title_en;
+            $sub_data['title_bn'] = $parent_value->title_bn;
+            $sub_data['slug'] = $parent_value->slug;
 
             if( !empty($parent_value->portalItems) && count($parent_value->portalItems) > 0 ){
                foreach ($parent_value->portalItems as $portal_items){
@@ -1057,7 +1057,7 @@ class EcarrerService
     try{
       $data = null;
 
-      $portal_forms = new EcarrerPortalForm;
+      $portal_forms = new EcareerPortalForm;
 
       $portal_forms->name = isset($request['name']) ? $request['name'] : null;
       $portal_forms->phone = isset($request['phone']) ? $request['phone'] : null;
@@ -1082,7 +1082,7 @@ class EcarrerService
     catch(QueryException $e){
       return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $e->getMessage(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
     }
-    
+
 
 
    }
@@ -1106,18 +1106,18 @@ class EcarrerService
         if( !empty($tab_titles) && count($tab_titles) > 0 ){
 
           foreach ($tab_titles as $tab_title) {
-            $sub_data['slug'] = $tab_title->slug; 
+            $sub_data['slug'] = $tab_title->slug;
             $results[] = $sub_data;
           }
 
-           
+
         }
       }
       else{
         $results = isset($tab_titles->first()->slug) ? $tab_titles->first()->slug : null;
       }
 
-      
+
 
       return $results;
    }
@@ -1126,4 +1126,3 @@ class EcarrerService
 } // Class end
 
 
-   
