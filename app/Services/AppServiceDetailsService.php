@@ -122,7 +122,13 @@ class AppServiceDetailsService
                     $sub_item['video'] = !empty($item->video) ? config('filesystems.image_host_url') . $item->video : null;
                     $sub_item['alt_links'] = $item->alt_links;
 
-                    $sub_item['multiple_attributes'] = !empty($item->multiple_attributes) ? json_decode($item->multiple_attributes) : null;
+                    if( !empty($item->multiple_attributes) ){
+                        $res = json_decode($item->multiple_attributes, true);
+                        $sub_item['multiple_attributes'] = array_values($res);
+                    }
+                    else{
+                        $sub_item['multiple_attributes'] = null;
+                    }
                     
                     $sub_item['other_attributes'] = $item->other_attributes;
 
