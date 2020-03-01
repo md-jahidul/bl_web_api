@@ -124,13 +124,34 @@ class AppServiceDetailsService
 
                     if( !empty($item->multiple_attributes) ){
                         $res = json_decode($item->multiple_attributes, true);
-                        $sub_item['multiple_attributes'] = array_values($res);
+                        
+
+                        $multi_res = array_map(function($value){
+
+                            $value['image_url'] = config('filesystems.image_host_url') . $value['image_url'];
+
+                            // if( $value['status'] == 0 ){
+                            // }
+                            
+                            return $value;
+
+                        }, $res);
+
+                        // dd($multi_res);
+
+                        $sub_item['multiple_attributes'] = array_values($multi_res);
                     }
                     else{
                         $sub_item['multiple_attributes'] = null;
                     }
                     
                     $sub_item['other_attributes'] = $item->other_attributes;
+
+                    if( !empty($item->other_attributes) && count($item->other_attributes) >0 ){
+                        foreach ($item->other_attributes as $key => $value) {
+                            $sub_item[$key] = $value;
+                        }
+                    }
 
                     $sub_data['component'][] = $sub_item;
 
