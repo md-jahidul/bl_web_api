@@ -86,12 +86,12 @@ class AppServiceDetailsService
      * @param  [type] $product_id [description]
      * @return [type]             [description]
      */
-    public function getDetailsSectionComponents($product_id)
+    public function getDetailsSectionComponents($product_id, $component_type = [])
     {
 
         $data = null;
 
-        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id);
+        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id, $component_type);
 
         if( !empty($results) && count($results) > 0 )
         foreach ($results as $value) {
@@ -112,6 +112,7 @@ class AppServiceDetailsService
                     $sub_item['title_en'] = $item->title_en;
                     $sub_item['title_bn'] = $item->title_bn;
                     $sub_item['slug'] = $item->slug;
+                    $sub_item['component_type'] = $item->component_type;
                     $sub_item['description_en'] = $item->description_en;
                     $sub_item['description_bn'] = $item->description_bn;
                     $sub_item['editor_en'] = $item->editor_en;
@@ -120,8 +121,37 @@ class AppServiceDetailsService
                     $sub_item['alt_text'] = $item->alt_text;
                     $sub_item['video'] = !empty($item->video) ? config('filesystems.image_host_url') . $item->video : null;
                     $sub_item['alt_links'] = $item->alt_links;
-                    $sub_item['multiple_attributes'] = $item->multiple_attributes;
+
+                    if( !empty($item->multiple_attributes) ){
+                        $res = json_decode($item->multiple_attributes, true);
+                        
+
+                        $multi_res = array_map(function($value){
+
+                            $value['image_url'] = config('filesystems.image_host_url') . $value['image_url'];
+
+                            // if( $value['status'] == 0 ){
+                            // }
+                            
+                            return $value;
+
+                        }, $res);
+
+                        // dd($multi_res);
+
+                        $sub_item['multiple_attributes'] = array_values($multi_res);
+                    }
+                    else{
+                        $sub_item['multiple_attributes'] = null;
+                    }
+                    
                     $sub_item['other_attributes'] = $item->other_attributes;
+
+                    if( !empty($item->other_attributes) && count($item->other_attributes) >0 ){
+                        foreach ($item->other_attributes as $key => $value) {
+                            $sub_item[$key] = $value;
+                        }
+                    }
 
                     $sub_data['component'][] = $sub_item;
 

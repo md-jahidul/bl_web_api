@@ -21,6 +21,14 @@ class AppServiceDetailsController extends Controller
    * app_banner_image
    */
 
+   /**** Compoent Types ****
+    * text_with_image_right
+    * text_with_image_bottom
+    * title_text_editor
+    * multiple_image_banner
+    * slider_text_with_image_right
+    */
+
     /**
      * @var $appServiceCategoryRepository
      */
@@ -70,7 +78,13 @@ class AppServiceDetailsController extends Controller
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
         $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
-        $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
+
+        # Get component "text with image right", "text with image bottom"
+        $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
+
+        $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
+
+        $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
 
         $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
 
