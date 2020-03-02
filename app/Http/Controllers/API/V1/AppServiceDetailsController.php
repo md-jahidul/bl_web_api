@@ -26,7 +26,7 @@ class AppServiceDetailsController extends Controller
     * text_with_image_bottom
     * title_text_editor
     * multiple_image_banner
-    * slider_with_image_right
+    * slider_text_with_image_right
     */
 
     /**
@@ -82,7 +82,7 @@ class AppServiceDetailsController extends Controller
         # Get component "text with image right", "text with image bottom"
         $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
 
-        $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_with_image_right']);
+        $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
 
         $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
 
