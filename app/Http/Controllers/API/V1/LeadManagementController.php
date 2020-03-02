@@ -42,7 +42,7 @@ class LeadManagementController extends Controller
             'thana'=> 'required',
             'address' => 'required',
             'quantity' => 'required',
-            'package' => 'required'
+//            'package' => 'required'
         ];
 
         $validator = Validator::make($request->all(), $rules);
