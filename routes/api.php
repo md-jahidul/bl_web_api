@@ -130,6 +130,10 @@ Route::group(['prefix' => '/v1'], function () {
     // VAS Apis
     Route::post('vas/subscription', 'API\V1\VasApiController@subscription');
     Route::post('vas/checkSubStatus', 'API\V1\VasApiController@checkSubStatus');
+    Route::post('vas/cancel-subscription', 'API\V1\VasApiController@cancelSubscription');
+
+    Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
+    Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
     # App and Service details page
 
