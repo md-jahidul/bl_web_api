@@ -30,7 +30,7 @@ class ManagementRepository extends BaseRepository
      */
     public function getAboutManagement()
     {
-        return $this->model->orderBy('display_order', 'asc')->get();
+        return $this->model->where('is_active', 1)->orderBy('display_order', 'asc')->get();
     }
 
 }
