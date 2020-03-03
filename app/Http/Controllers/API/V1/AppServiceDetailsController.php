@@ -71,6 +71,7 @@ class AppServiceDetailsController extends Controller
         # get app and service product info
         $product_info = $this->appServiceDetailsService->getProductInformationByID($product_id);
 
+
         $additional_details = $this->appServiceDetailsService->getProductDetailsOthersInfo($product_id);
 
         $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
@@ -79,12 +80,24 @@ class AppServiceDetailsController extends Controller
 
         $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
 
-        # Get component "text with image right", "text with image bottom"
-        $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
+        # Get App tab details component
+        if( $product_info->appServiceTab->alias == 'app' ){
+            # Get component "text with image right", "text with image bottom"
+            $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
 
-        $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
+            $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
 
-        $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
+            $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
+        }
+        elseif( $product_info->appServiceTab->alias == 'vas' ){
+
+            $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
+        }
+        else{
+            $data['section_component'] = null;
+        }
+
+        
 
         $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
 

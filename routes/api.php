@@ -126,10 +126,23 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+    Route::get('app-service/package-list/{provider}', 'API\V1\AppServiceController@packageList');
+
+    // VAS Apis
+    Route::post('vas/subscription', 'API\V1\VasApiController@subscription');
+    Route::post('vas/checkSubStatus', 'API\V1\VasApiController@checkSubStatus');
+    Route::post('vas/cancel-subscription', 'API\V1\VasApiController@cancelSubscription');
+
+    Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
+    Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
+
     # App and Service details page
+
+
+
     // App and service get details page with product id
     Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
-    
+
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
 

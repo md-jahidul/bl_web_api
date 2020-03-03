@@ -28,30 +28,13 @@ class LeadManagementController extends Controller
         $this->leadRequestService = $leadRequestService;
     }
 
-//    /**
-//     * @param LeadRequestCheck $request
-//     */
-    public function leadRequestData(Request $request)
+    /**
+     * @param LeadRequest $request
+     * @return string
+     */
+    public function leadRequestData(LeadRequest $request)
     {
-        $rules = [
-            'name' => 'required',
-            'company_name' => 'required',
-            'mobile' => 'required',
-            'email' => 'required|email|unique:lead_requests',
-            'district' => 'required',
-            'thana'=> 'required',
-            'address' => 'required',
-            'quantity' => 'required',
-//            'package' => 'required'
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first() ]), HttpStatusCode::VALIDATION_ERROR);
-        }
-
         return $this->leadRequestService->saveRequest($request->all());
-//        Session::flash('message', $response->getContent());
     }
 
 }
