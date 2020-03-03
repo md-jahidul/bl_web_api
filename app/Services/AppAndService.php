@@ -44,7 +44,6 @@ class AppAndService extends ApiBaseService
     public function appServiceData()
     {
         $data = $this->appServiceTabRepository->appServiceCollection();
-
         return $this->sendSuccessResponse($data,'Internet packs list', config('filesystems.image_host_url'));
     }
 }
