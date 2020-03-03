@@ -50,7 +50,7 @@ class AppAndService extends ApiBaseService
 
     public function packageList($provider)
     {
-        $data = $this->appServiceProductRepository->findByProperties(['provider_url' => $provider], ['id', 'name_en', 'name_bn', 'provider_url', 'validity_unit']);
+        $data = $this->appServiceProductRepository->findByProperties(['provider_url' => $provider], ['id', 'name_en', 'name_bn', 'provider_url', 'validity_unit', 'price_tk']);
         return $this->sendSuccessResponse($data,'VAS package list');
     }
 }
