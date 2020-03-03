@@ -82,7 +82,7 @@ class BusinessOthersService {
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($serviceId);
-        $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
+        $data['feature'] = $this->_getFeaturesByService($service['slug'], $serviceId);
         return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
     }
 
