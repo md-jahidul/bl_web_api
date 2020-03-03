@@ -17,6 +17,7 @@ use App\Repositories\BusinessComFeaturesRepository;
 use App\Repositories\BusinessComPriceTableRepository;
 use App\Repositories\BusinessComVideoRepository;
 use App\Repositories\BusinessComPhotoRepository;
+use App\Repositories\BusinessRelatedProductRepository;
 use Illuminate\Http\Response;
 
 class BusinessOthersService {
@@ -34,6 +35,7 @@ class BusinessOthersService {
     protected $videoRepo;
     protected $photoRepo;
     protected $asgnFeatureRepo;
+    protected $relatedProductRepo;
     public $responseFormatter;
 
     /**
@@ -47,9 +49,13 @@ class BusinessOthersService {
      * @param BusinessComVideoRepository $videoRepo
      * @param BusinessComPhotoRepository $photoRepo
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
+     * @param BusinessRelatedProductRepository $relatedProductRepo
      */
     public function __construct(
-    ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo, BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo, BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo, BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo
+    ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo,
+            BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo,
+            BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo,
+            BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo, BusinessRelatedProductRepository $relatedProductRepo
     ) {
         $this->otherRepo = $otherRepo;
         $this->photoTextRepo = $photoTextRepo;
@@ -60,6 +66,7 @@ class BusinessOthersService {
         $this->videoRepo = $videoRepo;
         $this->photoRepo = $photoRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
+        $this->relatedProductRepo = $relatedProductRepo;
 
         $this->responseFormatter = $responseFormatter;
     }
@@ -83,6 +90,10 @@ class BusinessOthersService {
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($serviceId);
         $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
+
+        $parentType = 2;
+        $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($serviceId, $parentType);
+
         return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
     }
 

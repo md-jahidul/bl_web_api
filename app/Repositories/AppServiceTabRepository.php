@@ -35,6 +35,7 @@ class AppServiceTabRepository extends BaseRepository
                             'ussd_en', 'ussd_bn',
                             'subscribe_text_en',
                             'subscribe_text_bn',
+                            'subscription_url',
                             'send_to',
                             'app_store_link',
                             'google_play_link'

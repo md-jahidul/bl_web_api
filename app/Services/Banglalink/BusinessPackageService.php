@@ -11,6 +11,7 @@ use App\Services\ApiBaseService;
 use App\Repositories\BusinessPackageRepository;
 use App\Repositories\BusinessFeaturesRepository;
 use App\Repositories\BusinessAssignedFeaturesRepository;
+use App\Repositories\BusinessRelatedProductRepository;
 use Illuminate\Http\Response;
 
 class BusinessPackageService {
@@ -22,6 +23,7 @@ class BusinessPackageService {
     protected $packageRepo;
     protected $featureRepo;
     protected $asgnFeatureRepo;
+    protected $relatedProductRepo;
     public $responseFormatter;
 
     /**
@@ -29,11 +31,15 @@ class BusinessPackageService {
      * @param BusinessPackageRepository $packageRepo
      * @param BusinessFeaturesRepository $featureRepo
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
+     * @param BusinessRelatedProductRepository $relatedProductRepo
      */
-    public function __construct(ApiBaseService $responseFormatter, BusinessPackageRepository $packageRepo, BusinessFeaturesRepository $featureRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo) {
+    public function __construct(ApiBaseService $responseFormatter, BusinessPackageRepository $packageRepo, 
+            BusinessFeaturesRepository $featureRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo,
+            BusinessRelatedProductRepository $relatedProductRepo) {
         $this->packageRepo = $packageRepo;
         $this->featureRepo = $featureRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
+        $this->relatedProductRepo = $relatedProductRepo;
          $this->responseFormatter = $responseFormatter;
     }
 
@@ -53,7 +59,12 @@ class BusinessPackageService {
      */
     public function getPackageById($packageId) {
         $data['packageDetails'] = $this->packageRepo->getPackageById($packageId);
+        
         $data['feature'] = $this->_getFeaturesByPackage($packageId);
+        
+        $parentType = 1;
+        $data['relatedPackages'] = $this->relatedProductRepo->getPackageRelatedProduct($packageId, $parentType);
+        
         return $this->responseFormatter->sendSuccessResponse($data, 'Business Package Details');
     }
 
