@@ -126,6 +126,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+    Route::get('app-service/package-list/{provider}', 'API\V1\AppServiceController@packageList');
 
     // VAS Apis
     Route::post('vas/subscription', 'API\V1\VasApiController@subscription');

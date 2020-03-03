@@ -35,4 +35,10 @@ class AppServiceController extends Controller
     {
         return $this->appAndService->appServiceData();
     }
+
+    public function packageList($provider)
+    {
+
+       return $this->appAndService->packageList($provider);
+    }
 }

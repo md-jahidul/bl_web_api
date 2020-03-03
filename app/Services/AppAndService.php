@@ -46,4 +46,11 @@ class AppAndService extends ApiBaseService
         $data = $this->appServiceTabRepository->appServiceCollection();
         return $this->sendSuccessResponse($data,'Internet packs list', config('filesystems.image_host_url'));
     }
+
+
+    public function packageList($provider)
+    {
+        $data = $this->appServiceProductRepository->findByProperties(['provider_url' => $provider], ['id', 'name_en', 'name_bn', 'provider_url', 'validity_unit']);
+        return $this->sendSuccessResponse($data,'VAS package list');
+    }
 }
