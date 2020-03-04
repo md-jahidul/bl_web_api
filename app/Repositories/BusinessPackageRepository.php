@@ -43,6 +43,7 @@ class BusinessPackageRepository extends BaseRepository {
         $data = [];
         if (!empty($package)) {
             $data['id'] = $package->id;
+            $data['slug'] = 'packages';
             $data['name_en'] = $package->name;
             $data['name_bn'] = $package->name_bn;
             $data['short_details_en'] = $package->short_details;

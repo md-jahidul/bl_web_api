@@ -89,7 +89,8 @@ class BusinessOthersService {
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($serviceId);
-        $data['feature'] = $this->_getFeaturesByService($service['type'], $serviceId);
+
+        $data['feature'] = $this->_getFeaturesByService($service['slug'], $serviceId);
 
         $parentType = 2;
         $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($serviceId, $parentType);
