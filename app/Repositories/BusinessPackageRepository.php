@@ -26,6 +26,7 @@ class BusinessPackageRepository extends BaseRepository {
         foreach ($packageData as $p) {
 
             $data[$count]['id'] = $p->id;
+            $data[$count]['slug'] = 'packages';
             $data[$count]['name_en'] = $p->name;
             $data[$count]['name_bn'] = $p->name_bn;
             $data[$count]['banner_photo'] = config('filesystems.image_host_url') . $p->banner_photo;

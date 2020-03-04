@@ -25,6 +25,7 @@ class BusinessRelatedProductRepository extends BaseRepository {
         $count = 0;
         foreach ($data as $p) {
             $related[$count]['package_id'] = $p->id;
+            $related[$count]['slug'] = 'packages';
             $related[$count]['name_en'] = $p->name;
             $related[$count]['name_bn'] = $p->name_bn;
             $related[$count]['banner_photo'] = config('filesystems.image_host_url') . $p->banner_photo;
@@ -38,7 +39,7 @@ class BusinessRelatedProductRepository extends BaseRepository {
     }
 
     public function getEnterpriseRelatedProduct($parentId, $productType) {
-        $data = $this->model->select('s.id', 's.name', 's.name_bn', 's.icon', 's.short_details', 's.short_details_bn')
+        $data = $this->model->select('s.id', 's.name', 's.name_bn', 's.icon', 's.short_details', 's.short_details_bn', 's.type')
                         ->leftJoin('business_other_services as s', 's.id', '=', 'business_related_products.product_id')
                         ->where(array(
                             'product_type' => $productType,
@@ -49,6 +50,7 @@ class BusinessRelatedProductRepository extends BaseRepository {
         $count = 0;
         foreach ($data as $p) {
             $related[$count]['package_id'] = $p->id;
+            $related[$count]['slug'] = $p->type;
             $related[$count]['name_en'] = $p->name;
             $related[$count]['name_bn'] = $p->name_bn;
             $related[$count]['icon'] = config('filesystems.image_host_url') . $p->icon;
