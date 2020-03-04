@@ -63,7 +63,7 @@ class BusinessOthersRepository extends BaseRepository {
     }
 
     public function getOtherService($type) {
-        $servces = $this->model->where('type', $type)->orderBy('sort')->get();
+        $servces = $this->model->where('type', $type)->where('status', 1)->orderBy('sort')->get();
 
         $data = [];
         $count = 0;

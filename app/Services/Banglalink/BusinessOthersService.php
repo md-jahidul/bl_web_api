@@ -169,6 +169,8 @@ class BusinessOthersService {
         foreach ($features as $v) {
             $position = $v->position;
             $components[$position]['type'] = 'product-features';
+            $components[$position]['data']['title_en'] = $v->title_en;
+            $components[$position]['data']['title_bn'] = $v->title_bn;
             $components[$position]['data']['feature_text_en'] = $v->feature_text;
             $components[$position]['data']['feature_text_bn'] = $v->feature_text_bn;
             $components[$position]['data']['photo_url'] = "";
