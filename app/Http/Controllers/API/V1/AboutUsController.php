@@ -28,24 +28,21 @@ class AboutUsController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
-     * @throws IdpAuthException
      */
-    public function getAboutBanglalink(Request $request)
+    public function getAboutBanglalink()
     {
-        return $this->aboutUsService->getAboutBanglalink($request);
+        return $this->aboutUsService->getAboutBanglalink();
     }
 
 
     /**
      * @param Request $request
      * @return JsonResponse
-     * @throws IdpAuthException
      */
-    public function getAboutManagement(Request $request)
+    public function getAboutManagement()
     {
-        return $this->aboutUsService->getAboutManagement($request);
+        return $this->aboutUsService->getAboutManagement();
     }
 
     /**
@@ -53,9 +50,9 @@ class AboutUsController extends Controller
      * @return JsonResponse
      * @throws IdpAuthException
      */
-    public function getEcareersInfo(Request $request)
+    public function getEcareersInfo()
     {
-        return $this->aboutUsService->getEcareersInfo($request);
+        return $this->aboutUsService->getEcareersInfo();
     }
 
 
