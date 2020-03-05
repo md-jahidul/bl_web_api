@@ -14,7 +14,7 @@ class BusinessOthersRepository extends BaseRepository {
     public $modelName = BusinessOthers::class;
 
     public function getHomeOtherService() {
-        $servces = $this->model
+        $servcesTop = $this->model
                         ->where(
                                 array(
                                     'status' => 1,
@@ -25,33 +25,45 @@ class BusinessOthersRepository extends BaseRepository {
 
         $data = [];
         $countTop = 0;
+
+        foreach ($servcesTop as $s) {
+            $data['top'][$countTop]['id'] = $s->id;
+            $data['top'][$countTop]['slug'] = $s->type;
+            $data['top'][$countTop]['icon'] = config('filesystems.image_host_url') . $s->icon;
+            $data['top'][$countTop]['name_en'] = $s->name;
+            $data['top'][$countTop]['name_bn'] = $s->name_bn;
+            $data['top'][$countTop]['short_details_en'] = $s->short_details;
+            $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
+            $countTop++;
+        }
+
+        $servcesSlider = $this->model
+                        ->where(
+                                array(
+                                    'status' => 1,
+                                    'in_home_slider' => 1
+                                )
+                        )
+                        ->orderBy('sort')->get();
         $countSlider = 0;
-        foreach ($servces as $s) {
-            if ($s->in_home_slider == 0) {
-                $data['top'][$countTop]['id'] = $s->id;
-                $data['top'][$countTop]['icon'] = config('filesystems.image_host_url') . $s->icon;
-                $data['top'][$countTop]['name_en'] = $s->name;
-                $data['top'][$countTop]['name_bn'] = $s->name_bn;
-                $data['top'][$countTop]['short_details_en'] = $s->short_details;
-                $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
-                $countTop++;
-            } else {
-                $data['slider'][$countSlider]['id'] = $s->id;
-                $data['slider'][$countSlider]['banner_photo'] = config('filesystems.image_host_url') . $s->banner_photo;
-                $data['slider'][$countSlider]['alt_text'] = $s->alt_text;
-                $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
-                $data['slider'][$countSlider]['name_en'] = $s->name;
-                $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
-                $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
-                $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
-                $countSlider++;
-            }
+        foreach ($servcesSlider as $s) {
+
+            $data['slider'][$countSlider]['id'] = $s->id;
+            $data['slider'][$countSlider]['slug'] = $s->type;
+            $data['slider'][$countSlider]['banner_photo'] = config('filesystems.image_host_url') . $s->banner_photo;
+            $data['slider'][$countSlider]['alt_text'] = $s->alt_text;
+            $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
+            $data['slider'][$countSlider]['name_en'] = $s->name;
+            $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
+            $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
+            $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
+            $countSlider++;
         }
         return $data;
     }
 
     public function getOtherService($type) {
-        $servces = $this->model->where('type', $type)->orderBy('sort')->get();
+        $servces = $this->model->where('type', $type)->where('status', 1)->orderBy('sort')->get();
 
         $data = [];
         $count = 0;
@@ -72,9 +84,9 @@ class BusinessOthersRepository extends BaseRepository {
 
     public function getServiceById($serviceId) {
         $service = $this->model->where('id', $serviceId)->first();
-        
+
         $data['id'] = $service->id;
-        $data['type'] = $service->type;
+        $data['slug'] = $service->type;
         $data['icon'] = config('filesystems.image_host_url') . $service->icon;
         $data['name_en'] = $service->name;
         $data['name_bn'] = $service->name_bn;
@@ -82,7 +94,7 @@ class BusinessOthersRepository extends BaseRepository {
         $data['short_details_bn'] = $service->short_details_bn;
         $data['offer_details_en'] = $service->offer_details;
         $data['offer_details_bn'] = $service->offer_details_bn;
-        
+
         return $data;
     }
 

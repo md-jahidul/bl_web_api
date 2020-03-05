@@ -9,6 +9,7 @@
 namespace App\Exceptions;
 
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class BLApiHubException extends \Exception
@@ -16,7 +17,7 @@ class BLApiHubException extends \Exception
     /**
      * Render an exception into an HTTP response.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function render()
     {

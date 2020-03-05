@@ -24,7 +24,7 @@ class BuyAmarOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'offer_id'     => 'required'
+            'offer_id' => 'required'
         ];
     }
 }

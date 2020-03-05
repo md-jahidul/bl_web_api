@@ -32,10 +32,11 @@ class AppServiceTabRepository extends BaseRepository
                             'product_img_url',
                             'like', 'app_rating',
                             'can_active',
+                            'show_in_vas',
                             'ussd_en', 'ussd_bn',
                             'subscribe_text_en',
                             'subscribe_text_bn',
-                            'subscription_url',
+                            'provider_url',
                             'send_to',
                             'app_store_link',
                             'google_play_link'

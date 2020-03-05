@@ -73,9 +73,8 @@ class AboutUsService extends ApiBaseService
     {
         try {
             $sliderData = $this->sliderRepository->getSliderInfo('about_media');
-            $sliderImage = $this->sliderImageRepository->findByProperties(['slider_id' => $sliderData->id]);
+            $sliderImage = $this->sliderImageRepository->aboutUsSliders($sliderData->id);
             $sliderImage = SliderImageResource::collection($sliderImage);
-
             $data = $this->aboutUsRepository->getAboutBanglalink();
             $formatted_data = AboutUsResource::collection($data);
             $component['banner'] = $formatted_data;

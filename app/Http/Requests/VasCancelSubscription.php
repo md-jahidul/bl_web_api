@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LeadRequest extends FormRequest
+class VasCancelSubscription extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,15 +33,8 @@ class LeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'mobile' => 'required',
-            'email' => 'required|email|unique:lead_requests',
-            'district' => 'required',
-            'thana'=> 'required',
-            'address' => 'required',
-            'quantity' => 'required',
-//            'package' => 'required'
+            'msisdn' => 'required',
+            'provider_url' => 'required'
         ];
     }
 }
