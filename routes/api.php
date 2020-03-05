@@ -30,6 +30,10 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
 
+
+    Route::get('product-details/{id}','API\V1\ProductDetailsController@productDetails');
+
+
     // QUICK LAUNCH  ====================================
     Route::get('quick-launch/button', 'API\V1\QuickLaunchController@getQuickLaunchItems');
 
@@ -126,6 +130,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
+    Route::get('app-service/package-list/{provider}', 'API\V1\AppServiceController@packageList');
 
     // VAS Apis
     Route::post('vas/subscription', 'API\V1\VasApiController@subscription');

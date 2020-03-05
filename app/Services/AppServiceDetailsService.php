@@ -91,9 +91,7 @@ class AppServiceDetailsService
 
         $data = null;
 
-        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id, $component_type);
-
-        
+        $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id);
 
         if( !empty($results) && count($results) > 0 ){
 

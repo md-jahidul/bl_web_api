@@ -55,7 +55,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
     {
         if( empty($component_type) ){
             return $this->model->with('detailsComponent')->where('product_id', $product_id)
-                ->whereNull('category')
+                ->where('category', 'component_sections')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
                 ->get();

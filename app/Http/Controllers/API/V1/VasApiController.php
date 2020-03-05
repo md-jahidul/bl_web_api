@@ -69,5 +69,4 @@ class VasApiController extends Controller
         return $this->vasApiService->contentDetail($providerUrl, $contentId);
     }
 
-
 }

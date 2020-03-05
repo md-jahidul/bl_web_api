@@ -13,4 +13,14 @@ use App\Models\Slider;
 class SliderImageRepository extends BaseRepository
 {
     public $modelName = AlSliderImage::class;
+
+
+    public function aboutUsSliders($sliderId)
+    {
+        return $this->model->where('slider_id', $sliderId)
+            ->where('is_active', 1)
+            ->checkStartEndDate()
+            ->orderBy('display_order')
+            ->get();
+    }
 }
