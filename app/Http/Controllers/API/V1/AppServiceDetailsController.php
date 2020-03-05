@@ -83,11 +83,13 @@ class AppServiceDetailsController extends Controller
         # Get App tab details component
         if( $product_info->appServiceTab->alias == 'app' ){
             # Get component "text with image right", "text with image bottom"
-            $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
+            $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
 
-            $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
+            // $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
 
-            $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
+            // $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
+
+            // $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
         }
         elseif( $product_info->appServiceTab->alias == 'vas' ){
 

@@ -92,7 +92,7 @@ class BusinessOthersRepository extends BaseRepository {
         $data['name_bn'] = $service->name_bn;
         $data['short_details_en'] = $service->short_details;
         $data['short_details_bn'] = $service->short_details_bn;
-        $data['offer_details_en'] = $service->offer_details;
+        $data['offer_details_en'] = $service->offer_details_en;
         $data['offer_details_bn'] = $service->offer_details_bn;
 
         return $data;
