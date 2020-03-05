@@ -51,13 +51,13 @@ class AboutUsService extends ApiBaseService
      * @param SliderRepository $sliderRepository
      * @param SliderImageRepository $sliderImageRepository
      */
-    public function __construct(AboutUsRepository $aboutUsRepository,
-                                ManagementRepository $managementRepository,
-                                EcareerPortalRepository $eCareerRepository,
-                                SliderRepository $sliderRepository,
-                                SliderImageRepository $sliderImageRepository
-)
-    {
+    public function __construct(
+        AboutUsRepository $aboutUsRepository,
+        ManagementRepository $managementRepository,
+        EcareerPortalRepository $eCareerRepository,
+        SliderRepository $sliderRepository,
+        SliderImageRepository $sliderImageRepository
+    ) {
         $this->aboutUsRepository = $aboutUsRepository;
         $this->managementRepository = $managementRepository;
         $this->eCareerRepository = $eCareerRepository;

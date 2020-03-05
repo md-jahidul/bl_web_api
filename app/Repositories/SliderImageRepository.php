@@ -19,6 +19,7 @@ class SliderImageRepository extends BaseRepository
     {
         return $this->model->where('slider_id', $sliderId)
             ->where('is_active', 1)
+            ->checkStartEndDate()
             ->orderBy('display_order')
             ->get();
     }
