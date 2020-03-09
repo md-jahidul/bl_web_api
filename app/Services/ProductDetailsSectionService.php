@@ -60,17 +60,16 @@ class ProductDetailsSectionService extends ApiBaseService
 //        $data['section'] = $sections;
 
         foreach ($sections as $category => $section) {
-
             $data['section'] = $sections;
-
 //            if ($section->section_type == "tab_section") {
 //                $data['tabs'] = $sections;
 //            } else {
-//
 //            }
+//            return $section->components;
         }
 
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
+
     }
 
 }

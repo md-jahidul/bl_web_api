@@ -18,7 +18,9 @@ class ProductDetailsSectionRepository extends BaseRepository
     public function section($productId)
     {
         return $this->model->where('product_id', $productId)
-            ->with('components')
+            ->with(['components' => function($q){
+                $q->where('page_type', 'product_details');
+            }])
             ->get();
     }
 }
