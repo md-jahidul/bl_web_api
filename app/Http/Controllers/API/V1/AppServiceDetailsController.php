@@ -95,6 +95,14 @@ class AppServiceDetailsController extends Controller
 
             $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
         }
+        elseif( $product_info->appServiceTab->alias == 'financial' ){
+
+            $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
+        }
+        elseif( $product_info->appServiceTab->alias == 'others' ){
+
+            $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
+        }
         else{
             $data['section_component'] = null;
         }
