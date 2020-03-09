@@ -32,6 +32,8 @@ class BusinessOthersRepository extends BaseRepository {
             $data['top'][$countTop]['icon'] = config('filesystems.image_host_url') . $s->icon;
             $data['top'][$countTop]['name_en'] = $s->name;
             $data['top'][$countTop]['name_bn'] = $s->name_bn;
+            $data['top'][$countTop]['home_short_details_en'] = $s->home_short_details_en;
+            $data['top'][$countTop]['home_short_details_bn'] = $s->home_short_details_bn;
             $data['top'][$countTop]['short_details_en'] = $s->short_details;
             $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
             $countTop++;
@@ -55,6 +57,8 @@ class BusinessOthersRepository extends BaseRepository {
             $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
             $data['slider'][$countSlider]['name_en'] = $s->name;
             $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
+            $data['slider'][$countSlider]['home_short_details_en'] = $s->home_short_details_en;
+            $data['slider'][$countSlider]['home_short_details_bn'] = $s->home_short_details_bn;
             $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
             $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
             $countSlider++;
@@ -92,7 +96,7 @@ class BusinessOthersRepository extends BaseRepository {
         $data['name_bn'] = $service->name_bn;
         $data['short_details_en'] = $service->short_details;
         $data['short_details_bn'] = $service->short_details_bn;
-        $data['offer_details_en'] = $service->offer_details;
+        $data['offer_details_en'] = $service->offer_details_en;
         $data['offer_details_bn'] = $service->offer_details_bn;
 
         return $data;
