@@ -49,7 +49,7 @@ class ProductDetailsSectionService extends ApiBaseService
         $sections = $this->productDetailsSectionRepository->section($productId);
 
         foreach ($sections as $section){
-            ($section->section_type == "multi_section") ? $isTab = true : $isTab = false;
+            ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
         }
 
         $data['header'] = [
@@ -57,18 +57,16 @@ class ProductDetailsSectionService extends ApiBaseService
             "isTab" => $isTab
         ];
 
-        $data['section'] = $sections;
+//        $data['section'] = $sections;
 
-//        foreach ($sections as $category => $section) {
-//
-//
-//
-////            if ($section->section_type == "multi_section") {
-////                $data['tabs'] = $sections;
-////            } else {
-////                $data['section'] = $section;
-////            }
-//        }
+        foreach ($sections as $category => $section) {
+
+            if ($section->section_type == "tab_section") {
+                $data['tabs'] = $sections;
+            } else {
+                $data['section'] = $sections;
+            }
+        }
 
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
