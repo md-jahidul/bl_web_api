@@ -4,16 +4,18 @@ namespace App\Services\Assetlite;
 
 //use App\Repositories\AppServiceProductegoryRepository;
 
+use App\Enums\HttpStatusCode;
 use App\Repositories\AppServiceProductDetailsRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\ProductDetailsSectionRepository;
+use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 
-class ProductDetailsSectionService
+class ProductDetailsSectionService extends ApiBaseService
 {
     use CrudTrait;
     /**
@@ -44,23 +46,31 @@ class ProductDetailsSectionService
 
     public function productDetails($productId)
     {
-        $sections = $this->productDetailsSectionRepository->findByProperties(['product_id' => $productId]);
+        $sections = $this->productDetailsSectionRepository->section($productId);
 
         foreach ($sections as $section){
-            $components[] = $this->componentRepository->findOneByProperties(['section_details_id' => $section->id]);
+            ($section->section_type == "multi_section") ? $isTab = true : $isTab = false;
         }
 
-        $data = [];
-        foreach ($sections as $category => $pack) {
-            $data [] = [
-                'section' => [
-                    $pack
-                ],
-                'component' => $components,
-                'related_product' => null
-            ];
-        }
-        return $data;
+        $data['header'] = [
+            "banner_image" => null,
+            "isTab" => $isTab
+        ];
+
+        $data['section'] = $sections;
+
+//        foreach ($sections as $category => $section) {
+//
+//
+//
+////            if ($section->section_type == "multi_section") {
+////                $data['tabs'] = $sections;
+////            } else {
+////                $data['section'] = $section;
+////            }
+//        }
+
+        return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
 
 }
