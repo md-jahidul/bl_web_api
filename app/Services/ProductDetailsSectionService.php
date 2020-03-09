@@ -54,7 +54,7 @@ class ProductDetailsSectionService extends ApiBaseService
 
         $data['header'] = [
             "banner_image" => null,
-            "isTab" => $isTab
+            "isTab" => isset($isTab) ? $isTab : null
         ];
 
 //        $data['section'] = $sections;
