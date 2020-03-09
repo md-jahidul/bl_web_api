@@ -62,6 +62,8 @@ class EcareerPortalRepository extends BaseRepository
      */
     public function getEcareersInfo()
     {
-        return $this->model->with('portalItems')->where('category', 'life_at_bl_diversity')->first();
+        return $this->model->with(['portalItems' => function ($query) {
+            $query->whereNull('deleted_at');
+        }])->where('category', 'life_at_bl_diversity')->first();
     }
 }

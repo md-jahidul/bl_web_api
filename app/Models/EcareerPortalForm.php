@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EcareerPortalForm extends Model
 {
 
-	protected $table = 'ecarrer_portal_forms';
+	protected $table = 'ecareer_portal_forms';
 
    protected $fillable = [
        'name',

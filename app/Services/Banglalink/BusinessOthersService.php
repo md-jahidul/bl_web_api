@@ -134,7 +134,6 @@ class BusinessOthersService {
             $components[$position]['data'][$pk1Count]['feature_text_en'] = $v->feature_text;
             $components[$position]['data'][$pk1Count]['feature_text_bn'] = $v->feature_text_bn;
             $components[$position]['data'][$pk1Count]['price_en'] = $v->price;
-            $components[$position]['data'][$pk1Count]['price_bn'] = $v->price_bn;
             $pk1Count++;
         }
 
@@ -159,7 +158,6 @@ class BusinessOthersService {
             $components[$position]['data'][$pk2Count]['package_days_en'] = $v->package_days;
             $components[$position]['data'][$pk2Count]['package_days_bn'] = $v->package_days_bn;
             $components[$position]['data'][$pk2Count]['price_en'] = $v->price;
-            $components[$position]['data'][$pk2Count]['price_bn'] = $v->price_bn;
             $pk2Count++;
         }
 
