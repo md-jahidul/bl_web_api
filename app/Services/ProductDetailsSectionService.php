@@ -81,9 +81,9 @@ class ProductDetailsSectionService extends ApiBaseService
 //        $data['section'] = $sections;
 
         foreach ($sections as $category => $section) {
+
             $data['section'] = $sections;
 
-            return $data;
 
 //            foreach ($section['components'] as $component)
 //            {
