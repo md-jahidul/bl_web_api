@@ -32,4 +32,9 @@ class Component extends Model
         'other_attributes' => 'array',
         'multiple_attributes' => 'array'
     ];
+
+    public function productInfo()
+    {
+        return $this->hasOne(Product::class,  'id','offer_type_id')->productCore();
+    }
 }

@@ -43,6 +43,35 @@ class ProductDetailsSectionService extends ApiBaseService
         $this->setActionRepository($productDetailsSectionRepository);
     }
 
+    public function bindDynamicValues($obj = null, $json_data = 'other_attributes', $data = null)
+    {
+
+
+        if (!empty($obj)) {
+            foreach ($obj as $key => $section) {
+
+                foreach ($section->components as $component){
+                    dd($component);
+                    foreach ($component->productInfo->productCore as $productInfo){
+                    }
+
+                }
+
+//                $obj->{$key} = $value;
+            }
+//            unset($obj->{$json_data});
+        }
+        // Product Core Data BindDynamicValues
+//        $data = json_decode($data);
+//
+//        if (!empty($data)) {
+//            foreach ($data as $key => $value) {
+//                $obj->{$key} = $value;
+//            }
+//            return $obj;
+//        }
+    }
+
 
     public function productDetails($productId)
     {
@@ -60,13 +89,34 @@ class ProductDetailsSectionService extends ApiBaseService
 //        $data['section'] = $sections;
 
         foreach ($sections as $category => $section) {
+
             $data['section'] = $sections;
+
+//            $this->bindDynamicValues($sections);
+
+//            foreach ($section['components'] as $component)
+//            {
+//                $this->bindDynamicValues();
+//            }
+
+
 //            if ($section->section_type == "tab_section") {
 //                $data['tabs'] = $sections;
 //            } else {
 //            }
-//            return $section->components;
+
+//            $data['component'] = null;
+
+//            foreach ($section->components as $item){
+//
+//                foreach ($item->multiple_attributes['image'] as $key => $img){
+//
+//                    return $key;
+//                }
+//            }
         }
+
+//        dd($data);
 
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
 
