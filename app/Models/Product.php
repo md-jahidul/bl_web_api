@@ -44,6 +44,7 @@ class Product extends Model
                 'sms_volume',
                 'minute_volume',
                 'call_rate as callrate_offer',
+                'call_rate_unit',
                 'sms_rate as sms_rate_offer',
                 'renew_product_code',
                 'recharge_product_code'

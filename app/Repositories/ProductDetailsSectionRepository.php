@@ -19,7 +19,11 @@ class ProductDetailsSectionRepository extends BaseRepository
     {
         return $this->model->where('product_id', $productId)
             ->with(['components' => function($q){
-                $q->where('page_type', 'product_details');
+                $q->where('page_type', 'product_details')
+                    ->with(['productInfo' => function ($productInfo){
+//                        $productInfo->select('id', 'product_code', 'rate_cutter_unit');
+                    }]);
+
             }])
             ->get();
     }
