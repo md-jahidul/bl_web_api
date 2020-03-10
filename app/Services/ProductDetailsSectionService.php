@@ -45,14 +45,22 @@ class ProductDetailsSectionService extends ApiBaseService
 
     public function bindDynamicValues($obj = null, $json_data = 'other_attributes', $data = null)
     {
-       return $obj['test_column'];
 
-//        if (!empty($obj->{$json_data})) {
-//            foreach ($obj->{$json_data} as $key => $value) {
+
+        if (!empty($obj)) {
+            foreach ($obj as $key => $section) {
+
+                foreach ($section->components as $component){
+                    dd($component);
+                    foreach ($component->productInfo->productCore as $productInfo){
+                    }
+
+                }
+
 //                $obj->{$key} = $value;
-//            }
+            }
 //            unset($obj->{$json_data});
-//        }
+        }
         // Product Core Data BindDynamicValues
 //        $data = json_decode($data);
 //
@@ -84,6 +92,7 @@ class ProductDetailsSectionService extends ApiBaseService
 
             $data['section'] = $sections;
 
+//            $this->bindDynamicValues($sections);
 
 //            foreach ($section['components'] as $component)
 //            {
