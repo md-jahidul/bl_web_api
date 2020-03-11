@@ -99,7 +99,7 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer
-     Route::get('device-offers/{brand?}/', 'API\V1\DeviceOfferController@offerList');
+     Route::get('device-offers/{brand?}/{model?}', 'API\V1\DeviceOfferController@offerList');
 
 
      //Business Module APIs
