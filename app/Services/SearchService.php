@@ -1,22 +1,23 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: jahangir
- * Date: 12/22/19
- * Time: 11:10 AM
+ * Dev: Bulbul Mahmud Nito
+ * Date: 10/03/2020
  */
 
 namespace App\Services;
 
-
+use App\Repositories\PopularSearchRepository;
 use App\Repositories\SearchRepository;
 use App\Services\Banglalink\BaseService;
 
-class SearchService extends BaseService
-{
+class SearchService extends BaseService {
+
     /**
-     * @var SearchRepository
+     * @var $popularRepository
+     * @var $searchRepository
      */
+    protected $popularRepository;
     protected $searchRepository;
 
     /**
@@ -26,19 +27,66 @@ class SearchService extends BaseService
 
     /**
      * SearchService constructor.
+     * @param PopularSearchRepository $popularRepository
      * @param SearchRepository $searchRepository
      */
-    public function __construct(SearchRepository $searchRepository, ApiBaseService $apiBaseService)
-    {
+    public function __construct(SearchRepository $searchRepository, PopularSearchRepository $popularRepository, ApiBaseService $apiBaseService) {
+        $this->popularRepository = $popularRepository;
         $this->searchRepository = $searchRepository;
         $this->apiBaseService = $apiBaseService;
     }
 
+    public function popularSearch() {
+        $keywords = $this->popularRepository->getResults();
+        return $this->apiBaseService->sendSuccessResponse($keywords, 'Popular Search Result');
+    }
 
-    public function getSearchResult($keyWord)
-    {
+    public function searchSuggestion($keyword) {
+        $keywords = $this->searchRepository->searchSuggestion($keyword);
+
+        $data = [];
+
+        $heads = array(
+            'prepaid-internet' => "Prepid Internet",
+            'prepaid-voice' => "Prepid Voice",
+            'prepaid-bundle' => "Prepid Bundle",
+            'postpaid-internet' => "Postpaid Internet",
+            'others' => "Others"
+        );
+        $count = 0;
+        foreach ($keywords as $k) {
+            $data[$k->type]['head'] = $heads[$k->type];
+            $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
+            $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+        }
+        return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
+    }
+
+    public function searchData($keyword) {
+        $keywords = $this->searchRepository->searchData($keyword);
+
+        $data = [];
+
+        $heads = array(
+            'prepaid-internet' => "Prepid Internet",
+            'prepaid-voice' => "Prepid Voice",
+            'prepaid-bundle' => "Prepid Bundle",
+            'postpaid-internet' => "Postpaid Internet",
+            'others' => "Others"
+        );
+        $count = 0;
+        foreach ($keywords as $k) {
+            $data[$k->type]['head'] = $heads[$k->type];
+            $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
+            $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+        }
+        return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
+    }
+
+    public function getSearchResult($keyWord) {
         $data = $this->searchRepository->getSearchResult($keyWord);
 
         return $this->apiBaseService->sendSuccessResponse($data, 'Search Result');
     }
+
 }

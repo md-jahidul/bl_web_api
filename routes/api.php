@@ -90,7 +90,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
 
 
-    Route::get('search/{keyWord}', 'API\V1\SearchController@getSearchResult');
+    Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');
+    Route::get('search-suggestion/{keyword}', 'API\V1\SearchController@getSearchSuggestion');
+    Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
      Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
