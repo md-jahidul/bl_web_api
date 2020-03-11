@@ -18,10 +18,12 @@ class DeviceOfferRepository extends BaseRepository {
 
         if (!empty($brand)) {
             $offers->where('brand', $brand);
-            $offers->where('model', $model);
+            if (!empty($model)){
+                $offers->where('model', $model);
+            }
         }
 
-        $offerList = $offers->first();
+        $offerList = ($brand && empty($model)) ? $offers->get() : $offers->first();
 
         $brandList = $this->model->select('brand')->groupBy('brand')->get();
         $brands = [];
@@ -29,7 +31,7 @@ class DeviceOfferRepository extends BaseRepository {
             $brands[] = $v['brand'];
         }
 
-        return array('brands' => $brands, 'offers' => $offerList);
+        return array('brands' => $brands, 'offers' => ($brand) ? $offerList : null);
     }
 
 }
