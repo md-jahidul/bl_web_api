@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\DeviceOffer;
+use App\Models\EasyPaymentCard;
 
 class DeviceOfferRepository extends BaseRepository {
 
@@ -31,7 +32,18 @@ class DeviceOfferRepository extends BaseRepository {
             $brands[] = $v['brand'];
         }
 
-        return array('brands' => $brands, 'offers' => ($brand) ? $offerList : null);
+        $codes = [];
+        if (isset($offerList['available_shop'])){
+            $codes = explode(',', $offerList['available_shop']);
+        }
+        $locationData = [];
+        foreach ($codes as $key => $code){
+            $data = EasyPaymentCard::where('code', str_replace(' ', '', $code))->first();
+            if(!empty($data)){
+               array_push($locationData, $data);
+            }
+        }
+        return array('brands' => $brands, 'offers' => ($brand) ? $offerList : null, 'shopLocation' => $locationData);
     }
 
 }
