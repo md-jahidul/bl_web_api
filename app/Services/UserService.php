@@ -265,6 +265,8 @@ class UserService extends ApiBaseService
 
         $idpData = json_decode($response['data']);
 
+        dd($idpData);
+
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }

@@ -18,8 +18,9 @@ class AppServiceTabRepository extends BaseRepository
     public function appServiceCollection()
     {
         return $this->model
-            ->with(['categories' => function ($query) {
-                    $query->with(['products' => function ($product) {
+            ->with(['categories' => function ($category) {
+                    $category->where('status', 1);
+                    $category->with(['products' => function ($product) {
                         $product->select([
                             'id', 'app_service_tab_id',
                             'app_service_cat_id',
@@ -40,9 +41,9 @@ class AppServiceTabRepository extends BaseRepository
                             'send_to',
                             'app_store_link',
                             'google_play_link'
-                        ]);
+                        ])->where('status', 1);;
                     }]);
-                    $query->select('id', 'app_service_tab_id', 'title_en', 'title_bn');
+                    $category->select('id', 'app_service_tab_id', 'title_en', 'title_bn');
                 }])
             ->select('id', 'name_en', 'name_bn', 'banner_image_url', 'banner_alt_text', 'alias')
             ->get();

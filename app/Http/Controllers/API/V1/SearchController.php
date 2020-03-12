@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: jahangir
- * Date: 12/22/19
- * Time: 10:47 AM
+ * Dev: Bulbul Mahmud Nito
+ * Date: 10/03/2020
  */
 
 namespace App\Http\Controllers\API\V1;
@@ -27,11 +25,20 @@ class SearchController extends Controller
     {
         $this->searchService = $searchService;
     }
-
-    public function getSearchResult($keyWord)
-    {
-        return $this->searchService->getSearchResult($keyWord);
+    
+    public function getPopularSearch(){
+        return $this->searchService->popularSearch();
     }
+    
+    public function getSearchSuggestion($keyword){
+        return $this->searchService->searchSuggestion($keyword);
+    }
+    
+    public function getSearchData($keyword){
+        return $this->searchService->searchData($keyword);
+    }
+    
+
 
 
 }
