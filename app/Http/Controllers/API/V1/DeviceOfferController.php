@@ -18,12 +18,12 @@ class DeviceOfferController extends Controller
         $this->deviceOfferService = $deviceOfferService;
     }
 
-    
-    
-    public function offerList($brand = ""){
-        
-         return $this->deviceOfferService->getOfferList($brand);
+
+
+    public function offerList($brand = "", $model = null){
+
+         return $this->deviceOfferService->getOfferList($brand, $model);
     }
-    
+
 
 }

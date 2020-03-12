@@ -70,9 +70,13 @@ class AppServiceDetailsService
 			
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
 			$all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;
-			$get_all_releated_products = $this->appServiceProductRepository->findByIds($all_releated_products_ids);
 			$results['releated_products']['title_en'] = $get_product_details_banner->title_en;
 			$results['releated_products']['title_bn'] = $get_product_details_banner->title_bn;
+
+			if( !empty($all_releated_products_ids) ){
+			    $get_all_releated_products = $this->appServiceProductRepository->findByIds($all_releated_products_ids);
+			}
+
 			$results['releated_products']['products'] = !empty($get_all_releated_products) ? $get_all_releated_products : null;
 		}
 
@@ -138,6 +142,7 @@ class AppServiceDetailsService
 									if( isset($value['image_url']) ){
 										$value['image_url'] = config('filesystems.image_host_url') . $value['image_url'];
 									}
+
 
 									if( $value['status'] == 0 ){
 										return null;

@@ -14,7 +14,7 @@ class DeviceOfferService extends BaseService
     public $deviceOfferRepository;
     public $responseFormatter;
 
-  
+
 
     public function __construct
     (
@@ -26,10 +26,10 @@ class DeviceOfferService extends BaseService
         $this->responseFormatter = $apiBaseService;
     }
 
-    public function getOfferList($brand){
-        $response = $this->deviceOfferRepository->getList($brand);
+    public function getOfferList($brand, $model){
+        $response = $this->deviceOfferRepository->getList($brand, $model);
         return $this->responseFormatter->sendSuccessResponse($response, 'Device Offer List');
     }
-   
+
 
 }

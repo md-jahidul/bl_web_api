@@ -15,6 +15,7 @@ use App\Repositories\BusinessFeaturesRepository;
 use App\Repositories\BusinessOthersRepository;
 use App\Repositories\BusinessPackageRepository;
 use App\Repositories\BusinessInternetRepository;
+use App\Repositories\BusinessSlidingSpeedRepository;
 use Illuminate\Http\Response;
 
 class BusinessHomeService {
@@ -27,6 +28,7 @@ class BusinessHomeService {
      * @var $businessOtherRepo
      * @var $businessPackageRepo
      * @var $businessInternetRepo
+     * @var $speedRepo
      */
     protected $businessCatRepo;
     protected $businessBannerRepo;
@@ -35,6 +37,7 @@ class BusinessHomeService {
     protected $businessOtherRepo;
     protected $businessPackageRepo;
     protected $businessInternetRepo;
+    protected $speedRepo;
     public $responseFormatter;
 
     /**
@@ -46,9 +49,10 @@ class BusinessHomeService {
      * @param BusinessOthersRepository $businessOtherRepo
      * @param BusinessPackageRepository $businessPackageRepo
      * @param BusinessInternetRepository $businessInternetRepo
+     * @param BusinessSlidingSpeedRepository $speedRepo
      */
     public function __construct(
-    ApiBaseService $responseFormatter, BusinessCategoryRepository $businessCatRepo, BusinessHomeBannerRepository $businessBannerRepo, BusinessNewsRepository $businessNewsRepo, BusinessFeaturesRepository $businessFeaturesRepo, BusinessOthersRepository $businessOtherRepo, BusinessPackageRepository $businessPackageRepo, BusinessInternetRepository $businessInternetRepo
+    ApiBaseService $responseFormatter, BusinessCategoryRepository $businessCatRepo, BusinessHomeBannerRepository $businessBannerRepo, BusinessNewsRepository $businessNewsRepo, BusinessFeaturesRepository $businessFeaturesRepo, BusinessOthersRepository $businessOtherRepo, BusinessPackageRepository $businessPackageRepo, BusinessInternetRepository $businessInternetRepo, BusinessSlidingSpeedRepository $speedRepo
     ) {
         $this->businessCatRepo = $businessCatRepo;
         $this->businessBannerRepo = $businessBannerRepo;
@@ -57,6 +61,7 @@ class BusinessHomeService {
         $this->businessOtherRepo = $businessOtherRepo;
         $this->businessPackageRepo = $businessPackageRepo;
         $this->businessInternetRepo = $businessInternetRepo;
+        $this->speedRepo = $speedRepo;
 
         $this->responseFormatter = $responseFormatter;
     }
@@ -68,6 +73,7 @@ class BusinessHomeService {
     public function getHomeData() {
         $data = [];
         $data['categories'] = $this->businessCatRepo->getHomeCategoryList();
+        $data['sliding_speed'] = $this->speedRepo->getSpeeds();
         $data['top_banners'] = $this->businessBannerRepo->getHomeBanners();
         $data['enterprise_solutions'] = $this->businessOtherRepo->getHomeOtherService();
 
