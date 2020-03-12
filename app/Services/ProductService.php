@@ -318,23 +318,32 @@ class ProductService extends ApiBaseService
         return $this->sendErrorResponse('Invalid operation');
     }
 
-    public function getCustomerLoanProducts($customerId)
+    public function getCustomerLoanProducts($customerId, $loanType)
     {
         $availableLoanProducts = [];
-//        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
-//        foreach ($loanProducts as $loan) {
-//            $product = ProductCore::where('product_code', $loan['code'])->first();
-//            if ($product)
-//                array_push($availableLoanProducts, $product);
-//        }
+        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
 
-        $availableLoanProducts = ProductCore::
-            where(function ($query) {
-                $query->where('content_type', 'ma loan')
-                    ->orWhere('content_type', 'data loan');
-            })->get();
+        foreach ($loanProducts as $loan) {
+            $product = ProductCore::where('product_code', $loan['code'])->first();
+            $product = array(
+                'product_code' => $product->product_code,
+                'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
+                'title' => $product->name,
+                'internet_volume_mb' => $product->internet_volume_mb,
+                'price_tk' => $product->mrp_price,
+                'validity' => $product->validity,
+                'validity_unit' => $product->validity_unit
+            );
 
-        return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
+            if ($loanType == $product['type']){
+                array_push($availableLoanProducts, $product);
+            }
+
+        }
+        if ($availableLoanProducts){
+            return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
+        }
+        return $this->sendErrorResponse($availableLoanProducts, 'Product not found');
     }
 
     /**
