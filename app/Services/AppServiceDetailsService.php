@@ -108,6 +108,7 @@ class AppServiceDetailsService
 				$parent_data['title_en'] = $value->title_en;
 				$parent_data['title_bn'] = $value->title_bn;
 				$parent_data['slug'] = $value->slug;
+				$parent_data['section_type'] = $value->slug;
 
 				$sub_data['section_header'] = $parent_data;
 
