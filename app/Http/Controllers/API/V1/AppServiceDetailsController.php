@@ -111,11 +111,13 @@ class AppServiceDetailsController extends Controller
 
         $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
 
-        
-        return response()->success($data, 'Data Found!');
+    
+        return response()->json(['status' => 'SUCCESS', "status_code" => 200,  "message" => "Data Found!", 'data' => $data], 200);
+        // return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
       }
       catch(\Exception $e){
-        return response()->error('Data Not Found!');
+        // return response()->error('Data Not Found!');
+        return response()->json(['status' => 'FAILED', "status_code" => 404,  "message" => "Data Not Found!", 'data' => []], 404);
       }
 
     }

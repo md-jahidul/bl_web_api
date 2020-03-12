@@ -83,7 +83,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
-    Route::get('product/loan', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
 
     //Loyalty or Priyojon section
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
@@ -99,7 +99,7 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer
-     Route::get('device-offers/{brand?}/', 'API\V1\DeviceOfferController@offerList');
+     Route::get('device-offers/{brand?}/{model?}', 'API\V1\DeviceOfferController@offerList');
 
 
      //Business Module APIs
