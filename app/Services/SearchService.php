@@ -65,8 +65,9 @@ class SearchService extends BaseService {
             'postpaid-internet' => "Postpaid Internet",
             'others' => "Others"
         );
-        $count = 0;
+        
         foreach ($keywords as $val) {
+            $count = 0;
             foreach ($val as $k) {
                 $data[$k->type]['head'] = $heads[$k->type];
                 $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
