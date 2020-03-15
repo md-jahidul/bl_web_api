@@ -59,7 +59,22 @@ class SalesAndServicesService
 
         $serviceCenterItems = $this->componentService->findByType('home_sales_service_center');
 
-        dd($serviceCenterItems);
+        $results["component"] = "ServiceCenter";
+        $results['title_en'] = $serviceCenterItems->title_en ?? null;
+        $results['title_bn'] = $serviceCenterItems->title_bn ?? null;
+        $results['description_en'] = $serviceCenterItems->description_en ?? null;
+        $results['description_bn'] = $serviceCenterItems->description_bn ?? null;
+
+        if( !empty($serviceCenterItems->other_attributes) && count($serviceCenterItems->other_attributes) > 0 ){
+            $results['button'] = $serviceCenterItems->other_attributes;
+        }
+        else{
+            $results['buttons'] = null;
+        }
+
+
+
+        return $results;
 
     }
 
