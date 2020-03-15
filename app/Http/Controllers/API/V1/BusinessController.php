@@ -42,7 +42,7 @@ class BusinessController extends Controller
      * Get json data for home page
      * 
      * @param No
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function index()
@@ -54,7 +54,7 @@ class BusinessController extends Controller
      * Get category list
      * 
      * @param No
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function getCategories()
@@ -66,7 +66,7 @@ class BusinessController extends Controller
      * Get package category page data
      * 
      * @param No
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function packages()
@@ -78,7 +78,7 @@ class BusinessController extends Controller
      * Get package details
      * 
      * @param No
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function packageById($packageId)
@@ -90,19 +90,42 @@ class BusinessController extends Controller
      * Get Internet package
      * 
      * @param No
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function internet()
     {
         return $this->internetService->getInternetPackage();
     }
+    
+    /**
+     * Get Internet package details
+     * 
+     * @param $internetId
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 15/03/2020
+     */
+    public function internetDetails($internetId)
+    {
+        return $this->internetService->getInternetDetails($internetId);
+    }
+    /**
+     * Give like and get total likes
+     * 
+     * @param No
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 15/03/2020
+     */
+    public function internetLike($internetId)
+    {
+        return $this->internetService->saveInternetLike($internetId);
+    }
 
     /**
      * Get Enterprise Solution
      * 
      * @param $type (business-solusion,iot,others)
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function enterpriseSolusion($type)
@@ -114,7 +137,7 @@ class BusinessController extends Controller
      * Get Enterprise Solution
      * 
      * @param $serviceId
-     * @return Factory|View
+     * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function enterpriseProductDetails($serviceId)

@@ -43,7 +43,7 @@ class DeviceOfferRepository extends BaseRepository {
                array_push($locationData, $data);
             }
         }
-        return array('brands' => $brands, 'offers' => ($brand) ? $offerList : null, 'shopLocation' => $locationData);
+        return array('brands' => $brands, 'offers' => ($brand) ? $offerList : null, 'shopLocation' =>  ($brand) ? $locationData : null);
     }
 
 }
