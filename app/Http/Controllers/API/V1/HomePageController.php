@@ -125,9 +125,11 @@ class HomePageController extends Controller
 
 	public function getSalesServiceData()
 	{
+		// $component_header = $this->salesAndServicesService->itemHeader();
 		return  [
+			// $component_header,
 			"component"=> "ServiceCenter",
-			"data" => $salesServiceItems = $this->salesAndServicesService->itemList()
+			"data" => $this->salesAndServicesService->itemList()
 		];
 	}
 

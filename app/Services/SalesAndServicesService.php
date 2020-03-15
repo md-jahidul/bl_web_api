@@ -6,6 +6,7 @@ use App\Http\Resources\SalesAndServicesResource;
 use App\Repositories\SalesAndServicesRepository;
 use App\Repositories\SearchRepository;
 use App\Traits\CrudTrait;
+use App\Services\Assetlite\ComponentService;
 
 class SalesAndServicesService
 {
@@ -17,6 +18,12 @@ class SalesAndServicesService
     protected $salesAndServicesRepository;
 
     /**
+     * [$componentService description]
+     * @var [type]
+     */
+    protected $componentService;
+
+    /**
      * @var ApiBaseService
      */
     protected $apiBaseService;
@@ -26,10 +33,11 @@ class SalesAndServicesService
      * @param SalesAndServicesRepository $salesAndServicesRepository
      * @param ApiBaseService $apiBaseService
      */
-    public function __construct(SalesAndServicesRepository $salesAndServicesRepository, ApiBaseService $apiBaseService)
+    public function __construct(SalesAndServicesRepository $salesAndServicesRepository, ApiBaseService $apiBaseService, ComponentService $componentService)
     {
         $this->salesAndServicesRepository = $salesAndServicesRepository;
         $this->apiBaseService = $apiBaseService;
+        $this->componentService = $componentService;
         $this->setActionRepository($salesAndServicesRepository);
     }
 
@@ -42,4 +50,17 @@ class SalesAndServicesService
         $serviceCenterItems = $this->salesAndServicesRepository->getServiceCenterByDistrict('Dhaka');
         return $serviceCenterItems = SalesAndServicesResource::collection($serviceCenterItems);
     }
+
+    /**
+     * [itemHeader description]
+     * @return [type] [description]
+     */
+    public function itemHeader(){
+
+        $serviceCenterItems = $this->componentService->findByType('home_sales_service_center');
+
+        dd($serviceCenterItems);
+
+    }
+
 }
