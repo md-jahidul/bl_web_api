@@ -91,6 +91,7 @@ class BusinessInternetRepository extends BaseRepository {
 
         $count = 0;
         $relatedProduct = $this->model->whereIn("id", array($internet->related_product))->get();
+        $data['related_product'] = [];
         foreach ($relatedProduct as $rp) {
 
             $rpDataVol = $rp->data_volume;
