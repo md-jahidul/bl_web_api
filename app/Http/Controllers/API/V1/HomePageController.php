@@ -14,6 +14,7 @@ use App\Models\ShortCode;
 use App\Models\MetaTag;
 use App\Services\ProductService;
 use App\Services\QuickLaunchService;
+use App\Services\SalesAndServicesService;
 use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use DB;
@@ -31,6 +32,7 @@ class HomePageController extends Controller
 	private $productService;
 	private $quickLaunchService;
 	private $ecarrerService;
+	private $salesAndServicesService;
 
 	/**
 	 * HomePageController constructor.
@@ -41,12 +43,14 @@ class HomePageController extends Controller
 	public function __construct(
 		ProductService $productService,
 		QuickLaunchService $quickLaunchService,
-		EcareerService $ecarrerService
+		EcareerService $ecarrerService,
+		SalesAndServicesService $salesAndServicesService
 	)
 	{
 		$this->productService = $productService;
 		$this->quickLaunchService = $quickLaunchService;
 		$this->ecarrerService = $ecarrerService;
+		$this->salesAndServicesService = $salesAndServicesService;
 	}
 
 	// In PHP, By default objects are passed as reference copy to a new Object.
@@ -123,8 +127,7 @@ class HomePageController extends Controller
 	{
 		return  [
 			"component"=> "ServiceCenter",
-			"data" => []
-			// "data" => $salesServiceItems = $this->quickLaunchService->itemList('panel')
+			"data" => $salesServiceItems = $this->salesAndServicesService->itemList()
 		];
 	}
 

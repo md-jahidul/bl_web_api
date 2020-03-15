@@ -40,7 +40,7 @@ class QuickLaunchService
     public function itemList($type)
     {
         $quickLaunchItems = $this->quickLaunchRepository->getQuickLaunch($type);
-        $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
-        return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
+        return $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
+        // return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
     }
 }

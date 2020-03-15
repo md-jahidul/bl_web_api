@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Http\Resources\QuickLaunchResource;
-use App\Repositories\QuickLaunchRepository;
+use App\Http\Resources\SalesAndServicesResource;
+use App\Repositories\SalesAndServicesRepository;
 use App\Repositories\SearchRepository;
 use App\Traits\CrudTrait;
 
@@ -12,9 +12,9 @@ class SalesAndServicesService
     use CrudTrait;
 
     /**
-     * @var QuickLaunchRepository
+     * @var SalesAndServicesRepository
      */
-    protected $quickLaunchRepository;
+    protected $salesAndServicesRepository;
 
     /**
      * @var ApiBaseService
@@ -23,24 +23,23 @@ class SalesAndServicesService
 
     /**
      * QuickLaunchService constructor.
-     * @param QuickLaunchRepository $quickLaunchRepository
+     * @param SalesAndServicesRepository $salesAndServicesRepository
      * @param ApiBaseService $apiBaseService
      */
-    public function __construct(QuickLaunchRepository $quickLaunchRepository, ApiBaseService $apiBaseService)
+    public function __construct(SalesAndServicesRepository $salesAndServicesRepository, ApiBaseService $apiBaseService)
     {
-        $this->quickLaunchRepository = $quickLaunchRepository;
+        $this->salesAndServicesRepository = $salesAndServicesRepository;
         $this->apiBaseService = $apiBaseService;
-        $this->setActionRepository($quickLaunchRepository);
+        $this->setActionRepository($salesAndServicesRepository);
     }
 
     /**
      * @param $type
      * @return mixed
      */
-    public function itemList($type)
-    {
-        $quickLaunchItems = $this->quickLaunchRepository->getQuickLaunch($type);
-        $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
-        return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
+    public function itemList()
+    {        
+        $serviceCenterItems = $this->salesAndServicesRepository->getServiceCenterByDistrict('Dhaka');
+        return $serviceCenterItems = SalesAndServicesResource::collection($serviceCenterItems);
     }
 }
