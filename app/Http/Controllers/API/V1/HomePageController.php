@@ -122,7 +122,7 @@ class HomePageController extends Controller
 	public function getSalesServiceData()
 	{
 		return  [
-			"component"=> "SalesService",
+			"component"=> "ServiceCenter",
 			"data" => []
 			// "data" => $salesServiceItems = $this->quickLaunchService->itemList('panel')
 		];
