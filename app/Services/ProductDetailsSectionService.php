@@ -81,15 +81,13 @@ class ProductDetailsSectionService extends ApiBaseService
         }
 
         $bannerRelatedData = $this->bannerImgRelatedProductRepository->findOneByProperties(['product_id' => $productId]);
-
-//        return $bannerRelatedData;
-
         $products = [];
-        foreach ($bannerRelatedData->related_product_id as $id){
-            $data = Product::where('id', $id)->productCore()->first();
-            array_push($products, $data);
+        if (isset($bannerRelatedData->related_product_id)){
+            foreach ($bannerRelatedData->related_product_id as $id){
+                $data = Product::where('id', $id)->productCore()->first();
+                array_push($products, $data);
+            }
         }
-
         if ($products) {
             foreach ($products as $product) {
                 $data = $product->productCore;
@@ -99,8 +97,6 @@ class ProductDetailsSectionService extends ApiBaseService
         }
 
 //        return $products;
-
-
 
         $data['header'] = [
             "banner_image" => $bannerRelatedData->banner_image_url,
