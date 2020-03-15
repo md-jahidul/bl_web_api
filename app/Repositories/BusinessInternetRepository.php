@@ -43,6 +43,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['tag_bn'] = "সেরা অফার";
             $data[$count]['tag_color'] = "#21874d";
             $data[$count]['activation_ussd_code'] = $p->activation_ussd_code;
+            $data[$count]['balance_check_ussd_code'] = $p->balance_check_ussd_code;
             $data[$count]['likes'] = $p->likes;
             $count++;
         }
@@ -71,6 +72,7 @@ class BusinessInternetRepository extends BaseRepository {
         $data['validity_unit'] = $internet->validity_unit;
         $data['price_tk'] = $internet->mrp;
         $data['activation_ussd_code'] = $internet->activation_ussd_code;
+        $data['balance_check_ussd_code'] = $internet->balance_check_ussd_code;
         $data['banner_photo'] = $internet->banner_photo == "" ? "" : config('filesystems.image_host_url') . $internet->banner_photo;
         $data['alt_text'] = $internet->alt_text;
         $data['package_details_en'] = $internet->package_details_en;
@@ -108,6 +110,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data['related_product'][$count]['validity_unit'] = $rp->validity_unit;
             $data['related_product'][$count]['price_tk'] = $rp->mrp;
             $data['related_product'][$count]['activation_ussd_code'] = $rp->activation_ussd_code;
+            $data['related_product'][$count]['balance_check_ussd_code'] = $rp->balance_check_ussd_code;
             $data['related_product'][$count]['likes'] = $rp->likes;
 
             $data['related_product'][$count]['tag_en'] = "";

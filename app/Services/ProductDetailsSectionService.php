@@ -99,8 +99,8 @@ class ProductDetailsSectionService extends ApiBaseService
 //        return $products;
 
         $data['header'] = [
-            "banner_image" => $bannerRelatedData->banner_image_url,
-            "alt_text" => $bannerRelatedData->alt_text,
+            "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
+            "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
             "isTab" => isset($isTab) ? $isTab : null
         ];
 
