@@ -36,13 +36,25 @@ class SearchService extends BaseService {
         $this->apiBaseService = $apiBaseService;
     }
 
+    private function _getLimits() {
+        $limit = $this->searchRepository->getSettingData();
+
+        $data = [];
+        foreach ($limit as $val) {
+            $data[$val->type_slug] = $val->limit;
+        }
+        return $data;
+    }
+
     public function popularSearch() {
         $keywords = $this->popularRepository->getResults();
         return $this->apiBaseService->sendSuccessResponse($keywords, 'Popular Search Result');
     }
 
     public function searchSuggestion($keyword) {
+
         $keywords = $this->searchRepository->searchSuggestion($keyword);
+
 
         $data = [];
 
@@ -53,11 +65,15 @@ class SearchService extends BaseService {
             'postpaid-internet' => "Postpaid Internet",
             'others' => "Others"
         );
-        $count = 0;
-        foreach ($keywords as $k) {
-            $data[$k->type]['head'] = $heads[$k->type];
-            $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
-            $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+        
+        foreach ($keywords as $val) {
+            $count = 0;
+            foreach ($val as $k) {
+                $data[$k->type]['head'] = $heads[$k->type];
+                $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
+                $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+                $count++;
+            }
         }
         return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
     }
