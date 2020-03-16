@@ -321,7 +321,7 @@ class ProductService extends ApiBaseService
     public function getCustomerLoanProducts($customerId, $loanType)
     {
         $availableLoanProducts = [];
-        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts(64108092);
+        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customerId);
 
         foreach ($loanProducts as $loan) {
             $product = ProductCore::where('product_code', $loan['code'])->first();
