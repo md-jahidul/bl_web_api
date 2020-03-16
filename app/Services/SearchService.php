@@ -92,9 +92,12 @@ class SearchService extends BaseService {
         );
         $count = 0;
         foreach ($keywords as $k) {
+            if($k->type != ""){
             $data[$k->type]['head'] = $heads[$k->type];
             $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
             $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+            $count++;
+            }
         }
         return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
     }

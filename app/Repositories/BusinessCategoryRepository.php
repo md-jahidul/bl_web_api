@@ -32,6 +32,8 @@ class BusinessCategoryRepository extends BaseRepository {
              $data[$count]['slug'] = $slugs[$v->id];
             $data[$count]['name_en'] = $v->name;
             $data[$count]['name_bn'] = $v->name_bn;
+            $data[$count]['alt_text'] = $v->alt_text;
+            $data[$count]['banner_photo'] = config('filesystems.image_host_url'). $v->banner_photo;
             $count++;
         }
         return $data;
@@ -55,6 +57,8 @@ class BusinessCategoryRepository extends BaseRepository {
             $data[$count]['slug'] = $slugs[$v->id];
             $data[$count]['name_en'] = $v->name;
             $data[$count]['name_bn'] = $v->name_bn;
+            $data[$count]['alt_text'] = $v->alt_text;
+            $data[$count]['banner_photo'] = config('filesystems.image_host_url'). $v->banner_photo;
             $count++;
         }
         return $data;
