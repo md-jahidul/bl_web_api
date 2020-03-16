@@ -38,7 +38,7 @@ class ComponentService
 
     public function findByType($type)
     {
-        return $this->componentRepository->findOneByProperties(['type' => $type]);
+        return $this->componentRepository->findOneByProperties(['page_type' => $type]);
     }
 
     public function componentList($section_id)

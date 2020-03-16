@@ -2,14 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Models\QuickLaunchItem;
+use App\Models\StoreLocator;
 
 class SalesAndServicesRepository extends BaseRepository
 {
-    public $modelName = QuickLaunchItem::class;
+    public $modelName = StoreLocator::class;
 
-    public function getQuickLaunch($type)
+    public function getServiceCenterByDistrict($district = null)
     {
-        return $this->model->where('type', $type)->orderBy('display_order', 'ASC')->get();
+    	if( !empty($district) ){
+    		return $this->model->where('district', $district)->orderBy('district', 'ASC')->get();
+    	}
+    	else{
+    		return $this->model->orderBy('district', 'ASC')->get();
+    	}
+        
     }
 }
