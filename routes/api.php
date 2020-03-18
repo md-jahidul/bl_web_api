@@ -144,8 +144,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # App and Service details page
-
+    # Sales and Service search results
+    Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
 
 
     // App and service get details page with product id
