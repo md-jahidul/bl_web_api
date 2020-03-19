@@ -78,4 +78,29 @@ class SalesAndServicesService
 
     }
 
+    /**
+     * [getSearchResults description]
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     */
+    public function getSearchResults($data)
+    {
+
+        $district = !empty($data['district']) ? trim($data['district']) : null;
+        $thana = !empty($data['thana']) ? trim($data['thana']) : null;
+
+        if( !empty($district) && !empty($thana) ){
+            $serviceCenterItems = $this->salesAndServicesRepository->getServiceCenterByDistrictThana($district, $thana);
+            $serviceCenterItems = SalesAndServicesResource::collection($serviceCenterItems);
+            return $this->apiBaseService->sendSuccessResponse($serviceCenterItems, 'Data Found');
+        }
+        elseif( !empty($district) ){
+            $serviceCenterItems = $this->salesAndServicesRepository->getServiceCenterByDistrict($district);
+            $serviceCenterItems = SalesAndServicesResource::collection($serviceCenterItems);
+            return $this->apiBaseService->sendSuccessResponse($serviceCenterItems, 'Data Found');
+        }
+
+    }
+
+
 }

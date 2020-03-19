@@ -9,7 +9,9 @@
 
 namespace App\Repositories;
 
+use App\Models\AppServiceCategory;
 use App\Models\AppServiceProduct;
+use App\Models\AppServiceTab;
 
 class AppServiceProductRepository extends BaseRepository
 {

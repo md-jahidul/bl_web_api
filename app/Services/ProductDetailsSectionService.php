@@ -96,51 +96,19 @@ class ProductDetailsSectionService extends ApiBaseService
             }
         }
 
-//        return $products;
-
         $data['header'] = [
             "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
             "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
             "isTab" => isset($isTab) ? $isTab : null
         ];
 
-//        $data['section'] = $sections;
-
         foreach ($sections as $category => $section) {
-
             $data['section'] = $sections;
-
-//            $this->bindDynamicValues($sections);
-
-//            foreach ($section['components'] as $component)
-//            {
-//                $this->bindDynamicValues();
-//            }
-
-
-//            if ($section->section_type == "tab_section") {
-//                $data['tabs'] = $sections;
-//            } else {
-//            }
-
-//            $data['component'] = null;
-
-//            foreach ($section->components as $item){
-//
-//                foreach ($item->multiple_attributes['image'] as $key => $img){
-//
-//                    return $key;
-//                }
-//            }
         }
         $data['footer'] = [
             'related_products' => $products
         ];
-
-//        dd($data);
-
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
-
     }
 
 }
