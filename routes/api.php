@@ -149,6 +149,8 @@ Route::group(['prefix' => '/v1'], function () {
     # Sales and Service search results
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
 
+    Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
+
 
     // App and service get details page with product id
     Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');

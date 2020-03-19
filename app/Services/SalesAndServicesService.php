@@ -103,4 +103,24 @@ class SalesAndServicesService
     }
 
 
+    public function getDistricts()
+    {
+        $districts = $this->salesAndServicesRepository->getAllDistrict();
+
+        if( !empty($districts) ){
+            $districts_arr = $districts->toArray();
+
+            $districts_filter = array_map(function($value){
+                return array_values($value)[0];
+            }, $districts_arr);
+
+            return $this->apiBaseService->sendSuccessResponse($districts_filter, 'Data Found');
+        }
+        else{
+            return $this->apiBaseService->sendErrorResponse('Data Not Found');
+        }
+
+        
+    }
+
 }

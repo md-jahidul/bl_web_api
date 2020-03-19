@@ -42,4 +42,14 @@ class SalesServiceController extends Controller
         return $this->salesAndServicesService->getSearchResults($request->all());
     }
 
+    /**
+     * [salesServiceGetDistricts description]
+     * @return [type] [description]
+     */
+    public function salesServiceGetDistricts()
+    {
+        return $this->salesAndServicesService->getDistricts();
+    }
+
+
 }
