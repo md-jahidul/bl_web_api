@@ -107,7 +107,7 @@ class SalesAndServicesService
     {
         $districts = $this->salesAndServicesRepository->getAllDistrict();
 
-        if( !empty($districts) ){
+        if( !empty($districts) && count($districts) > 0 ){
             $districts_arr = $districts->toArray();
 
             $districts_filter = array_map(function($value){
@@ -122,5 +122,31 @@ class SalesAndServicesService
 
         
     }
+
+    /**
+     * [getThanaByDistricts description]
+     * @return [type] [description]
+     */
+    public function getThanaByDistricts($data)
+    {
+        $district = trim($data['district']);
+
+        $serviceCenterThana = $this->salesAndServicesRepository->getServiceCenterThanaByDistrict($district);
+
+        if( !empty($serviceCenterThana) && count($serviceCenterThana) > 0 ){
+            $thana_arr = $serviceCenterThana->toArray();
+
+            $thana_arr_filter = array_map(function($value){
+                return array_values($value)[0];
+            }, $thana_arr);
+
+            return $this->apiBaseService->sendSuccessResponse($thana_arr_filter, 'Data Found');
+        }
+        else{
+            return $this->apiBaseService->sendErrorResponse('Data Not Found');
+        }
+
+    }
+
 
 }

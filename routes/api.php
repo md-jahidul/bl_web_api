@@ -150,7 +150,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
 
     Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
-
+    Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 
     // App and service get details page with product id
     Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');

@@ -52,4 +52,16 @@ class SalesServiceController extends Controller
     }
 
 
+    public function salesServiceThanaByDistricts(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'district' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+        }
+
+        return $this->salesAndServicesService->getThanaByDistricts($request->all());
+    }
+
 }

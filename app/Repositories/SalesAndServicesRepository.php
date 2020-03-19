@@ -48,4 +48,14 @@ class SalesAndServicesRepository extends BaseRepository
 		return $this->model->groupBy('district')->orderBy('district', 'ASC')->get(['district']);
 	}
 
+	/**
+	 * [getServiceCenterThanaByDistrict description]
+	 * @param  [type] $district [description]
+	 * @return [type]           [description]
+	 */
+	public function getServiceCenterThanaByDistrict($district)
+	{
+		return $this->model->where('district', $district)->groupBy('thana')->orderBy('thana', 'ASC')->get(['thana']);
+	}
+
 }
