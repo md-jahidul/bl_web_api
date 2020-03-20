@@ -108,6 +108,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('business-packages', 'API\V1\BusinessController@packages');
      Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
      Route::get('business-internet-package', 'API\V1\BusinessController@internet');
+     Route::get('business-internet-details/{internetId}', 'API\V1\BusinessController@internetDetails');
+     Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
      Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
      Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
@@ -133,6 +135,8 @@ Route::group(['prefix' => '/v1'], function () {
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
     Route::get('app-service/package-list/{provider}', 'API\V1\AppServiceController@packageList');
+    Route::get('app-service/like/{productId}', 'API\V1\AppServiceController@appServiceLike');
+    Route::post('app-service/bookmark/save-or-remove', 'API\V1\AppServiceController@bookmarkSaveOrDelete');
 
     // VAS Apis
     Route::post('vas/subscription', 'API\V1\VasApiController@subscription');
@@ -142,9 +146,11 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # App and Service details page
+    # Sales and Service search results
+    Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
 
-
+    Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
+    Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 
     // App and service get details page with product id
     Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');

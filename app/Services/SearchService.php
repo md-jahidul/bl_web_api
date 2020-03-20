@@ -65,8 +65,9 @@ class SearchService extends BaseService {
             'postpaid-internet' => "Postpaid Internet",
             'others' => "Others"
         );
-        $count = 0;
+
         foreach ($keywords as $val) {
+            $count = 0;
             foreach ($val as $k) {
                 $data[$k->type]['head'] = $heads[$k->type];
                 $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
@@ -89,11 +90,49 @@ class SearchService extends BaseService {
             'postpaid-internet' => "Postpaid Internet",
             'others' => "Others"
         );
-        $count = 0;
+        $countPi = 0;
+        $countPv = 0;
+        $countPb = 0;
+        $countPstI = 0;
+        $countOth = 0;
         foreach ($keywords as $k) {
-            $data[$k->type]['head'] = $heads[$k->type];
-            $data[$k->type]['keywords'][$count]['keyword'] = $k->keyword;
-            $data[$k->type]['keywords'][$count]['product_url'] = $k->product_url;
+            if ($k->type != "") {
+
+                if ($k->type == "prepaid-internet") {
+                    $data[$k->type]['head'] = $heads[$k->type];
+                    $data[$k->type]['keywords'][$countPi]['keyword'] = $k->keyword;
+                    $data[$k->type]['keywords'][$countPi]['product_url'] = $k->product_url;
+                    $countPi++;
+                }
+
+                if ($k->type == "prepaid-voice") {
+                    $data[$k->type]['head'] = $heads[$k->type];
+                    $data[$k->type]['keywords'][$countPv]['keyword'] = $k->keyword;
+                    $data[$k->type]['keywords'][$countPv]['product_url'] = $k->product_url;
+                    $countPv++;
+                }
+
+                if ($k->type == "prepaid-bundle") {
+                    $data[$k->type]['head'] = $heads[$k->type];
+                    $data[$k->type]['keywords'][$countPb]['keyword'] = $k->keyword;
+                    $data[$k->type]['keywords'][$countPb]['product_url'] = $k->product_url;
+                    $countPb++;
+                }
+
+                if ($k->type == "postpaid-internet") {
+                    $data[$k->type]['head'] = $heads[$k->type];
+                    $data[$k->type]['keywords'][$countPstI]['keyword'] = $k->keyword;
+                    $data[$k->type]['keywords'][$countPstI]['product_url'] = $k->product_url;
+                    $countPstI++;
+                }
+
+                if ($k->type == "others") {
+                    $data[$k->type]['head'] = $heads[$k->type];
+                    $data[$k->type]['keywords'][$countOth]['keyword'] = $k->keyword;
+                    $data[$k->type]['keywords'][$countOth]['product_url'] = $k->product_url;
+                    $countOth++;
+                }
+            }
         }
         return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
     }

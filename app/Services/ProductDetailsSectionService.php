@@ -81,15 +81,13 @@ class ProductDetailsSectionService extends ApiBaseService
         }
 
         $bannerRelatedData = $this->bannerImgRelatedProductRepository->findOneByProperties(['product_id' => $productId]);
-
-//        return $bannerRelatedData;
-
         $products = [];
-        foreach ($bannerRelatedData->related_product_id as $id){
-            $data = Product::where('id', $id)->productCore()->first();
-            array_push($products, $data);
+        if (isset($bannerRelatedData->related_product_id)){
+            foreach ($bannerRelatedData->related_product_id as $id){
+                $data = Product::where('id', $id)->productCore()->first();
+                array_push($products, $data);
+            }
         }
-
         if ($products) {
             foreach ($products as $product) {
                 $data = $product->productCore;
@@ -98,53 +96,19 @@ class ProductDetailsSectionService extends ApiBaseService
             }
         }
 
-//        return $products;
-
-
-
         $data['header'] = [
-            "banner_image" => $bannerRelatedData->banner_image_url,
-            "alt_text" => $bannerRelatedData->alt_text,
+            "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
+            "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
             "isTab" => isset($isTab) ? $isTab : null
         ];
 
-//        $data['section'] = $sections;
-
         foreach ($sections as $category => $section) {
-
             $data['section'] = $sections;
-
-//            $this->bindDynamicValues($sections);
-
-//            foreach ($section['components'] as $component)
-//            {
-//                $this->bindDynamicValues();
-//            }
-
-
-//            if ($section->section_type == "tab_section") {
-//                $data['tabs'] = $sections;
-//            } else {
-//            }
-
-//            $data['component'] = null;
-
-//            foreach ($section->components as $item){
-//
-//                foreach ($item->multiple_attributes['image'] as $key => $img){
-//
-//                    return $key;
-//                }
-//            }
         }
         $data['footer'] = [
             'related_products' => $products
         ];
-
-//        dd($data);
-
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
-
     }
 
 }
