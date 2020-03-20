@@ -42,4 +42,26 @@ class SalesServiceController extends Controller
         return $this->salesAndServicesService->getSearchResults($request->all());
     }
 
+    /**
+     * [salesServiceGetDistricts description]
+     * @return [type] [description]
+     */
+    public function salesServiceGetDistricts()
+    {
+        return $this->salesAndServicesService->getDistricts();
+    }
+
+
+    public function salesServiceThanaByDistricts(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'district' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
+        }
+
+        return $this->salesAndServicesService->getThanaByDistricts($request->all());
+    }
+
 }

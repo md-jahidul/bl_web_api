@@ -21,7 +21,7 @@ class AboutUsEcareerResource extends JsonResource
             'description_en'      => $this->description_en ?? null,
             'description_bn'      => $this->title_en ?? null,
             'is_active'           => $this->is_active ?? null,
-            'portal_items'        =>  AboutUsEcareerItemResource::collection($this->portalItems),
+            'portal_items'        =>  AboutUsEcareerItemResource::collection($this->aboutUsEcareerItems),
         ];
 
     }
