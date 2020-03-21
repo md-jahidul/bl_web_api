@@ -111,7 +111,7 @@ class AboutUsService extends ApiBaseService
             $formatted_data = [];
 
             if( $data != null){
-                $arr_data = AboutUsEcareerResource::collection($data);
+                $arr_data = AboutUsEcareerResource::make($data);
                 $formatted_data = json_decode (json_encode ($arr_data), FALSE);
             }
 

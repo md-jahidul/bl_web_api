@@ -18,7 +18,9 @@ class AboutUsEcareerRepository extends BaseRepository
      */
     public function getEcareersInfo()
     {
-        return $this->model->with('aboutUsEcareerItems')->get();
+        return $this->model->with('aboutUsEcareerItems')->first();
+
+
 
         /*return $this->model->with(['aboutUsEcareerItems' => function ($query) {
             $query->whereNull('deleted_at');
