@@ -41,6 +41,13 @@ class QuickLaunchService
     {
         $quickLaunchItems = $this->quickLaunchRepository->getQuickLaunch($type);
         return $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
-        // return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
+//         return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
+    }
+
+    public function itemListButton($type)
+    {
+        $quickLaunchItems = $this->quickLaunchRepository->getQuickLaunch($type);
+        $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
+        return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
     }
 }
