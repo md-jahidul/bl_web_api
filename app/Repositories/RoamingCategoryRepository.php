@@ -19,10 +19,19 @@ class RoamingCategoryRepository extends BaseRepository {
                         ->orderBy('sort')->get();
         $data = [];
         $count = 0;
+        
+        $slugs = array(
+            1 => 'offer',
+            2 => 'about-roaming',
+            3 => 'roaming-rates',
+            4 => 'bill-payment',
+            5 => 'info-tips',
+        );
 
 
         foreach ($categories as $v) {
             $data[$count]['id'] = $v->id;
+            $data[$count]['category_slug'] = $slugs[$v->id];
             $data[$count]['url_slug'] = $v->url_slug;
             $data[$count]['page_header'] = $v->page_header;
             $data[$count]['schema_markup'] = $v->schema_markup;
