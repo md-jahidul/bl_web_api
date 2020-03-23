@@ -47,7 +47,8 @@ class SearchService extends BaseService {
     }
 
     public function popularSearch() {
-        $keywords = $this->popularRepository->getResults();
+        $limits = $this->searchRepository->getSettingData();
+        $keywords = $this->popularRepository->getResults($limits['popular-search']);
         return $this->apiBaseService->sendSuccessResponse($keywords, 'Popular Search Result');
     }
 

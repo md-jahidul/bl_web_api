@@ -16,12 +16,12 @@ class AboutUsEcareerResource extends JsonResource
     {
         return [
             'id'                  => $this->id ?? null,
-            'title_en'            => "Career" ?? null,
-            'title_bn'            => "ক্যারিয়ার" ?? null,
+            'title_en'            => $this->title_en ?? null,
+            'title_bn'            => $this->title_bn ?? null,
             'description_en'      => $this->description_en ?? null,
-            'description_bn'      => $this->title_en ?? null,
+            'description_bn'      => $this->description_bn ?? null,
             'is_active'           => $this->is_active ?? null,
-            'portal_items'        =>  AboutUsEcareerItemResource::collection($this->portalItems),
+            'portal_items'        =>  AboutUsEcareerItemResource::collection($this->aboutUsEcareerItems),
         ];
 
     }

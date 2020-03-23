@@ -77,6 +77,8 @@ class BusinessInternetRepository extends BaseRepository {
         $data['alt_text'] = $internet->alt_text;
         $data['package_details_en'] = $internet->package_details_en;
         $data['package_details_bn'] = $internet->package_details_bn;
+        $data['banner_photo'] = $internet->banner_photo != "" ? config('filesystems.image_host_url') . $internet->banner_photo : "";
+        $data['alt_text'] = $internet->alt_text;
         $data['likes'] = $internet->likes;
 
         $data['tag_en'] = "";

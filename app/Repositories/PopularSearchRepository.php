@@ -13,8 +13,10 @@ class PopularSearchRepository extends BaseRepository {
 
     public $modelName = SearchPopularKeywords::class;
 
-    public function getResults() {
-         $response = $this->model->select('keyword', 'url as product_url')->where('status', 1)->orderBy('sort')->get();
+    public function getResults($limit) {
+         $response = $this->model->select('keyword', 'url as product_url')
+                 ->offset(0)->limit($limit)
+                 ->where('status', 1)->orderBy('sort')->get();
         return $response;
     }
 
