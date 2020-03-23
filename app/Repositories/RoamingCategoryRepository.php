@@ -38,8 +38,8 @@ class RoamingCategoryRepository extends BaseRepository {
             $data[$count]['name_en'] = $v->name_en;
             $data[$count]['name_bn'] = $v->name_bn;
             $data[$count]['alt_text'] = $v->alt_text;
-            $data[$count]['banner_photo_web'] = $v->banner_photo == "" ? "" : config('filesystems.image_host_url') . $v->banner_web;
-            $data[$count]['banner_photo_mobile'] = $v->banner_photo == "" ? "" : config('filesystems.image_host_url') . $v->banner_mobile;
+            $data[$count]['banner_photo_web'] = $v->banner_web == "" ? "" : config('filesystems.image_host_url') . $v->banner_web;
+            $data[$count]['banner_photo_mobile'] = $v->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $v->banner_mobile;
             $count++;
         }
         return $data;
