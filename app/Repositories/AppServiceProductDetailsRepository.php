@@ -58,6 +58,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
                 ->where('category', 'component_sections')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
+                ->orderBy('section_order', 'asc')
                 ->get();
         }
         else{
@@ -77,6 +78,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
                 ->whereNull('category')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
+                ->orderBy('section_order', 'asc')
                 ->get();
 
         }
