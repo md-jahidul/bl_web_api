@@ -52,7 +52,6 @@ class Product extends Model
         }]);
     }
 
-
     public function scopeCategory($query, $type)
     {
         return $query->whereHas('sim_category', function ($q) use ($type) {
