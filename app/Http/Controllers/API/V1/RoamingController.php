@@ -40,11 +40,33 @@ class RoamingController extends Controller
      * 
      * @param No
      * @return Json Response
-     * @Bulbul Mahmud Nito || 23/03/2020
+     * @Bulbul Mahmud Nito || 24/03/2020
      */
     public function getCountries()
     {
-        return $this->roammingService->getCategories();
+        return $this->roammingService->getCountries();
+    }
+    /**
+     * Get Operators List
+     * 
+     * @param No
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 24/03/2020
+     */
+    public function getOperators($countryEn)
+    {
+        return $this->roammingService->getOperators($countryEn);
+    }
+    /**
+     * Get Operators List
+     * 
+     * @param No
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 24/03/2020
+     */
+    public function roamingGeneralPage($pageSlug)
+    {
+        return $this->roammingService->roamingGeneralPage($pageSlug);
     }
 
 }

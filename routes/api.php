@@ -117,6 +117,9 @@ Route::group(['prefix' => '/v1'], function () {
      
      //roaming Module APIs
      Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
+     Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
+     Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
+     Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
