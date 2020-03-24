@@ -403,11 +403,21 @@ class EcareerController extends Controller
  	public function getEcarrerPrograms(){
 
  		try{
-
+            
  			$data = [];
- 			$data[]['sap'] = $this->ecarrerService->getProgramsSap();
- 			$data[]['ennovators'] = $this->ecarrerService->getProgramsEnnovators();
- 			$data[]['aip'] = $this->ecarrerService->getProgramsAip();
+            $ecarrer_sap = $this->ecarrerService->getProgramsSap();
+            $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
+            $ecarrer_aip = $this->ecarrerService->getProgramsAip();
+
+            if( !empty($ecarrer_sap['tab_title']) ){
+     			$data[]['sap'] = $ecarrer_sap;
+            }
+            if( !empty($ecarrer_ennovators['tab_title']) ){
+                $data[]['ennovators'] = $ecarrer_ennovators;
+            }
+            if( !empty($ecarrer_aip['tab_title']) ){
+                $data[]['aip'] = $ecarrer_aip;
+            }
 
  			return response()->success($data, 'Data Found!');
  		}

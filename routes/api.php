@@ -113,7 +113,13 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
      Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
-
+     
+     
+     //roaming Module APIs
+     Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
+     Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
+     Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
+     Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
