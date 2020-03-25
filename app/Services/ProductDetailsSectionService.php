@@ -108,6 +108,10 @@ class ProductDetailsSectionService extends ApiBaseService
                 $data = Product::where('id', $id)
                     ->select(
                         'id', 'product_code',
+                        'tag_category_id',
+                        'sim_category_id',
+                        'offer_category_id',
+                        'special_product',
                         'name_en', 'name_bn',
                         'ussd_bn', 'call_rate_unit_bn',
                         'balance_check_ussd_bn', 'like')
