@@ -15,6 +15,14 @@ class LeadRequestService extends ApiBaseService
 {
     use CrudTrait;
 
+    const BUSINESS = 'business';
+    const BUSINESS_SUB = 'business';
+    const BUSINESS_REQUEST_TYPE = 'business';
+
+    const POSTPAID_CAT = ['postpaid'];
+    const POSTPAID_SUB = ['package'];
+    const POSTPAID_REQUEST_TYPE = ['order_postpaid_sim'];
+
     /**
      * @var LeadRequestRepository
      */

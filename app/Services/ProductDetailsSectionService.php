@@ -90,7 +90,7 @@ class ProductDetailsSectionService extends ApiBaseService
             $this->bindDynamicValues($parentProduct, 'offer_info', $parentProduct->productCore);
             unset($parentProduct->productCore);
         }
-//
+
         $offerTypeId = isset($parentProduct->package_offer_type_id) ? $parentProduct->package_offer_type_id : null;
 
         $offerType = OfferCategory::where('id', $offerTypeId)->select('id', 'name_en', 'alias')->first();
