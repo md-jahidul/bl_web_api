@@ -18,7 +18,7 @@ class AppServiceDetailsController extends Controller
 {  
 
    /** Details category list
-   * app_banner_image
+   * app_banner_fixed_section
    */
 
    /**** Compoent Types ****
