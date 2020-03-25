@@ -22,6 +22,8 @@ class RoamingGeneralPageRepository extends BaseRepository {
         $data['category_slug'] = $page->page_type;
         $data['title_en'] = $page->title_en;
         $data['title_bn'] = $page->title_bn;
+        $data['short_description_en'] = $page->short_description_en;
+        $data['short_description_bn'] = $page->short_description_bn;
         
         $count = 0;
         
@@ -29,11 +31,13 @@ class RoamingGeneralPageRepository extends BaseRepository {
 
         foreach ($components as $v) {
             $data['components'][$count]['id'] = $v->id;
+            $data['components'][$count]['component_type'] = $v->component_type;
+            $data['components'][$count]['headline_en'] = $v->headline_en;
+            $data['components'][$count]['headline_bn'] = $v->headline_bn;
             $data['components'][$count]['body_text_en'] = $v->body_text_en;
             $data['components'][$count]['body_text_bn'] = $v->body_text_bn;
-            $data['components'][$count]['big_font'] = $v->big_font;
-            $data['components'][$count]['payment_block'] = $v->payment_block;
-            $data['components'][$count]['component_type'] = $v->component_type;
+            $data['components'][$count]['show_button'] = $v->show_button;
+            
             $count++;
         }
         return $data;
