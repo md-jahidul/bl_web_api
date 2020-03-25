@@ -41,7 +41,9 @@ class AppServiceTabRepository extends BaseRepository
                             'send_to',
                             'app_store_link',
                             'google_play_link'
-                        ])->where('status', 1);;
+                        ])
+                        ->where('status', 1)
+                        ->checkStartEndDate();
                     }]);
                     $category->select('id', 'app_service_tab_id', 'title_en', 'title_bn');
                 }])

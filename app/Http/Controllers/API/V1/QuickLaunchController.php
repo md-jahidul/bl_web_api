@@ -27,7 +27,7 @@ class QuickLaunchController extends Controller
      */
     public function getQuickLaunchItems()
     {
-        return $this->quickLaunchService->itemList('button');
+        return $this->quickLaunchService->itemListButton('button');
     }
 
 }

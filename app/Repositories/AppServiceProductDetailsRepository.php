@@ -44,10 +44,10 @@ class AppServiceProductDetailsRepository extends BaseRepository
     public function appServiceDetailsOtherInfo($product_id)
     {
         return $this->model->where('product_id', $product_id)
-            ->where('category', 'app_banner_image')
+            ->where('category', 'app_banner_fixed_section')
             ->where('status', 1)
             ->whereNull('deleted_at')
-            ->first(['title_en', 'title_bn', 'image', 'alt_text', 'other_attributes']);
+            ->first(['title_en', 'title_bn', 'image', 'alt_text', 'other_attributes', 'multiple_component']);
     }
 
 
@@ -58,6 +58,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
                 ->where('category', 'component_sections')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
+                ->orderBy('section_order', 'asc')
                 ->get();
         }
         else{
@@ -77,6 +78,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
                 ->whereNull('category')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
+                ->orderBy('section_order', 'asc')
                 ->get();
 
         }

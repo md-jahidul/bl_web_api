@@ -5,6 +5,8 @@ namespace App\Services\Assetlite;
 //use App\Repositories\AppServiceProductegoryRepository;
 
 use App\Enums\HttpStatusCode;
+use App\Enums\OfferType;
+use App\Models\OfferCategory;
 use App\Models\Product;
 use App\Repositories\AppServiceProductDetailsRepository;
 use App\Repositories\BannerImgRelatedProductRepository;
@@ -16,6 +18,7 @@ use App\Traits\FileTrait;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
+use PhpParser\Node\Stmt\DeclareDeclare;
 
 class ProductDetailsSectionService extends ApiBaseService
 {
@@ -74,6 +77,24 @@ class ProductDetailsSectionService extends ApiBaseService
 
     public function productDetails($productId)
     {
+        $parentProduct = Product::where('id', $productId)
+            ->select(
+                'id', 'product_code',
+                'offer_category_id',
+                'name_en', 'name_bn',
+                'ussd_bn', 'call_rate_unit_bn',
+                'balance_check_ussd_bn', 'like',
+                'offer_info')
+            ->productCore()->first();
+        if ($parentProduct){
+            $this->bindDynamicValues($parentProduct, 'offer_info', $parentProduct->productCore);
+            unset($parentProduct->productCore);
+        }
+//
+        $offerTypeId = isset($parentProduct->package_offer_type_id) ? $parentProduct->package_offer_type_id : null;
+
+        $offerType = OfferCategory::where('id', $offerTypeId)->select('id', 'name_en', 'alias')->first();
+
         $sections = $this->productDetailsSectionRepository->section($productId);
 
         foreach ($sections as $section){
@@ -84,7 +105,13 @@ class ProductDetailsSectionService extends ApiBaseService
         $products = [];
         if (isset($bannerRelatedData->related_product_id)){
             foreach ($bannerRelatedData->related_product_id as $id){
-                $data = Product::where('id', $id)->productCore()->first();
+                $data = Product::where('id', $id)
+                    ->select(
+                        'id', 'product_code',
+                        'name_en', 'name_bn',
+                        'ussd_bn', 'call_rate_unit_bn',
+                        'balance_check_ussd_bn', 'like')
+                    ->productCore()->first();
                 array_push($products, $data);
             }
         }
@@ -99,15 +126,16 @@ class ProductDetailsSectionService extends ApiBaseService
         $data['header'] = [
             "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
             "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
-            "isTab" => isset($isTab) ? $isTab : null
+            "isTab" => isset($isTab) ? $isTab : null,
+            "product_type" => isset($offerType) ? $offerType->alias : null
         ];
+
+        $data['product'] = $parentProduct;
 
         foreach ($sections as $category => $section) {
             $data['section'] = $sections;
         }
-        $data['footer'] = [
-            'related_products' => $products
-        ];
+        $data['related_products'] = $products;
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
 
