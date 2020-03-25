@@ -22,7 +22,11 @@ class ProductDetailsSectionRepository extends BaseRepository
                 $q->orderBy('component_order', 'ASC')
                     ->where('page_type', 'product_details')
                     ->with(['productInfo' => function ($productInfo){
-//                        $productInfo->select('id', 'product_code', 'rate_cutter_unit');
+                        $productInfo->select(
+                            'id', 'product_code',
+                            'name_en', 'name_bn',
+                            'ussd_bn', 'call_rate_unit_bn',
+                            'balance_check_ussd_bn', 'like');
                     }]);
 
             }])

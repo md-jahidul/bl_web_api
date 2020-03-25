@@ -67,6 +67,9 @@ class AppServiceDetailsService
 		if( !empty($get_product_details_banner) ){
 			$results['banner']['image'] = !empty($get_product_details_banner->image) ? config('filesystems.image_host_url') . $get_product_details_banner->image : null;
 			$results['banner']['alt_text'] = $get_product_details_banner->alt_text;
+
+			$results['banner']['image_mobile'] = !empty($get_product_details_banner->other_attributes['image_mobile']) ? config('filesystems.image_host_url') . $get_product_details_banner->other_attributes['image_mobile'] : null;
+
 			
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
 			$all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;

@@ -6,5 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class LeadRequest extends Model
 {
-    protected $fillable = ['name', 'company_name', 'mobile', 'email', 'district', 'thana', 'address', 'quantity', 'package', 'request_type'];
+    protected $fillable = [
+        'category',
+        'sub_category',
+        'name',
+        'company_name',
+        'mobile',
+        'email',
+        'district',
+        'thana',
+        'address',
+        'quantity',
+        'package',
+        'request_type'
+    ];
 }
