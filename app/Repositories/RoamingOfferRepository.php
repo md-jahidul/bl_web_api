@@ -60,7 +60,7 @@ class RoamingOfferRepository extends BaseRepository {
         
         $bundles = RoamingBundles::where(array('country' => $country, 'operator' => $operator, 'status' => 1))->get();
         
-          foreach($rates as $key => $val){
+          foreach($bundles as $key => $val){
             $data['bundles'][$key]['id'] = $val->id;
             $data['bundles'][$key]['subscription_type'] = $val->subscription_type;
             $data['bundles'][$key]['product_code'] = $val->product_code;
