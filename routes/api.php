@@ -121,6 +121,7 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
      Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
      Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
+     Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
      Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
      Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
 

@@ -89,6 +89,14 @@ class RoamingService {
         $response = $this->offerRepo->getOtherOffers();
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Other Offers');
     }
+    /**
+     * Get roaming other offer details
+     * @return Response
+     */
+    public function otherOfferDetalis($offerId) {
+        $response = $this->offerRepo->getOtherOffersDetails($offerId);
+        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Other Offer Details');
+    }
 
     /**
      * Get roaming rates and bundle

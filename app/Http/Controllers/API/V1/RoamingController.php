@@ -81,6 +81,18 @@ class RoamingController extends Controller
         return $this->roammingService->offerPage();
     }
     /**
+     * Get other offer details
+     * 
+     * @param $offerId
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 26/03/2020
+     */
+    public function otherOfferDetails($offerId)
+    {
+        return $this->roammingService->otherOfferDetalis($offerId);
+    }
+    
+    /**
      * Get offer page data
      * 
      * @param No

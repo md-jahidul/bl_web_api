@@ -34,6 +34,7 @@ class RoamingOfferRepository extends BaseRepository {
                 $data[$k]['offers'][$key]['id'] = $v->id;
                 $data[$k]['offers'][$key]['name_en'] = $v->name_en;
                 $data[$k]['offers'][$key]['name_bn'] = $v->name_bn;
+                $data[$k]['offers'][$key]['url_slug'] = $v->url_slug;
                 $data[$k]['offers'][$key]['card_text_en'] = $v->card_text_en;
                 $data[$k]['offers'][$key]['card_text_bn'] = $v->card_text_bn;
                 $data[$k]['offers'][$key]['likes'] = $v->likes;
@@ -45,6 +46,47 @@ class RoamingOfferRepository extends BaseRepository {
 
         return $data;
     }
+    
+    public function getOtherOffersDetails($offerId) {
+
+        $offer = $this->model->findOrFail($offerId);
+
+
+        $data = [];
+        
+        $data['name_en'] = $offer->name_en;
+        $data['name_bn'] = $offer->name_bn;
+        $data['short_text_en'] = $offer->short_text_en;
+        $data['short_text_bn'] = $offer->short_text_bn;
+        $data['banner_web'] = config('filesystems.image_host_url') . $offer->banner_web;
+        $data['banner_mobile'] = config('filesystems.image_host_url') . $offer->banner_mobile;
+        $data['alt_text'] = $offer->alt_text;
+        $data['page_header'] = $offer->page_header;
+        $data['schema_markup'] = $offer->schema_markup;
+        $data['likes'] = $offer->likes;
+
+        $components = RoamingOtherOfferComponents::where('parent_id', $offerId)->orderBy('position')->get();
+        foreach ($components as $k => $val) {
+            
+            $textEn = json_decode($val->body_text_en);
+            $textBn = json_decode($val->body_text_bn);
+            
+            $data['components'][$k]['component_type'] = $val->component_type;
+            $data['components'][$k]['data_en'] = $textEn;
+            $data['components'][$k]['data_bn'] = $textBn;
+         
+        }
+        
+         $data['details_en'] = $offer->details_en;
+         $data['details_bn'] = $offer->details_en;
+
+
+
+
+        return $data;
+    }
+    
+    
     
     public function ratesAndBundle($country, $operator){
         $rates = RoamingRates::where(array('country' => $country, 'operator' => $operator))->get();
