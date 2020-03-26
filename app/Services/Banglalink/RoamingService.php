@@ -60,7 +60,7 @@ class RoamingService {
      */
     public function roamingGeneralPage($pageSlug) {
         $response = $this->gnPageRepo->roamingGeneralPage($pageSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Category List');
+        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming '.$pageSlug.' Page');
     }
 
     /**
@@ -97,6 +97,14 @@ class RoamingService {
     public function ratesAndBundle($country, $operator) {
         $response = $this->offerRepo->ratesAndBundle($country, $operator);
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Rates & Bundle');
+    }
+    /**
+     * Get roaming rates page data
+     * @return Response
+     */
+    public function roamingRates() {
+        $response = $this->offerRepo->roamingRates();
+        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Rates Page');
     }
 
 }

@@ -9,6 +9,7 @@ namespace App\Repositories;
 
 use App\Models\RoamingOtherOfferCategory;
 use App\Models\RoamingOtherOffer;
+use App\Models\RoamingOtherOfferComponents;
 use App\Models\RoamingRates;
 use App\Models\RoamingBundles;
 
@@ -74,9 +75,43 @@ class RoamingOfferRepository extends BaseRepository {
             $data['bundles'][$key]['price'] = $val->price;
             $data['bundles'][$key]['tax'] = $val->tax;
             $data['bundles'][$key]['like'] = $val->like;
+            $data['bundles'][$key]['details_en'] = $val->details_en;
+            $data['bundles'][$key]['details_bn'] = $val->details_bn;
         }
         
         return $data;
     }
+    
+    public function roamingRates(){
+        $rates = RoamingRates::orderBy('region')->orderBy('country')->orderBy('operator')->get();
+        
+        $region = [];
+        foreach($rates as $k => $val){
+            $region[$val->region][$k] = $val;
+        }
+        
+        $data = [];
+        $rCount = 0;
+        foreach($region as $k => $reg){
+            $rateCount = 0;
+            
+            $data[$rCount]['region'] = $k;
+            foreach($reg as $val){
+                $data[$rCount]['rates'][$rateCount]['subscription_type'] = $val->subscription_type;
+                $data[$rCount]['rates'][$rateCount]['country'] = $val->country;
+                $data[$rCount]['rates'][$rateCount]['operator'] = $val->operator;
+                $data[$rCount]['rates'][$rateCount]['voice_visiting_country'] = $val->rate_visiting_country;
+                $data[$rCount]['rates'][$rateCount]['voice_bangladesh'] = $val->rate_bangladesh;
+                $data[$rCount]['rates'][$rateCount]['sms_rate'] = $val->sms_rate;
+                $data[$rCount]['rates'][$rateCount]['data_rate'] = $val->gprs;
+                $rateCount++;
+            }
+            $rCount++;
+        }
+        
+        return $data;
+    }
+    
+   
 
 }

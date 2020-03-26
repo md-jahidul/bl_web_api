@@ -42,6 +42,8 @@ class RoamingOperatorRepository extends BaseRepository {
             $data[$count]['id'] = $v->id;
             $data[$count]['operator_en'] = $v->operator_en;
             $data[$count]['operator_bn'] = $v->operator_bn;
+            $data[$count]['details_en'] = $v->details_en;
+            $data[$count]['details_bn'] = $v->details_bn;
             $count++;
         }
         return $data;

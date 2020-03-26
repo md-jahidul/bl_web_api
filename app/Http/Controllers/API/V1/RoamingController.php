@@ -91,5 +91,16 @@ class RoamingController extends Controller
     {
         return $this->roammingService->ratesAndBundle($country, $operator);
     }
+    /**
+     * Get rate page data
+     * 
+     * @param No
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 26/03/2020
+     */
+    public function roamingRates()
+    {
+        return $this->roammingService->roamingRates();
+    }
 
 }
