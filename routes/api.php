@@ -123,6 +123,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
      Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
      Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
+     Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
+     Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
      Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
 
      // eCarrer api

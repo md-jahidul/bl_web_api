@@ -106,6 +106,25 @@ class RoamingService {
         $response = $this->offerRepo->ratesAndBundle($country, $operator);
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Rates & Bundle');
     }
+    
+    /**
+     * Like roaming bundle
+     * @return Response
+     */
+    public function bundleLike($bundleId) {
+        $response = $this->offerRepo->bundleLike($bundleId);
+        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Bundle Like');
+    }
+    
+    /**
+     * Like roaming offer
+     * @return Response
+     */
+    public function otherOfferLike($offerId) {
+        $response = $this->offerRepo->otherOfferLike($offerId);
+        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Offer Like');
+    }
+    
     /**
      * Get roaming rates page data
      * @return Response

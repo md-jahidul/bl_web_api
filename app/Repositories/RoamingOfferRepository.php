@@ -124,6 +124,26 @@ class RoamingOfferRepository extends BaseRepository {
         return $data;
     }
     
+     public function bundleLike($bundleId) {
+
+        $bundle = RoamingBundles::findOrFail($bundleId);
+        $likes = $bundle->like + 1;
+        $bundle->like = $likes;
+        $bundle->save();
+        $data['likes'] = $likes;
+        return $data;
+    }
+    
+     public function otherOfferLike($offerId) {
+
+        $offer = $this->model->findOrFail($offerId);
+        $likes = $offer->likes + 1;
+        $offer->likes = $likes;
+        $offer->save();
+        $data['likes'] = $likes;
+        return $data;
+    }
+    
     public function roamingRates(){
         $rates = RoamingRates::orderBy('region')->orderBy('country')->orderBy('operator')->get();
         
