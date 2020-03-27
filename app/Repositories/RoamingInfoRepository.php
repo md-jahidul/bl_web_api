@@ -8,7 +8,6 @@
 namespace App\Repositories;
 
 use App\Models\RoamingInfo;
-use App\Models\RoamingInfoCategory;
 use App\Models\RoamingInfoComponents;
 
 class RoamingInfoRepository extends BaseRepository {
@@ -17,32 +16,19 @@ class RoamingInfoRepository extends BaseRepository {
 
     public function getInfoTips() {
 
-        $category = RoamingInfoCategory::where('status', 1)->get();
 
-
-        $data = [];
-
-        $catCount = 0;
-        foreach ($category as $k => $c) {
-            $data[$k]['category_en'] = $c->name_en;
-            $data[$k]['category_bn'] = $c->name_bn;
+            $infos = $this->model->where('status', 1)->orderBy('id', 'desc')->get();
             
-            $infos = $this->model->where('status', 1)->where('category_id', $c->id)->orderBy('id', 'desc')->get();
-            
-            $data[$k]['info'] = [];
+            $data = [];
             foreach ($infos as $key => $v) {
-                $data[$k]['info'][$key]['id'] = $v->id;
-                $data[$k]['info'][$key]['name_en'] = $v->name_en;
-                $data[$k]['info'][$key]['name_bn'] = $v->name_bn;
-                $data[$k]['info'][$key]['url_slug'] = $v->url_slug;
-                $data[$k]['info'][$key]['card_text_en'] = $v->card_text_en;
-                $data[$k]['info'][$key]['card_text_bn'] = $v->card_text_bn;
-                $data[$k]['info'][$key]['likes'] = $v->likes;
+                $data[$key]['id'] = $v->id;
+                $data[$key]['name_en'] = $v->name_en;
+                $data[$key]['name_bn'] = $v->name_bn;
+                $data[$key]['url_slug'] = $v->url_slug;
+                $data[$key]['card_text_en'] = $v->card_text_en;
+                $data[$key]['card_text_bn'] = $v->card_text_bn;
+                $data[$key]['likes'] = $v->likes;
             }
-        }
-
-
-
 
         return $data;
     }
