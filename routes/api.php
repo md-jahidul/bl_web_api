@@ -120,6 +120,12 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
      Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
      Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
+     Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
+     Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
+     Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
+     Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
+     Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
+     Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
