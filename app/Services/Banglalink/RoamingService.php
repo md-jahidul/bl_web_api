@@ -104,6 +104,7 @@ class RoamingService {
      */
     public function ratesAndBundle($country, $operator) {
         $response = $this->offerRepo->ratesAndBundle($country, $operator);
+        $response['operatorInstruction'] = $this->operatorRepo->getSingleOperator($operator);
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Rates & Bundle');
     }
     
