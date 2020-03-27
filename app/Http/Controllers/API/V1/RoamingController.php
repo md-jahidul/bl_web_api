@@ -80,6 +80,7 @@ class RoamingController extends Controller
     {
         return $this->roammingService->offerPage();
     }
+  
     /**
      * Get other offer details
      * 
@@ -138,6 +139,29 @@ class RoamingController extends Controller
     public function roamingRates()
     {
         return $this->roammingService->roamingRates();
+    }
+    
+      /**
+     * Get info & tips
+     * 
+     * @param No
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 27/03/2020
+     */
+    public function infoTips()
+    {
+        return $this->roammingService->infoTips();
+    }
+      /**
+     * Get info & tips
+     * 
+     * @param $infoId
+     * @return Json Response
+     * @Bulbul Mahmud Nito || 27/03/2020
+     */
+    public function infoTipsDetails($infoId)
+    {
+        return $this->roammingService->infoTipsDetails($infoId);
     }
 
 }
