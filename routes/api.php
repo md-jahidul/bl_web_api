@@ -126,6 +126,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
      Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
      Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
+      Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
+      Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
