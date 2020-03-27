@@ -33,6 +33,10 @@ class RoamingOperatorRepository extends BaseRepository {
     public function getSingleOperator($operator){
        $data = $this->model->select('details_en', 'details_bn')
                         ->where('operator_en', $operator)->first(); 
+       
+       if(empty($data)){
+           return array();
+       }
        return $data;
     }
 
