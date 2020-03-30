@@ -33,14 +33,14 @@ class LeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'mobile' => 'required',
-            'email' => 'required|email|unique:lead_requests',
-            'district' => 'required',
-            'thana'=> 'required',
-            'address' => 'required',
-            'quantity' => 'required',
+//            'name' => 'required',
+//            'company_name' => 'required',
+//            'mobile' => 'required',
+//            'email' => 'required|email|unique:lead_requests',
+//            'district' => 'required',
+//            'thana'=> 'required',
+//            'address' => 'required',
+//            'quantity' => 'required',
 //            'package' => 'required'
         ];
     }

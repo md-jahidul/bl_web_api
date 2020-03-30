@@ -29,6 +29,16 @@ class RoamingOperatorRepository extends BaseRepository {
         }
         return $data;
     }
+    
+    public function getSingleOperator($operator){
+       $data = $this->model->select('details_en', 'details_bn')
+                        ->where('operator_en', $operator)->first(); 
+       
+       if(empty($data)){
+           return array();
+       }
+       return $data;
+    }
 
     public function getOperators($countryName) {
         $operators = $this->model
@@ -41,7 +51,7 @@ class RoamingOperatorRepository extends BaseRepository {
         foreach ($operators as $v) {
             $data[$count]['id'] = $v->id;
             $data[$count]['operator_en'] = $v->operator_en;
-            $data[$count]['operator_bn'] = $v->operator_bn;
+            $data[$count]['operator_bn'] = $v->operator_bn;           
             $count++;
         }
         return $data;
