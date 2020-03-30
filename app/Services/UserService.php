@@ -163,7 +163,7 @@ class UserService extends ApiBaseService
             $user_data["email"] = !empty($idpUserData->email) ? $idpUserData->email : null;
             $user_data["msisdn"] = !empty($idpUserData->msisdn) ? $idpUserData->msisdn : null;
             $user_data["birth_date"] = !empty($idpUserData->birth_date) ? $idpUserData->birth_date : null;
-            $user_data["profile_image"] = !empty($idpUserData->profile_image_base64) ? $idpUserData->profile_image_base64 : null;
+            $user_data["profile_image"] = !empty($idpUserData->profile_image) ? $idpUserData->profile_image : null;
             $user_data["first_name"] = !empty($idpUserData->first_name) ? $idpUserData->first_name : null;
             $user_data["last_name"] = !empty($idpUserData->last_name) ? $idpUserData->last_name : null;
             $user_data["gender"] = !empty($idpUserData->gender) ? $idpUserData->gender : null;
