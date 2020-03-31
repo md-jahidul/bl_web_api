@@ -113,8 +113,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
      Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
-     
-     
+
+
      //roaming Module APIs
      Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
      Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
@@ -126,6 +126,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
      Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
      Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
+      Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
+      Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
@@ -177,5 +179,8 @@ Route::group(['prefix' => '/v1'], function () {
     //District Thana
     Route::get('district', 'API\V1\DistrictThanaController@district');
     Route::get('thana/{districtId}', 'API\V1\DistrictThanaController@thana');
+
+    #SMS
+    Route::post('send-sms', 'API\V1\SmsController@sendSms');
 
 });

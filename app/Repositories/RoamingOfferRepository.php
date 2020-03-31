@@ -30,6 +30,7 @@ class RoamingOfferRepository extends BaseRepository {
             $data[$k]['category_bn'] = $c->name_bn;
             
             $offers = $this->model->where('status', 1)->where('category_id', $c->id)->orderBy('id', 'desc')->get();
+            $data[$k]['offers'] = [];
             foreach ($offers as $key => $v) {
                 $data[$k]['offers'][$key]['id'] = $v->id;
                 $data[$k]['offers'][$key]['name_en'] = $v->name_en;
@@ -58,14 +59,15 @@ class RoamingOfferRepository extends BaseRepository {
         $data['name_bn'] = $offer->name_bn;
         $data['short_text_en'] = $offer->short_text_en;
         $data['short_text_bn'] = $offer->short_text_bn;
-        $data['banner_web'] = config('filesystems.image_host_url') . $offer->banner_web;
-        $data['banner_mobile'] = config('filesystems.image_host_url') . $offer->banner_mobile;
+        $data['banner_web'] = $offer->banner_web == "" ? "" : config('filesystems.image_host_url') . $offer->banner_web;
+        $data['banner_mobile'] = $offer->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $offer->banner_mobile;
         $data['alt_text'] = $offer->alt_text;
         $data['page_header'] = $offer->page_header;
         $data['schema_markup'] = $offer->schema_markup;
         $data['likes'] = $offer->likes;
 
         $components = RoamingOtherOfferComponents::where('parent_id', $offerId)->orderBy('position')->get();
+        $data['components'] = [];
         foreach ($components as $k => $val) {
             
             $textEn = json_decode($val->body_text_en);
@@ -92,6 +94,8 @@ class RoamingOfferRepository extends BaseRepository {
         $rates = RoamingRates::where(array('country' => $country, 'operator' => $operator))->get();
         
         $data = [];
+        
+        $data['rates'] = array();
         foreach($rates as $k => $val){
             $data['rates'][$k]['id'] = $val->id;
             $data['rates'][$k]['subscription_type'] = $val->subscription_type;
@@ -103,6 +107,7 @@ class RoamingOfferRepository extends BaseRepository {
         
         $bundles = RoamingBundles::where(array('country' => $country, 'operator' => $operator, 'status' => 1))->get();
         
+        $data['bundles'] = array();
           foreach($bundles as $key => $val){
             $data['bundles'][$key]['id'] = $val->id;
             $data['bundles'][$key]['subscription_type'] = $val->subscription_type;
