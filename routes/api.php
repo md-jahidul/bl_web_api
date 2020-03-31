@@ -113,8 +113,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
      Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
-     
-     
+
+
      //roaming Module APIs
      Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
      Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
@@ -179,5 +179,8 @@ Route::group(['prefix' => '/v1'], function () {
     //District Thana
     Route::get('district', 'API\V1\DistrictThanaController@district');
     Route::get('thana/{districtId}', 'API\V1\DistrictThanaController@thana');
+
+    #SMS
+    Route::post('send-sms', 'API\V1\SmsController@sendSms');
 
 });
