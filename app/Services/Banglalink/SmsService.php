@@ -45,11 +45,11 @@ class SmsService extends BaseService
         $result = $this->get($end_point);
 
         if ($result['status_code'] == 202) {
-            $data = $result['response'];
 
             return $this->apiBaseService->sendSuccessResponse(
-                $data,
+                [],
                 "SMS Send Successfully",
+                [],
                 [],
                 HttpStatusCode::SUCCESS
             );
