@@ -15,6 +15,9 @@ class EcareerPortalRepository extends BaseRepository
 {
     public $modelName = EcareerPortal::class;
 
+    public function getSeoData($category){
+        return $this->model->where('category_type', $category)->first();
+    }
 
     /**
      * [getSectionsByCategory description]
