@@ -33,24 +33,16 @@ class BanglalinkLoyaltyService extends BaseService
     {
         $url = $this->statusEndPoint . '?msisdn='.$subscriberId.'&subscriptionType='.$connectionType;
         $result = $this->get($url);
-
-//        dd($result);
-
         $result = json_decode($result['response']);
-
-
         if ($result->messgeCode == 200) {
             $data = $result->data;
-
-//            dd($result);
-
             if ($result->message == 'OK') {
                 return $data;
             }
             throw new BLApiHubException($data['responseMessage'], 500);
 
         }
-        throw new BLApiHubException("Internal service error", $result['status_code']);
+        throw new BLApiHubException("Internal service error");
     }
 
     public function getRedeemOptions($subscriberId)
