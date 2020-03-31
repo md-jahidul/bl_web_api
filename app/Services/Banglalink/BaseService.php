@@ -110,6 +110,7 @@ class BaseService
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+
         return ['response' => $result, 'status_code' => $httpCode];
     }
 
