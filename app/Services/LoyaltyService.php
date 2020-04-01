@@ -35,7 +35,7 @@ class LoyaltyService extends ApiBaseService
 //        $subscriberId = substr($mobile, 1);
         //$subscriberId = '1903303978'; //TODO: Remove from production
         $result = $this->blLoyaltyService->getPriyojonStatus($subscriberId, $connectionType);
-        return $this->sendSuccessResponse($result, 'Loyalty data');
+        return $this->sendSuccessResponse($result['data'], 'Loyalty data');
 //        return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
     }
 

@@ -31,18 +31,16 @@ class BanglalinkLoyaltyService extends BaseService
 
     public function getPriyojonStatus($subscriberId, $connectionType)
     {
-        $url = $this->statusEndPoint . '?msisdn='.$subscriberId.'&subscriptionType='.$connectionType;
+        $url = $this->statusEndPoint . '?msisdn=' . $subscriberId . '&subscriptionType=' . $connectionType;
         $result = $this->get($url);
-        $result = json_decode($result['response']);
-        if ($result->messgeCode == 200) {
-            $data = $result->data;
-            if ($result->message == 'OK') {
+        if ($result['status_code'] == 200) {
+            $data = json_decode($result['response'], true);
+            if ($data['message'] == 'OK') {
                 return $data;
             }
-            throw new BLApiHubException($data['responseMessage'], 500);
-
+            throw new BLApiHubException($data['message'], 500);
         }
-        throw new BLApiHubException("Internal service error");
+        throw new BLApiHubException("Internal service error", $result['status_code']);
     }
 
     public function getRedeemOptions($subscriberId)
