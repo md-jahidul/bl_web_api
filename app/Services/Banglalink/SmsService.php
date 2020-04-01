@@ -38,10 +38,10 @@ class SmsService extends BaseService
     public function sendSms(Request $request)
     {
         $msisdn = $request->input('msisdn');
-        $message = $request->input('message');
+        $message = rawurlencode($request->input('message'));
 
         $end_point = self::SMS_ENDPOINT . "?message=" . $message."&msisdn=".$msisdn;
-
+        
         $result = $this->get($end_point);
 
         if ($result['status_code'] == 202) {
