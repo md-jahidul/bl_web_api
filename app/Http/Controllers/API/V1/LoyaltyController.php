@@ -12,6 +12,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Services\CustomerService;
 use App\Services\LoyaltyService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class LoyaltyController extends Controller
@@ -25,22 +26,30 @@ class LoyaltyController extends Controller
      * @var CustomerService
      */
     protected $customerService;
+    /**
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * LoyaltyController constructor.
      * @param LoyaltyService $loyaltyService
+     * @param CustomerService $customerService
+     * @param UserService $userService
      */
-    public function __construct(LoyaltyService $loyaltyService, CustomerService $customerService)
+    public function __construct(LoyaltyService $loyaltyService, CustomerService $customerService, UserService $userService)
     {
         $this->loyaltyService = $loyaltyService;
         $this->customerService = $customerService;
+        $this->userService = $userService;
     }
 
     public function priyojonStatus(Request $request)
     {
         $customer = $this->customerService->getCustomerDetails($request);
-
-        return $this->loyaltyService->getPriyojonStatus($customer->phone);
+        $customerInfo = $this->userService->getCustomerInfo($customer->phone);
+        $connectionType = $customerInfo['balance_data']['connection_type'];
+        return $this->loyaltyService->getPriyojonStatus($customer->msisdn, $connectionType);
     }
 
     public function redeemOptions(Request $request)
