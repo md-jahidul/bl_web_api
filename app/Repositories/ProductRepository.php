@@ -19,7 +19,7 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type)
     {
-        return $this->model->where('status', 1)
+        return $this->model->select('products.*', 'd.url_slug')->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
             ->productCore()
