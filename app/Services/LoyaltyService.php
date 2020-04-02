@@ -29,13 +29,14 @@ class LoyaltyService extends ApiBaseService
         $this->blLoyaltyService = $blLoyaltyService;
     }
 
-    public function getPriyojonStatus($mobile)
+    public function getPriyojonStatus($mobile, $connectionType)
     {
-        $subscriberId = substr($mobile, 1);
+        $subscriberId = $mobile;
+//        $subscriberId = substr($mobile, 1);
         //$subscriberId = '1903303978'; //TODO: Remove from production
-
-        $result = $this->blLoyaltyService->getPriyojonStatus($subscriberId);
-        return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
+        $result = $this->blLoyaltyService->getPriyojonStatus($subscriberId, $connectionType);
+        return $this->sendSuccessResponse($result['data'], 'Loyalty data');
+//        return $this->sendSuccessResponse($result['loyaltyPrograms'], 'Loyalty data');
     }
 
     public function getRedeemOptions($mobile)

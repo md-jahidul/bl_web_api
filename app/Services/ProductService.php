@@ -281,7 +281,6 @@ class ProductService extends ApiBaseService
     {
         $customerProducts = $this->blProductService->getCustomerProducts($customerId);
         $productIds = [];
-
         foreach ($customerProducts as $product) {
             array_push($productIds, $product['code']);
         }

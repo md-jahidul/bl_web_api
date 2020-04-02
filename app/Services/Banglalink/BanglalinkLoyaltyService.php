@@ -14,7 +14,8 @@ use App\Services\ApiBaseService;
 
 class BanglalinkLoyaltyService extends BaseService
 {
-    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
+    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
+//    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
     protected $redeemOptionEndPoint = '/loyalty/loyalty/get-priyojon-redeem-options';
 
     protected $apiBaseService;
@@ -28,17 +29,16 @@ class BanglalinkLoyaltyService extends BaseService
         $this->apiBaseService = $apiBaseService;
     }
 
-    public function getPriyojonStatus($subscriberId)
+    public function getPriyojonStatus($subscriberId, $connectionType)
     {
-        $url = $this->statusEndPoint . '?customerId=' . $subscriberId;
+        $url = $this->statusEndPoint . '?msisdn=' . $subscriberId . '&subscriptionType=' . $connectionType;
         $result = $this->get($url);
         if ($result['status_code'] == 200) {
             $data = json_decode($result['response'], true);
-            if ($data['responseMessage'] == 'SUCCESS') {
+            if ($data['message'] == 'OK') {
                 return $data;
             }
-            throw new BLApiHubException($data['responseMessage'], 500);
-
+            throw new BLApiHubException($data['message'], 500);
         }
         throw new BLApiHubException("Internal service error", $result['status_code']);
     }

@@ -54,7 +54,7 @@ class UserProfileController extends Controller
     }
 
     public function updateProfileImage(Request $request)
-    {   
+    {
 
         if ($request->hasFile('profile_photo')) {
 
@@ -69,7 +69,7 @@ class UserProfileController extends Controller
                 // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
                 return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
             }
-            
+
 
             return $this->userService->uploadProfileImage($request);
         } else {
