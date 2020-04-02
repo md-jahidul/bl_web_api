@@ -70,6 +70,9 @@ class PartnerOfferController extends Controller
             if( !empty($value['banner_image_url']) ){
                 $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
             }
+            if( !empty($value['banner_image_mobile']) ){
+                $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
+            }
             return $value;
             }, $offer->toArray());
         }
