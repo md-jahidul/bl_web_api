@@ -31,7 +31,7 @@ class BaseService
         $header = [
             'Accept: application/vnd.banglalink.apihub-v1.0+json',
             'Content-Type: application/vnd.banglalink.apihub-v1.0+json',
-            "accept: application/json",
+            'accept: application/json',
             'client_authorization:' . $client_token,
             'customer_authorization:' . $customer_token
         ];
@@ -107,9 +107,8 @@ class BaseService
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         static::makeRequest($ch, $url, $body, $headers);
         $result = curl_exec($ch);
-
+        //dd($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
 
         return ['response' => $result, 'status_code' => $httpCode];
     }
