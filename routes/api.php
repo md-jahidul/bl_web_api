@@ -43,6 +43,7 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::get('product-like/{id}','API\V1\ProductController@productLike');
     Route::post('product/bookmark/save-remove','API\V1\ProductController@bookmarkProductSaveRemove');
+    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
     Route::get('customer/product/bookmark','API\V1\ProductController@getCustomerBookmarkProducts');
     Route::get('customer/products','API\V1\ProductController@customerSavedBookmarkProduct');
 
