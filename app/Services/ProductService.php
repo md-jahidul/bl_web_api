@@ -303,6 +303,7 @@ class ProductService extends ApiBaseService
                 'mobile' => $customerInfo->phone,
                 'product_id' => $productId,
                 'module_type' => $request->module_type,
+                'category' => $request->category,
             ]);
             return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
         } else if ($operationType == 'delete') {

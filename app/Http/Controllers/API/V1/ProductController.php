@@ -121,7 +121,8 @@ class ProductController extends Controller
             [
                 'product_id' => 'required',
                 'operation_type' => 'required',
-                'module_type' => 'required'
+                'module_type' => 'required',
+                'category' => 'required'
             ]);
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
