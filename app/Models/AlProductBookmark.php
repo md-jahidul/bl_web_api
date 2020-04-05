@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class AlProductBookmark extends Model
 {
-    protected $fillable = ['mobile', 'product_code'];
+    protected $fillable = ['module_type', 'category', 'mobile', 'product_id'];
 }

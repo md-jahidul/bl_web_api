@@ -295,20 +295,20 @@ class ProductService extends ApiBaseService
     public function customerProductBookmark($request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-
         $operationType = $request->operation_type;
-        $productCode = $request->product_code;
+        $productId = $request->product_id;
 
         if ($operationType == 'save') {
             $this->productBookmarkRepository->save([
                 'mobile' => $customerInfo->phone,
-                'product_code' => $productCode,
+                'product_id' => $productId,
+                'module_type' => $request->module_type,
             ]);
             return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
         } else if ($operationType == 'delete') {
             $bookmarkProducts = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
             foreach ($bookmarkProducts as $bookmarkProduct) {
-                if ($bookmarkProduct->product_code == $productCode) {
+                if ($bookmarkProduct->product_id == $productId) {
                     $bookmarkProduct->delete();
                     return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
                 }

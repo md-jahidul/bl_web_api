@@ -115,9 +115,14 @@ class ProductController extends Controller
      * @return JsonResponse
      * @throws IdpAuthException
      */
-    public function bookmarkProduct(Request $request)
+    public function bookmarkProductSaveRemove(Request $request)
     {
-        $validator = Validator::make($request->all(), ['product_code' => 'required', 'operation_type' => 'required']);
+        $validator = Validator::make($request->all(),
+            [
+                'product_id' => 'required',
+                'operation_type' => 'required',
+                'module_type' => 'required'
+            ]);
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
         }
