@@ -22,9 +22,19 @@ class ProductBookmarkController extends Controller
         $this->productBookmarkService = $productBookmarkService;
     }
 
-    public function getBookmarkAppService()
+    public function getBookmarkAppService($mobile)
     {
-        return $this->productBookmarkService->appServiceProducts();
+        return $this->productBookmarkService->appServiceProducts($mobile);
+    }
+    
+    public function getBookmarkBusiness($mobile)
+    {
+        return $this->productBookmarkService->businessProducts($mobile);
+    }
+    
+    public function getBookmarkOffers($mobile)
+    {
+        return $this->productBookmarkService->offerProducts($mobile);
     }
 
 }
