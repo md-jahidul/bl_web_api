@@ -10,6 +10,6 @@ class QuickLaunchRepository extends BaseRepository
 
     public function getQuickLaunch($type)
     {
-        return $this->model->where('type', $type)->orderBy('display_order', 'ASC')->get();
+        return $this->model->where('type', $type)->where('status', 1)->orderBy('display_order', 'ASC')->get();
     }
 }
