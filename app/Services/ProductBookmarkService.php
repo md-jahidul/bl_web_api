@@ -57,6 +57,8 @@ class ProductBookmarkService extends ApiBaseService {
     public function businessProducts($request) {
         $idpData = $this->_getIdpData($request);
         
+        dd($idpData);
+        
         if ($idpData->token_status != 'Valid') {
             
             return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
