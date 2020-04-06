@@ -47,9 +47,9 @@ Route::group(['prefix' => '/v1'], function () {
     //Bookmark =======================================
     Route::post('product/bookmark/save-remove', 'API\V1\ProductController@bookmarkProductSaveRemove');
 //    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
-    Route::get('bookmark/app-and-service/{mobile}', 'API\V1\ProductBookmarkController@getBookmarkAppService');
-    Route::get('bookmark/business/{mobile}', 'API\V1\ProductBookmarkController@getBookmarkBusiness');
-    Route::get('bookmark/offers/{mobile}', 'API\V1\ProductBookmarkController@getBookmarkOffers');
+    Route::get('bookmark/app-and-service/', 'API\V1\ProductBookmarkController@getBookmarkAppService');
+    Route::get('bookmark/business/', 'API\V1\ProductBookmarkController@getBookmarkBusiness');
+    Route::get('bookmark/offers/', 'API\V1\ProductBookmarkController@getBookmarkOffers');
 
 
     Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');

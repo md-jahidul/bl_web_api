@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repositories\ProductBookmarkRepository;
 use App\Traits\CrudTrait;
 
-class ProductBookmarkService {
+class ProductBookmarkService extends ApiBaseService {
 
     use CrudTrait;
 
@@ -23,7 +23,7 @@ class ProductBookmarkService {
         $this->setActionRepository($productBookmarkRepository);
     }
 
-    public function appServiceProducts($mobile) {
+    public function appServiceProducts($request) {
 
         $data = $this->productBookmarkRepository->getAppAndService($mobile);
 
@@ -53,25 +53,34 @@ class ProductBookmarkService {
         return $response;
     }
 
-    public function businessProducts($mobile) {
+    public function businessProducts($request) {
+        $idpData = $this->_getIdpData($request);
+        
+        if ($idpData->token_status != 'Valid') {
+            
+            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+            
+        } else {
+            $mobile = $idpData->user->mobile;
+            $data = $this->productBookmarkRepository->getBusiness($mobile);
 
-        $data = $this->productBookmarkRepository->getBusiness($mobile);
+            $response = [];
+            $count = 0;
+            foreach ($data as $val) {
 
-        $response = [];
-        $count = 0;
-        foreach ($data as $val) {
+                $response[0]['category'] = 'internet';
+                $response[0]['category_en'] = $val->cat_en;
+                $response[0]['category_bn'] = $val->cat_bn;
+                $response[0]['data'][$count] = $val;
+                $count++;
+            }
 
-            $response[0]['category'] = 'internet';
-            $response[0]['category_en'] = $val->cat_en;
-            $response[0]['category_bn'] = $val->cat_bn;
-            $response[0]['data'][$count] = $val;
-            $count++;
+            return $response;
+            return $this->sendSuccessResponse($response, 'Business bookmark data');
         }
-
-        return $response;
     }
 
-    public function offerProducts($mobile) {
+    public function offerProducts($request) {
 
         $data = $this->productBookmarkRepository->getOffers($mobile);
         $response = [];
@@ -98,7 +107,7 @@ class ProductBookmarkService {
             $response['offers'][$tabCount]['data'][$count] = $val;
             $count++;
         }
-        
+
         $rbCount = 0;
         foreach ($data['roming_bundle_offers'] as $k => $val) {
 
@@ -106,7 +115,7 @@ class ProductBookmarkService {
             $response['roming_bundle_offers'][0]['data'][$rbCount] = $val;
             $rbCount++;
         }
-        
+
         $roCount = 0;
         foreach ($data['roaming_others_offers'] as $k => $val) {
 
@@ -114,7 +123,7 @@ class ProductBookmarkService {
             $response['roaming_others_offers'][0]['data'][$roCount] = $val;
             $roCount++;
         }
-        
+
         $riCount = 0;
         foreach ($data['roaming_info_tips'] as $k => $val) {
 
@@ -124,6 +133,15 @@ class ProductBookmarkService {
         }
 
         return $response;
+    }
+
+    private function _getIdpData($request) {
+        $bearerToken = ['token' => $request->header('authorization')];
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+        $idpData = json_decode($response['data']);
+
+        return $idpData;
     }
 
 }
