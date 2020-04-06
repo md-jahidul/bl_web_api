@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\HttpStatusCode;
 use App\Repositories\ProductBookmarkRepository;
 use App\Traits\CrudTrait;
 
