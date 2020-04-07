@@ -25,44 +25,50 @@ class ProductBookmarkService extends ApiBaseService {
     }
 
     public function appServiceProducts($request) {
+        $idpData = $this->_getIdpData($request);
 
-        $data = $this->productBookmarkRepository->getAppAndService($mobile);
+        if ($idpData->token_status != 'Valid') {
 
-        $response = [];
-        $tabCount = 0;
-        $tabName = "";
-        $count = 0;
-        foreach ($data as $k => $val) {
+            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        } else {
+            $mobile = $idpData->user->mobile;
 
-            if ($k == 0) {
-                $tabName = $val->alias;
+            $data = $this->productBookmarkRepository->getAppAndService($mobile);
+
+            $response = [];
+            $tabCount = 0;
+            $tabName = "";
+            $count = 0;
+            foreach ($data as $k => $val) {
+
+                if ($k == 0) {
+                    $tabName = $val->alias;
+                }
+
+                if ($tabName != $val->alias) {
+                    $tabName = $val->alias;
+                    $tabCount++;
+                    $count = 0;
+                }
+
+                $response[$tabCount]['category'] = $val->alias;
+                $response[$tabCount]['category_en'] = $val->tab_en;
+                $response[$tabCount]['category_bn'] = $val->tab_bn;
+                $response[$tabCount]['data'][$count] = $val;
+                $count++;
             }
-
-            if ($tabName != $val->alias) {
-                $tabName = $val->alias;
-                $tabCount++;
-                $count = 0;
-            }
-
-            $response[$tabCount]['category'] = $val->alias;
-            $response[$tabCount]['category_en'] = $val->tab_en;
-            $response[$tabCount]['category_bn'] = $val->tab_bn;
-            $response[$tabCount]['data'][$count] = $val;
-            $count++;
+            
+            return $this->sendSuccessResponse($response, 'App & Service bookmark data');
         }
-
-        return $response;
     }
 
     public function businessProducts($request) {
         $idpData = $this->_getIdpData($request);
-        
-        dd($idpData);
-        
+
+
         if ($idpData->token_status != 'Valid') {
-            
+
             return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
-            
         } else {
             $mobile = $idpData->user->mobile;
             $data = $this->productBookmarkRepository->getBusiness($mobile);
@@ -78,64 +84,71 @@ class ProductBookmarkService extends ApiBaseService {
                 $count++;
             }
 
-            return $response;
             return $this->sendSuccessResponse($response, 'Business bookmark data');
         }
     }
 
     public function offerProducts($request) {
 
-        $data = $this->productBookmarkRepository->getOffers($mobile);
-        $response = [];
-        $tabCount = 0;
-        $tabName = "";
-        $count = 0;
-        foreach ($data['products'] as $k => $val) {
+        $idpData = $this->_getIdpData($request);
 
-            if ($k == 0) {
-                $tabName = $val->bookmark_category;
+        if ($idpData->token_status != 'Valid') {
+
+            return $this->sendErrorResponse("Token Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        } else {
+            $mobile = $idpData->user->mobile;
+            $data = $this->productBookmarkRepository->getOffers($mobile);
+            $response = [];
+            $tabCount = 0;
+            $tabName = "";
+            $count = 0;
+            foreach ($data['products'] as $k => $val) {
+
+                if ($k == 0) {
+                    $tabName = $val->bookmark_category;
+                }
+
+                if ($tabName != $val->bookmark_category) {
+                    $tabName = $val->bookmark_category;
+                    $tabCount++;
+                    $count = 0;
+                }
+
+                $response['offers'][$tabCount]['category'] = $val->bookmark_category;
+                $response['offers'][$tabCount]['category_en'] = $val->cat_en;
+                $response['offers'][$tabCount]['category_bn'] = $val->cat_bn;
+                $response['offers'][$tabCount]['sim_type'] = $val->sim_alias;
+                $response['offers'][$tabCount]['category_type'] = $val->cat_alias;
+                $response['offers'][$tabCount]['data'][$count] = $val;
+                $count++;
             }
 
-            if ($tabName != $val->bookmark_category) {
-                $tabName = $val->bookmark_category;
-                $tabCount++;
-                $count = 0;
+            $rbCount = 0;
+            foreach ($data['roming_bundle_offers'] as $k => $val) {
+
+                $response['roming_bundle_offers'][0]['category'] = $val->bookmark_category;
+                $response['roming_bundle_offers'][0]['data'][$rbCount] = $val;
+                $rbCount++;
             }
 
-            $response['offers'][$tabCount]['category'] = $val->bookmark_category;
-            $response['offers'][$tabCount]['category_en'] = $val->cat_en;
-            $response['offers'][$tabCount]['category_bn'] = $val->cat_bn;
-            $response['offers'][$tabCount]['sim_type'] = $val->sim_alias;
-            $response['offers'][$tabCount]['category_type'] = $val->cat_alias;
-            $response['offers'][$tabCount]['data'][$count] = $val;
-            $count++;
+            $roCount = 0;
+            foreach ($data['roaming_others_offers'] as $k => $val) {
+
+                $response['roaming_others_offers'][0]['category'] = $val->bookmark_category;
+                $response['roaming_others_offers'][0]['data'][$roCount] = $val;
+                $roCount++;
+            }
+
+            $riCount = 0;
+            foreach ($data['roaming_info_tips'] as $k => $val) {
+
+                $response['roaming_info_tips'][0]['category'] = $val->bookmark_category;
+                $response['roaming_info_tips'][0]['data'][$riCount] = $val;
+                $riCount++;
+            }
+
+            return $this->sendSuccessResponse($response, 'Offer bookmark data');
         }
-
-        $rbCount = 0;
-        foreach ($data['roming_bundle_offers'] as $k => $val) {
-
-            $response['roming_bundle_offers'][0]['category'] = $val->bookmark_category;
-            $response['roming_bundle_offers'][0]['data'][$rbCount] = $val;
-            $rbCount++;
-        }
-
-        $roCount = 0;
-        foreach ($data['roaming_others_offers'] as $k => $val) {
-
-            $response['roaming_others_offers'][0]['category'] = $val->bookmark_category;
-            $response['roaming_others_offers'][0]['data'][$roCount] = $val;
-            $roCount++;
-        }
-
-        $riCount = 0;
-        foreach ($data['roaming_info_tips'] as $k => $val) {
-
-            $response['roaming_info_tips'][0]['category'] = $val->bookmark_category;
-            $response['roaming_info_tips'][0]['data'][$riCount] = $val;
-            $riCount++;
-        }
-
-        return $response;
     }
 
     private function _getIdpData($request) {
