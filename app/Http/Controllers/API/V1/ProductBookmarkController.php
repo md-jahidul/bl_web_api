@@ -4,9 +4,10 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\ProductBookmarkService;
+use Illuminate\Http\Request;
 
-class ProductBookmarkController extends Controller
-{
+class ProductBookmarkController extends Controller {
+
     /**
      * @var ProductBookmarkService
      */
@@ -17,14 +18,21 @@ class ProductBookmarkController extends Controller
      * @param ProductBookmarkService $productBookmarkService
      */
     public function __construct(
-        ProductBookmarkService $productBookmarkService
+    ProductBookmarkService $productBookmarkService
     ) {
         $this->productBookmarkService = $productBookmarkService;
     }
 
-    public function getBookmarkAppService()
-    {
-        return $this->productBookmarkService->appServiceProducts();
+    public function getBookmarkAppService(Request $request) {
+        return $this->productBookmarkService->appServiceProducts($request);
+    }
+
+    public function getBookmarkBusiness(Request $request) {
+        return $this->productBookmarkService->businessProducts($request);
+    }
+
+    public function getBookmarkOffers(Request $request) {
+        return $this->productBookmarkService->offerProducts($request);
     }
 
 }
