@@ -120,8 +120,9 @@ class UserService extends ApiBaseService
 
         $tokenResponseData = json_decode($tokenResponse['data']);
 
+
         if ($tokenResponse['http_code'] != 200) {
-            return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
+            return $this->sendErrorResponse('IDP error', "Something went wrong", HttpStatusCode::UNAUTHORIZED);
         } else {
             $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
 
