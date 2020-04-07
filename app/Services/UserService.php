@@ -107,7 +107,8 @@ class UserService extends ApiBaseService
         $getOtpInfo = $this->otpRepository->validateOtpToken($request['mobile'], $request['otp_session']);
 
         if( empty($getOtpInfo) ){
-            return $this->sendErrorResponse('Token is Invalid or Expired', [], HttpStatusCode::UNAUTHORIZED);
+            return $this->sendErrorResponse('Token is Invalid or Expired', [],
+                HttpStatusCode::UNAUTHORIZED);
         }
 
         $data['otp'] = $request['otp'];
@@ -121,11 +122,13 @@ class UserService extends ApiBaseService
         $tokenResponseData = json_decode($tokenResponse['data']);
 
         if ($tokenResponse['http_code'] != 200) {
-            return $this->sendErrorResponse('IDP error', $tokenResponseData->message, HttpStatusCode::UNAUTHORIZED);
+            return $this->sendErrorResponse('IDP error', $tokenResponseData->message,
+                HttpStatusCode::UNAUTHORIZED);
         } else {
-            $idpCus = IdpIntegrationService::getCustomerInfo($request['mobile']);
 
-            $customerInfo = $this->getCustomerInfo($request['mobile'], (object)$idpCus);
+            $idpCus = IdpIntegrationService::getCustomerBasicInfo($request['mobile']);
+
+            $customerInfo = $this->getCustomerBasicInfo($request['mobile'], (object)$idpCus);
 
             $profileData = [
                 'token' => $tokenResponseData,
@@ -136,11 +139,16 @@ class UserService extends ApiBaseService
         }
     }
 
-    public function getCustomerInfo($mobile, $idpUserData = null)
+
+    /**
+     * @param $mobile
+     * @param null $idpUserData
+     * @return array|null
+     */
+    public function getCustomerBasicInfo($mobile, $idpUserData = null)
     {
         $customerInfo = array();
 
-        //Todo : Done merge idp user data and local data and send to front end
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
         if (!$user)
             return null;
@@ -156,22 +164,19 @@ class UserService extends ApiBaseService
                 $idpUserData = json_decode($idpUserData);
             }
 
-            $user_data["id"] = !empty($user->id) ? $user->id : null;
-            $user_data["phone"] = !empty($user->phone) ? $user->phone : null;
-            $user_data["customer_account_id"] = !empty($user->customer_account_id) ? $user->customer_account_id : null;
-            $user_data["name"] = !empty($idpUserData->name) ? $idpUserData->name : null;
-            $user_data["email"] = !empty($idpUserData->email) ? $idpUserData->email : null;
-            $user_data["msisdn"] = !empty($idpUserData->msisdn) ? $idpUserData->msisdn : null;
-            $user_data["birth_date"] = !empty($idpUserData->birth_date) ? $idpUserData->birth_date : null;
-            $user_data["profile_image"] = !empty($idpUserData->profile_image) ? $idpUserData->profile_image : null;
-            $user_data["first_name"] = !empty($idpUserData->first_name) ? $idpUserData->first_name : null;
-            $user_data["last_name"] = !empty($idpUserData->last_name) ? $idpUserData->last_name : null;
-            $user_data["gender"] = !empty($idpUserData->gender) ? $idpUserData->gender : null;
-            $user_data["alternate_phone"] = !empty($idpUserData->alternate_phone) ? $idpUserData->alternate_phone : null;
-            $user_data["mobile"] = !empty($idpUserData->mobile) ? $idpUserData->mobile : null;
-            $user_data["address"] = !empty($idpUserData->address) ? $idpUserData->address : null;
-            $user_data["district"] = !empty($user->district) ? $user->district : null;
-            $user_data["thana"] = !empty($user->thana) ? $user->thana : null;
+            $user_data["id"] =  $user->id ?? null;
+            $user_data["phone"] = $user->phone ?? null;
+            $user_data["customer_account_id"] =  $user->customer_account_id ?? null;
+            $user_data["name"] =  $idpUserData->name ?? null;
+            $user_data["email"] =  $idpUserData->email ?? null;
+            $user_data["msisdn"] =  $idpUserData->msisdn ?? null;
+            $user_data["birth_date"] =  $idpUserData->birth_date ?? null;
+            $user_data["first_name"] = $idpUserData->first_name ?? null;
+            $user_data["last_name"] =  $idpUserData->last_name ?? null;
+            $user_data["gender"] =  $idpUserData->gender ?? null;
+            $user_data["alternate_phone"] =  $idpUserData->alternate_phone ?? null;
+            $user_data["mobile"] =  $idpUserData->mobile ?? null;
+
         }
         else{
             $user->profile_image = !empty($user->profile_image) ? config('filesystems.image_host_url') . $user->profile_image : null;
@@ -181,11 +186,9 @@ class UserService extends ApiBaseService
 
         $customerInfo['personal_data'] = $user_data;
 
-        //Balance Info
-        // $customerInfo['balance_data'] = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        // $balanceData = $this->balanceService->getBalanceSummary($user->customer_account_id);
-        $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
-        $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
+
+       // $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
+       // $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         return $customerInfo;
 
@@ -197,6 +200,7 @@ class UserService extends ApiBaseService
      *
      * @param $number
      * @return string
+     * @throws BLApiHubException
      */
     public function sendOTP($number)
     {
@@ -210,8 +214,6 @@ class UserService extends ApiBaseService
 
         $encrypted_token = Crypt::encryptString($token);
 
-        //$otp = $this->generateNumericOTP(6);
-        // OTP now send from BL services
         $otp = null;
 
         $this->otpRepository->createOtp($number, $otp, $encrypted_token);
@@ -221,7 +223,8 @@ class UserService extends ApiBaseService
             'otp_token' => $encrypted_token
         ];
 
-        return $this->sendSuccessResponse($data, 'OTP Send Successfully', [], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'OTP Send Successfully',
+            [], HttpStatusCode::SUCCESS);
     }
 
     /**
@@ -244,6 +247,10 @@ class UserService extends ApiBaseService
     }
 
 
+    /**
+     * @param int $length
+     * @return string
+     */
     public function generateOtpToken($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -258,6 +265,10 @@ class UserService extends ApiBaseService
     }
 
 
+    /**
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
     public function viewProfile($request)
     {
         $bearerToken = ['token' => $request->header('authorization')];
@@ -265,18 +276,79 @@ class UserService extends ApiBaseService
 
         $idpData = json_decode($response['data']);
 
-//        dd($idpData);
-
         if ($response['http_code'] != 200 || $idpData->token_status != 'Valid') {
             return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
         $idpUser = $idpData->user;
 
-        $user = $this->getCustomerInfo($idpData->user->mobile, json_encode($idpUser));
+        $user = $this->getCustomerDetails($idpData->user->mobile, json_encode($idpUser));
 
         return $this->sendSuccessResponse($user, 'Data found', []);
     }
+
+
+    /**
+     * Get Customer Details
+     *
+     * @param $mobile
+     * @param null $idpUserData
+     * @return array|null
+     */
+    public function getCustomerDetails($mobile, $idpUserData = null)
+    {
+        $customerInfo = array();
+
+        $user = $this->userRepository->findOneBy(['phone' => $mobile]);
+        if (!$user)
+            return null;
+
+        $user_data = [];
+        if( !empty($idpUserData) ){
+
+            if( isset($idpUserData->data) ){
+                $idpUserData = json_decode($idpUserData->data);
+                $idpUserData = $idpUserData->data;
+            }
+            else{
+                $idpUserData = json_decode($idpUserData);
+            }
+
+            $user_data["id"] =  $user->id ?? null;
+            $user_data["phone"] = $user->phone ?? null;
+            $user_data["customer_account_id"] =  $user->customer_account_id ?? null;
+            $user_data["name"] =  $idpUserData->name ?? null;
+            $user_data["email"] =  $idpUserData->email ?? null;
+            $user_data["msisdn"] =  $idpUserData->msisdn ?? null;
+            $user_data["birth_date"] =  $idpUserData->birth_date ?? null;
+            $user_data["profile_image"] =  $idpUserData->profile_image ?? null;
+            $user_data["first_name"] = $idpUserData->first_name ?? null;
+            $user_data["last_name"] =  $idpUserData->last_name ?? null;
+            $user_data["gender"] =  $idpUserData->gender ?? null;
+            $user_data["alternate_phone"] =  $idpUserData->alternate_phone ?? null;
+            $user_data["mobile"] =  $idpUserData->mobile ?? null;
+            $user_data["address"] =  $idpUserData->address ?? null;
+            $user_data["district"] =  $user->district ?? null;
+            $user_data["thana"] =  $user->thana ?? null;
+        }
+        else {
+            $user_data = $user;
+        }
+
+
+        $customerInfo['personal_data'] = $user_data;
+
+
+        $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
+        $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
+
+        return $customerInfo;
+
+    }
+
+
+
+
 
     public function isUserExist($mobile)
     {

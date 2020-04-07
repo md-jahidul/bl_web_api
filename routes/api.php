@@ -81,6 +81,12 @@ Route::group(['prefix' => '/v1'], function () {
     // Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
 
+
+    // Balance
+    Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
+    Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
+
+
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
@@ -126,8 +132,8 @@ Route::group(['prefix' => '/v1'], function () {
      Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
      Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
      Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
-      Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
-      Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
+     Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
+     Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
 
      // eCarrer api
      Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');

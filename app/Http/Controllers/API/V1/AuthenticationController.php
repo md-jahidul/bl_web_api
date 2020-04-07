@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jahangir
- * Date: 11/24/19
- * Time: 11:54 AM
- */
-
 namespace App\Http\Controllers\API\V1;
 
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OtpLoginRequest;
 use App\Services\NumberValidationService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -31,6 +25,7 @@ class AuthenticationController extends Controller
     /**
      * AuthenticationController constructor.
      * @param UserService $userService
+     * @param NumberValidationService $numberValidationService
      */
     public function __construct(UserService $userService, NumberValidationService $numberValidationService)
     {
@@ -38,23 +33,36 @@ class AuthenticationController extends Controller
         $this->numberValidationService = $numberValidationService;
     }
 
+    /**
+     * @param $mobile
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function numberValidation($mobile)
     {
         return $this->numberValidationService->validateNumberWithResponse($mobile);
     }
 
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|string
+     */
     public function requestOtpLogin(Request $request)
     {
         return $this->userService->otpLoginRequest($request);
     }
 
-    public function otpLogin(Request $request)
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function otpLogin(OtpLoginRequest $request)
     {
-        $validator = Validator::make($request->all(), $this->getLoginValidationRules());
+       /* $validator = Validator::make($request->all(), $this->getLoginValidationRules());
         if ($validator->fails()) {
             return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
-        }
+        }*/
 
         return $this->userService->otpLogin($request);
     }
