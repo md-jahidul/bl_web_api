@@ -40,14 +40,26 @@ class AppServiceTabRepository extends BaseRepository
                             'provider_url',
                             'send_to',
                             'app_store_link',
-                            'google_play_link'
+                            'google_play_link',
+                            'url_slug'
                         ])
                         ->where('status', 1)
                         ->checkStartEndDate();
                     }]);
                     $category->select('id', 'app_service_tab_id', 'title_en', 'title_bn');
                 }])
-            ->select('id', 'name_en', 'name_bn', 'banner_image_url', 'banner_alt_text', 'alias')
+            ->select(
+                'id',
+                'name_en',
+                'name_bn',
+                'banner_image_url',
+                'banner_image_mobile',
+                'banner_alt_text',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'alias'
+            )
             ->get();
     }
 }

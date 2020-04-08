@@ -19,7 +19,28 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type)
     {
-        return $this->model->select('products.*', 'd.url_slug')->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')->where('status', 1)
+        return $this->model->select(
+                'products.id',
+                'products.product_code',
+                'products.rate_cutter_unit',
+                'products.rate_cutter_offer',
+                'products.name_en',
+                'products.name_bn',
+                'products.ussd_bn',
+                'products.balance_check_ussd_bn',
+                'products.call_rate_unit_bn',
+                'products.sms_rate_unit_bn',
+                'products.tag_category_id',
+                'products.sim_category_id',
+                'products.offer_category_id',
+                'products.special_product',
+                'products.like',
+                'products.validity_postpaid',
+                'products.offer_info',
+                'd.url_slug'
+            )
+            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+            ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
             ->productCore()
