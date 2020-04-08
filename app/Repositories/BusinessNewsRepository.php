@@ -19,7 +19,7 @@ class BusinessNewsRepository extends BaseRepository {
         $count = 0;
         foreach($news as $v){
             $data['sliding_speed'] = $v->sliding_speed;
-            $data['data'][$count]['image'] = config('filesystems.image_host_url'). $v->image_url;
+            $data['data'][$count]['image'] = $v->image_url == "" ? "" : config('filesystems.image_host_url'). $v->image_url;
             $data['data'][$count]['alt_text'] = $v->alt_text;
             $data['data'][$count]['title'] = $v->title;
             $data['data'][$count]['title_bn'] = $v->title_bn;

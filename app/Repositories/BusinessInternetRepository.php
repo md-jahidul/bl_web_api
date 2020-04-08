@@ -44,6 +44,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['tag_color'] = "#21874d";
             $data[$count]['activation_ussd_code'] = $p->activation_ussd_code;
             $data[$count]['balance_check_ussd_code'] = $p->balance_check_ussd_code;
+            $data[$count]['url_slug'] = $p->url_slug;
             $data[$count]['likes'] = $p->likes;
             $count++;
         }
@@ -74,11 +75,15 @@ class BusinessInternetRepository extends BaseRepository {
         $data['activation_ussd_code'] = $internet->activation_ussd_code;
         $data['balance_check_ussd_code'] = $internet->balance_check_ussd_code;
         $data['banner_photo'] = $internet->banner_photo == "" ? "" : config('filesystems.image_host_url') . $internet->banner_photo;
+        $data['banner_photo_mobile'] = $internet->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $internet->banner_image_mobile;
         $data['alt_text'] = $internet->alt_text;
         $data['package_details_en'] = $internet->package_details_en;
         $data['package_details_bn'] = $internet->package_details_bn;
         $data['banner_photo'] = $internet->banner_photo != "" ? config('filesystems.image_host_url') . $internet->banner_photo : "";
         $data['alt_text'] = $internet->alt_text;
+        $data['url_slug'] = $internet->url_slug;
+        $data['page_header'] = $internet->page_header;
+        $data['schema_markup'] = $internet->schema_markup;
         $data['likes'] = $internet->likes;
 
         $data['tag_en'] = "";
@@ -113,6 +118,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data['related_product'][$count]['price_tk'] = $rp->mrp;
             $data['related_product'][$count]['activation_ussd_code'] = $rp->activation_ussd_code;
             $data['related_product'][$count]['balance_check_ussd_code'] = $rp->balance_check_ussd_code;
+            $data['related_product'][$count]['url_slug'] = $rp->url_slug;
             $data['related_product'][$count]['likes'] = $rp->likes;
 
             $data['related_product'][$count]['tag_en'] = "";
