@@ -79,11 +79,18 @@ class ProductDetailsSectionService extends ApiBaseService
     {
         $parentProduct = Product::where('id', $productId)
             ->select(
-                'id', 'product_code',
+                'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
                 'offer_category_id',
-                'name_en', 'name_bn',
-                'ussd_bn', 'call_rate_unit_bn',
-                'balance_check_ussd_bn', 'like',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'call_rate_unit_bn',
+                'balance_check_ussd_bn',
+                'like',
                 'offer_info')
             ->productCore()->first();
         if ($parentProduct){
@@ -129,7 +136,11 @@ class ProductDetailsSectionService extends ApiBaseService
 
         $data['header'] = [
             "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
+            "banner_mobile_view" => isset($bannerRelatedData->mobile_view_img_url) ? $bannerRelatedData->mobile_view_img_url : null,
             "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
+            "url_slug" => isset($bannerRelatedData->url_slug) ? $bannerRelatedData->url_slug : null,
+            "schema_markup" => isset($bannerRelatedData->schema_markup) ? $bannerRelatedData->schema_markup : null,
+            "page_header" => isset($bannerRelatedData->page_header) ? $bannerRelatedData->page_header : null,
             "isTab" => isset($isTab) ? $isTab : null,
             "product_type" => isset($offerType) ? $offerType->alias : null
         ];

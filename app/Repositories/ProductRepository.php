@@ -22,6 +22,9 @@ class ProductRepository extends BaseRepository
         return $this->model->select(
                 'products.id',
                 'products.product_code',
+                'products.url_slug',
+                'products.schema_markup',
+                'products.page_header',
                 'products.rate_cutter_unit',
                 'products.rate_cutter_offer',
                 'products.name_en',
@@ -36,10 +39,10 @@ class ProductRepository extends BaseRepository
                 'products.special_product',
                 'products.like',
                 'products.validity_postpaid',
-                'products.offer_info',
-                'd.url_slug'
+                'products.offer_info'
+//                'd.url_slug'
             )
-            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+//            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
             ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
@@ -70,14 +73,18 @@ class ProductRepository extends BaseRepository
             ->productCore()
             ->select(
                 'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
                 'sim_category_id',
                 'offer_category_id',
                 'offer_info',
-                'product_code',
                 'name_en',
-                'name_bn', 'ussd_bn',
-                'offer_info', 'status',
-                'purchase_option',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'status',
                 'like')
             ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
