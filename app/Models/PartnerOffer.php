@@ -13,4 +13,9 @@ class PartnerOffer extends Model
     {
         return $this->belongsTo(Partner::class);
     }
+
+    public function partner_offer_details()
+    {
+        return $this->hasOne(PartnerOfferDetail::class);
+    }
 }

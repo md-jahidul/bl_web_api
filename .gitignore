@@ -12,4 +12,8 @@ npm-debug.log
 yarn-error.log
 .idea
 /public/slider-images
+<<<<<<< HEAD
 /nbproject/private/
+=======
+composer.lock
+>>>>>>> 5b81cf0998b9d0846b52beee3a3cc51d3873fafc

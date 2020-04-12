@@ -15,4 +15,9 @@ class Menu extends Model
     public function children(){
         return $this->hasMany( Menu::class, 'parent_id', 'id' )->orderBy('display_order');
     }
+
+    public function scopeActive($query)
+    {
+//        return $query->whereHas();
+    }
 }

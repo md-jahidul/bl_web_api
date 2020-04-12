@@ -89,6 +89,11 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+        'lever_api_log' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/lever_api.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

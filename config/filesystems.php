@@ -54,6 +54,12 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
+        'internal' => [
+            'driver' => 'local',
+            'root' => env('UPLOAD_BASE_PATH', '/src/uploads'),
+            'url' => env('APP_URL') . '/uploads',
+            'visibility' => 'public',
+        ],
 
         's3' => [
             'driver' => 's3',
@@ -65,5 +71,6 @@ return [
         ],
 
     ],
-
+    'image_host_url' => env('IMAGE_HOST_URL', 'http://172.16.8.160:8443/uploads/'),
+    'image_host' => env('IMAGE_HOST', 'http://172.16.8.160:8443')
 ];
