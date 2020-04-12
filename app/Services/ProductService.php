@@ -229,8 +229,6 @@ class ProductService extends ApiBaseService
                 }
             }
 
-
-
             $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
 
             if ($productDetail) {
