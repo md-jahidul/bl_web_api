@@ -184,4 +184,28 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    public function findOneProduct($type, $id)
+    {
+        return $data = $this->model->where('id', $id)
+            ->productCore()
+            ->select(
+                'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'tag_category_id',
+                'sim_category_id',
+                'offer_category_id',
+                'offer_info',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'status',
+                'like')
+            ->category($type)
+            ->first();
+    }
+
 }
