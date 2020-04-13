@@ -37,9 +37,11 @@ class ProductBookmarkRepository extends BaseRepository {
                         . " concat(s.name, ' ', c.name_bn) as cat_bn,"
                         . "s.alias as sim_alias,"
                         . "c.alias as cat_alias,"
-                        . " pd.url_slug, p.*"
+                        . " pd.url_slug, p.*, pc.balance_check_ussd, pc.mrp_price, pc.price, pc.vat,"
+                        . " pc.validity, pc.validity_unit, pc.validity_in_days as validity_days, pc.internet_volume_mb, pc.sms_volume, pc.minute_volume"
                 )
                 ->leftJoin('products as p', 'p.id', '=', 'al_product_bookmarks.product_id')
+                ->leftJoin('product_cores as pc', 'pc.product_code', '=', 'p.product_code')
                 ->leftJoin('product_details as pd', 'pd.product_id', '=', 'p.id')
                 ->leftJoin('sim_categories as s', 's.id', '=', 'p.sim_category_id')
                 ->leftJoin('offer_categories as c', 'c.id', '=', 'p.offer_category_id')
@@ -49,7 +51,7 @@ class ProductBookmarkRepository extends BaseRepository {
                         . " OR al_product_bookmarks.category = 'prepaid-bundle' OR al_product_bookmarks.category = 'postpaid-internet'"
                         . " OR al_product_bookmarks.category = 'prepaid-other-offers')")
                 ->get();
-        
+
         $response['roming_bundle_offers'] = $this->model->selectRaw(
                         "al_product_bookmarks.category as bookmark_category, b.*"
                 )
@@ -58,7 +60,7 @@ class ProductBookmarkRepository extends BaseRepository {
                 ->where('al_product_bookmarks.mobile', '=', $mobile)
                 ->whereRaw("(al_product_bookmarks.category = 'roaming-bundle-offer')")
                 ->get();
-        
+
         $response['roaming_others_offers'] = $this->model->selectRaw(
                         "al_product_bookmarks.category as bookmark_category, o.*"
                 )
@@ -67,7 +69,7 @@ class ProductBookmarkRepository extends BaseRepository {
                 ->where('al_product_bookmarks.mobile', '=', $mobile)
                 ->whereRaw("(al_product_bookmarks.category = 'roaming-others-offer')")
                 ->get();
-        
+
         $response['roaming_info_tips'] = $this->model->selectRaw(
                         "al_product_bookmarks.category as bookmark_category, i.*"
                 )
