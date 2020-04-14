@@ -53,13 +53,35 @@ class ProductRepository extends BaseRepository
 
     public function showTrendingProduct()
     {
-       return $this->model->where('show_in_home', 1)
-            ->productCore()
-            ->where('status', 1)
-            ->where('special_product', 0)
-            ->startEndDate()
-            ->orderBy('display_order')
-            ->get();
+       return $this->model->select(
+               'id',
+               'product_code',
+               'url_slug',
+               'schema_markup',
+               'page_header',
+               'rate_cutter_unit',
+               'rate_cutter_offer',
+               'name_en',
+               'name_bn',
+               'ussd_bn',
+               'balance_check_ussd_bn',
+               'call_rate_unit_bn',
+               'sms_rate_unit_bn',
+               'tag_category_id',
+               'sim_category_id',
+               'offer_category_id',
+               'special_product',
+               'like',
+               'validity_postpaid',
+               'offer_info'
+           )
+           ->productCore()
+           ->startEndDate()
+           ->where('status', 1)
+           ->where('show_in_home', 1)
+           ->where('special_product', 0)
+           ->orderBy('display_order')
+           ->get();
     }
 
     /**
@@ -182,6 +204,30 @@ class ProductRepository extends BaseRepository
         return $this->model->where('offer_info->other_offer_type_id',  13)
             ->productCore()
             ->get();
+    }
+
+    public function findOneProduct($type, $id)
+    {
+        return $data = $this->model->where('id', $id)
+            ->productCore()
+            ->select(
+                'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'tag_category_id',
+                'sim_category_id',
+                'offer_category_id',
+                'offer_info',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'status',
+                'like')
+            ->category($type)
+            ->first();
     }
 
 }

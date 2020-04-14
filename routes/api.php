@@ -31,6 +31,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}', 'API\V1\ProductController@productDetails');
 
+    Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
+
 
     Route::get('product-details/{id}', 'API\V1\ProductDetailsController@productDetails');
 
