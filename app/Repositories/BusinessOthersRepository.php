@@ -97,9 +97,9 @@ class BusinessOthersRepository extends BaseRepository {
         $data['id'] = $service->id;
         $data['slug'] = $service->type;
         $data['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
-        $data['banner_photo'] = $service->banner_photo == "" ? "" : config('filesystems.image_host_url') . $service->banner_photo;
-        $data['banner_photo_mobile'] = $service->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $service->banner_image_mobile;
-        $data['alt_text'] = $service->alt_text;
+        $data['banner_photo'] =  $service->details_banner_web == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_web;
+        $data['banner_photo_mobile'] = $service->details_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_mobile;
+        $data['alt_text'] = $service->details_alt_text;
         $data['name_en'] = $service->name;
         $data['name_bn'] = $service->name_bn;
         $data['short_details_en'] = $service->short_details;
