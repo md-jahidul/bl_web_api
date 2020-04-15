@@ -189,9 +189,17 @@ class ProductService extends ApiBaseService
 
     private function filterProductsByUser($allProducts, $availableProductIds)
     {
+
+        $selectedProduct = [];
+        foreach ($allProducts as $product) {
+            if ($product->offer_category_id == OfferType::PACKAGES || $product->offer_category_id == OfferType::OTHERS){
+                array_push($selectedProduct, $product->product_code);
+            }
+        }
+        $margeArray = array_merge($selectedProduct, $availableProductIds);
         $viewableProducts = [];
         foreach ($allProducts as $product) {
-            if (in_array($product->product_code, $availableProductIds)) {
+            if (in_array($product->product_code, $margeArray)) {
                 array_push($viewableProducts, $product);
             }
         }
