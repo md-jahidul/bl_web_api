@@ -38,7 +38,7 @@ class ProductBookmarkRepository extends BaseRepository {
                         . "s.alias as sim_alias,"
                         . "c.alias as cat_alias,"
                         . " pd.url_slug, p.*, pc.balance_check_ussd, pc.mrp_price as price_tk, pc.price, pc.vat, pc.activation_ussd as ussd_en, "
-                        . " pc.validity, pc.validity_unit, pc.validity_in_days as validity_days, pc.internet_volume_mb, pc.sms_volume, pc.minute_volume"
+                        . " pc.validity, pc.validity_unit, pc.validity_in_days as validity_days, pc.internet_volume_mb, pc.call_rate as callrate_offer, pc.call_rate_unit, pc.sms_volume, pc.minute_volume"
                 )
                 ->leftJoin('products as p', 'p.id', '=', 'al_product_bookmarks.product_id')
                 ->leftJoin('product_cores as pc', 'pc.product_code', '=', 'p.product_code')
