@@ -138,9 +138,6 @@ class ProductDetailsSectionService extends ApiBaseService
             "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
             "banner_mobile_view" => isset($bannerRelatedData->mobile_view_img_url) ? $bannerRelatedData->mobile_view_img_url : null,
             "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
-            "url_slug" => isset($bannerRelatedData->url_slug) ? $bannerRelatedData->url_slug : null,
-            "schema_markup" => isset($bannerRelatedData->schema_markup) ? $bannerRelatedData->schema_markup : null,
-            "page_header" => isset($bannerRelatedData->page_header) ? $bannerRelatedData->page_header : null,
             "isTab" => isset($isTab) ? $isTab : null,
             "product_type" => isset($offerType) ? $offerType->alias : null
         ];
