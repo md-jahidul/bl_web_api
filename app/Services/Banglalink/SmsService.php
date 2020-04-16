@@ -18,7 +18,7 @@ class SmsService extends BaseService
     protected $customerService;
     protected $blCustomerService;
 
-    protected const SMS_ENDPOINT   = "/octopus-sms/sms";
+    protected const SMS_ENDPOINT   = "/otp/sms";
 
 
     /**
@@ -41,10 +41,10 @@ class SmsService extends BaseService
         $message = rawurlencode($request->input('message'));
 
         $end_point = self::SMS_ENDPOINT . "?message=" . $message."&msisdn=".$msisdn;
-        
+
         $result = $this->get($end_point);
 
-        if ($result['status_code'] == 202) {
+        if ($result['status_code'] == 200) {
 
             return $this->apiBaseService->sendSuccessResponse(
                 [],
