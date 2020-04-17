@@ -34,8 +34,6 @@ class BanglalinkLoyaltyService extends BaseService
         $url = $this->statusEndPoint . '?msisdn=' . $subscriberId . '&subscriptionType=' . $connectionType;
         $result = $this->get($url);
 
-        dd($result['message']);
-
         if ($result['status_code'] == 200) {
             $data = json_decode($result['response'], true);
             if ($data['message'] == 'OK') {

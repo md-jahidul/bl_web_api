@@ -41,7 +41,8 @@ class AppServiceTabRepository extends BaseRepository
                             'send_to',
                             'app_store_link',
                             'google_play_link',
-                            'url_slug'
+                            'url_slug',
+                            'other_info'
                         ])
                         ->where('status', 1)
                         ->checkStartEndDate();
