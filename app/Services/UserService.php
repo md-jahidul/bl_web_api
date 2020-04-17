@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Generator\RandomBytesGenerator;
 
 /**
- * Class BannerService
+ * Class UserService
  * @package App\Services
  */
 class UserService extends ApiBaseService
@@ -80,6 +80,12 @@ class UserService extends ApiBaseService
         $this->customerService = $customerService;
     }
 
+
+    /**
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse|string
+     * @throws BLApiHubException
+     */
     public function otpLoginRequest($request)
     {
         $mobile = $request->mobile;
@@ -101,6 +107,10 @@ class UserService extends ApiBaseService
 
     }
 
+    /**
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
     public function otpLogin($request)
     {
         //TODO: Done Check otp session with database
@@ -121,9 +131,13 @@ class UserService extends ApiBaseService
 
         $tokenResponseData = json_decode($tokenResponse['data']);
 
+
         if ($tokenResponse['http_code'] != 200) {
-            return $this->sendErrorResponse('IDP error', $tokenResponseData->message,
-                HttpStatusCode::UNAUTHORIZED);
+            return $this->sendErrorResponse( 'Something went wrong. Try again later',
+                ['message' => "Something went wrong. Try again later"],
+                HttpStatusCode::BAD_REQUEST
+            );
+
         } else {
 
             $idpCus = IdpIntegrationService::getCustomerBasicInfo($request['mobile']);
@@ -179,13 +193,10 @@ class UserService extends ApiBaseService
 
         }
         else{
-            $user->profile_image = !empty($user->profile_image) ? config('filesystems.image_host_url') . $user->profile_image : null;
             $user_data = $user;
         }
 
-
         $customerInfo['personal_data'] = $user_data;
-
 
        // $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
        // $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
@@ -335,9 +346,7 @@ class UserService extends ApiBaseService
             $user_data = $user;
         }
 
-
         $customerInfo['personal_data'] = $user_data;
-
 
         $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
@@ -346,10 +355,10 @@ class UserService extends ApiBaseService
 
     }
 
-
-
-
-
+    /**
+     * @param $mobile
+     * @return bool
+     */
     public function isUserExist($mobile)
     {
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);

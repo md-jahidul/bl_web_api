@@ -144,58 +144,14 @@ class BalanceService extends BaseService
     }
 
 
-    /**
-     * @param $request
-     * @return array|JsonResponse
-     * @throws \App\Exceptions\TokenInvalidException
-     * @throws \App\Exceptions\TokenNotFoundException
-     * @throws \App\Exceptions\TooManyRequestException
-     */
-    public function getBalanceSummary($request)
-    {
-        $customerInfo = $this->customerService->getAuthenticateCustomer($request);
-
-        if (!$customerInfo) {
-            return $this->responseFormatter->sendErrorResponse("Customer not found", [], HttpStatusCode::UNAUTHORIZED);
-        }
-
-        $customer_id = $customerInfo->customer_account_id;
-
-        dd($customerInfo);
-
-        # Postpaid balance summery
-        if( $customerInfo->connectionType == 'POSTPAID' ){
-
-            $response = $this->get($this->getBalanceUrlPostpaid($customer_id));
-            $response = json_decode($response['response']);
-            if (isset($response->error)) {
-                return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
-            }
-
-            $balanceSummary = $this->prepareBalanceSummaryPostpaid($response, $customer_id);
-
-        }
-        # Prepaid balance summery
-        else{
-            $response = $this->get($this->getBalanceUrl($customer_id));
-            $response = json_decode($response['response']);
-            if (isset($response->error)) {
-                return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
-            }
-            $balanceSummary = $this->prepareBalanceSummary($response, $customer_id);
-        }
-
-        $balanceSummary['connection_type'] = isset($customerInfo->connectionType) ? $customerInfo->connectionType : null;
-
-        return ['status' => 'SUCCESS', 'data' => $balanceSummary];
-    }
-
 
     /**
+     * Get Balance Summary
+     *
      * @param $mobile
      * @return array|JsonResponse
      */
-   /* public function getBalanceSummary($mobile)
+    public function getBalanceSummary($mobile)
     {
 
         $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
@@ -231,7 +187,7 @@ class BalanceService extends BaseService
         $balanceSummary['connection_type'] = isset($customerInfo->connectionType) ? $customerInfo->connectionType : null;
 
         return ['status' => 'SUCCESS', 'data' => $balanceSummary];
-    }*/
+    }
 
     /**
      * @param $response
