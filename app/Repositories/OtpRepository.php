@@ -83,7 +83,7 @@ class OtpRepository
     public function updateOtpInfo($phone, $otp_token, $encrypted_token)
     {
         $otp_expiry = config('apiconfig.opt_token_expiry');
-        
+
         $otp = $this->model->where('phone', $phone)->first();
 
         $otp->otp = $otp_token;

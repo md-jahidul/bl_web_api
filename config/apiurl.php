@@ -11,7 +11,7 @@ return [
 
     'idp_otp_client_secret' => env('IDP_OTP_CLIENT_SECRET', 'zVN8wYHp5Ei5Wkyu6PT975tgMnWaYuCBY2tc7QqQ'),
 
-    'bl_api_host' => env('BL_API_HOST', 'http://172.16.254.122:7171'),
+    'bl_api_host' => env('BL_API_HOST', 'http://apigateway-test.banglalink.net:7081'),
 
     'bl_vas_api_host' => env('BL_VAS_API_HOST', 'http://mybl.apigate.pro'),
 

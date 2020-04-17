@@ -23,7 +23,7 @@ class AppServiceDetailsService
 	 * @var $appServiceProductDetailsRepository
 	 */
 	protected $appServiceProductDetailsRepository;
-	
+
 
 	/**
 	 * @var AppServiceProductDetailsRepository
@@ -68,9 +68,8 @@ class AppServiceDetailsService
 			$results['banner']['image'] = !empty($get_product_details_banner->image) ? config('filesystems.image_host_url') . $get_product_details_banner->image : null;
 			$results['banner']['alt_text'] = $get_product_details_banner->alt_text;
 
-			$results['banner']['image_mobile'] = !empty($get_product_details_banner->other_attributes['image_mobile']) ? config('filesystems.image_host_url') . $get_product_details_banner->other_attributes['image_mobile'] : null;
+			$results['banner']['image_mobile'] = !empty($get_product_details_banner->banner_image_mobile) ? config('filesystems.image_host_url') . $get_product_details_banner->banner_image_mobile : null;
 
-			
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
 			$all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;
 			$results['releated_products']['title_en'] = $get_product_details_banner->title_en;
@@ -105,7 +104,7 @@ class AppServiceDetailsService
 		if( !empty($results) && count($results) > 0 ){
 
 			foreach ($results as $value) {
-				
+
 				$sub_data = [];
 
 				$parent_data['title_en'] = $value->title_en;
@@ -119,7 +118,7 @@ class AppServiceDetailsService
 
 
 					foreach ($value->detailsComponent as $item) {
-						
+
 						$sub_item = [];
 
 						$sub_item['title_en'] = $item->title_en;
@@ -138,7 +137,7 @@ class AppServiceDetailsService
 						// Multiple attributed formated
 						if( $item->multiple_attributes != null && !empty($item->multiple_attributes) ){
 							$res = json_decode($item->multiple_attributes, true);
-							
+
 							if( !empty($res) && count($res) > 0 ){
 
 								$multi_res = array_map(function($value){
@@ -151,7 +150,7 @@ class AppServiceDetailsService
 									if( $value['status'] == 0 ){
 										return null;
 									}
-									
+
 									return $value;
 
 								}, $res);
@@ -165,7 +164,7 @@ class AppServiceDetailsService
 								$sub_item['multiple_attributes'] = null;
 							}
 
-							
+
 
 						}
 						else{
@@ -193,11 +192,11 @@ class AppServiceDetailsService
 
 			}
 		}
-		
-		
+
+
 
 		return $data;
 	}
 
-	
+
 }

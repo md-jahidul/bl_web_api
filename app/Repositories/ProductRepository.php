@@ -19,7 +19,31 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type)
     {
-        return $this->model->select('products.*', 'd.url_slug')->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')->where('status', 1)
+        return $this->model->select(
+                'products.id',
+                'products.product_code',
+                'products.url_slug',
+                'products.schema_markup',
+                'products.page_header',
+                'products.rate_cutter_unit',
+                'products.rate_cutter_offer',
+                'products.name_en',
+                'products.name_bn',
+                'products.ussd_bn',
+                'products.balance_check_ussd_bn',
+                'products.call_rate_unit_bn',
+                'products.sms_rate_unit_bn',
+                'products.tag_category_id',
+                'products.sim_category_id',
+                'products.offer_category_id',
+                'products.special_product',
+                'products.like',
+                'products.validity_postpaid',
+                'products.offer_info'
+//                'd.url_slug'
+            )
+//            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+            ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
             ->productCore()
@@ -29,13 +53,35 @@ class ProductRepository extends BaseRepository
 
     public function showTrendingProduct()
     {
-       return $this->model->where('show_in_home', 1)
-            ->productCore()
-            ->where('status', 1)
-            ->where('special_product', 0)
-            ->startEndDate()
-            ->orderBy('display_order')
-            ->get();
+       return $this->model->select(
+               'id',
+               'product_code',
+               'url_slug',
+               'schema_markup',
+               'page_header',
+               'rate_cutter_unit',
+               'rate_cutter_offer',
+               'name_en',
+               'name_bn',
+               'ussd_bn',
+               'balance_check_ussd_bn',
+               'call_rate_unit_bn',
+               'sms_rate_unit_bn',
+               'tag_category_id',
+               'sim_category_id',
+               'offer_category_id',
+               'special_product',
+               'like',
+               'validity_postpaid',
+               'offer_info'
+           )
+           ->productCore()
+           ->startEndDate()
+           ->where('status', 1)
+           ->where('show_in_home', 1)
+           ->where('special_product', 0)
+           ->orderBy('display_order')
+           ->get();
     }
 
     /**
@@ -49,14 +95,18 @@ class ProductRepository extends BaseRepository
             ->productCore()
             ->select(
                 'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
                 'sim_category_id',
                 'offer_category_id',
                 'offer_info',
-                'product_code',
                 'name_en',
-                'name_bn', 'ussd_bn',
-                'offer_info', 'status',
-                'purchase_option',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'status',
                 'like')
             ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
@@ -154,6 +204,30 @@ class ProductRepository extends BaseRepository
         return $this->model->where('offer_info->other_offer_type_id',  13)
             ->productCore()
             ->get();
+    }
+
+    public function findOneProduct($type, $id)
+    {
+        return $data = $this->model->where('id', $id)
+            ->productCore()
+            ->select(
+                'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'tag_category_id',
+                'sim_category_id',
+                'offer_category_id',
+                'offer_info',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'status',
+                'like')
+            ->category($type)
+            ->first();
     }
 
 }

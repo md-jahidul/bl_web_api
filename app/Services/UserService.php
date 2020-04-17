@@ -428,7 +428,7 @@ class UserService extends ApiBaseService
         }
 
 
-        $requested_input = ['name', 'email', 'first_name', 'last_name', 'birth_date', 'gender', 'alternate_phone' ];
+        $requested_input = ['name', 'email', 'first_name', 'last_name', 'birth_date', 'gender', 'alternate_phone', 'address' ];
 
         foreach ($request->all() as $request_key => $request_value) {
 

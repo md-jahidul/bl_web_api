@@ -47,7 +47,7 @@ class AppServiceProductDetailsRepository extends BaseRepository
             ->where('category', 'app_banner_fixed_section')
             ->where('status', 1)
             ->whereNull('deleted_at')
-            ->first(['title_en', 'title_bn', 'image', 'alt_text', 'other_attributes', 'multiple_component']);
+            ->first(['title_en', 'title_bn', 'image', 'banner_image_mobile', 'alt_text', 'other_attributes', 'multiple_component']);
     }
 
 
@@ -64,9 +64,9 @@ class AppServiceProductDetailsRepository extends BaseRepository
         else{
 
             return $this->model->whereHas('detailsComponent', function($query) use ($component_type){
-                
+
                 foreach ($component_type as $key => $value) {
-                    
+
                     if( $key == 0 ){
                         $query->where('component_type', $value);
                     }
@@ -82,6 +82,6 @@ class AppServiceProductDetailsRepository extends BaseRepository
                 ->get();
 
         }
-        
+
     }
 }

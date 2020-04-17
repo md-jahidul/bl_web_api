@@ -189,9 +189,17 @@ class ProductService extends ApiBaseService
 
     private function filterProductsByUser($allProducts, $availableProductIds)
     {
+
+        $selectedProduct = [];
+        foreach ($allProducts as $product) {
+            if ($product->offer_category_id == OfferType::PACKAGES || $product->offer_category_id == OfferType::OTHERS){
+                array_push($selectedProduct, $product->product_code);
+            }
+        }
+        $margeArray = array_merge($selectedProduct, $availableProductIds);
         $viewableProducts = [];
         foreach ($allProducts as $product) {
-            if (in_array($product->product_code, $availableProductIds)) {
+            if (in_array($product->product_code, $margeArray)) {
                 array_push($viewableProducts, $product);
             }
         }
@@ -228,8 +236,6 @@ class ProductService extends ApiBaseService
                     $specialProducts[] = $this->productRepository->relatedProducts($productId);
                 }
             }
-
-
 
             $bondhoSImOffers = $this->productRepository->bondhoSimOffer();
 
@@ -295,20 +301,21 @@ class ProductService extends ApiBaseService
     public function customerProductBookmark($request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-
         $operationType = $request->operation_type;
-        $productCode = $request->product_code;
+        $productId = $request->product_id;
 
         if ($operationType == 'save') {
             $this->productBookmarkRepository->save([
                 'mobile' => $customerInfo->phone,
-                'product_code' => $productCode,
+                'product_id' => $productId,
+                'module_type' => $request->module_type,
+                'category' => $request->category,
             ]);
             return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
         } else if ($operationType == 'delete') {
             $bookmarkProducts = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
             foreach ($bookmarkProducts as $bookmarkProduct) {
-                if ($bookmarkProduct->product_code == $productCode) {
+                if ($bookmarkProduct->product_id == $productId) {
                     $bookmarkProduct->delete();
                     return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
                 }

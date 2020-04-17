@@ -1,4 +1,5 @@
 <?php
+
 //header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
 //header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
 
@@ -6,32 +7,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+  |--------------------------------------------------------------------------
+  | API Routes
+  |--------------------------------------------------------------------------
+  |
+  | Here is where you can register API routes for your application. These
+  | routes are loaded by the RouteServiceProvider within a group which
+  | is assigned the "api" middleware group. Enjoy building your API!
+  |
+ */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::group(['prefix' => '/v1'], function () {
-    Route::get('menu','API\V1\MenuApiController@getMenu');
-    Route::get('header-footer','API\V1\MenuController@getHeaderFooterMenus');
-    Route::get('home-page','API\V1\HomePageController@getHomePageData');
+    Route::get('menu', 'API\V1\MenuApiController@getMenu');
+    Route::get('header-footer', 'API\V1\MenuController@getHeaderFooterMenus');
+    Route::get('home-page', 'API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-    Route::get('partner-offers','API\V1\PartnerOfferController@index');
-    Route::get('offers/{type}','API\V1\ProductController@simPackageOffers');
-    Route::get('offers-categories','API\V1\PartnerOfferController@offerCategories');
-    Route::get('product-details/{type}/{id}','API\V1\ProductController@productDetails');
+    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
+    Route::get('offers/{type}', 'API\V1\ProductController@simPackageOffers');
+    Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
+    Route::get('product-details/{type}/{id}', 'API\V1\ProductController@productDetails');
+
+    Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
 
 
-    Route::get('product-details/{id}','API\V1\ProductDetailsController@productDetails');
+    Route::get('product-details/{id}', 'API\V1\ProductDetailsController@productDetails');
 
 
     // QUICK LAUNCH  ====================================
@@ -40,43 +43,47 @@ Route::group(['prefix' => '/v1'], function () {
     //AMAR OFFER ========================================
     Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
     Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOffer');
+    Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
+    Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');
 
-    Route::get('product-like/{id}','API\V1\ProductController@productLike');
-    Route::post('product/bookmark','API\V1\ProductController@bookmarkProduct');
-    Route::get('customer/product/bookmark','API\V1\ProductController@getCustomerBookmarkProducts');
-    Route::get('customer/products','API\V1\ProductController@customerSavedBookmarkProduct');
+    //Bookmark =======================================
+    Route::post('product/bookmark/save-remove', 'API\V1\ProductController@bookmarkProductSaveRemove');
+//    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
+    Route::get('bookmark/app-and-service/', 'API\V1\ProductBookmarkController@getBookmarkAppService');
+    Route::get('bookmark/business/', 'API\V1\ProductBookmarkController@getBookmarkBusiness');
+    Route::get('bookmark/offers/', 'API\V1\ProductBookmarkController@getBookmarkOffers');
 
 
     Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');
     Route::get('recharge-offers', 'API\V1\ProductController@rechargeOffers');
 
-    Route::get('priyojon-header','API\V1\PriyojonController@priyojonHeader');
-    Route::get('priyojon-offers','API\V1\PriyojonController@priyojonOffers');
+    Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
+    Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
 
-    Route::get('about-page/{slug}','API\V1\PriyojonController@getAboutPage');
+    Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
 
-    Route::get('offer-details/{id}','API\V1\PartnerOfferController@offerDetails');
+    Route::get('offer-details/{id}', 'API\V1\PartnerOfferController@offerDetails');
 
-    Route::post('ssl','API\V1\SslCommerzController@ssl');
-    Route::get('ssl-api','API\V1\SslCommerzController@sslApi');
-    Route::get('ssl/request/details','API\V1\SslCommerzController@getRequestDetails');
-    Route::post('success','API\V1\SslCommerzController@success');
-    Route::post('failure','API\V1\SslCommerzController@failure');
-    Route::post('cancel','API\V1\SslCommerzController@cancel');
+    Route::post('ssl', 'API\V1\SslCommerzController@ssl');
+    Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
+    Route::get('ssl/request/details', 'API\V1\SslCommerzController@getRequestDetails');
+    Route::post('success', 'API\V1\SslCommerzController@success');
+    Route::post('failure', 'API\V1\SslCommerzController@failure');
+    Route::post('cancel', 'API\V1\SslCommerzController@cancel');
 
-    Route::get('ebl-pay','API\V1\EblPaymentApiController@postData');
-    Route::get('ebl-pay/complete/{order_id}','API\V1\EblPaymentApiController@complete');
-    Route::get('ebl-pay/cancel','API\V1\EblPaymentApiController@cancel');
+    Route::get('ebl-pay', 'API\V1\EblPaymentApiController@postData');
+    Route::get('ebl-pay/complete/{order_id}', 'API\V1\EblPaymentApiController@complete');
+    Route::get('ebl-pay/cancel', 'API\V1\EblPaymentApiController@cancel');
 
-    Route::get('macro','API\V1\HomePageController@macro');
+    Route::get('macro', 'API\V1\HomePageController@macro');
 
-    Route::get('user/profile/view','API\V1\UserProfileController@view');
-    Route::post('user/profile/update','API\V1\UserProfileController@update');
-    Route::post('user/profile/image/update','API\V1\UserProfileController@updateProfileImage');
-    Route::get('user/profile/image/remove','API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}','API\V1\AuthenticationController@numberValidation');
-    Route::post('user/otp-login/request','API\V1\AuthenticationController@requestOtpLogin');
-    Route::post('user/otp-login/perform','API\V1\AuthenticationController@otpLogin');
+    Route::get('user/profile/view', 'API\V1\UserProfileController@view');
+    Route::post('user/profile/update', 'API\V1\UserProfileController@update');
+    Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
+    Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
+    Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
 
     // Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
@@ -101,48 +108,48 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
-     Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
-     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
+    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
+    Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer
-     Route::get('device-offers/{brand?}/{model?}', 'API\V1\DeviceOfferController@offerList');
+    Route::get('device-offers/{brand?}/{model?}', 'API\V1\DeviceOfferController@offerList');
 
 
-     //Business Module APIs
-     Route::get('business-home-data', 'API\V1\BusinessController@index');
-     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
-     Route::get('business-packages', 'API\V1\BusinessController@packages');
-     Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
-     Route::get('business-internet-package', 'API\V1\BusinessController@internet');
-     Route::get('business-internet-details/{internetId}', 'API\V1\BusinessController@internetDetails');
-     Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
-     Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
+    //Business Module APIs
+    Route::get('business-home-data', 'API\V1\BusinessController@index');
+    Route::get('business-categories', 'API\V1\BusinessController@getCategories');
+    Route::get('business-packages', 'API\V1\BusinessController@packages');
+    Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
+    Route::get('business-internet-package', 'API\V1\BusinessController@internet');
+    Route::get('business-internet-details/{internetId}', 'API\V1\BusinessController@internetDetails');
+    Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
+    Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
-     Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
+    Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
 
 
-     //roaming Module APIs
-     Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
-     Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
-     Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
-     Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
-     Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
-     Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
-     Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
-     Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
-     Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
-     Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
-     Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
-     Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
+    //roaming Module APIs
+    Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
+    Route::get('roaming-country-list', 'API\V1\RoamingController@getCountries');
+    Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
+    Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
+    Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
+    Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
+    Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
+    Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
+    Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
+    Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
+    Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
+    Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
 
-     // eCarrer api
-     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
-     Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
+    // eCarrer api
+    Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
+    Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
 
-     Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
-     Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
+    Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
+    Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
 
-     // eCarrer Application form api  =========================================================
+    // eCarrer Application form api  =========================================================
     Route::get('ecarrer/university', 'API\V1\EcareerController@ecarrerUniversity');
     Route::post('ecarrer/application-form', 'API\V1\EcareerController@ecarrerApplicationForm');
 
@@ -188,5 +195,4 @@ Route::group(['prefix' => '/v1'], function () {
 
     #SMS
     Route::post('send-sms', 'API\V1\SmsController@sendSms');
-
 });

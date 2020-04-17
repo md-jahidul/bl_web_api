@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class OfferCategory extends Model
 {
 
+    protected $casts = [
+        'other_attributes' => 'array'
+    ];
+
     public function children()
     {
         return $this->hasMany(OfferCategory::class, 'parent_id', 'id');
