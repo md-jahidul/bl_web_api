@@ -162,7 +162,21 @@ class ProductRepository extends BaseRepository
     public function relatedProducts($id)
     {
         return $this->model->where('id', $id)
-            ->select('id', 'product_code', 'name_en', 'name_bn', 'ussd_bn', 'tag_category_id', 'sim_category_id', 'offer_category_id', 'like')
+            ->select(
+                'id',
+                'product_code',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'balance_check_ussd_bn',
+                'tag_category_id',
+                'sim_category_id',
+                'offer_category_id',
+                'like')
             ->productCore()
             ->first();
     }
