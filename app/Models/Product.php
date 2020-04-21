@@ -47,7 +47,7 @@ class Product extends Model
                 'sms_rate as sms_rate_offer',
                 'renew_product_code',
                 'recharge_product_code'
-            )->orderBy('mrp_price', 'DESC');
+            );
         }]);
     }
 
