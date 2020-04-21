@@ -173,9 +173,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # Sales and Service search results
+    # Sales and Service 
+    Route::get('sales-service-locations', 'API\V1\SalesServiceController@getNearestStoreLocations');
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
-
     Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
     Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 
