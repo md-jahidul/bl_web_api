@@ -88,6 +88,12 @@ Route::group(['prefix' => '/v1'], function () {
     // Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
 
+
+    // Balance
+    Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
+    Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
+
+
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
