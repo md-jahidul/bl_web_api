@@ -59,11 +59,6 @@ class AuthenticationController extends Controller
      */
     public function otpLogin(OtpLoginRequest $request)
     {
-       /* $validator = Validator::make($request->all(), $this->getLoginValidationRules());
-        if ($validator->fails()) {
-            return response()->json($validator->messages(), HttpStatusCode::VALIDATION_ERROR);
-        }*/
-
         return $this->userService->otpLogin($request);
     }
 
