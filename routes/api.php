@@ -64,12 +64,27 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::get('offer-details/{id}', 'API\V1\PartnerOfferController@offerDetails');
 
-    Route::post('ssl', 'API\V1\SslCommerzController@ssl');
+    /*Route::post('ssl', 'API\V1\SslCommerzController@ssl');
     Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
     Route::get('ssl/request/details', 'API\V1\SslCommerzController@getRequestDetails');
     Route::post('success', 'API\V1\SslCommerzController@success');
     Route::post('failure', 'API\V1\SslCommerzController@failure');
-    Route::post('cancel', 'API\V1\SslCommerzController@cancel');
+    Route::post('cancel', 'API\V1\SslCommerzController@cancel');*/
+
+    /**
+     * SSL Payment Gateway
+     */
+    Route::post('initiate-payment', 'API\V1\SslCommerzController@initiatePayment');
+    Route::post('recharge-via-ssl', 'API\V1\SslCommerzController@rechargeViaSsl');
+    Route::get('payment-options', 'API\V1\SslCommerzController@getRequestDetails');
+    Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
+    Route::post('recharge-success', 'API\V1\SslCommerzController@success');
+    Route::post('recharge-failure', 'API\V1\SslCommerzController@failure');
+    Route::post('recharge-cancel', 'API\V1\SslCommerzController@cancel');
+    Route::post('payment-submit', 'API\V1\SslCommerzController@paymentRequestSubmit');
+    Route::post('recharge/validate-numbers', 'API\V1\PaymentController@validateNumbers');
+
+
 
     Route::get('ebl-pay', 'API\V1\EblPaymentApiController@postData');
     Route::get('ebl-pay/complete/{order_id}', 'API\V1\EblPaymentApiController@complete');
@@ -173,7 +188,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # Sales and Service 
+    # Sales and Service
     Route::get('sales-service-locations', 'API\V1\SalesServiceController@getNearestStoreLocations');
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
     Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
