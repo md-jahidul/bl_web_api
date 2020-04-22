@@ -65,4 +65,19 @@ class Handler extends ExceptionHandler
         }
         return parent::render($request, $exception);
     }
+
+
+    /**
+     * NotFoundHttpException
+     * The requested path could not match a route in the API
+     *
+     * @param NotFoundHttpException $exception
+     * @return void 403
+     */
+
+    protected function handleNotFoundHttpException(NotFoundHttpException $exception)
+    {
+        abort(403);
+    }
+
 }
