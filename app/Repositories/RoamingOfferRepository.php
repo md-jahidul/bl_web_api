@@ -117,10 +117,12 @@ class RoamingOfferRepository extends BaseRepository {
             $data['bundles'][$key]['data_volume'] = $val->data_volume;
             $data['bundles'][$key]['data_volume_unit'] = $val->volume_data_unit;
             $data['bundles'][$key]['validity'] = $val->validity;
+            $data['bundles'][$key]['sms_volume'] = $val->sms_volume;
+            $data['bundles'][$key]['minute_volume'] = $val->minute_volume;
             $data['bundles'][$key]['validity_unit'] = $val->validity_unit;
-            $data['bundles'][$key]['mrp'] = $val->mrp;
-            $data['bundles'][$key]['price'] = $val->price;
-            $data['bundles'][$key]['tax'] = $val->tax;
+            $data['bundles'][$key]['mrp'] = round($val->mrp, 2);
+            $data['bundles'][$key]['price'] = 0;
+            $data['bundles'][$key]['tax'] = 0;
             $data['bundles'][$key]['like'] = $val->like;
             $data['bundles'][$key]['details_en'] = $val->details_en;
             $data['bundles'][$key]['details_bn'] = $val->details_bn;
