@@ -28,7 +28,7 @@ class RoamingOfferRepository extends BaseRepository {
         foreach ($offerCategory as $k => $c) {
             $data[$k]['category_en'] = $c->name_en;
             $data[$k]['category_bn'] = $c->name_bn;
-            
+
             $offers = $this->model->where('status', 1)->where('category_id', $c->id)->orderBy('id', 'desc')->get();
             $data[$k]['offers'] = [];
             foreach ($offers as $key => $v) {
@@ -47,14 +47,14 @@ class RoamingOfferRepository extends BaseRepository {
 
         return $data;
     }
-    
+
     public function getOtherOffersDetails($offerId) {
 
         $offer = $this->model->findOrFail($offerId);
 
 
         $data = [];
-        
+
         $data['name_en'] = $offer->name_en;
         $data['name_bn'] = $offer->name_bn;
         $data['short_text_en'] = $offer->short_text_en;
@@ -69,34 +69,31 @@ class RoamingOfferRepository extends BaseRepository {
         $components = RoamingOtherOfferComponents::where('parent_id', $offerId)->orderBy('position')->get();
         $data['components'] = [];
         foreach ($components as $k => $val) {
-            
+
             $textEn = json_decode($val->body_text_en);
             $textBn = json_decode($val->body_text_bn);
-            
+
             $data['components'][$k]['component_type'] = $val->component_type;
             $data['components'][$k]['data_en'] = $textEn;
             $data['components'][$k]['data_bn'] = $textBn;
-         
         }
-        
-         $data['details_en'] = $offer->details_en;
-         $data['details_bn'] = $offer->details_en;
+
+        $data['details_en'] = $offer->details_en;
+        $data['details_bn'] = $offer->details_en;
 
 
 
 
         return $data;
     }
-    
-    
-    
-    public function ratesAndBundle($country, $operator){
+
+    public function ratesAndBundle($country, $operator) {
         $rates = RoamingRates::where(array('country' => $country, 'operator' => $operator))->get();
-        
+
         $data = [];
-        
+
         $data['rates'] = array();
-        foreach($rates as $k => $val){
+        foreach ($rates as $k => $val) {
             $data['rates'][$k]['id'] = $val->id;
             $data['rates'][$k]['subscription_type'] = $val->subscription_type;
             $data['rates'][$k]['call_rate'] = $val->rate_visiting_country;
@@ -104,11 +101,11 @@ class RoamingOfferRepository extends BaseRepository {
             $data['rates'][$k]['sms_rate'] = $val->sms_rate;
             $data['rates'][$k]['data_rate'] = $val->gprs;
         }
-        
+
         $bundles = RoamingBundles::where(array('country' => $country, 'operator' => $operator, 'status' => 1))->get();
-        
+
         $data['bundles'] = array();
-          foreach($bundles as $key => $val){
+        foreach ($bundles as $key => $val) {
             $data['bundles'][$key]['id'] = $val->id;
             $data['bundles'][$key]['subscription_type'] = $val->subscription_type;
             $data['bundles'][$key]['product_code'] = $val->product_code;
@@ -117,21 +114,19 @@ class RoamingOfferRepository extends BaseRepository {
             $data['bundles'][$key]['data_volume'] = $val->data_volume;
             $data['bundles'][$key]['data_volume_unit'] = $val->volume_data_unit;
             $data['bundles'][$key]['validity'] = $val->validity;
+            $data['bundles'][$key]['validity_unit'] = $val->validity_unit;
             $data['bundles'][$key]['sms_volume'] = $val->sms_volume;
             $data['bundles'][$key]['minute_volume'] = $val->minute_volume;
-            $data['bundles'][$key]['validity_unit'] = $val->validity_unit;
-            $data['bundles'][$key]['mrp'] = round($val->mrp, 2);
-            $data['bundles'][$key]['price'] = 0;
-            $data['bundles'][$key]['tax'] = 0;
+            $data['bundles'][$key]['price_tk'] = round($val->mrp, 2);
             $data['bundles'][$key]['like'] = $val->like;
             $data['bundles'][$key]['details_en'] = $val->details_en;
             $data['bundles'][$key]['details_bn'] = $val->details_bn;
         }
-        
+
         return $data;
     }
-    
-     public function bundleLike($bundleId) {
+
+    public function bundleLike($bundleId) {
 
         $bundle = RoamingBundles::findOrFail($bundleId);
         $likes = $bundle->like + 1;
@@ -140,8 +135,8 @@ class RoamingOfferRepository extends BaseRepository {
         $data['likes'] = $likes;
         return $data;
     }
-    
-     public function otherOfferLike($offerId) {
+
+    public function otherOfferLike($offerId) {
 
         $offer = $this->model->findOrFail($offerId);
         $likes = $offer->likes + 1;
@@ -150,22 +145,22 @@ class RoamingOfferRepository extends BaseRepository {
         $data['likes'] = $likes;
         return $data;
     }
-    
-    public function roamingRates(){
+
+    public function roamingRates() {
         $rates = RoamingRates::orderBy('region')->orderBy('country')->orderBy('operator')->get();
-        
+
         $region = [];
-        foreach($rates as $k => $val){
+        foreach ($rates as $k => $val) {
             $region[$val->region][$k] = $val;
         }
-        
+
         $data = [];
         $rCount = 0;
-        foreach($region as $k => $reg){
+        foreach ($region as $k => $reg) {
             $rateCount = 0;
-            
+
             $data[$rCount]['region'] = $k;
-            foreach($reg as $val){
+            foreach ($reg as $val) {
                 $data[$rCount]['rates'][$rateCount]['subscription_type'] = $val->subscription_type;
                 $data[$rCount]['rates'][$rateCount]['country'] = $val->country;
                 $data[$rCount]['rates'][$rateCount]['operator'] = $val->operator;
@@ -177,10 +172,8 @@ class RoamingOfferRepository extends BaseRepository {
             }
             $rCount++;
         }
-        
+
         return $data;
     }
-    
-   
 
 }
