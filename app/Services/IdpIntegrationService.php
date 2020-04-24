@@ -61,13 +61,13 @@ class IdpIntegrationService
         }
 
         return Redis::get(self::IDP_TOKEN_REDIS_KEY);
-        
+
        // if (!static::$token) {
          //   static::setToken();
        // }
 
        // return static::$token;
-        
+
     }
 
 
@@ -117,6 +117,30 @@ class IdpIntegrationService
     public static function getCustomerInfo($msisdn)
     {
         return static::get('/api/customers/' . $msisdn);
+    }
+
+
+    /**
+     * Send request for customer Basic info
+     *
+     * @param $msisdn
+     * @return mixed
+     */
+    public static function getCustomerBasicInfo($msisdn)
+    {
+        return static::get('/api/v1/customers/basic-info/' . $msisdn);
+    }
+
+
+    /**
+     * Send request for customer Profile Image
+     *
+     * @param $msisdn
+     * @return mixed
+     */
+    public static function getCustomerProfileImage($msisdn)
+    {
+        return static::get('/api/v1/customers/profile-image/' . $msisdn);
     }
 
 
@@ -251,7 +275,7 @@ class IdpIntegrationService
      * @return string
      */
     private static function makeMethod($method, $url, $body = [], $headers = null)
-    {   
+    {
         $ch = curl_init();
         $headers = $headers ?: static::makeHeader();
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));

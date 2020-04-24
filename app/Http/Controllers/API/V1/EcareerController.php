@@ -329,6 +329,7 @@ class EcareerController extends Controller {
                 $sub_data_news_item['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
                 $sub_data_news_item['alt_links'] = $portal_items->alt_links;
+                $sub_data_news_item['video'] = $portal_items->video;
 
                 $sub_data_news['item_list'][] = $sub_data_news_item;
             }

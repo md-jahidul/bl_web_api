@@ -31,7 +31,7 @@ class AppServiceTabRepository extends BaseRepository
                             'price_tk',
                             'validity_unit',
                             'product_img_url',
-                            'like', 'app_rating',
+                            'like', 'app_review', 'app_rating',
                             'can_active',
                             'show_in_vas',
                             'ussd_en', 'ussd_bn',
