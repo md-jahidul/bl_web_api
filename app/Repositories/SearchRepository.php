@@ -84,7 +84,12 @@ class SearchRepository extends BaseRepository {
                 $keywrods .= "," . $v . "-" . $kwArray[$k + 1]."*";
             }
         }
+        
+        echo $keywrods;
+        die();
 
+
+//        dd($keywrods);
         $response = $this->model->select('keyword', 'url as product_url', 'type')
                         ->selectRaw("MATCH(keyword,tag) AGAINST('$keywrods' IN BOOLEAN MODE) as score")
                         ->where('status', 1)
