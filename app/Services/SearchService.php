@@ -81,6 +81,7 @@ class SearchService extends BaseService {
 
     public function searchData($keyword) {
         $keywords = $this->searchRepository->searchData($keyword);
+      return $keywords;
 
         $data = [];
 

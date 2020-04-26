@@ -69,28 +69,27 @@ class SearchRepository extends BaseRepository {
 
     public function searchData($keyword) {
 
-        $keywrods = $keyword;
+        $keywrods = $keyword."*";
 
         $kwArray = explode(' ', $keyword);
 
-        $keywrods .= "," . implode(',', $kwArray);
-        $keywrods .= "," . implode('', $kwArray);
-        $keywrods .= "," . implode('-', $kwArray);
+        $keywrods .= "," . implode('*,', $kwArray)."*";
+        $keywrods .= "," . implode('', $kwArray)."*";
+        $keywrods .= "," . implode('-', $kwArray)."*";
 
         foreach ($kwArray as $k => $v) {
             if (($k + 1) < count($kwArray)) {
-                $keywrods .= "," . $v . "" . $kwArray[$k + 1];
-                $keywrods .= "," . $v . " " . $kwArray[$k + 1];
-                $keywrods .= "," . $v . "-" . $kwArray[$k + 1];
+                $keywrods .= "," . $v . "" . $kwArray[$k + 1]."*";
+                $keywrods .= "," . $v . "* " . $kwArray[$k + 1]."*";
+                $keywrods .= "," . $v . "-" . $kwArray[$k + 1]."*";
             }
         }
 
-
-//        dd($keywrods);
         $response = $this->model->select('keyword', 'url as product_url', 'type')
+                        ->selectRaw("MATCH(keyword,tag) AGAINST('$keywrods' IN BOOLEAN MODE) as score")
                         ->where('status', 1)
                         ->whereRaw("MATCH(keyword,tag) AGAINST('$keywrods' "
-                                . "IN NATURAL LANGUAGE MODE)")->get();
+                                . "IN BOOLEAN MODE)")->orderBy('score', 'desc')->get();
         return $response;
     }
 
