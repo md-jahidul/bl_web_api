@@ -55,6 +55,8 @@ class SearchService extends BaseService {
     public function searchSuggestion($keyword) {
 
         $keywords = $this->searchRepository->searchSuggestion($keyword);
+        
+        return $keywords;
 
 
         $data = [];
