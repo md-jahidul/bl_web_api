@@ -58,8 +58,6 @@ class SearchService extends BaseService {
 
         $limits = $this->searchRepository->getSettingData();
 
-        $data = [];
-
         $heads = array(
             'prepaid-internet' => "Prepid Internet",
             'prepaid-voice' => "Prepid Voice",
@@ -68,84 +66,47 @@ class SearchService extends BaseService {
             'others' => "Others"
         );
 
-        $countPi = 0;
-        $countPv = 0;
-        $countPb = 0;
-        $countPstI = 0;
-        $countOth = 0;
-        foreach ($keywords as $k) {
-            if ($k->type != "") {
 
-                if ($k->type == "prepaid-internet") {
 
-                    if ($limits['prepaid-internet'] > $countPi) {
-                        $data[$k->type]['head'] = $heads[$k->type];
-                        $data[$k->type]['keywords'][$countPi]['keyword'] = $k->keyword;
-                        $data[$k->type]['keywords'][$countPi]['product_url'] = $k->product_url;
-                        
-                    }
-                    $countPi++;
-                }
+        $data = [];
+        $response = [];
+        $response['more_result'] = 0;
 
-                if ($k->type == "prepaid-voice") {
-
-                    if ($limits['prepaid-voice'] > $countPv) {
-                        $data[$k->type]['head'] = $heads[$k->type];
-                        $data[$k->type]['keywords'][$countPv]['keyword'] = $k->keyword;
-                        $data[$k->type]['keywords'][$countPv]['product_url'] = $k->product_url;
-                       
-                    }
-                     $countPv++;
-                }
-
-                if ($k->type == "prepaid-bundle") {
-
-                    if ($limits['prepaid-bundle'] > $countPb) {
-                        $data[$k->type]['head'] = $heads[$k->type];
-                        $data[$k->type]['keywords'][$countPb]['keyword'] = $k->keyword;
-                        $data[$k->type]['keywords'][$countPb]['product_url'] = $k->product_url;
-                        
-                    }
-                    $countPb++;
-                }
-
-                if ($k->type == "postpaid-internet") {
-
-                    if ($limits['postpaid-internet'] > $countPstI) {
-                        $data[$k->type]['head'] = $heads[$k->type];
-                        $data[$k->type]['keywords'][$countPstI]['keyword'] = $k->keyword;
-                        $data[$k->type]['keywords'][$countPstI]['product_url'] = $k->product_url;
-                       
-                    }
-                     $countPstI++;
-                }
-
-                if ($k->type == "others") {
-                    if ($limits['others'] > $countOth) {
-                        $data[$k->type]['head'] = $heads[$k->type];
-                        $data[$k->type]['keywords'][$countOth]['keyword'] = $k->keyword;
-                        $data[$k->type]['keywords'][$countOth]['product_url'] = $k->product_url;
-                        
-                    }
-                    $countOth++;
-                }
+        $count = 0;
+        foreach ($keywords as $k => $val) {
+            if ($val->type != "") {
+                $data[$val->type][$count] = $val;
+                $count++;
             }
         }
-        
-        $data['more_result'] = 0;
-        if($countPi > $limits['prepaid-internet'] || $countPv > $limits['prepaid-voice'] || $countPb > $limits['prepaid-bundle'] || $countPstI > $limits['postpaid-internet'] || $countOth > $limits['others']){
-            $data['more_result'] = 1;
+
+        $catCount = -1;
+        $catName = "";
+        foreach ($data as $k => $kw) {
+
+            if ($catName != $k) {
+                $catName = $k;
+                $catCount++;
+            }
+            $response['keyword_sections'][$catCount]['category'] = $heads[$k];
+            $count = 0;
+            foreach ($kw as $val) {
+                if ($count < $limits[$k]) {
+                    $response['keyword_sections'][$catCount]['keywords'][$count] = $val;
+                    $count++;
+                } else {
+                    $response['more_result'] = 1;
+                }
+            }
+            $catName = $k;
         }
-        
-        
-        
-        return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
+
+        return $this->apiBaseService->sendSuccessResponse($response, 'Search Suggestion');
     }
 
     public function searchData($keyword) {
-        $keywords = $this->searchRepository->searchData($keyword);
 
-        $data = [];
+        $keywords = $this->searchRepository->searchSuggestion($keyword);
 
         $heads = array(
             'prepaid-internet' => "Prepid Internet",
@@ -154,51 +115,37 @@ class SearchService extends BaseService {
             'postpaid-internet' => "Postpaid Internet",
             'others' => "Others"
         );
-        $countPi = 0;
-        $countPv = 0;
-        $countPb = 0;
-        $countPstI = 0;
-        $countOth = 0;
-        foreach ($keywords as $k) {
-            if ($k->type != "") {
 
-                if ($k->type == "prepaid-internet") {
-                    $data[$k->type]['head'] = $heads[$k->type];
-                    $data[$k->type]['keywords'][$countPi]['keyword'] = $k->keyword;
-                    $data[$k->type]['keywords'][$countPi]['product_url'] = $k->product_url;
-                    $countPi++;
-                }
 
-                if ($k->type == "prepaid-voice") {
-                    $data[$k->type]['head'] = $heads[$k->type];
-                    $data[$k->type]['keywords'][$countPv]['keyword'] = $k->keyword;
-                    $data[$k->type]['keywords'][$countPv]['product_url'] = $k->product_url;
-                    $countPv++;
-                }
 
-                if ($k->type == "prepaid-bundle") {
-                    $data[$k->type]['head'] = $heads[$k->type];
-                    $data[$k->type]['keywords'][$countPb]['keyword'] = $k->keyword;
-                    $data[$k->type]['keywords'][$countPb]['product_url'] = $k->product_url;
-                    $countPb++;
-                }
-
-                if ($k->type == "postpaid-internet") {
-                    $data[$k->type]['head'] = $heads[$k->type];
-                    $data[$k->type]['keywords'][$countPstI]['keyword'] = $k->keyword;
-                    $data[$k->type]['keywords'][$countPstI]['product_url'] = $k->product_url;
-                    $countPstI++;
-                }
-
-                if ($k->type == "others") {
-                    $data[$k->type]['head'] = $heads[$k->type];
-                    $data[$k->type]['keywords'][$countOth]['keyword'] = $k->keyword;
-                    $data[$k->type]['keywords'][$countOth]['product_url'] = $k->product_url;
-                    $countOth++;
-                }
+        $data = [];
+        $response = [];
+        $count = 0;
+        foreach ($keywords as $k => $val) {
+            if ($val->type != "") {
+                $data[$val->type][$count] = $val;
+                $count++;
             }
         }
-        return $this->apiBaseService->sendSuccessResponse($data, 'Search Suggestion');
+
+        $catCount = -1;
+        $catName = "";
+        foreach ($data as $k => $kw) {
+
+            if ($catName != $k) {
+                $catName = $k;
+                $catCount++;
+            }
+            $response['keyword_sections'][$catCount]['category'] = $heads[$k];
+            $count = 0;
+            foreach ($kw as $val) {
+                $response['keyword_sections'][$catCount]['keywords'][$count] = $val;
+                $count++;
+            }
+            $catName = $k;
+        }
+
+        return $this->apiBaseService->sendSuccessResponse($response, 'Search Data');
     }
 
     public function getSearchResult($keyWord) {

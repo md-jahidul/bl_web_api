@@ -25,12 +25,11 @@ class SearchRepository extends BaseRepository {
         $keywrods .= ", " . implode('*, ', $kwArray) . "*";
 
 
+
         $response = $this->model->select('keyword', 'url as product_url', 'type')
                         ->where('status', 1)
                         ->whereRaw("MATCH(keyword,tag) AGAINST('$keywrods' IN BOOLEAN MODE)")->get();
         return $response;
-
-
     }
 
     public function searchData($keyword) {
