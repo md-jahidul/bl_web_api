@@ -70,7 +70,7 @@ class HomePageController extends Controller {
 
         $slider_images = $limit ? $query->limit($limit)->get() : $query->get();
 
-        $slider_images = $this->makeResource($slider_images);
+        $slider_images = $this->makeResource($slider_images, $component);
 
         $this->bindDynamicValues($slider);
 
@@ -79,10 +79,18 @@ class HomePageController extends Controller {
         return $slider;
     }
 
-    public function makeResource($requests) { {
+    public function makeResource($requests, $component) { {
             $result = [];
             foreach ($requests as $request) {
                 $data = [];
+
+                if ($component == "Corona") {
+                    $bnsModel = \App\Models\BusinessOthers::where('type', $request->id)->first();
+                    $data['details_id'] = $bnsModel->id;
+                    $data['url_slug'] = $bnsModel->url_slug;
+                }
+
+
                 $data["id"] = $request->id ?? null;
                 $data["slider_id"] = $request->slider_id ?? null;
                 $data["title_en"] = $request->title_en ?? null;
@@ -94,6 +102,9 @@ class HomePageController extends Controller {
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
+
+
+
                 if ($request->other_attributes) {
                     foreach ($request->other_attributes as $key => $value) {
                         $data[$key] = $value;
