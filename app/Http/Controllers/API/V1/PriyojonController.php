@@ -78,4 +78,9 @@ class PriyojonController extends Controller
     {
         return $this->aboutPriyojonService->aboutDetails($slug);
     }
+
+    public function offerLike($id)
+    {
+        return $this->partnerOfferService->offerLike($id);
+    }
 }

@@ -60,6 +60,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
     Route::get('priyojon-discount-offers/{page}', 'API\V1\PriyojonController@discountOffers');
+    Route::get('priyojon-offers-like/{id}', 'API\V1\PriyojonController@offerLike');
 
     Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
 
