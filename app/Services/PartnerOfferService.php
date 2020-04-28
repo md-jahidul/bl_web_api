@@ -77,7 +77,7 @@ class PartnerOfferService extends ApiBaseService {
      */
     public function discountOffers($page, $elg, $cat, $area, $searchStr) {
         try {
-            
+
             $data['status'] = array(
                 1 => "Silver",
                 2 => "Gold",
@@ -85,7 +85,7 @@ class PartnerOfferService extends ApiBaseService {
             );
             $data['categories'] = $this->partnerOfferRepository->getCategories();
             $data['areas'] = $this->partnerOfferRepository->getAreas();
-            
+
             $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
             $data['offers'] = PartnerOfferResource::collection($offers);
 
@@ -98,22 +98,23 @@ class PartnerOfferService extends ApiBaseService {
             return response()->error("Something wrong", $exception);
         }
     }
+
     /**
      * @Get_Priyojon_Offers form Partner table
      */
     public function offerLike($id) {
         try {
-            
-        $offer = $this->findOrFail($id);
-        $offer->like = $offer->like + 1;
+
+            $offer = $this->findOrFail($id);
+            $offer->like = $offer->like + 1;
 
             if ($offer->save()) {
                 $data['success'] = 1;
                 $data['like'] = $offer->like;
-                return response()->success($data, 'Data Found!');
+                return $this->sendSuccessResponse($data, 'Likes');
             }
-             $data['success'] = 0;
-            return response()->error("Process failed");
+            $data['success'] = 0;
+            return $this->sendErrorResponse('Process failed');
         } catch (QueryException $exception) {
             return response()->error("Something wrong", $exception);
         }
