@@ -78,7 +78,7 @@ class PartnerOfferService extends ApiBaseService {
     public function discountOffers($page, $elg, $cat, $area, $searchStr) {
         try {
             
-            $data['eligible'] = array(
+            $data['status'] = array(
                 1 => "Silver",
                 2 => "Gold",
                 3 => "Platinum"
