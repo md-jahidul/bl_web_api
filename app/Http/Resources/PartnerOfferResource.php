@@ -19,6 +19,9 @@ class PartnerOfferResource extends JsonResource {
         if (!empty($this->location)) {
             $location = json_decode($this->location);
         }
+        
+        $offerScaleEn = array('Upto' => "Up To", 'Minimum' => 'Minimum', 'Fixed' => 'Fixed');
+        $offerScaleBn = array('Upto' => "সর্বোচ্ছ", 'Minimum' => 'নূন্যতম', 'Fixed' => 'ফিক্সড');
 
         return [
             "id" => $this->id ?? null,
@@ -35,7 +38,8 @@ class PartnerOfferResource extends JsonResource {
             "validity_bn" => $this->validity_bn ?? null,
             "offer_unit" => $this->offer_unit ?? null,
             "offer_value" => $this->offer_value ?? null,
-            "offer_scale" => $this->offer_scale ?? null,
+            "offer_scale_en" => $offerScaleEn[$this->offer_scale] ?? null,
+            "offer_scale_bn" => $offerScaleBn[$this->offer_scale] ?? null,
             "get_offer_msg_en" => $this->get_offer_msg_en ?? null,
             "get_offer_msg_bn" => $this->get_offer_msg_bn ?? null,
             "btn_text_en" => $this->btn_text_en ?? null,
@@ -43,6 +47,7 @@ class PartnerOfferResource extends JsonResource {
             "campaign_img" => (!empty($this->campaign_img)) ? config("filesystems.image_host_url") . $this->campaign_img : null,
             "is_campaign" => $this->is_campaign ?? null,
             "show_in_home" => $this->show_in_home ?? null,
+            "like" => $this->like,
             "is_active" => $this->is_active,
             "display_order" => $this->display_order,
             "campaign_order" => $this->campaign_order,

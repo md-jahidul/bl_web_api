@@ -86,7 +86,8 @@ class PartnerOfferService extends ApiBaseService {
             $data['categories'] = $this->partnerOfferRepository->getCategories();
             $data['areas'] = $this->partnerOfferRepository->getAreas();
             
-            $data['offers'] = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
+            $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
+            $data['offers'] = PartnerOfferResource::collection($offers);
 
             if ($data) {
 //                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
