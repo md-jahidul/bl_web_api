@@ -144,7 +144,11 @@ class PartnerOfferController extends Controller {
                 $data['area_en'] = $productDetail->area_en;
                 $data['area_bn'] = $productDetail->area_bn;
                 
-                $data['banner_image_url'] = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
+                $banner = "";
+                if($productDetail->partner_offer_details->banner_image_url != ""){
+                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url; 
+                }
+                $data['banner_image_url'] = $banner;
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;
                 $data['apple_app_store_link'] = $productDetail->partner->apple_app_store_link;
                 $data['google_play_link'] = $productDetail->partner->google_play_link;

@@ -9,6 +9,7 @@ use App\Services\AboutPageService;
 use App\Services\PartnerOfferService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class PriyojonController extends Controller
 {
@@ -59,6 +60,18 @@ class PriyojonController extends Controller
     public function priyojonOffers()
     {
        return $this->partnerOfferService->priyojonOffers();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function discountOffers(Request $request, $page)
+    {
+       $elg = $request->status;
+       $cat = $request->category;
+       $area = $request->area;
+       $searchStr = $request->search;
+       return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
     }
 
     public function getAboutPage($slug)

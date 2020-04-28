@@ -1,12 +1,14 @@
 <?php
+
 namespace App\Repositories;
 
+use App\Models\Partner;
 use App\Models\PartnerOffer;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
-class PartnerOfferRepository extends BaseRepository
-{
+class PartnerOfferRepository extends BaseRepository {
+
     /**
      * @var string
      */
@@ -17,29 +19,78 @@ class PartnerOfferRepository extends BaseRepository
      * @param $id
      * @return mixed
      */
-    public function detailProducts($type, $id)
-    {
+    public function detailProducts($type, $id) {
         return $this->model->where('id', $id)
-            ->category($type)
-            ->with('product_details', 'related_product', 'other_related_product')
-            ->first();
+                        ->category($type)
+                        ->with('product_details', 'related_product', 'other_related_product')
+                        ->first();
     }
 
+    public function getCategories() {
+        $category = Partner::select('c.id', 'c.name_en', 'c.name_bn')
+                        ->leftJoin('partner_categories as c', 'c.id', 'partners.partner_category_id')
+                        ->join('partner_offers as o', 'o.partner_id', '=', 'partners.id')->groupBy('partners.partner_category_id')->where('o.is_active', 1)->get();
+        return $category;
+    }
+
+    public function getAreas() {
+        $areas = $this->model::select('a.id', 'a.area_en', 'a.area_bn')
+                        ->join('partner_area_list as a', 'a.id', '=', 'partner_offers.area_id')
+                        ->groupBy('a.id')->where('partner_offers.is_active', 1)->get();
+        return $areas;
+    }
 
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function offers()
-    {
+    public function offers() {
         $priyojonOffers = DB::table('partner_offers as po')
-            ->where('po.is_active',1)
-            ->where('po.show_in_home',1)
-            ->join('partners as p', 'po.partner_id', '=', 'p.id')
-            ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
-            ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-            ->select('po.*', 'a.area_en', 'a.area_bn', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
-            ->orderBy('po.display_order')
-            ->get();
+                ->where('po.is_active', 1)
+                ->where('po.show_in_home', 1)
+                ->join('partners as p', 'po.partner_id', '=', 'p.id')
+                ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
+                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+                ->select('po.*', 'a.area_en', 'a.area_bn', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
+                ->orderBy('po.display_order')
+                ->get();
+
+        return $priyojonOffers;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function discountOffers($page, $elg, $cat, $area, $searchStr) {
+        $actualPage = $page - 1;
+        $limit = 9;
+        $offset = $actualPage * $limit;
+        $offers = DB::table('partner_offers as po')
+                        ->where('po.is_active', 1)
+                        ->join('partners as p', 'po.partner_id', '=', 'p.id')
+                        ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
+                        ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+                        ->select('po.*', 'a.area_en', 'a.area_bn', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
+                        ->orderBy('po.display_order')
+                        ->offset($offset)->limit($limit);
+
+        if ($elg != "") {
+            $elg == 1 ? $offers->where('po.silver', 1) : null;
+            $elg == 2 ? $offers->where('po.gold', 1) : null;
+            $elg == 3 ? $offers->where('po.platium', 1) : null;
+        }
+
+        if ($cat != "") {
+            $offers->where('p.partner_category_id', $cat);
+        }
+        if ($area != "") {
+            $offers->where('po.area_id', $area);
+        }
+        if ($searchStr != "") {
+            $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+        }
+
+
+        $priyojonOffers = $offers->get();
 
         return $priyojonOffers;
     }
