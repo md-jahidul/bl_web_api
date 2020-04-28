@@ -35,7 +35,7 @@ class PartnerOfferRepository extends BaseRepository
             ->where('po.is_active',1)
             ->where('po.show_in_home',1)
             ->join('partners as p', 'po.partner_id', '=', 'p.id')
-            ->join('partner_area_list as a', 'po.area_id', '=', 'a.id')
+            ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
             ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
             ->select('po.*', 'a.area_en', 'a.area_bn', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en','p.company_name_bn','p.company_logo')
             ->orderBy('po.display_order')
