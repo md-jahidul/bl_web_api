@@ -7,9 +7,8 @@ use App\Repositories\PartnerOfferRepository;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
 
+class PartnerOfferService extends ApiBaseService {
 
-class PartnerOfferService extends ApiBaseService
-{
     use CrudTrait;
 
     /**
@@ -21,8 +20,7 @@ class PartnerOfferService extends ApiBaseService
      * PartnerOfferService constructor.
      * @param PartnerOfferRepository $partnerOfferRepository
      */
-    public function __construct(PartnerOfferRepository $partnerOfferRepository)
-    {
+    public function __construct(PartnerOfferRepository $partnerOfferRepository) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
@@ -32,8 +30,7 @@ class PartnerOfferService extends ApiBaseService
      * @param string $json_data
      * In PHP, By default objects are passed as reference copy to a new Object.
      */
-    public function bindDynamicValues($obj, $json_data = 'other_attributes')
-    {
+    public function bindDynamicValues($obj, $json_data = 'other_attributes') {
         if (!empty($obj->{$json_data})) {
             foreach ($obj->{$json_data} as $key => $value) {
                 $obj->{$key} = $value;
@@ -46,8 +43,7 @@ class PartnerOfferService extends ApiBaseService
      * @param $products
      * @return array
      */
-    public function findRelatedProduct($products)
-    {
+    public function findRelatedProduct($products) {
         $data = [];
         foreach ($products as $product) {
 
@@ -57,12 +53,10 @@ class PartnerOfferService extends ApiBaseService
         return $data;
     }
 
-
     /**
      * @Get_Priyojon_Offers form Partner table
      */
-    public function priyojonOffers()
-    {
+    public function priyojonOffers() {
         try {
             $partnerOffers = $this->partnerOfferRepository->offers();
 
@@ -73,7 +67,54 @@ class PartnerOfferService extends ApiBaseService
                 return response()->success($partnerOffers, 'Data Found!');
             }
             return response()->error("Data Not Found!");
+        } catch (QueryException $exception) {
+            return response()->error("Something wrong", $exception);
+        }
+    }
 
+    /**
+     * @Get_Priyojon_Offers form Partner table
+     */
+    public function discountOffers($page, $elg, $cat, $area, $searchStr) {
+        try {
+
+            $data['status'] = array(
+                1 => "Silver",
+                2 => "Gold",
+                3 => "Platinum"
+            );
+            $data['categories'] = $this->partnerOfferRepository->getCategories();
+            $data['areas'] = $this->partnerOfferRepository->getAreas();
+
+            $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
+            $data['offers'] = PartnerOfferResource::collection($offers);
+
+            if ($data) {
+//                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
+                return response()->success($data, 'Data Found!');
+            }
+            return response()->error("Data Not Found!");
+        } catch (QueryException $exception) {
+            return response()->error("Something wrong", $exception);
+        }
+    }
+
+    /**
+     * @Get_Priyojon_Offers form Partner table
+     */
+    public function offerLike($id) {
+        try {
+
+            $offer = $this->findOrFail($id);
+            $offer->like = $offer->like + 1;
+
+            if ($offer->save()) {
+                $data['success'] = 1;
+                $data['like'] = $offer->like;
+                return $this->sendSuccessResponse($data, 'Likes');
+            }
+            $data['success'] = 0;
+            return $this->sendErrorResponse('Process failed');
         } catch (QueryException $exception) {
             return response()->error("Something wrong", $exception);
         }
