@@ -34,6 +34,8 @@ class AppServiceTabRepository extends BaseRepository
                             'like', 'app_review', 'app_rating',
                             'can_active',
                             'show_in_vas',
+                            'show_subscribe',
+                            'show_ussd',
                             'ussd_en', 'ussd_bn',
                             'subscribe_text_en',
                             'subscribe_text_bn',
