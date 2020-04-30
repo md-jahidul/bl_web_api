@@ -197,6 +197,7 @@ class HomePageController extends Controller {
         try {
             $componentList = ShortCode::where('page_id', 1)
                     ->where('is_active', 1)
+                    ->orderBy('sequence', 'ASC')
                     ->get();
 
             $metainfo = MetaTag::where('page_id', 1)
