@@ -96,7 +96,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
 
     // Product Purchase
-    Route::get('product/eligibility-check/{productCode}', 'API\V1\ProductController@eligibleCheck');
+    Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');

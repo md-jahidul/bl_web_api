@@ -95,9 +95,9 @@ class ProductController extends Controller
         return $productDetail = $this->productService->details($type, $id);
     }
 
-    public function eligibleCheck(Request $request, $productCode)
+    public function eligibleCheck($mobile, $productCode)
     {
-        return $this->productService->eligible($request, $productCode);
+        return $this->productService->eligible($mobile, $productCode);
     }
 
     public function purchase(Request $request)

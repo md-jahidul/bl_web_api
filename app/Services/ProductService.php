@@ -187,9 +187,10 @@ class ProductService extends ApiBaseService
         }
     }
 
-    public function eligible($request, $productCode)
+    public function eligible($mobile, $productCode)
     {
-        $customer = $this->customerService->getCustomerDetails($request);
+        $customer = $this->customerService->getCustomerInfoByPhone($mobile);
+
         $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
 
         foreach ($availableProducts as $availableProduct){
