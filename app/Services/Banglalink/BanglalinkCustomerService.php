@@ -43,6 +43,8 @@ class BanglalinkCustomerService extends BaseService
 
         $result = $this->get($end_point);
 
+
+
         if ($result['status_code'] == 200) {
             return $this->apiBaseService->sendSuccessResponse(
                 json_decode($result['response'], true),
@@ -51,6 +53,8 @@ class BanglalinkCustomerService extends BaseService
                 HttpStatusCode::SUCCESS
             );
         }
+
+//        dd($result);
 
         return $this->apiBaseService->sendErrorResponse(
             "Internal server error",

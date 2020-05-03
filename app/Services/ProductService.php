@@ -10,6 +10,7 @@ use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
 use App\Traits\CrudTrait;
@@ -32,6 +33,11 @@ class ProductService extends ApiBaseService
     protected $blProductService;
 
     /**
+     * @var BanglalinkProductService
+     */
+    protected $blCustomerService;
+
+    /**
      * @var CustomerService
      */
     protected $customerService;
@@ -52,6 +58,7 @@ class ProductService extends ApiBaseService
      * @param BanglalinkProductService $blProductService
      * @param CustomerService $customerService
      * @param ProductBookmarkRepository $productBookmarkRepository
+     * @param BanglalinkCustomerService $banglalinkCustomerService
      * @param BanglalinkLoanService $blLoanProductService
      */
     public function __construct
@@ -60,6 +67,7 @@ class ProductService extends ApiBaseService
         BanglalinkProductService $blProductService,
         CustomerService $customerService,
         ProductBookmarkRepository $productBookmarkRepository,
+        BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService
     )
     {
@@ -68,6 +76,7 @@ class ProductService extends ApiBaseService
         $this->customerService = $customerService;
         $this->productBookmarkRepository = $productBookmarkRepository;
         $this->blLoanProductService = $blLoanProductService;
+        $this->blCustomerService = $banglalinkCustomerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -179,7 +188,8 @@ class ProductService extends ApiBaseService
                     $this->bindDynamicValues($product, 'offer_info', $data);
                     unset($product->productCore);
                 }
-                return response()->success($viewAbleProducts, 'Data Found!');
+                return $this->sendSuccessResponse($viewAbleProducts, 'Data Found!');
+//                return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
         } catch (QueryException $exception) {
@@ -187,11 +197,21 @@ class ProductService extends ApiBaseService
         }
     }
 
+    /**
+     * @param $mobile
+     * @param $productCode
+     * @return JsonResponse|mixed
+     */
     public function eligible($mobile, $productCode)
     {
-        $customer = $this->customerService->getCustomerInfoByPhone($mobile);
+        $msisdn = "88" . $mobile;
+        $customer = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
 
-        $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
+        if ($customer->getData()->status_code == 500) {
+            return $this->sendErrorResponse([], 'Customer not found', 404);
+        }
+        $customer_account_id = $customer->getData()->data->package->customerId;
+        $availableProducts = $this->getProductCodesByCustomerId($customer_account_id);
 
         foreach ($availableProducts as $availableProduct){
             if ($availableProduct === strtoupper($productCode)) {
