@@ -95,6 +95,11 @@ class ProductController extends Controller
         return $productDetail = $this->productService->details($type, $id);
     }
 
+    public function eligibleCheck(Request $request, $productCode)
+    {
+        return $this->productService->eligible($request, $productCode);
+    }
+
     public function purchase(Request $request)
     {
         $validator = Validator::make($request->all(), ['product_code' => 'required']);

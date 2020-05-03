@@ -95,7 +95,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
     Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
 
-
+    // Product Purchase
+    Route::get('product/eligibility-check/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
@@ -175,7 +176,7 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # Sales and Service 
+    # Sales and Service
     Route::get('sales-service-locations', 'API\V1\SalesServiceController@getNearestStoreLocations');
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
     Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');

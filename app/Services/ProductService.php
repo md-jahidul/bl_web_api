@@ -187,6 +187,22 @@ class ProductService extends ApiBaseService
         }
     }
 
+    public function eligible($request, $productCode)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        $availableProducts = $this->getProductCodesByCustomerId($customer->customer_account_id);
+
+        foreach ($availableProducts as $availableProduct){
+            if ($availableProduct === strtoupper($productCode)) {
+                $data = [
+                    'is_eligible' => true
+                ];
+                return $this->sendSuccessResponse($data, 'This product eligible to you');
+            }
+        }
+        return $this->sendSuccessResponse($data = ['is_eligible' => false], 'This product not eligible to you');
+    }
+
     private function filterProductsByUser($allProducts, $availableProductIds)
     {
 
@@ -287,6 +303,7 @@ class ProductService extends ApiBaseService
     public function getProductCodesByCustomerId($customerId)
     {
         $customerProducts = $this->blProductService->getCustomerProducts($customerId);
+
         $productIds = [];
         foreach ($customerProducts as $product) {
             array_push($productIds, $product['code']);
