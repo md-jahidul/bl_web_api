@@ -88,11 +88,13 @@ class RoamingOfferRepository extends BaseRepository {
     }
 
     public function ratesAndBundle($country, $operator) {
-        $rates = RoamingRates::where(array('country' => $country, 'operator' => $operator))->get();
+        $ratesObj = RoamingRates::where(array('country' => $country, 'operator' => $operator));
         
-        if(empty($rates)){
-           $rates = RoamingRates::where(array('country' => $country))->get(); 
+        if($ratesObj->count() == 0){
+           $ratesObj = RoamingRates::where(array('country' => $country)); 
         }
+        
+        $rates = $ratesObj->get();
 
         $data = [];
 
