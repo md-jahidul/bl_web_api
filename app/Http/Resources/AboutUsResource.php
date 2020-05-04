@@ -16,6 +16,7 @@ class AboutUsResource extends JsonResource
     {
         return [
             'id'                      => $this->id ?? null,
+            'slug'                      => $this->slug ?? null,
             'title_en'                => $this->title ?? null,
             'title_bn'                => $this->title_bn ?? null,
             'banglalink_info_en'      => $this->banglalink_info ?? null,

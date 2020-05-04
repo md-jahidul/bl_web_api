@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Resources\PartnerOfferResource;
 use App\Http\Resources\QuickLaunchResource;
 use App\Http\Resources\SliderImageResource;
+use App\Models\BusinessOthers;
 use App\Models\QuickLaunch;
 use App\Models\QuickLaunchItem;
 use App\Models\AlSlider;
@@ -85,7 +86,7 @@ class HomePageController extends Controller {
                 $data = [];
 
                 if ($component == "Corona") {
-                    $bnsModel = \App\Models\BusinessOthers::where('type', $request->id)->first();
+                    $bnsModel = BusinessOthers::where('type', $request->id)->first();
                     $data['details_id'] = $bnsModel->id;
                     $data['url_slug'] = $bnsModel->url_slug;
                 }
