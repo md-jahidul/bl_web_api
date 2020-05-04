@@ -178,9 +178,9 @@ class ProductService extends ApiBaseService
             $products = $this->productRepository->simTypeProduct($type);
             $viewAbleProducts = $products;
 
-            if ($this->isUserLoggedIn($request)) {
-                $viewAbleProducts = $this->checkCustomerProduct($request, $viewAbleProducts);
-            }
+//            if ($this->isUserLoggedIn($request)) {
+//                $viewAbleProducts = $this->checkCustomerProduct($request, $viewAbleProducts);
+//            }
 
             if ($viewAbleProducts) {
                 foreach ($viewAbleProducts as $product) {
