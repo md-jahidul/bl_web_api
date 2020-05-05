@@ -413,7 +413,7 @@ class EcareerService {
                         $sub_data['description_bn'] = $items_value->description_bn;
 
                         $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
-
+                        $sub_data['video'] = $items_value->video;
                         $sub_data['alt_text'] = $items_value->alt_text;
                         // $sub_data['alt_links'] = $items_value->alt_links;
                         #teams tab content buttons
@@ -507,7 +507,7 @@ class EcareerService {
                         // $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
-
+                        $sub_items['video'] = $portal_items->video;
                         $sub_data['item_list'][] = $sub_items;
                     }
                 }
@@ -876,8 +876,8 @@ class EcareerService {
                         $sub_items['description_bn'] = $items_value->description_bn;
 
                         $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
-
                         $sub_items['alt_text'] = $items_value->alt_text;
+                        $sub_items['video'] = $items_value->video;
                         // $sub_items['alt_links'] = $items_value->alt_links;
                         #teams tab content buttons
                         //$sub_items['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;

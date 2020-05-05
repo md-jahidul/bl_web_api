@@ -5,6 +5,7 @@ namespace App\Services\Banglalink;
 use App\Enums\HttpStatusCode;
 use App\Repositories\CustomerRepository;
 use App\Services\ApiBaseService;
+use App\Services\CustomerService;
 use App\Services\IdpIntegrationService;
 use App\Services\NumberValidationService;
 use Carbon\Carbon;
@@ -29,10 +30,21 @@ class BalanceService extends BaseService
      */
     protected $customerRepository;
 
-    public function __construct(NumberValidationService $numberValidationService)
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
+    /**
+     * BalanceService constructor.
+     * @param CustomerService $customerService
+     * @param NumberValidationService $numberValidationService
+     */
+    public function __construct(CustomerService $customerService, NumberValidationService $numberValidationService)
     {
         $this->responseFormatter = new ApiBaseService();
         $this->customerRepository = new CustomerRepository();
+        $this->customerService = $customerService;
         $this->numberValidationService = $numberValidationService;
     }
 
@@ -131,13 +143,17 @@ class BalanceService extends BaseService
         return $data;
     }
 
+
+
     /**
-     * @param param changed from $customerAccountId to mobile
-     * @return JsonResponse
+     * Get Balance Summary
+     *
+     * @param $mobile
+     * @return array|JsonResponse
      */
     public function getBalanceSummary($mobile)
     {
-        
+
         $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
         if ($validationResponse->getData()->status == 'FAIL') {
             return $validationResponse;
@@ -173,6 +189,10 @@ class BalanceService extends BaseService
         return ['status' => 'SUCCESS', 'data' => $balanceSummary];
     }
 
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
     private function getInternetBalance($response)
     {
         $internet_data = collect($response->data);
@@ -196,6 +216,10 @@ class BalanceService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($data, 'Internet  Balance Details');
     }
 
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
     private function getSmsBalance($response)
     {
         $sms = collect($response->sms);
@@ -214,6 +238,11 @@ class BalanceService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($data, 'SMS  Balance Details');
     }
 
+
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
     private function getTalkTimeBalance($response)
     {
         $talk_time = collect($response->voice);
@@ -233,6 +262,10 @@ class BalanceService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
     }
 
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
     private function getMainBalance($response)
     {
         $balance_data = collect($response->money);
@@ -259,6 +292,12 @@ class BalanceService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($data, 'Main Balance Details');
     }
 
+
+    /**
+     * @param $type
+     * @param Request $request
+     * @return JsonResponse|mixed
+     */
     public function getBalanceDetails($type, Request $request)
     {
         $user = $this->getAuthenticateUser($request);
@@ -312,9 +351,9 @@ class BalanceService extends BaseService
         $balance_data_roaming = null;
         $balance_data_local = null;
         foreach ($balance_data as $item) {
-            
+
             if( $item->billingAccountType == 'ROAMING' ){
-                
+
                 $balance_data_roaming = $item;
             }
             elseif( $item->billingAccountType == 'LOCAL' ){
@@ -323,7 +362,7 @@ class BalanceService extends BaseService
             }
         }
 
-        
+
         //$is_eligible_to_loan =  $this->isEligibleToLoan($customer_id);
         $data['balance'] = [
             'amount' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0 ,
@@ -352,7 +391,7 @@ class BalanceService extends BaseService
                 if( !empty($local_product->code) && !empty($local_product->commercialName && !empty($local_product->usages) )  ){
 
                     foreach ($local_product->usages as $usages) {
-                        
+
                         if( $usages->serviceType == 'VOICE' ){
 
                             $local_product_usage['minutes'] = [
@@ -382,7 +421,7 @@ class BalanceService extends BaseService
 
                     }
                 }
-                
+
             }
         }
 
@@ -403,7 +442,7 @@ class BalanceService extends BaseService
                 if( !empty($roaming_product->code) && !empty($roaming_product->commercialName && !empty($roaming_product->usages) )  ){
 
                     foreach ($roaming_product->usages as $usages) {
-                        
+
                         if( $usages->serviceType == 'VOICE' ){
 
                             $roming_product_usage['minutes'] = [
@@ -433,7 +472,7 @@ class BalanceService extends BaseService
 
                     }
                 }
-                
+
             }
         }
 
@@ -445,11 +484,11 @@ class BalanceService extends BaseService
         $default_sms = !empty($local_product_usage['sms']) ? $local_product_usage['sms'] : ( !empty($roming_product_usage['sms']) ?  $roming_product_usage['sms'] : 0 );
 
         $default_internet = !empty($local_product_usage['internet']) ? $local_product_usage['internet'] : ( !empty($roming_product_usage['internet']) ?  $roming_product_usage['internet'] : 0 );
-         
+
         $data['minutes'] = $default_minutes;
         $data['sms'] = $default_sms;
         $data['internet'] = $default_internet;
-        
+
         return $data;
     }
 }

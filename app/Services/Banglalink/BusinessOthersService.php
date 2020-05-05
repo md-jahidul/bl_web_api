@@ -268,8 +268,12 @@ class BusinessOthersService {
      */
     private function _getFeaturesByService($serviceType, $serviceId) {
         $types = array("business-solution" => 2, "iot" => 3, "others" => 4);
+        
+        $response = [];
+        if(isset($types[$serviceType])){
         $parentType = $types[$serviceType];
         $response = $this->asgnFeatureRepo->getAssignedFeatures($serviceId, $parentType);
+        }
         return $response;
     }
 

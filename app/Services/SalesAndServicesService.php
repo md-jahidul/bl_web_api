@@ -7,6 +7,7 @@ use App\Repositories\SalesAndServicesRepository;
 use App\Repositories\SearchRepository;
 use App\Traits\CrudTrait;
 use App\Services\Assetlite\ComponentService;
+use Illuminate\Support\Facades\DB;
 
 class SalesAndServicesService
 {
@@ -46,7 +47,7 @@ class SalesAndServicesService
      * @return mixed
      */
     public function itemList()
-    {        
+    {
         $serviceCenterItems = $this->salesAndServicesRepository->getServiceCenterByDistrict('Dhaka');
         return $serviceCenterItems = SalesAndServicesResource::collection($serviceCenterItems);
     }
@@ -120,7 +121,7 @@ class SalesAndServicesService
             return $this->apiBaseService->sendErrorResponse('Data Not Found');
         }
 
-        
+
     }
 
     /**
@@ -146,6 +147,58 @@ class SalesAndServicesService
             return $this->apiBaseService->sendErrorResponse('Data Not Found');
         }
 
+    }
+
+
+    /**
+     * Get Nearest Sales and Service locations
+     *
+     * @param $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function getNearestLocations($request)
+    {
+        $current_longitude = $request->longitude;
+        $current_latitude = $request->latitude;
+        $distance = isset($request->distance) ? $request->distance : 5; //distance in KM
+
+        $sql = "SELECT *,
+       ( 6371 * acos( cos( radians($current_latitude) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($current_longitude) ) + sin( radians($current_latitude) ) * sin( radians( latitude ) ) ) ) AS distance
+        FROM store_locators having distance <= $distance ORDER BY distance";
+        $locations = DB::select($sql);
+
+        return $this->apiBaseService->sendSuccessResponse($this->formatData($locations), 'Nearest Sales and Service Locations');
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    public function formatData($data)
+    {
+        $formatted_data = [];
+
+        if (!empty($data)) {
+            foreach ($data as $val) {
+                $formatted_data [] = [
+                    'cc_code'                   => $val->cc_code,
+                    'cc_name'                   => $val->cc_name,
+                    'district'                  => $val->district,
+                    'thana'                     => $val->thana,
+                    'address'                   => $val->address,
+                    'longitude'                 => $val->longitude,
+                    'latitude'                  => $val->latitude,
+                    'opening_time'              => $val->opening_time,
+                    'closing_time'              => $val->closing_time,
+                    'holiday'                   => $val->holiday,
+                    'half_holiday'              => $val->half_holiday,
+                    'half_holiday_opening_time' => $val->half_holiday_opening_time,
+                    'half_holiday_closing_time' => $val->half_holiday_closing_time,
+                ];
+            }
+        }
+
+        return $formatted_data;
     }
 
 

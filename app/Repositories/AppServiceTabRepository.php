@@ -31,9 +31,11 @@ class AppServiceTabRepository extends BaseRepository
                             'price_tk',
                             'validity_unit',
                             'product_img_url',
-                            'like', 'app_rating',
+                            'like', 'app_review', 'app_rating',
                             'can_active',
                             'show_in_vas',
+                            'show_subscribe',
+                            'show_ussd',
                             'ussd_en', 'ussd_bn',
                             'subscribe_text_en',
                             'subscribe_text_bn',
@@ -41,7 +43,8 @@ class AppServiceTabRepository extends BaseRepository
                             'send_to',
                             'app_store_link',
                             'google_play_link',
-                            'url_slug'
+                            'url_slug',
+                            'other_info'
                         ])
                         ->where('status', 1)
                         ->checkStartEndDate();

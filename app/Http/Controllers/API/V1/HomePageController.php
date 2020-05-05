@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Resources\PartnerOfferResource;
 use App\Http\Resources\QuickLaunchResource;
 use App\Http\Resources\SliderImageResource;
+use App\Models\BusinessOthers;
 use App\Models\QuickLaunch;
 use App\Models\QuickLaunchItem;
 use App\Models\AlSlider;
@@ -70,7 +71,7 @@ class HomePageController extends Controller {
 
         $slider_images = $limit ? $query->limit($limit)->get() : $query->get();
 
-        $slider_images = $this->makeResource($slider_images);
+        $slider_images = $this->makeResource($slider_images, $component);
 
         $this->bindDynamicValues($slider);
 
@@ -79,10 +80,18 @@ class HomePageController extends Controller {
         return $slider;
     }
 
-    public function makeResource($requests) { {
+    public function makeResource($requests, $component) { {
             $result = [];
             foreach ($requests as $request) {
                 $data = [];
+
+                if ($component == "Corona") {
+                    $bnsModel = BusinessOthers::where('type', $request->id)->first();
+                    $data['details_id'] = $bnsModel->id;
+                    $data['url_slug'] = $bnsModel->url_slug;
+                }
+
+
                 $data["id"] = $request->id ?? null;
                 $data["slider_id"] = $request->slider_id ?? null;
                 $data["title_en"] = $request->title_en ?? null;
@@ -94,6 +103,9 @@ class HomePageController extends Controller {
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
+
+
+
                 if ($request->other_attributes) {
                     foreach ($request->other_attributes as $key => $value) {
                         $data[$key] = $value;
@@ -185,6 +197,7 @@ class HomePageController extends Controller {
         try {
             $componentList = ShortCode::where('page_id', 1)
                     ->where('is_active', 1)
+                    ->orderBy('sequence', 'ASC')
                     ->get();
 
             $metainfo = MetaTag::where('page_id', 1)

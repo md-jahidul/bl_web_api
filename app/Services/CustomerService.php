@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\IdpAuthException;
+use App\Exceptions\TokenInvalidException;
+use App\Exceptions\TokenNotFoundException;
+use App\Exceptions\TooManyRequestException;
 use App\Http\Requests\DeviceTokenRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
@@ -159,29 +162,161 @@ class CustomerService extends ApiBaseService
      *
      * @param $request
      * @return mixed
+     * @throws TokenInvalidException
+     * @throws TooManyRequestException
+     * @throws TokenNotFoundException
      */
     public function getAuthenticateCustomer($request)
     {
-        $bearerToken = ['token' => $request->header('authorization')];
+        if (!$request->bearerToken()) {
+            throw new TokenNotFoundException();
+        }
 
+        $bearerToken = ['token' => $request->header('authorization')];
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $data = json_decode($response, true);
+//        dd($response);
 
-
-        if ($data['token_status'] != 'Valid') {
-            return $this->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
+        if ($response['status_code'] == 429) {
+            throw new TooManyRequestException();
         }
 
-        $customer = $this->customerRepository->getCustomerInfoByPhone($data['user']['mobile']);
+        $data = json_decode($response['response'], true);
 
-        return $customer;
+        if ($data['token_status'] != 'Valid') {
+            throw new TokenInvalidException();
+        }
+
+        return $this->customerRepository->getCustomerInfoByPhone($data['user']['mobile']);
     }
 
 
+    /**
+     * @param $phone
+     * @return mixed
+     */
     public function getCustomerInfoByPhone($phone)
     {
         return $this->customerRepository->getCustomerInfoByPhone($phone);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws TokenInvalidException
+     */
+    public function getCustomerBasicInfo(Request $request)
+    {
+        $bearerToken = ['token' => $request->header('authorization')];
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $data = json_decode($response['response'], true);
+
+        if ($data['token_status'] != 'Valid') {
+            throw new TokenInvalidException();
+        }
+
+        if ($data['status'] != 'SUCCESS') {
+            return $this->sendErrorResponse("IDp service Unavailable", [], 500);
+        }
+
+        $msisdn_key = 'mobile';
+        $user = Customer::where('phone', $data['user'][$msisdn_key])->first();
+
+        if (!$user) {
+            throw new TokenInvalidException();
+        }
+
+        return $this->sendSuccessResponse(
+            $this->prepareCustomerBasicInfo($user, $data['user']),
+            'Customer Details Info'
+        );
+    }
+
+
+    /**
+     * @param $customer
+     * @param $data
+     * @return array
+     */
+    public function prepareCustomerBasicInfo($customer, $data)
+    {
+        return [
+            'id' => $customer->id,
+            'customer_account_id' => $customer->customer_account_id,
+            'name' => isset($data['name']) ? $data['name'] : null,
+            'msisdn_number' => $data['mobile'],
+            'connection_type' => Customer::connectionType($customer),
+            'email' => $data['email'],
+            'birth_date' => isset($data['birth_date']) ? $data['birth_date'] : null,
+            'enable_balance_transfer' => ($customer->balance_transfer_pin) ? true : false,
+            'package' => Customer::package($customer),
+            'is_password_set' => $data['is_password_set'] ? true : false
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws TokenInvalidException
+     */
+    public function getCustomerProfileImage(Request $request)
+    {
+        $bearerToken = ['token' => $request->header('authorization')];
+
+        $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $data = json_decode($response['response'], true);
+
+        if ($data['token_status'] != 'Valid') {
+            throw new TokenInvalidException();
+        }
+
+
+        if ($data['status'] != 'SUCCESS') {
+            return $this->sendErrorResponse("IDp service Unavailable", [], 500);
+        }
+
+        $msisdn_key = 'mobile';
+
+        $user = Customer::where('phone', $data['user'][$msisdn_key])->first();
+
+
+        if (!$user) {
+            throw new TokenInvalidException();
+        }
+
+        $response = IdpIntegrationService::getCustomerProfileImage($data['user'][$msisdn_key]);
+
+        if ($response['status_code'] != 200) {
+            return $this->sendErrorResponse('IDP Customer info Problem', [
+                'message' => 'Something went wrong. try again later',
+                'hint' => 'Getting HTTP error from IDP',
+                'details' => []
+            ], 400);
+        }
+
+        $data = json_decode($response['response'], true);
+
+        $customer = $this->prepareCustomerProfileImage($user, $data['data']);
+
+        return $this->sendSuccessResponse($customer, 'Customer Profile Image');
+    }
+
+
+    /**
+     * @param $customer
+     * @param $data
+     * @return array
+     */
+    public function prepareCustomerProfileImage($customer, $data)
+    {
+        return [
+            'name' => isset($data['name']) ? $data['name'] : null,
+            'mobile' =>   isset($data['mobile']) ? $data['mobile'] : null,
+            'profile_image' => isset($data['profile_image']) ? $data['profile_image'] : null
+        ];
     }
 }

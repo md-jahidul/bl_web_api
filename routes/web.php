@@ -12,7 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   // return view('welcome');
+    abort('403');
 });
 
 //Route::get( '/{path?}', function(){

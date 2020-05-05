@@ -127,6 +127,8 @@ class ProductBookmarkService extends ApiBaseService {
             foreach ($data['roming_bundle_offers'] as $k => $val) {
 
                 $response['roming_bundle_offers'][0]['category'] = $val->bookmark_category;
+                $response['roming_bundle_offers'][0]['category_en'] = "Roaming Bundle Offers";
+                $response['roming_bundle_offers'][0]['category_bn'] = "রোমিং এর বান্ডেল অফার";
                 $response['roming_bundle_offers'][0]['data'][$rbCount] = $val;
                 $rbCount++;
             }
@@ -135,6 +137,8 @@ class ProductBookmarkService extends ApiBaseService {
             foreach ($data['roaming_others_offers'] as $k => $val) {
 
                 $response['roaming_others_offers'][0]['category'] = $val->bookmark_category;
+                $response['roaming_others_offers'][0]['category_en'] = "Roaming Other Offers";
+                $response['roaming_others_offers'][0]['category_bn'] = "রোমিং এর অন্যান্য অফার";
                 $response['roaming_others_offers'][0]['data'][$roCount] = $val;
                 $roCount++;
             }
@@ -143,6 +147,8 @@ class ProductBookmarkService extends ApiBaseService {
             foreach ($data['roaming_info_tips'] as $k => $val) {
 
                 $response['roaming_info_tips'][0]['category'] = $val->bookmark_category;
+                $response['roaming_info_tips'][0]['category_en'] = "Roaming Info & Tips";
+                $response['roaming_info_tips'][0]['category_bn'] = "রোমিং এর তথ্য ও পরামর্শ";
                 $response['roaming_info_tips'][0]['data'][$riCount] = $val;
                 $riCount++;
             }

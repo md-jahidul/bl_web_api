@@ -31,6 +31,8 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}', 'API\V1\ProductController@productDetails');
 
+    Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
+
 
     Route::get('product-details/{id}', 'API\V1\ProductDetailsController@productDetails');
 
@@ -57,6 +59,8 @@ Route::group(['prefix' => '/v1'], function () {
 
     Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
+    Route::get('priyojon-discount-offers/{page}', 'API\V1\PriyojonController@discountOffers');
+    Route::get('priyojon-offers-like/{id}', 'API\V1\PriyojonController@offerLike');
 
     Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
 
@@ -86,6 +90,13 @@ Route::group(['prefix' => '/v1'], function () {
     // Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
 
+
+    // Balance
+    Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
+    Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
+
+    // Product Purchase
+    Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
@@ -165,9 +176,9 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('vas/{providerUrl}/content-list', 'API\V1\VasApiController@contentList');
     Route::get('vas/{providerUrl}/content-detail/{contentId}', 'API\V1\VasApiController@contentDetail');
 
-    # Sales and Service search results
+    # Sales and Service
+    Route::get('sales-service-locations', 'API\V1\SalesServiceController@getNearestStoreLocations');
     Route::post('sales-service/search-results', 'API\V1\SalesServiceController@salesServiceSearchResutls');
-
     Route::get('sales-service/districts', 'API\V1\SalesServiceController@salesServiceGetDistricts');
     Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 

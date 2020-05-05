@@ -37,8 +37,8 @@ class ProductBookmarkRepository extends BaseRepository {
                         . " concat(s.name, ' ', c.name_bn) as cat_bn,"
                         . "s.alias as sim_alias,"
                         . "c.alias as cat_alias,"
-                        . " pd.url_slug, p.*, pc.balance_check_ussd, pc.mrp_price, pc.price, pc.vat,"
-                        . " pc.validity, pc.validity_unit, pc.validity_in_days as validity_days, pc.internet_volume_mb, pc.sms_volume, pc.minute_volume"
+                        . " pd.url_slug, p.*, pc.balance_check_ussd, pc.mrp_price as price_tk, pc.price, pc.vat, pc.activation_ussd as ussd_en, "
+                        . " pc.validity, pc.validity_unit, pc.validity_in_days as validity_days, pc.internet_volume_mb, pc.call_rate as callrate_offer, pc.call_rate_unit, pc.sms_volume, pc.minute_volume"
                 )
                 ->leftJoin('products as p', 'p.id', '=', 'al_product_bookmarks.product_id')
                 ->leftJoin('product_cores as pc', 'pc.product_code', '=', 'p.product_code')
@@ -49,7 +49,7 @@ class ProductBookmarkRepository extends BaseRepository {
                 ->where('al_product_bookmarks.mobile', '=', $mobile)
                 ->whereRaw("(al_product_bookmarks.category = 'prepaid-internet' OR al_product_bookmarks.category = 'prepaid-voice'"
                         . " OR al_product_bookmarks.category = 'prepaid-bundle' OR al_product_bookmarks.category = 'postpaid-internet'"
-                        . " OR al_product_bookmarks.category = 'prepaid-other-offers')")
+                        . " OR al_product_bookmarks.category = 'prepaid-other-offers')")->orderBy('al_product_bookmarks.category')
                 ->get();
 
         $response['roming_bundle_offers'] = $this->model->selectRaw(

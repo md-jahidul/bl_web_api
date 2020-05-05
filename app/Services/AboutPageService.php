@@ -18,6 +18,9 @@ class AboutPageService
      */
     protected $aboutPageRepository;
 
+    protected const PRIYOJON = "priyojon";
+    protected const REWARD_POINTS = "reward_points";
+
     /**
      * AboutPageService constructor.
      * @param AboutPageRepository $aboutPageRepository
@@ -35,12 +38,14 @@ class AboutPageService
     public function aboutDetails($slug)
     {
         try {
-            $data = $this->aboutPageRepository->findDetail($slug);
-            if (!empty($data)) {
-                $aboutDetails = AboutPriyojonResource::collection($data);
-                return response()->success($aboutDetails, 'Data Found!');
+            if ($slug == self::PRIYOJON || $slug == self::REWARD_POINTS){
+                $data = $this->aboutPageRepository->findDetail($slug);
+                if (!empty($data)) {
+                    $aboutDetails = AboutPriyojonResource::collection($data);
+                    return response()->success($aboutDetails, 'Data Found!');
+                }
             }
-            return response()->error("Data Not Found!");
+            return response()->error("Invalid Parameter");
         } catch (QueryException $exception) {
             return response()->error("Something Wrong", $exception);
         }
