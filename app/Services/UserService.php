@@ -395,6 +395,7 @@ class UserService extends ApiBaseService
             }
         }
 
+        $data['platform'] = 'assetelite';
         $user = $this->userRepository->create($data);
 
         return ['status' => 'SUCCESS', 'data' => $user];
