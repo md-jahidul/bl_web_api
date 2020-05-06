@@ -111,7 +111,7 @@ class PartnerOfferService extends ApiBaseService {
             if ($offer->save()) {
                 $data['success'] = 1;
                 $data['like'] = $offer->like;
-                return $this->sendSuccessResponse($data, 'Likes');
+                return $this->sendSuccessResponse($data, 'Offer Liked Successfully!');
             }
             $data['success'] = 0;
             return $this->sendErrorResponse('Process failed');
