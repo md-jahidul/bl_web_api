@@ -15,6 +15,7 @@ use App\Models\AlProductBookmark;
 use App\Models\Product;
 use App\Models\ProductBookmark;
 use App\Services\Banglalink\BanglalinkProductService;
+use App\Services\Banglalink\ProductLoanService;
 use App\Services\Banglalink\PurchaseService;
 use App\Services\CustomerService;
 use App\Services\ProductDetailService;
@@ -50,10 +51,15 @@ class ProductController extends Controller
      * @var BanglalinkProductService
      */
     private $blProductService;
+    /**
+     * @var ProductLoanService
+     */
+    private $productLoanService;
 
     /**
      * ProductController constructor.
      * @param ProductService $productService
+     * @param ProductLoanService $productLoanService
      * @param ProductDetailService $productDetailService
      * @param PurchaseService $purchaseService
      * @param BanglalinkProductService $blProductService
@@ -61,6 +67,7 @@ class ProductController extends Controller
      */
     public function __construct(
         ProductService $productService,
+        ProductLoanService $productLoanService,
         ProductDetailService $productDetailService,
         PurchaseService $purchaseService,
         BanglalinkProductService $blProductService,
@@ -68,6 +75,7 @@ class ProductController extends Controller
     )
     {
         $this->productService = $productService;
+        $this->productLoanService = $productLoanService;
         $this->productDetailService = $productDetailService;
         $this->purchaseService = $purchaseService;
         $this->blProductService = $blProductService;
@@ -146,9 +154,8 @@ class ProductController extends Controller
 
     public function customerLoanProducts(Request $request, $loanType)
     {
-        $customer = $this->customerService->getCustomerDetails($request);
-        $customerId = $customer->customer_account_id;
-        return $this->productService->getCustomerLoanProducts($customerId, $loanType);
+//        dd($request);
+        return $this->productLoanService->getLoanInfo($request, $loanType);
     }
 
     /**
