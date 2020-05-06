@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Enums\MyBlAppSettingsKey;
+use App\Models\Config;
 use App\Models\Customer;
 use App\Models\MyBlAppSettings;
 use App\Models\MyBlProduct;
@@ -24,6 +25,8 @@ class ProductLoanService extends BaseService
     protected $responseFormatter;
     protected const CUSTOMER_INFO_API_ENDPOINT = "/customer-information/customer-information";
     protected const BALANCE_API_ENDPOINT = "/customer-information/customer-information";
+
+    protected const ADVANCE_MINIMUM_BALANCE = "advance_minimum_balance";
     /**
      * @var CustomerRepository
      */
@@ -142,8 +145,17 @@ class ProductLoanService extends BaseService
                 400
             );
         }
+
+
         $balance = $this->getMainBalance($customer_account_id);
+
+
+        $eligibility_cap = Config::where('key', self::ADVANCE_MINIMUM_BALANCE)->first()->value;
+
         $min_amount = 10;
+        if ($eligibility_cap){
+            $min_amount = (int)$eligibility_cap;
+        }
 
         // Balance Check more than 10 tk
         if ($loanType == "balance"){

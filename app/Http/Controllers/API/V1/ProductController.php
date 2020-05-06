@@ -154,7 +154,6 @@ class ProductController extends Controller
 
     public function customerLoanProducts(Request $request, $loanType)
     {
-//        dd($request);
         return $this->productLoanService->getLoanInfo($request, $loanType);
     }
 
