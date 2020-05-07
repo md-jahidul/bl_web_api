@@ -102,6 +102,7 @@ class ProductRepository extends BaseRepository
                 'sim_category_id',
                 'offer_category_id',
                 'offer_info',
+                'validity_postpaid',
                 'name_en',
                 'name_bn',
                 'ussd_bn',
