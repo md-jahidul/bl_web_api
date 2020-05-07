@@ -366,6 +366,11 @@ class UserService extends ApiBaseService
         return $user ? true : false;
     }
 
+    /**
+     * @param $customerInfo
+     * @param $mobile
+     * @return array
+     */
     private function register($customerInfo, $mobile)
     {
         $data['mobile'] = $mobile;
