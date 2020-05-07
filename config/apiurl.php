@@ -18,7 +18,7 @@ return [
     'ssl_api_host' => env('SSL_API_HOST', 'https://easy.com.bd/blweb/test'),
 
     'lever_api_host' => env('LEVER_API_HOST', 'https://api.lever.co/v0'),
-    'lever_api_client' => env('LEVER_API_CLIENT', 'leverdemo'), // vimpelcom, leverdemo
+    'lever_api_client' => env('LEVER_API_CLIENT', 'vimpelcom'), // vimpelcom, leverdemo
 ];
 
 ?>
