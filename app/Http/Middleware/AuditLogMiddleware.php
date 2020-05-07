@@ -37,7 +37,7 @@ class AuditLogMiddleware
     {
         AuditLog::create([
             'msisdn' => $request->header('msisdn'),
-            'source' => 'assetelite',
+            'source' => 'assetlite',
             //'source' => $request->header('platform'),
             'browse_url' => $request->path(),
             'browser_info' => $request->header('browser'),
