@@ -1,0 +1,53 @@
+[
+    {
+        "catName": "Commercial Division",
+        "departments": {
+            "0": "B2C Sales & Distribution",
+            "1": "CCO Office",
+            "2": "Commercial Strategy & Planning",
+            "3": "Customer Experience and Service",
+            "4": "Digital Business",
+            "5": "Enterprise Business",
+            "6": "JAZZ"
+        }
+    },
+    {
+        "catName": "Enablers",
+        "departments": {
+            "0": "Adminstration",
+            "1": "CC&RAO Office",
+            "2": "CFO Office",
+            "3": "Compliance",
+            "4": "Corporate Communications",
+            "5": "Corporate Finance & Treasury and PMO",
+            "6": "Corporate Responsibility",
+            "7": "Enterprise Risk Management",
+            "8": "Finance Control",
+            "9": "Financial Planning and Analysis",
+            "10": "Forensic",
+            "11": "Human Resources",
+            "12": "Legal Affairs",
+            "13": "Public and Digital Policy",
+            "14": "Regulatory Affairs and Connectivity Business",
+            "15": "Regulatory Compliance",
+            "16": "Revenue Assurance",
+            "17": "Stakeholders Relations",
+            "18": "Supply Chain",
+            "19": "CEO Office",
+            "20": "Internal Audit"
+        }
+    },
+    {
+        "catName": "Technology",
+        "departments": {
+            "0": "Busines Service Management",
+            "1": "CTO Office",
+            "2": "Infrastructure Service Management",
+            "3": "Network Service Management",
+            "4": "Service Assurance Management",
+            "5": "Technology Financial Management",
+            "6": "Technology Governance & Cyber Security",
+            "7": "Technology Program Management"
+        }
+    }
+]

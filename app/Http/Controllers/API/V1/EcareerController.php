@@ -364,6 +364,8 @@ class EcareerController extends Controller {
             $data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
             $data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
             $data['job_offers'] = $this->ecarrerService->getVacancyLeverJobOffers();
+            
+            return $data['job_offers'];
 
 
             return response()->success($data, 'Data Found!');
