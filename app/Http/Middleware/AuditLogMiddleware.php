@@ -19,7 +19,7 @@ class AuditLogMiddleware
 
         try {
             $msisdn = "01999998963";
-            $this->keepAuditLogs($request, $msisdn);
+            $this->saveAuditLogs($request, $msisdn);
 
         } catch (\Exception $e) {
             Log::error('Audit Log Error : ' . $e->getMessage());
@@ -33,11 +33,11 @@ class AuditLogMiddleware
      * @param $request
      * @param $user
      */
-    private function keepAuditLogs($request, $msisdn)
+    private function saveAuditLogs($request, $msisdn)
     {
         AuditLog::create([
             'msisdn' => $msisdn,
-            'source' => $request->header('platform'),
+            //'source' => $request->header('platform'),
             'browse_url' => $request->path(),
             'user_ip' => $request->ip(),
             'device_id' => "",

@@ -158,7 +158,7 @@ Route::group(['prefix' => '/v1'], function () {
 
 
     // AboutUsBanglalink
-    Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
+    Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink')->middleware('audit.log');;
     Route::get('about-us-management', 'API\V1\AboutUsController@getAboutManagement');
     Route::get('about-us-eCareer', 'API\V1\AboutUsController@getEcareersInfo');
 
