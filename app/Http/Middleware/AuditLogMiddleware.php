@@ -18,7 +18,14 @@ class AuditLogMiddleware
     {
 
         try {
-            $msisdn = "01999998963";
+            $number = $request->header('msisdn');
+
+            if (preg_match('/^[0-9]*$/', $number)) {
+                $msisdn = $number;
+            } else {
+                $msisdn = "";
+            }
+
             $this->saveAuditLogs($request, $msisdn);
 
         } catch (\Exception $e) {
@@ -31,18 +38,16 @@ class AuditLogMiddleware
 
     /**
      * @param $request
-     * @param $user
+     * @param $msisdn
      */
     private function saveAuditLogs($request, $msisdn)
     {
         AuditLog::create([
-            'msisdn' => $request->header('msisdn'),
+            'msisdn' => $msisdn,
             'source' => 'assetlite',
-            //'source' => $request->header('platform'),
             'browse_url' => $request->path(),
             'browser_info' => $request->header('browser'),
-            'user_ip' => $request->ip(),
-            'device_id' => "",
+            'user_ip' => $request->ip()
         ]);
     }
 }
