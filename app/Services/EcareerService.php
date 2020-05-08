@@ -671,7 +671,7 @@ class EcareerService {
         $results = null;
 
         $categoryJson = $this->loadJSON();
-        
+
 
 
         # get job offer titles
@@ -713,7 +713,7 @@ class EcareerService {
             if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
 
                 $response = json_decode($response->getBody()->getContents(), true);
-                
+
 
 //                $mod_response = array_map(function($ar) {
 //
@@ -733,29 +733,26 @@ class EcareerService {
 //                }, $response);
 //
 //                $lever_content = $mod_response;
-                
+
                 $jobData = [];
-                foreach($categoryJson as $k => $cats){
-                 
-                    
-                    foreach($response as $val){
-                        
-                        $jobData[$k]['tabName'] = $cats->catName;
-                        
-                        $depArray = (array) $cats->departments;
-                        if( in_array($val['categories']['team'], $depArray) ){
-                            unset($val['additional']);
-                            unset($val['description']);
-                            unset($val['descriptionPlain']);
-                            $val['additionalPlain'] = substr($val['additionalPlain'], 0, 250);
-                            $jobData[$k]['jobs'][] = $val;
+                foreach ($categoryJson as $k => $cats) {
+
+                    $jobData[$k]['tabName'] = $cats->catName;
+                    foreach ($response as $val) {
+
+                        if (isset($val['categories']['department']) && $val['categories']['department'] == "BANGLALINK") {
+
+                            $depArray = (array) $cats->departments;
+                            if (isset($val['categories']['team']) && in_array($val['categories']['team'], $depArray)) {
+                                unset($val['additional']);
+                                unset($val['description']);
+                                unset($val['descriptionPlain']);
+                                $val['additionalPlain'] = substr($val['additionalPlain'], 0, 250);
+                                $jobData[$k]['jobs'][] = $val;
+                            }
                         }
-                       
                     }
-                    
-                       
                 }
-                
             }
         } catch (BadResponseException $e) {
             // $response = $e->getResponse();
@@ -777,7 +774,7 @@ class EcareerService {
 
         try {
             $path = public_path() . "/config-json/job-categories.json"; // ie: /var/www/laravel/app/storage/json/filename.json
-            
+
             if (!File::exists($path)) {
                 throw new \Exception("Invalid File");
             }
