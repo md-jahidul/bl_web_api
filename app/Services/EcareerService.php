@@ -743,7 +743,7 @@ class EcareerService {
                         $jobData[$k]['tabName'] = $cats->catName;
                         
                         $depArray = (array) $cats->departments;
-                        if( in_array($val['categories']['department'], $depArray) ){
+                        if( in_array($val['categories']['team'], $depArray) ){
                             unset($val['additional']);
                             unset($val['description']);
                             unset($val['descriptionPlain']);
