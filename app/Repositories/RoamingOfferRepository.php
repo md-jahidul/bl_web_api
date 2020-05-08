@@ -89,11 +89,11 @@ class RoamingOfferRepository extends BaseRepository {
 
     public function ratesAndBundle($country, $operator) {
         $ratesObj = RoamingRates::where(array('country' => $country, 'operator' => $operator));
-        
-        if($ratesObj->count() == 0){
-           $ratesObj = RoamingRates::where(array('country' => $country)); 
+
+        if ($ratesObj->count() == 0) {
+            $ratesObj = RoamingRates::where(array('country' => $country));
         }
-        
+
         $rates = $ratesObj->get();
 
         $data = [];
@@ -110,23 +110,49 @@ class RoamingOfferRepository extends BaseRepository {
 
         $bundles = RoamingBundles::where(array('country' => $country, 'operator' => $operator, 'status' => 1))->get();
 
-        $data['bundles'] = array();
+        $data['prepaid_bundles'] = array();
+        $data['postpaid_bundles'] = array();
+
+        $preCount = 0;
+        $postCount = 0;
         foreach ($bundles as $key => $val) {
-            $data['bundles'][$key]['id'] = $val->id;
-            $data['bundles'][$key]['subscription_type'] = $val->subscription_type;
-            $data['bundles'][$key]['product_code'] = $val->product_code;
-            $data['bundles'][$key]['package_name_en'] = $val->package_name_en;
-            $data['bundles'][$key]['package_name_bn'] = $val->package_name_bn;
-            $data['bundles'][$key]['data_volume'] = $val->data_volume;
-            $data['bundles'][$key]['data_volume_unit'] = $val->volume_data_unit;
-            $data['bundles'][$key]['validity'] = $val->validity;
-            $data['bundles'][$key]['validity_unit'] = $val->validity_unit;
-            $data['bundles'][$key]['sms_volume'] = $val->sms_volume;
-            $data['bundles'][$key]['minute_volume'] = $val->minute_volume;
-            $data['bundles'][$key]['price_tk'] = round($val->mrp, 2);
-            $data['bundles'][$key]['like'] = $val->like;
-            $data['bundles'][$key]['details_en'] = $val->details_en;
-            $data['bundles'][$key]['details_bn'] = $val->details_bn;
+
+            if (strtolower($val->subscription_type) != 'postpaid') {
+                $data['prepaid_bundles'][$preCount]['id'] = $val->id;
+                $data['prepaid_bundles'][$preCount]['subscription_type'] = $val->subscription_type;
+                $data['prepaid_bundles'][$preCount]['product_code'] = $val->product_code;
+                $data['prepaid_bundles'][$preCount]['package_name_en'] = $val->package_name_en;
+                $data['prepaid_bundles'][$preCount]['package_name_bn'] = $val->package_name_bn;
+                $data['prepaid_bundles'][$preCount]['data_volume'] = $val->data_volume;
+                $data['prepaid_bundles'][$preCount]['data_volume_unit'] = $val->volume_data_unit;
+                $data['prepaid_bundles'][$preCount]['validity'] = $val->validity;
+                $data['prepaid_bundles'][$preCount]['validity_unit'] = $val->validity_unit;
+                $data['prepaid_bundles'][$preCount]['sms_volume'] = $val->sms_volume;
+                $data['prepaid_bundles'][$preCount]['minute_volume'] = $val->minute_volume;
+                $data['prepaid_bundles'][$preCount]['price_tk'] = round($val->mrp, 2);
+                $data['prepaid_bundles'][$preCount]['like'] = $val->like;
+                $data['prepaid_bundles'][$preCount]['details_en'] = $val->details_en;
+                $data['prepaid_bundles'][$preCount]['details_bn'] = $val->details_bn;
+                $preCount++;
+            }
+
+            if (strtolower($val->subscription_type) != 'prepaid') {
+                $data['postpaid_bundles'][$postCount]['id'] = $val->id;
+                $data['postpaid_bundles'][$postCount]['subscription_type'] = $val->subscription_type;
+                $data['postpaid_bundles'][$postCount]['product_code'] = $val->product_code;
+                $data['postpaid_bundles'][$postCount]['package_name_en'] = $val->package_name_en;
+                $data['postpaid_bundles'][$postCount]['package_name_bn'] = $val->package_name_bn;
+                $data['postpaid_bundles'][$postCount]['data_volume'] = $val->data_volume;
+                $data['postpaid_bundles'][$postCount]['data_volume_unit'] = $val->volume_data_unit;
+                $data['postpaid_bundles'][$postCount]['validity'] = $val->validity;
+                $data['postpaid_bundles'][$postCount]['validity_unit'] = $val->validity_unit;
+                $data['postpaid_bundles'][$postCount]['sms_volume'] = $val->sms_volume;
+                $data['postpaid_bundles'][$postCount]['minute_volume'] = $val->minute_volume;
+                $data['postpaid_bundles'][$postCount]['price_tk'] = round($val->mrp, 2);
+                $data['postpaid_bundles'][$postCount]['like'] = $val->like;
+                $data['postpaid_bundles'][$postCount]['details_en'] = $val->details_en;
+                $data['postpaid_bundles'][$postCount]['details_bn'] = $val->details_bn;
+            }
         }
 
         return $data;
