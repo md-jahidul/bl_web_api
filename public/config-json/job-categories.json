@@ -11,6 +11,19 @@
         }
     },
     {
+        "catName": "Technology",
+        "departments": {
+            "0": "Busines Service Management",
+            "1": "CTO Office",
+            "2": "Infrastructure Service Management",
+            "3": "Network Service Management",
+            "4": "Service Assurance Management",
+            "5": "Technology Financial Management",
+            "6": "Technology Governance & Cyber Security",
+            "7": "Technology Program Management"
+        }
+    },
+    {
         "catName": "Enablers",
         "departments": {
             "0": "Adminstration",
@@ -35,18 +48,6 @@
             "19": "CEO Office",
             "20": "Internal Audit"
         }
-    },
-    {
-        "catName": "Technology",
-        "departments": {
-            "0": "Busines Service Management",
-            "1": "CTO Office",
-            "2": "Infrastructure Service Management",
-            "3": "Network Service Management",
-            "4": "Service Assurance Management",
-            "5": "Technology Financial Management",
-            "6": "Technology Governance & Cyber Security",
-            "7": "Technology Program Management"
-        }
     }
+    
 ]
