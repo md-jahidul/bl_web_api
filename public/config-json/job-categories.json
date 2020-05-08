@@ -1,6 +1,6 @@
 [
     {
-        "catName": "Commercial Division",
+        "catName": "Commercial",
         "departments": {
             "0": "B2C Sales & Distribution",
             "1": "CCO Office",
@@ -8,6 +8,19 @@
             "3": "Customer Experience and Service",
             "4": "Digital Business",
             "5": "Enterprise Business"
+        }
+    },
+    {
+        "catName": "Technology",
+        "departments": {
+            "0": "Busines Service Management",
+            "1": "CTO Office",
+            "2": "Infrastructure Service Management",
+            "3": "Network Service Management",
+            "4": "Service Assurance Management",
+            "5": "Technology Financial Management",
+            "6": "Technology Governance & Cyber Security",
+            "7": "Technology Program Management"
         }
     },
     {
@@ -35,18 +48,6 @@
             "19": "CEO Office",
             "20": "Internal Audit"
         }
-    },
-    {
-        "catName": "Technology",
-        "departments": {
-            "0": "Busines Service Management",
-            "1": "CTO Office",
-            "2": "Infrastructure Service Management",
-            "3": "Network Service Management",
-            "4": "Service Assurance Management",
-            "5": "Technology Financial Management",
-            "6": "Technology Governance & Cyber Security",
-            "7": "Technology Program Management"
-        }
     }
+    
 ]
