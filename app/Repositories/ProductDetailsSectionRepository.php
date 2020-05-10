@@ -18,9 +18,11 @@ class ProductDetailsSectionRepository extends BaseRepository
     public function section($productId)
     {
         return $this->model->where('product_id', $productId)
+            ->where('status', 1)
             ->with(['components' => function($q){
                 $q->orderBy('component_order', 'ASC')
                     ->where('page_type', 'product_details')
+                    ->where('status', 1)
                     ->with(['productInfo' => function ($productInfo){
                         $productInfo->select(
                             'id', 'product_code',
