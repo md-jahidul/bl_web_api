@@ -14,6 +14,7 @@ use GuzzleHttp\Exception\BadResponseException;
 use App\Models\University;
 use App\Models\EcareerPortalForm;
 use Illuminate\Database\QueryException;
+use File;
 
 class EcareerService {
 
@@ -669,6 +670,10 @@ class EcareerService {
 
         $results = null;
 
+        $categoryJson = $this->loadJSON();
+
+
+
         # get job offer titles
         $vacancy_job_offer_title = $this->getProgramsByCateogryType('vacancy_pioneer', 'job_offers_title');
         $job_offer_title = [];
@@ -702,31 +707,52 @@ class EcareerService {
         $client = new Client();
         try {
             $response = $client->get(
-                    config('apiurl.lever_api_host') . '/postings/' . config('apiurl.lever_api_client') . '/?skip=0&limit=6&mode=json'
+                    config('apiurl.lever_api_host') . '/postings/' . config('apiurl.lever_api_client') . '/?skip=0&mode=json'
             );
 
             if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
 
                 $response = json_decode($response->getBody()->getContents(), true);
 
-                $mod_response = array_map(function($ar) {
 
-                    if (isset($ar['description'])) {
-                        unset($ar['description']);
+//                $mod_response = array_map(function($ar) {
+//
+//                    if (isset($ar['description'])) {
+//                        unset($ar['description']);
+//                    }
+//
+//                    if (isset($ar['descriptionPlain'])) {
+//                        unset($ar['descriptionPlain']);
+//                    }
+//
+//                    if (isset($ar['additional'])) {
+//                        unset($ar['additional']);
+//                    }
+//
+//                    return $ar;
+//                }, $response);
+//
+//                $lever_content = $mod_response;
+
+                $jobData = [];
+                foreach ($categoryJson as $k => $cats) {
+
+                    $jobData[$k]['tabName'] = $cats->catName;
+                    foreach ($response as $val) {
+
+                        if (isset($val['categories']['department']) && $val['categories']['department'] == "BANGLALINK") {
+
+                            $depArray = (array) $cats->departments;
+                            if (isset($val['categories']['team']) && in_array($val['categories']['team'], $depArray)) {
+                                unset($val['additional']);
+                                unset($val['description']);
+                                unset($val['descriptionPlain']);
+                                $val['additionalPlain'] = substr($val['additionalPlain'], 0, 250);
+                                $jobData[$k]['jobs'][] = $val;
+                            }
+                        }
                     }
-
-                    if (isset($ar['descriptionPlain'])) {
-                        unset($ar['descriptionPlain']);
-                    }
-
-                    if (isset($ar['additional'])) {
-                        unset($ar['additional']);
-                    }
-
-                    return $ar;
-                }, $response);
-
-                $lever_content = $mod_response;
+                }
             }
         } catch (BadResponseException $e) {
             // $response = $e->getResponse();
@@ -737,11 +763,27 @@ class EcareerService {
             \Log::channel('lever_api_log')->info('Technical error when lever api parsing data');
         };
 
-        $results['job_offers_content'] = $lever_content;
+        $results['job_offers_content'] = $jobData;
         # lever api end
 
 
         return $results;
+    }
+
+    public function loadJSON() {
+
+        try {
+            $path = public_path() . "/config-json/job-categories.json"; // ie: /var/www/laravel/app/storage/json/filename.json
+
+            if (!File::exists($path)) {
+                throw new \Exception("Invalid File");
+            }
+
+            $file = File::get($path); // string
+            return json_decode($file);
+        } catch (\Exception $e) {
+            return $e;
+        };
     }
 
     /**
