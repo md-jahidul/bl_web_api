@@ -46,6 +46,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
     Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');
 
+    //Bondho SIM OFFER ========================================
+    Route::get('check/bondho-sim-offer/{mobile}', 'API\V1\BondhoSimOfferController@getBondhoSimOfferCheck');
+
     //Bookmark =======================================
     Route::post('product/bookmark/save-remove', 'API\V1\ProductController@bookmarkProductSaveRemove');
 //    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
