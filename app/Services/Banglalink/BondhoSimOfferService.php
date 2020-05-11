@@ -55,7 +55,7 @@ class BondhoSimOfferService extends BaseService
 
         if ($response_data['status_code'] == 200){
             $response = json_decode($response_data['response'], true);
-            return $this->responseFormatter->sendSuccessResponse($response, 'Bondho SIM Offer Response');
+            return $this->responseFormatter->sendSuccessResponse($response, 'Bondho SIM Offer Applicable Response');
         }
 
         return $this->responseFormatter->sendErrorResponse('Internal Server error', 500);
