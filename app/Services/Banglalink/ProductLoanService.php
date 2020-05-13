@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Enums\MyBlAppSettingsKey;
+use App\Models\AlCoreProduct;
 use App\Models\Config;
 use App\Models\Customer;
 use App\Models\MyBlAppSettings;
@@ -183,7 +184,7 @@ class ProductLoanService extends BaseService
     {
         $availableLoanProducts = [];
         foreach ($loanProducts as $loan) {
-            $product = ProductCore::where('product_code', $loan['code'])->first();
+            $product = AlCoreProduct::where('product_code', $loan['code'])->first();
             if (empty($product)) {
                 return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
             }
