@@ -146,15 +146,12 @@ class AmarOfferService extends BaseService
      */
     public function getAmarOfferList(Request $request)
     {
-
         $customerInfo = $this->customerService->getCustomerDetails($request);
 
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
 
-        $response_data = json_decode($response_data['response'], true);
-
-        if ($response_data['status'] == 200){
-            $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response'], true));
+        if ($response_data['status_code'] == 200){
+            $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
             return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
         }
 
