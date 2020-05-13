@@ -410,7 +410,7 @@ class EcareerService {
                     foreach ($value->portalItems as $items_value) {
                         $sub_data['title_en'] = $items_value->title_en;
                         $sub_data['title_bn'] = $items_value->title_bn;
-                        $sub_data['description_en'] = $items_value->description_bn;
+                        $sub_data['description_en'] = $items_value->description_en;
                         $sub_data['description_bn'] = $items_value->description_bn;
 
                         $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
