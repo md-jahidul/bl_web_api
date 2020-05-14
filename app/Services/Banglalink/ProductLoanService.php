@@ -124,9 +124,9 @@ class ProductLoanService extends BaseService
     {
         $user = $this->customerService->getCustomerDetails($request);
 
-//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber(8801932287502);
+        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber(8801962424479);
 
-        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
+//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
 
         $customer_type = $customerInfo->getData()->data->connectionType;
         $customer_account_id = $customerInfo->getData()->data->package->customerId;
@@ -176,7 +176,7 @@ class ProductLoanService extends BaseService
         }
         return $this->responseFormatter->sendSuccessResponse(
             [],
-            "ALREADY_AVAILED"
+            "NOT_ELIGIBLE"
         );
     }
 
