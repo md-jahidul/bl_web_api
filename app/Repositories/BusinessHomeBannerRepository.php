@@ -19,6 +19,7 @@ class BusinessHomeBannerRepository extends BaseRepository {
         $count = 0;
         foreach($banners as $v){
             $data[$count]['image'] = $v->image_name == "" ? "" : config('filesystems.image_host_url'). $v->image_name;
+            $data[$count]['image_mobile'] = $v->image_name_mobile == "" ? "" : config('filesystems.image_host_url'). $v->image_name_mobile;
             $data[$count]['alt_text'] = $v->alt_text;
             $data[$count]['sort'] = $v->home_sort == 1 ? 'left' : 'right';
             $count++;
