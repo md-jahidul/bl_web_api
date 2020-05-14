@@ -29,9 +29,9 @@ class BusinessPackageRepository extends BaseRepository {
             $data[$count]['slug'] = 'packages';
             $data[$count]['name_en'] = $p->name;
             $data[$count]['name_bn'] = $p->name_bn;
-            $data[$count]['banner_photo'] = $p->banner_photo == "" ? "" : config('filesystems.image_host_url') . $p->banner_photo;
-            $data[$count]['banner_photo_mobile'] = $p->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $p->banner_image_mobile;
-            $data[$count]['alt_text'] = $p->alt_text;
+            $data[$count]['banner_photo'] = $p->card_banner_web == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_web;
+            $data[$count]['banner_photo_mobile'] = $p->card_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_mobile;
+            $data[$count]['alt_text'] = $p->card_banner_alt_text;
             $data[$count]['short_details_en'] = $p->short_details;
             $data[$count]['short_details_bn'] = $p->short_details_bn;
             $data[$count]['url_slug'] = $p->url_slug;
