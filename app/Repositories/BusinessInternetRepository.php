@@ -39,10 +39,8 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['validity_days'] = $p->validity;
             $data[$count]['validity_unit'] = $p->validity_unit;
             $data[$count]['price_tk'] = $p->mrp;
-            $data[$count]['tag_en'] = "Best Offer";
-            $data[$count]['tag_bn'] = "সেরা অফার";
-            $data[$count]['tag_color'] = "#21874d";
-            $data[$count]['activation_ussd_code'] = $p->activation_ussd_code;
+            $data[$count]['tag_category_id'] = $p->tag_id;
+            $data[$count]['ussd_en'] = $p->activation_ussd_code;
             $data[$count]['balance_check_ussd_code'] = $p->balance_check_ussd_code;
             $data[$count]['url_slug'] = $p->url_slug;
             $data[$count]['likes'] = $p->likes;

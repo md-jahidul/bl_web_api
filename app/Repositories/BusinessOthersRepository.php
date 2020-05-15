@@ -82,8 +82,8 @@ class BusinessOthersRepository extends BaseRepository {
             $data[$count]['icon'] = $s->icon == "" ? "" : config('filesystems.image_host_url') . $s->icon;
             $data[$count]['name_en'] = $s->name;
             $data[$count]['name_bn'] = $s->name_bn;
-            $data[$count]['short_details_en'] = $s->short_details;
-            $data[$count]['short_details_bn'] = $s->short_details_bn;
+            $data[$count]['short_details_en'] = $s->home_short_details_en;
+            $data[$count]['short_details_bn'] = $s->home_short_details_bn;
             $data[$count]['url_slug'] = $s->url_slug;
 
             $count++;
