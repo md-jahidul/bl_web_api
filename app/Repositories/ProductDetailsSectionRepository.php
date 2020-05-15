@@ -25,10 +25,15 @@ class ProductDetailsSectionRepository extends BaseRepository
                     ->where('status', 1)
                     ->with(['productInfo' => function ($productInfo){
                         $productInfo->select(
-                            'id', 'product_code',
-                            'name_en', 'name_bn',
-                            'ussd_bn', 'call_rate_unit_bn',
-                            'balance_check_ussd_bn', 'like');
+                            'id',
+                            'product_code',
+                            'name_en',
+                            'name_bn',
+                            'ussd_bn',
+                            'call_rate_unit_bn',
+                            'balance_check_ussd_bn',
+                            'offer_info',
+                            'like');
                     }]);
 
             }])
