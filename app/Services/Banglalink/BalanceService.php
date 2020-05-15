@@ -171,7 +171,8 @@ class BalanceService extends BaseService
                 return ['status' => 'FAIL', 'data' => $response->message, 'status_code' => $response->status];
             }
 
-            $balanceSummary = $this->prepareBalanceSummaryPostpaid($response, $customer_id);
+           // $balanceSummary = $this->prepareBalanceSummaryPostpaid($response, $customer_id);
+            $balanceSummary = $this->preparePostpaidSummary($response);
 
         }
         # Prepaid balance summery
@@ -184,6 +185,7 @@ class BalanceService extends BaseService
             $balanceSummary = $this->prepareBalanceSummary($response, $customer_id);
         }
 
+        dd($balanceSummary);
         $balanceSummary['connection_type'] = isset($customerInfo->connectionType) ? $customerInfo->connectionType : null;
 
         return ['status' => 'SUCCESS', 'data' => $balanceSummary];
@@ -333,6 +335,70 @@ class BalanceService extends BaseService
                 404
             );
         }
+    }
+
+
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
+    private function preparePostpaidSummary($response)
+    {
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+        $balance = [
+            'total_outstanding' => $local_balance->totalOutstanding,
+            'credit_limit' => $local_balance->creditLimit,
+            'payment_date' => isset($local_balance->nextPaymentDate) ?
+                Carbon::parse($local_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+        ];
+
+        $usage = collect($local_balance->productUsage)->where('code', '<>', '');
+
+        $minutes = [];
+        $sms = [];
+        $internet = [];
+
+        foreach ($usage as $product) {
+            foreach ($product->usages as $item) {
+                $type = $item->serviceType;
+                switch ($type) {
+                    case "DATA":
+                        $internet ['total'][] = $item->total;
+                        $internet ['remaining'][] = $item->left;
+                        break;
+                    case "VOICE":
+                        $minutes ['total'][] = $item->total;
+                        $minutes ['remaining'][] = $item->left;
+                        break;
+                    case "SMS":
+                        $sms ['total'][] = $item->total;
+                        $sms ['remaining'][] = $item->left;
+                        break;
+                }
+            }
+        }
+
+        $data ['connection_type'] = 'POSTPAID';
+        $data ['balance'] = $balance;
+        $data ['minutes'] = [
+            'total' => isset($minutes['total']) ? array_sum($minutes['total']) : 0,
+            'remaining' => isset($minutes['remaining']) ? array_sum($minutes['remaining']) : 0,
+            'unit' => 'MIN'
+        ];
+        $data ['internet'] = [
+            'total' => isset($internet['total']) ? array_sum($internet['total']) : 0,
+            'remaining' => isset($internet['remaining']) ? array_sum($internet['remaining']) : 0,
+            'unit' => 'MB'
+        ];
+        $data ['sms'] = [
+            'total' => isset($sms['total']) ? array_sum($sms['total']) : 0,
+            'remaining' => isset($sms['remaining']) ? array_sum($sms['remaining']) : 0,
+            'unit' => 'SMS'
+        ];
+
+        return $data;
+
+        //return $this->responseFormatter->sendSuccessResponse($data, 'User Balance Summary');
     }
 
     /**
