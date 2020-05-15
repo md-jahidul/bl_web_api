@@ -18,6 +18,7 @@ class AppServiceTabRepository extends BaseRepository
     public function appServiceCollection()
     {
         return $this->model
+            ->where('status', 1)
             ->with(['categories' => function ($category) {
                     $category->where('status', 1);
                     $category->with(['products' => function ($product) {
