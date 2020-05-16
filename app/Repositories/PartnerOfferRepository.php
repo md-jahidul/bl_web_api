@@ -65,6 +65,7 @@ class PartnerOfferRepository extends BaseRepository {
         $limit = 9;
         $offset = $actualPage * $limit;
         $offers = DB::table('partner_offers as po')
+                        ->where('po.is_campaign', 0)
                         ->where('po.is_active', 1)
                         ->join('partners as p', 'po.partner_id', '=', 'p.id')
                         ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
