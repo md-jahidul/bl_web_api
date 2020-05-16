@@ -16,7 +16,11 @@ class BusinessInternetRepository extends BaseRepository {
 
     public function getInternetPackageList($homeShow = 0) {
 
-        $internet = $this->model->where('status', 1)->whereNotNull('product_code')->orderBy('sort');
+        $internet = $this->model->where('status', 1)
+            ->whereNotNull('product_code')
+            ->where('product_code', '!=', "")
+            ->orderBy('sort');
+
         if ($homeShow == 1) {
             $internet->where('home_show', 1);
         }
