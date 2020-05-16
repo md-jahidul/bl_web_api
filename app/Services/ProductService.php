@@ -381,66 +381,6 @@ class ProductService extends ApiBaseService
         return $this->sendErrorResponse('Invalid operation');
     }
 
-    public function getCustomerLoanProducts($request, $loanType)
-    {
-        $customer = $this->customerService->getCustomerDetails($request);
-        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber(8801960660449);
-
-        $customer_account_id = $customerInfo->getData()->data->package->customerId;
-
-//        return $customer_account_id;
-
-        $customer_type = $customerInfo->getData()->data->connectionType;
-
-        if ($customer_type == 'POSTPAID') {
-            return $this->responseFormatter->sendErrorResponse(
-                'Emergency Balance is not eligible for Postpaid user',
-                [
-                    'message' => 'Emergency Balance is not eligible for Postpaid user',
-                    'hint'    => 'Postpaid user not eligible for Emergency balance'
-                ],
-                400
-            );
-        }
-
-        $min_amount = 10;
-
-        $balance = $this->get($this->getPrepaidBalanceUrl($customer_account_id));
-
-        if ($balance > $min_amount) {
-            return $this->responseFormatter->sendSuccessResponse(
-                [],
-                "Sorry, you are not eligible for emergency balance as you have more than Tk " . $min_amount
-            );
-        }
-
-        $availableLoanProducts = [];
-        $loanProducts = $this->blLoanProductService->getCustomerLoanProducts($customer_account_id);
-        foreach ($loanProducts as $loan) {
-            $product = ProductCore::where('product_code', $loan['code'])->first();
-            if (!$product) {
-                return $this->sendErrorResponse([], 'Core product data not found');
-            }
-            $product = array(
-                'product_code' => $product->product_code,
-                'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
-                'title' => $product->name,
-                'internet_volume_mb' => $product->internet_volume_mb,
-                'price_tk' => $product->mrp_price,
-                'validity' => $product->validity,
-                'validity_unit' => $product->validity_unit
-            );
-
-            if ($loanType == $product['type']){
-                array_push($availableLoanProducts, $product);
-            }
-        }
-
-
-
-        return $this->sendSuccessResponse($availableLoanProducts, 'Available loan products');
-    }
-
     /**
      * @param $request
      * @return mixed

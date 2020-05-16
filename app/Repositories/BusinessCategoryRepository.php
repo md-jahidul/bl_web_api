@@ -45,7 +45,7 @@ class BusinessCategoryRepository extends BaseRepository {
     }
 
     public function getCategoryList() {
-        $categories = $this->model
+        $categories = $this->model->where('home_show', 1)
                         ->orderBy('id')->get();
         $data = [];
         $count = 0;

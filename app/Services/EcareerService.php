@@ -410,7 +410,7 @@ class EcareerService {
                     foreach ($value->portalItems as $items_value) {
                         $sub_data['title_en'] = $items_value->title_en;
                         $sub_data['title_bn'] = $items_value->title_bn;
-                        $sub_data['description_en'] = $items_value->description_bn;
+                        $sub_data['description_en'] = $items_value->description_en;
                         $sub_data['description_bn'] = $items_value->description_bn;
 
                         $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
@@ -418,7 +418,8 @@ class EcareerService {
                         $sub_data['alt_text'] = $items_value->alt_text;
                         // $sub_data['alt_links'] = $items_value->alt_links;
                         #teams tab content buttons
-                        $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+                        $sub_data['call_to_action_buttons'] = null;
+//                        $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
                     }
                 }
             }
@@ -964,7 +965,7 @@ class EcareerService {
                         $sub_items = [];
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
-                        $sub_items['description_en'] = $portal_items->description_bn;
+                        $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
 
                         $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;

@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use App\Models\AlCoreProduct;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Models\ProductPriceSlab;
@@ -193,7 +194,7 @@ class ProductRepository extends BaseRepository
     public function rechargeBenefitsOffer($productCode)
     {
         if ($productCode) {
-            return ProductCore::where('recharge_product_code', $productCode)
+            return AlCoreProduct::where('recharge_product_code', $productCode)
                 ->select(
                     'product_code',
                     'activation_ussd as ussd_en',

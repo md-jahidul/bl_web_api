@@ -95,8 +95,9 @@ class PartnerOfferController extends Controller {
     public function offerDetails($id) {
         try {
 
-            $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn')
+            $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn')
                     ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
+                    ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
                     ->where('partner_offers.id', $id)
                     ->with(['partner_offer_details', 'partner' => function ($query) {
                             $query->select([
@@ -111,6 +112,8 @@ class PartnerOfferController extends Controller {
             $data = [];
             if (isset($productDetail)) {
                 $data['id'] = $productDetail->id;
+                $data['company_name_en'] = $productDetail->company_name_en;
+                $data['company_name_bn'] = $productDetail->company_name_bn;
                 $data['validity_en'] = $productDetail->validity_en;
                 $data['validity_bn'] = $productDetail->validity_bn;
                 $data['offer_scale'] = $productDetail->offer_scale;
