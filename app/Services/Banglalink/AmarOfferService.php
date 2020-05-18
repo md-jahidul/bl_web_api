@@ -23,6 +23,8 @@ class AmarOfferService extends BaseService
     public $productService;
     public $responseFormatter;
     protected const AMAR_OFFER_API_ENDPOINT = "/product-offer/offer/amar-offers";
+
+    protected const BANNER_IMAGE = "banner_image";
     /**
      * @var CustomerService
      */
@@ -147,12 +149,17 @@ class AmarOfferService extends BaseService
     public function getAmarOfferList(Request $request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
+        $bannerImage = $this->amarOfferDetailsRepository
+            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
 
         if ($response_data['status_code'] == 200){
             $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-            return $this->responseFormatter->sendSuccessResponse($formatted_data, 'Amar Offer List');
+
+            $data['header'] = $bannerImage;
+            $data['offers'] = $formatted_data;
+
+            return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 
         return $this->responseFormatter->sendErrorResponse($response_data['message'], $response_data['error'], $response_data['status']);
