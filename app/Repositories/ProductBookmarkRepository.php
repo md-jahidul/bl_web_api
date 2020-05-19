@@ -24,7 +24,7 @@ class ProductBookmarkRepository extends BaseRepository {
 
     public function getBusiness($mobile) {
         $response = $this->model->select("c.name as cat_en", "c.name_bn as cat_bn", "bi.activation_ussd_code",
-                "bi.balance_check_ussd_code", "bi.cat_bn", "bi.cat_en", 
+                "bi.balance_check_ussd_code", 
                 DB::raw("if(volume_data_unit = 'GB', (bi.data_volume * 1024), bi.data_volume) as data_volume"),
                 "bi.id","bi.likes","bi.mrp","bi.offer_type", "bi.product_code", "bi.product_code_ev",
                 "bi.product_code_with_renew", "bi.product_commercial_name_bn", "bi.product_commercial_name_en",
