@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\AlProductBookmark;
+use DB;
 
 class ProductBookmarkRepository extends BaseRepository {
 
