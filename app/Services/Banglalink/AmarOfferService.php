@@ -155,14 +155,16 @@ class AmarOfferService extends BaseService
 
         if ($response_data['status_code'] == 200){
             $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-
             $data['header'] = $bannerImage;
             $data['offers'] = $formatted_data;
-
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 
-        return $this->responseFormatter->sendErrorResponse($response_data['message'], $response_data['error'], $response_data['status']);
+        if ($response_data['status_code'] == 500){
+            $errorResponse = json_decode($response_data['response'], true);
+            return $this->responseFormatter->sendErrorResponse($errorResponse['message'], "Internal Server Error in API hub", $errorResponse['status']);
+        }
+
     }
 
     public function getAmarOfferDetails($type)
