@@ -97,6 +97,7 @@ class ProductRepository extends BaseRepository
             ->select(
                 'id',
                 'product_code',
+                'rate_cutter_offer',
                 'url_slug',
                 'schema_markup',
                 'page_header',
@@ -168,6 +169,7 @@ class ProductRepository extends BaseRepository
             ->select(
                 'id',
                 'product_code',
+                'rate_cutter_offer',
                 'product_code',
                 'url_slug',
                 'schema_markup',
