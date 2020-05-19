@@ -161,8 +161,7 @@ class AmarOfferService extends BaseService
         }
 
         if ($response_data['status_code'] == 500){
-            $errorResponse = json_decode($response_data['response'], true);
-            return $this->responseFormatter->sendErrorResponse($errorResponse['message'], "Internal Server Error in API hub", $errorResponse['status']);
+            return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
         }
 
     }
