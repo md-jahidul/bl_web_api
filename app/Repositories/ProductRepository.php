@@ -132,33 +132,30 @@ class ProductRepository extends BaseRepository
         # check price range
         $check_product_code = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first();
 
-//        $check_product_code = !empty($check_product_code) ? $check_product_code : null;
-
-
         $check_product_code = !empty($check_product_code->product_code) ? $check_product_code->product_code : null;
 
 
-        return $this->model->join('product_cores', 'products.product_code', 'product_cores.product_code')
-            ->selectRaw('products.*, product_cores.activation_ussd as ussd_en, product_cores.balance_check_ussd, product_cores.mrp_price as price_tk,
-             product_cores.validity as validity_days,product_cores.validity_unit, product_cores.internet_volume_mb,product_cores.sms_volume,product_cores.minute_volume,product_cores.call_rate as callrate_offer,product_cores.sms_rate as sms_rate_offer')
+        return $this->model->join('al_core_products', 'products.product_code', 'al_core_products.product_code')
+            ->selectRaw('products.*, al_core_products.activation_ussd as ussd_en, al_core_products.balance_check_ussd, al_core_products.mrp_price as price_tk,
+             al_core_products.validity as validity_days,al_core_products.validity_unit, al_core_products.internet_volume_mb,al_core_products.sms_volume,al_core_products.minute_volume,al_core_products.call_rate as callrate_offer,al_core_products.sms_rate as sms_rate_offer')
             ->whereIn('products.purchase_option', ['recharge'])
             ->where('products.status', 1)
-            ->whereIn('product_cores.platform', ['all', 'web'])
+            ->whereIn('al_core_products.platform', ['all', 'web'])
             // ->where('products.sim_category_id', 1) // Check prepaid sim type
             ->whereHas('sim_category', function ($query) {
                 $query->where('alias', 'prepaid');
             })
-            // ->where('product_cores.mrp_price', '=', $amount)
+            // ->where('al_core_products.mrp_price', '=', $amount)
             ->where(function($query) use ($amount, $check_product_code){
                 if( !empty($check_product_code) ){
-                    return $query->where('product_cores.mrp_price', '=', $amount)->orWhere('product_cores.recharge_product_code', '=', $check_product_code);
+                    return $query->where('al_core_products.mrp_price', '=', $amount)->orWhere('al_core_products.recharge_product_code', '=', $check_product_code);
                 }
                 else{
-                    return $query->where('product_cores.mrp_price', '=', $amount);
+                    return $query->where('al_core_products.mrp_price', '=', $amount);
                 }
 
             })
-            ->orderBy('product_cores.mrp_price')
+            ->orderBy('al_core_products.mrp_price')
             ->first();
     }
 
