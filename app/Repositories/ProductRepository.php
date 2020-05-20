@@ -97,6 +97,7 @@ class ProductRepository extends BaseRepository
             ->select(
                 'id',
                 'product_code',
+                'rate_cutter_offer',
                 'url_slug',
                 'schema_markup',
                 'page_header',
@@ -165,6 +166,7 @@ class ProductRepository extends BaseRepository
             ->select(
                 'id',
                 'product_code',
+                'rate_cutter_offer',
                 'product_code',
                 'url_slug',
                 'schema_markup',
@@ -172,6 +174,7 @@ class ProductRepository extends BaseRepository
                 'name_en',
                 'name_bn',
                 'ussd_bn',
+                'call_rate_unit_bn',
                 'balance_check_ussd_bn',
                 'tag_category_id',
                 'sim_category_id',

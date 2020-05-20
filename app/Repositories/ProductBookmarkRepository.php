@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\AlProductBookmark;
+use DB;
 
 class ProductBookmarkRepository extends BaseRepository {
 
@@ -22,7 +23,12 @@ class ProductBookmarkRepository extends BaseRepository {
     }
 
     public function getBusiness($mobile) {
-        $response = $this->model->select("c.name as cat_en", "c.name_bn as cat_bn", "bi.*")
+        $response = $this->model->select("c.name as cat_en", "c.name_bn as cat_bn", "bi.activation_ussd_code",
+                "bi.balance_check_ussd_code", 
+                DB::raw("if(volume_data_unit = 'GB', (bi.data_volume * 1024), bi.data_volume) as data_volume"),
+                "bi.id","bi.likes","bi.mrp","bi.offer_type", "bi.product_code", "bi.product_code_ev",
+                "bi.product_code_with_renew", "bi.product_commercial_name_bn", "bi.product_commercial_name_en",
+                "bi.status", "bi.tag_id as tag_category_id", "bi.url_slug", "bi.validity", "bi.validity_unit", "bi.volume_data_unit")
                 ->leftJoin('business_internet_packages as bi', 'bi.id', '=', 'al_product_bookmarks.product_id')
                 ->leftJoin('business_product_categories as c', 'c.id', '=', 'c.id')
                 ->where(['al_product_bookmarks.module_type' => 'business', 'al_product_bookmarks.mobile' => $mobile, 'c.id' => 2])
