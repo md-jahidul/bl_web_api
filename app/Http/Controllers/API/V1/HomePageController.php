@@ -13,6 +13,7 @@ use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
 use App\Models\MetaTag;
+use App\Services\HomeService;
 use App\Services\ProductService;
 use App\Services\QuickLaunchService;
 use App\Services\SalesAndServicesService;
@@ -28,6 +29,7 @@ class HomePageController extends Controller {
     /**
      * @var ProductService
      */
+    private $homeService;
     private $productService;
     private $quickLaunchService;
     private $ecarrerService;
@@ -35,13 +37,20 @@ class HomePageController extends Controller {
 
     /**
      * HomePageController constructor.
+     * @param HomeService $homeService
      * @param ProductService $productService
      * @param QuickLaunchService $quickLaunchService
      * @param EcareerService $ecarrerService
+     * @param SalesAndServicesService $salesAndServicesService
      */
     public function __construct(
-    ProductService $productService, QuickLaunchService $quickLaunchService, EcareerService $ecarrerService, SalesAndServicesService $salesAndServicesService
+        HomeService $homeService,
+        ProductService $productService,
+        QuickLaunchService $quickLaunchService,
+        EcareerService $ecarrerService,
+        SalesAndServicesService $salesAndServicesService
     ) {
+        $this->homeService = $homeService;
         $this->productService = $productService;
         $this->quickLaunchService = $quickLaunchService;
         $this->ecarrerService = $ecarrerService;
@@ -148,7 +157,6 @@ class HomePageController extends Controller {
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
 
 
-
         if ($id == 4) {
             $partnerOffers = DB::table('partner_offers as po')
                     ->where('po.show_in_home', 1)
@@ -194,6 +202,11 @@ class HomePageController extends Controller {
     }
 
     public function getHomePageData() {
+
+       return $this->homeService->getComponents();
+
+
+
         try {
             $componentList = ShortCode::where('page_id', 1)
                     ->where('is_active', 1)
@@ -210,59 +223,59 @@ class HomePageController extends Controller {
 
             if (isset($homePageData)) {
                 return response()->json(
-                                [
-                                    'status' => 200,
-                                    'success' => true,
-                                    'message' => 'Data Found!',
-                                    'data' => [
-                                        'metatags' => $metainfo,
-                                        'components' => $homePageData
-                                    ]
-                                ]
+                    [
+                        'status' => 200,
+                        'success' => true,
+                        'message' => 'Data Found!',
+                        'data' => [
+                            'metatags' => $metainfo,
+                            'components' => $homePageData
+                        ]
+                    ]
                 );
             }
             return response()->json(
-                            [
-                                'status' => 400,
-                                'success' => false,
-                                'message' => 'Data Not Found!'
-                            ]
+                [
+                    'status' => 400,
+                    'success' => false,
+                    'message' => 'Data Not Found!'
+                ]
             );
         } catch (QueryException $e) {
             return response()->json(
-                            [
-                                'status' => 403,
-                                'success' => false,
-                                'message' => explode('|', $e->getMessage())[0],
-                            ]
+                [
+                    'status' => 403,
+                    'success' => false,
+                    'message' => explode('|', $e->getMessage())[0],
+                ]
             );
         }
     }
 
-    /**
-     *  Macro & mixin sample output for
-     */
-    public function macro() {
-
-        $input = request()->all();
-
-        $validator = Validator::make($input, [
-                    'name' => 'required',
-                    'detail' => 'required'
-        ]);
-
-
-        if ($validator->fails()) {
-            return response()->error('Validation Error.', $validator->errors());
-        }
-
-        $result = [
-            ['id' => 1],
-            ['id' => 2]
-        ];
-
-        return response()->success($result, "Data Success");
-    }
+//    /**
+//     *  Macro & mixin sample output for
+//     */
+//    public function macro() {
+//
+//        $input = request()->all();
+//
+//        $validator = Validator::make($input, [
+//                    'name' => 'required',
+//                    'detail' => 'required'
+//        ]);
+//
+//
+//        if ($validator->fails()) {
+//            return response()->error('Validation Error.', $validator->errors());
+//        }
+//
+//        $result = [
+//            ['id' => 1],
+//            ['id' => 2]
+//        ];
+//
+//        return response()->success($result, "Data Success");
+//    }
 
     /**
      * Frontend dynamic route for seo tab
