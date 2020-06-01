@@ -131,7 +131,27 @@ class AppServiceDetailsService
 						$sub_item['editor_bn'] = $item->editor_bn;
 						$sub_item['image'] = !empty($item->image) ? config('filesystems.image_host_url') . $item->image : null;
 						$sub_item['alt_text'] = $item->alt_text;
-						$sub_item['video'] = !empty($item->video) ? config('filesystems.image_host_url') . $item->video : null;
+                                                
+                                                $sub_item['video'] = NULL;
+                                                
+                                                $other_attr_array = json_decode($item->other_attributes, true);
+                                                $sub_item['other_attributes'] = $item->other_attributes;
+
+						if( !empty($item->other_attributes) ){
+							
+							foreach ($other_attr_array as $key => $value) {
+								$sub_item[$key] = $value;
+							}
+						}
+                                                        
+                                                if(!empty($item->video)){
+                                                    if($other_attr_array['video_type'] == 'youtube_video'){
+                                                        $sub_item['video'] = $item->video;
+                                                    }else{
+                                                        $sub_item['video'] = config('filesystems.image_host_url');
+                                                    }
+                                                }
+						
 						$sub_item['alt_links'] = $item->alt_links;
 
 						// Multiple attributed formated
@@ -171,14 +191,7 @@ class AppServiceDetailsService
 							$sub_item['multiple_attributes'] = null;
 						}
 
-						$sub_item['other_attributes'] = $item->other_attributes;
-
-						if( !empty($item->other_attributes) ){
-							$other_attr_array = json_decode($item->other_attributes, true);
-							foreach ($other_attr_array as $key => $value) {
-								$sub_item[$key] = $value;
-							}
-						}
+						
 
 						$sub_data['component'][] = $sub_item;
 
