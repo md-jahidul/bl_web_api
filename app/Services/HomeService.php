@@ -213,15 +213,15 @@ class HomeService extends ApiBaseService
         $metainfo = MetaTag::where('page_id', 1)
             ->first()->toArray();
 
-        if (!$value = Redis::get('home_components')){
+        if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
             }
-            Redis::setex('home_components', 3600, json_encode($homePageData));
-            $value = Redis::get('home_components');
+            Redis::setex('al_home_components', 3600, json_encode($homePageData));
+            $value = Redis::get('al_home_components');
         } else {
-            $value = Redis::get('home_components');
+            $value = Redis::get('al_home_components');
         }
 
         $data = [
