@@ -22,6 +22,7 @@ class ConfigRepository extends BaseRepository
     {
         return $this->model->where('key', 'site_logo')
             ->orWhere('key', 'logo_alt_text')
+            ->orWhere('key', 'header_script')
             ->get();
     }
 
@@ -30,6 +31,7 @@ class ConfigRepository extends BaseRepository
         return [
             "site_logo" => ($data['site_logo'] != '') ? env("IMAGE_HOST_URL") . $data['site_logo'] : null,
             "logo_alt_text" => $data['logo_alt_text'] ?? null,
+            "header_script" => $data['header_script'] ?? null,
         ];
     }
 
