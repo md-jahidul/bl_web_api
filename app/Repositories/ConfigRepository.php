@@ -31,7 +31,8 @@ class ConfigRepository extends BaseRepository
         return [
             "site_logo" => ($data['site_logo'] != '') ? env("IMAGE_HOST_URL") . $data['site_logo'] : null,
             "logo_alt_text" => $data['logo_alt_text'] ?? null,
-            "header_script" => $data['header_script'] ?? null,
+            "header_script_en" => $data['header_script_en'] ?? null,
+            "header_script_bn" => $data['header_script_bn'] ?? null,
         ];
     }
 
