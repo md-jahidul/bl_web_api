@@ -42,7 +42,7 @@ class ComponentService
     }
 
     public function componentList($section_id)
-    {   
+    {
         return $this->componentRepository->findByProperties(['section_details_id' => $section_id]);
     }
 
@@ -65,27 +65,27 @@ class ComponentService
 
         $data['page_type'] = self::APP;
 
-        
+
         $results = [];
         if( isset($data['multi_item']) && !empty($data['multi_item']) ){
             $request_multi = $data['multi_item'];
 
             $item_count = isset($data['multi_item_count']) ? $data['multi_item_count'] : 0;
 
-            for ($i=1; $i <= $item_count; $i++) { 
-                
+            for ($i=1; $i <= $item_count; $i++) {
+
                 foreach ($data['multi_item'] as $key => $value) {
-                    
+
                     $sub_data = [];
 
                     $check_index = explode('-', $key)[1];
 
                     if( $check_index == $i ){
-                    
+
                         if ( request()->hasFile( 'multi_item.'.$key ) ) {
                             $value = $this->upload($value, 'assetlite/images/app-service/product/details');
                         }
-                        
+
                         $results[$i][] = [$key => $value];
                     }
 
@@ -93,11 +93,11 @@ class ComponentService
 
             }
 
-            
+
 
         }
 
-        
+
         $data['multiple_attributes'] = json_encode($results);
 
         $this->save($data);
@@ -136,11 +136,11 @@ class ComponentService
      * @return ResponseFactory|Response
      * @throws Exception
      */
-    public function deleteAppServiceProduct($id)
-    {
-        $appServiceCat = $this->findOne($id);
-        $this->deleteFile($appServiceCat->product_img_url);
-        $appServiceCat->delete();
-        return Response('App Service Tab deleted successfully !');
-    }
+//    public function deleteAppServiceProduct($id)
+//    {
+//        $appServiceCat = $this->findOne($id);
+//        $this->deleteFile($appServiceCat->product_img_url);
+//        $appServiceCat->delete();
+//        return Response('App Service Tab deleted successfully !');
+//    }
 }

@@ -18,4 +18,7 @@ use App\Models\Component;
 class ComponentRepository extends BaseRepository
 {
     public $modelName = Component::class;
+
+
+
 }

@@ -104,14 +104,11 @@ class AppServiceDetailsService
 		if( !empty($results) && count($results) > 0 ){
 
 			foreach ($results as $value) {
-
 				$sub_data = [];
-
 				$parent_data['title_en'] = $value->title_en;
 				$parent_data['title_bn'] = $value->title_bn;
 				$parent_data['slug'] = $value->slug;
 				$parent_data['section_type'] = $value->section_type;
-
 				$sub_data['section_header'] = $parent_data;
 
 				if( !empty($value->detailsComponent) && count($value->detailsComponent) > 0 ){

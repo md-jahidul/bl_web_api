@@ -201,4 +201,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     #SMS
     Route::post('send-sms', 'API\V1\SmsController@sendSms');
+
+    //Dynamic Page
+    Route::get('dynamic-page/{slug}', 'API\V1\DynamicPageController@getDynamicPageData');
 });
