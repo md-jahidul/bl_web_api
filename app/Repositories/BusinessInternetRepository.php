@@ -37,6 +37,7 @@ class BusinessInternetRepository extends BaseRepository {
             }
 
             $data[$count]['id'] = $p->id;
+            $data[$count]['type'] = $p->type;
             $data[$count]['product_code'] = $p->product_code;
             $data[$count]['internet_volume_mb'] = $dataVol;
             $data[$count]['volume_data_unit'] = $p->volume_data_unit;
@@ -67,6 +68,7 @@ class BusinessInternetRepository extends BaseRepository {
         }
 
         $data['id'] = $internet->id;
+        $data['type'] = $internet->type;
         $data['product_code'] = $internet->product_code;
         $data['product_name'] = $internet->product_name;
         $data['internet_volume_mb'] = $dataVol;
@@ -111,6 +113,7 @@ class BusinessInternetRepository extends BaseRepository {
             }
 
             $data['related_product'][$count]['id'] = $rp->id;
+            $data['related_product'][$count]['type'] = $rp->type;
             $data['related_product'][$count]['product_code'] = $rp->product_code;
             $data['related_product'][$count]['product_name'] = $rp->product_name;
             $data['related_product'][$count]['internet_volume_mb'] = $rpDataVol;
