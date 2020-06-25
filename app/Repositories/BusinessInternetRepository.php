@@ -37,7 +37,8 @@ class BusinessInternetRepository extends BaseRepository {
             }
 
             $data[$count]['id'] = $p->id;
-            $data[$count]['type'] = $p->type;
+            $data[$count]['type_en'] = $p->type;
+            $data[$count]['type_bn'] = $p->type == 'Prepaid' ? 'প্রিপেইড' : 'পোস্টপেইড';;
             $data[$count]['product_code'] = $p->product_code;
             $data[$count]['internet_volume_mb'] = $dataVol;
             $data[$count]['volume_data_unit'] = $p->volume_data_unit;
