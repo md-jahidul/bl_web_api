@@ -206,4 +206,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Dynamic Page
     Route::get('dynamic-page/{slug}', 'API\V1\DynamicPageController@getDynamicPageData');
+    
+    //Ethics & Compliance
+    Route::get('ethics-and-compliance', 'API\V1\EthicsController@index');
+    
 });
