@@ -186,14 +186,14 @@ class ProductService extends ApiBaseService
 
     /**
      * @param $type
+     * @param $offerType
      * @param $request
      * @return mixed
-     * @throws IdpAuthException
      */
-    public function simTypeOffers($type, $request)
+    public function simTypeOffers($type, $offerType, $request)
     {
         try {
-            $products = $this->productRepository->simTypeProduct($type);
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
             $viewAbleProducts = $products;
 
 //            if ($this->isUserLoggedIn($request)) {

@@ -14,12 +14,36 @@ class ProductRepository extends BaseRepository
      */
     public $modelName = Product::class;
 
+    protected function getOfferTypeId($offerType)
+    {
+        switch ($offerType) {
+            case "internet":
+                return 1;
+                break;
+            case "voice":
+                return 2;
+                break;
+            case "bundle":
+                return 3;
+                break;
+            case "package":
+                return 4;
+                break;
+            case "other":
+                return 9;
+                break;
+            default:
+                return false; /*Offer type not found*/
+        }
+    }
+
     /**
      * @param $type
      * @return mixed
      */
-    public function simTypeProduct($type)
+    public function simTypeProduct($type, $offerType)
     {
+        $offerTypeById = $this->getOfferTypeId($offerType);
         return $this->model->select(
                 'products.id',
                 'products.product_code',
@@ -44,6 +68,7 @@ class ProductRepository extends BaseRepository
 //                'd.url_slug'
             )
 //            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+            ->where('offer_category_id', $offerTypeById)
             ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
