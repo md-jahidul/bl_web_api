@@ -23,13 +23,13 @@ class ProductRepository extends BaseRepository
             case "voice":
                 return 2;
                 break;
-            case "bundle":
+            case "bundles":
                 return 3;
                 break;
-            case "package":
+            case "packages":
                 return 4;
                 break;
-            case "other":
+            case "others":
                 return 9;
                 break;
             default:
