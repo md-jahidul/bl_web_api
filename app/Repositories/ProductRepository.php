@@ -179,6 +179,7 @@ class ProductRepository extends BaseRepository
                 }
 
             })
+            ->whereIn('offer_category_id', [1, 2, 3])
             ->orderBy('al_core_products.mrp_price')
             ->first();
     }
