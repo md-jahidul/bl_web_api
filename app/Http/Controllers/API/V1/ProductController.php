@@ -89,9 +89,9 @@ class ProductController extends Controller
      * @return mixed
      * @throws IdpAuthException
      */
-    public function simPackageOffers(Request $request, $type, $offerType)
+    public function simPackageOffers($type)
     {
-        return $this->productService->simTypeOffers($type, $offerType, $request);
+        return $this->productService->simTypeOffers($type);
     }
 
     /**

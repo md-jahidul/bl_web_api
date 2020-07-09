@@ -28,7 +28,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
     Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
 
-    Route::get('offers/{type}/{offerType}', 'API\V1\ProductController@simPackageOffers');
+    Route::get('offers/{type}', 'API\V1\ProductController@simPackageOffers');
 
     Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
     Route::get('product-details/{type}/{id}', 'API\V1\ProductController@productDetails');
@@ -206,8 +206,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Dynamic Page
     Route::get('dynamic-page/{slug}', 'API\V1\DynamicPageController@getDynamicPageData');
-    
+
     //Ethics & Compliance
     Route::get('ethics-and-compliance', 'API\V1\EthicsController@index');
-    
+
 });
