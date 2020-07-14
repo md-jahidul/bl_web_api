@@ -25,7 +25,7 @@ class DynamicPageRepository extends BaseRepository {
                         'component_type', 'title_en', 'title_bn',
                         'editor_en', 'editor_bn', 'extra_title_bn',
                         'extra_title_en', 'multiple_attributes',
-                        'other_attributes'
+                        'video', 'image', 'alt_text', 'other_attributes'
                     )
                     ->where('status', 1);
             }])
