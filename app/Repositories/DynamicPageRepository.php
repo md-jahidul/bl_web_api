@@ -15,6 +15,7 @@ class DynamicPageRepository extends BaseRepository {
                 'id', 'page_header', 'schema_markup',
                 'banner_image_url', 'banner_mobile_view',
                 'alt_text', 'page_name_en', 'page_name_bn',
+                'page_content_en', 'page_content_bn',
                 'url_slug'
             )
             ->with(['components' => function($q){
