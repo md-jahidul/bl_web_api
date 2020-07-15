@@ -52,23 +52,6 @@ class DynamicPageService extends ApiBaseService
         $this->setActionRepository($pageRepo);
     }
 
-    public function pagesInfo()
-    {
-        $pages = $this->footerMenuRepository
-            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
-
-        foreach ($pages as $pageData){
-            $data[] = [
-                'id' => $pageData->id,
-                'title' => $pageData->en_label_text,
-                'code' => 'DynamicPages',
-                'url' => $pageData->url,
-                'exact' => true,
-                'slug' => $pageData->dynamic_page_slug,
-            ];
-        }
-        return $this->sendSuccessResponse($data, 'Dynamic page data');
-    }
 
     public function pageData($slug)
     {

@@ -51,6 +51,24 @@ class HeaderFooterMenuService extends ApiBaseService
         $this->apiBaseService = $apiBaseService;
     }
 
+    public function pagesInfo()
+    {
+        $pages = $this->footerMenuRepository
+            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
+
+        foreach ($pages as $pageData){
+            $data[] = [
+                'id' => $pageData->id,
+                'title' => $pageData->en_label_text,
+                'code' => 'DynamicPages',
+                'url' => $pageData->url,
+                'exact' => true,
+                'slug' => $pageData->dynamic_page_slug,
+            ];
+        }
+        return $data;
+    }
+
     /**
      * @return JsonResponse
      */
@@ -82,7 +100,8 @@ class HeaderFooterMenuService extends ApiBaseService
                 'footer' => [
                     'menu' => $footerMenu,
                     'settings' => $footer_settings
-                ]
+                ],
+                'dynamic-routes' => $this->pagesInfo()
             ];
             return $this->apiBaseService->sendSuccessResponse($result, 'Data Found Header Footer Menus!');
         }

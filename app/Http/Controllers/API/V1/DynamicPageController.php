@@ -33,11 +33,6 @@ class DynamicPageController extends Controller
         $this->componentService = $componentService;
     }
 
-    public function getPageInfo()
-    {
-       return $this->pageService->pagesInfo();
-    }
-
     public function getDynamicPageData($slug)
     {
         return $this->pageService->pageData($slug);
