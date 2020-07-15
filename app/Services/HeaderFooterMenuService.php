@@ -101,7 +101,7 @@ class HeaderFooterMenuService extends ApiBaseService
                     'menu' => $footerMenu,
                     'settings' => $footer_settings
                 ],
-                'dynamic-routes' => $this->pagesInfo()
+                'dynamic_routes' => $this->pagesInfo()
             ];
             return $this->apiBaseService->sendSuccessResponse($result, 'Data Found Header Footer Menus!');
         }

@@ -210,7 +210,4 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     //Ethics & Compliance
     Route::get('ethics-and-compliance', 'API\V1\EthicsController@index');
 
-//    //Informative Dynamic Routes
-//    Route::get('informative/dynamic-routes', 'API\V1\DynamicPageController@getPageInfo');
-
 });
