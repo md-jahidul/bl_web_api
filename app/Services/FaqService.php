@@ -2,63 +2,32 @@
 
 namespace App\Services;
 
-use App\Enums\HttpStatusCode;
-use App\Http\Resources\MixedBundleOfferResource;
-use App\Models\AmarOffer;
-use App\Models\FaqQuestion;
-use App\Models\InternetOffer;
-use App\Models\InternetPackFilter;
-use App\Models\MixedBundleFilter;
-use App\Models\MixedBundleOffer;
-use App\Models\NearbyOffer;
-use App\Http\Resources\InternetOfferResource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\FaqRepository;
 
 class FaqService extends ApiBaseService
 {
+    /**
+     * @var FaqRepository
+     */
+    private $faqRepository;
 
-    public function getAll()
+    /**
+     * AboutPageService constructor.
+     * @param FaqRepository $faqRepository
+     */
+    public function __construct(FaqRepository $faqRepository)
     {
-        return new FaqQuestion();
+        $this->faqRepository = $faqRepository;
     }
 
-    public function getQuestions()
+    public function getQuestionAnswer($slug)
     {
-        $builder = $this->getAll()->app()->with('category');
-
-        $questions = $builder->get()->groupBy('category.title')->sortBy('category.title')->toArray();
-
-        ksort($questions);
-        $data = [];
-
-        foreach ($questions as $name => $question) {
-            $item['category'] = $name;
-            $val = [];
-            foreach ($question as $q) {
-                $val[] = [
-                    'id' => $q['id'],
-                    'question' => $q['question']
-                ];
-            }
-
-            $item['questions'] = $val;
-            array_push($data, $item);
-        }
-
-        return $this->sendSuccessResponse($data, 'Category wise FAQ Questions');
-    }
-
-    public function getAnswer(Request $request)
-    {
-        $answer = FaqQuestion::findOrFail($request->question_id);
-
-        $data = [
-            'question' => $answer->question,
-            'answer' => $answer->answer
-        ];
-
+        $data = $this->faqRepository
+            ->findByProperties(['slug' => $slug], [
+                'id', 'title', 'slug',
+                'question_en', 'question_bn',
+                'answer_en', 'answer_bn'
+            ]);
         return $this->sendSuccessResponse($data, 'FAQ Question and Answer');
     }
 }

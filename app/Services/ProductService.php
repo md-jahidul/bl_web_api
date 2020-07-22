@@ -190,10 +190,10 @@ class ProductService extends ApiBaseService
      * @param $request
      * @return mixed
      */
-    public function simTypeOffers($type)
+    public function simTypeOffers($type, $offerType)
     {
         try {
-            $products = $this->productRepository->simTypeProduct($type);
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
             $viewAbleProducts = $products;
 
 //            if ($this->isUserLoggedIn($request)) {
