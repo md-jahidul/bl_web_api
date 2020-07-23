@@ -14,10 +14,4 @@ use App\Models\MediaLandingPage;
 class MediaLandingPageRepository extends BaseRepository
 {
     public $modelName = MediaLandingPage::class;
-
-    public function components()
-    {
-        return $this->model->where('component_type', '!=', 'banner_image')
-            ->get();
-    }
 }

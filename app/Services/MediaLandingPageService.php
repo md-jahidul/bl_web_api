@@ -23,7 +23,7 @@ class MediaLandingPageService extends ApiBaseService
      * @var MediaBannerImageRepository
      */
     private $mediaBannerImageRepository;
-    
+
     /**
      * DigitalServicesService constructor.
      * @param MediaLandingPageRepository $mediaLandingPageRepository
@@ -47,10 +47,11 @@ class MediaLandingPageService extends ApiBaseService
     {
         $data['title_en'] = $componentsData->title_en;
         $data['title_bn'] = $componentsData->title_bn;
+        $data['component_type'] = $componentsData->component_type;
         if ($type == 'press_release' || $type == 'news_events'){
             foreach ($componentsData->items as $id){
                 $data['sliding_speed'] = $componentsData->sliding_speed;
-                $data['component_type'] = $componentsData->component_type;
+
                 $pressNewsEvent = $this->mediaPressNewsEventRepository->getPressNewsEvent($type, $id);
                 if ($pressNewsEvent) {
                     $data['data'][] = $pressNewsEvent;
@@ -58,7 +59,6 @@ class MediaLandingPageService extends ApiBaseService
             }
         } else {
             foreach ($componentsData->items as $id){
-                $data['component_type'] = $componentsData->component_type;
                 $video = $this->mediaTvcVideoRepository->getVideoItems($id);
                 if ($video){
                     $data['data'][] = $video;
@@ -86,7 +86,8 @@ class MediaLandingPageService extends ApiBaseService
 
     public function landingData()
     {
-        $components = $this->mediaLandingPageRepository->components();
+        $orderBy = ['column' => "display_order", 'direction' => 'ASC'];
+        $components = $this->mediaLandingPageRepository->findAll('', '', $orderBy);
         foreach ($components as $items){
             $allComponents[] = $this->factoryComponent($items);
         }
