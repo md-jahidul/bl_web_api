@@ -2,32 +2,28 @@
 
 namespace App\Services;
 
+use App\Repositories\FaqCategoryRepository;
 use App\Repositories\FaqRepository;
 
 class FaqService extends ApiBaseService
 {
     /**
-     * @var FaqRepository
+     * @var FaqCategoryRepository
      */
-    private $faqRepository;
+    private $faqCatRepository;
 
     /**
      * AboutPageService constructor.
-     * @param FaqRepository $faqRepository
+     * @param FaqCategoryRepository $faqCategoryRepository
      */
-    public function __construct(FaqRepository $faqRepository)
+    public function __construct(FaqCategoryRepository $faqCategoryRepository)
     {
-        $this->faqRepository = $faqRepository;
+        $this->faqCatRepository = $faqCategoryRepository;
     }
 
     public function getQuestionAnswer($slug)
     {
-        $data = $this->faqRepository
-            ->findByProperties(['slug' => $slug], [
-                'id', 'title', 'slug',
-                'question_en', 'question_bn',
-                'answer_en', 'answer_bn'
-            ]);
+        $data = $this->faqCatRepository->getData($slug);
         return $this->sendSuccessResponse($data, 'FAQ Question and Answer');
     }
 }
