@@ -487,4 +487,9 @@ class ProductService extends ApiBaseService
             return response()->error("Data Not Found!", $exception);
         }
     }
+
+    public function fourGInternet($type, $last_id)
+    {
+        return $this->productRepository->fourGData($type, $last_id);
+    }
 }

@@ -20,6 +20,7 @@ class FaqCategoryRepository extends BaseRepository
         return $this->model->where('slug', $slug)
             ->select('slug', 'description_en', 'description_bn')
             ->with(['faqs' => function($q){
+                $q->where('status', 1);
                 $q->select(
                     'id', 'slug',
                     'question_en', 'question_bn',

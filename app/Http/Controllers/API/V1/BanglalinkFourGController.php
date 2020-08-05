@@ -4,35 +4,64 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Services\ProductService;
+use DB;
 use App\Services\AboutUsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
-class AboutUsController extends Controller
+class BanglalinkFourGController extends Controller
 {
-
     /**
-     * @var AboutUsService
+     * @var ProductService
      */
-    protected $aboutUsService;
-
+    private $productService;
 
     /**
      * AboutUsController constructor.
-     * @param AboutUsService $aboutUsService
+     * @param ProductService $productService
      */
-    public function __construct(AboutUsService $aboutUsService)
+    public function __construct(ProductService $productService)
     {
-        $this->aboutUsService = $aboutUsService;
+        $this->productService = $productService;
     }
 
     /**
      * @return JsonResponse
      */
-    public function getAboutBanglalink()
+    public function getFourGInternet($type, $last_id = null)
     {
-        return $this->aboutUsService->getAboutBanglalink();
+       return $this->productService->fourGInternet($type, $last_id);
+
+        if ($last_id){
+            $products = Product::where('offer_category_id', 1)
+                ->where('is_four_g_offer', 1)
+                ->where('status', 1)
+                ->where('id', '>', $last_id)
+                ->where('special_product', 0)
+                ->startEndDate()
+                ->productCore()
+                ->category($type)
+                ->limit(2)
+                ->get();
+        } else {
+            $products = Product::where('offer_category_id', 1)
+                ->where('is_four_g_offer', 1)
+                ->where('status', 1)
+                ->where('special_product', 0)
+                ->startEndDate()
+                ->productCore()
+                ->category($type)
+//                ->limit(2)
+                ->get();
+        }
+
+
+        return $products;
+
+//        return $this->aboutUsService->getAboutBanglalink();
     }
 
 
@@ -42,7 +71,7 @@ class AboutUsController extends Controller
      */
     public function getAboutManagement()
     {
-        return $this->aboutUsService->getAboutManagement();
+//        return $this->aboutUsService->getAboutManagement();
     }
 
     /**

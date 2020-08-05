@@ -222,4 +222,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // FAQ
     Route::get('faq/{slug}', 'API\V1\FaqController@getFAQ');
 
+    // 4G Internet Offers
+    Route::get('four-g-internet/{package_type}/{last_id?}', 'API\V1\BanglalinkFourGController@getFourGInternet');
+
 });

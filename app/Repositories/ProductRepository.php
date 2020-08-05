@@ -273,4 +273,17 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
+    public function fourGData($type, $last_id)
+    {
+        return $this->model->where('offer_category_id', 1)
+            ->where('is_four_g_offer', 1)
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->startEndDate()
+            ->productCore()
+            ->category($type)
+            ->limit(2)
+            ->paginate(2);
+    }
+
 }
