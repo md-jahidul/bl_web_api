@@ -29,39 +29,12 @@ class BanglalinkFourGController extends Controller
     }
 
     /**
-     * @return JsonResponse
+     * @param $type
+     * @return mixed
      */
-    public function getFourGInternet($type, $last_id = null)
+    public function getFourGInternet($type)
     {
-       return $this->productService->fourGInternet($type, $last_id);
-
-        if ($last_id){
-            $products = Product::where('offer_category_id', 1)
-                ->where('is_four_g_offer', 1)
-                ->where('status', 1)
-                ->where('id', '>', $last_id)
-                ->where('special_product', 0)
-                ->startEndDate()
-                ->productCore()
-                ->category($type)
-                ->limit(2)
-                ->get();
-        } else {
-            $products = Product::where('offer_category_id', 1)
-                ->where('is_four_g_offer', 1)
-                ->where('status', 1)
-                ->where('special_product', 0)
-                ->startEndDate()
-                ->productCore()
-                ->category($type)
-//                ->limit(2)
-                ->get();
-        }
-
-
-        return $products;
-
-//        return $this->aboutUsService->getAboutBanglalink();
+       return $this->productService->fourGInternet($type);
     }
 
 

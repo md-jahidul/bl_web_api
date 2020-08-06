@@ -488,8 +488,15 @@ class ProductService extends ApiBaseService
         }
     }
 
-    public function fourGInternet($type, $last_id)
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function fourGInternet($type)
     {
-        return $this->productRepository->fourGData($type, $last_id);
+        $internetOffers = $this->productRepository->fourGData($type);
+        return $internetOffers;
+//        dd($internetOffers->items());
+        return $this->sendSuccessResponse($internetOffers, '4G Internet Offers');
     }
 }

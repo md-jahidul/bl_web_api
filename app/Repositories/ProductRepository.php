@@ -44,8 +44,7 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type, $offerType)
     {
-        $offerTypeById = $this->getOfferTypeId($offerType);
-//        dd($offerTypeById);
+//        $offerTypeById = $this->getOfferTypeId($offerType);
         return $this->model->select(
                 'products.id',
                 'products.product_code',
@@ -70,7 +69,7 @@ class ProductRepository extends BaseRepository
 //                'd.url_slug'
             )
 //            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
-            ->where('offer_category_id', $offerTypeById)
+//            ->where('offer_category_id', $offerTypeById)
             ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
@@ -273,7 +272,7 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
-    public function fourGData($type, $last_id)
+    public function fourGData($type)
     {
         return $this->model->where('offer_category_id', 1)
             ->where('is_four_g_offer', 1)
