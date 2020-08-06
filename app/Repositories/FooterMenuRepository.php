@@ -27,8 +27,8 @@ class FooterMenuRepository extends BaseRepository
                 $query->where('status', 1)
                 ->select('id', 'parent_id',
                     'en_label_text', 'bn_label_text',
-                    'code', 'url', 'external_site',
-                    'is_dynamic_page', 'dynamic_page_slug'
+                    'code', 'url', 'external_site'
+//                    'is_dynamic_page', 'dynamic_page_slug'
                 );
             }])
             ->orderBy('display_order')
