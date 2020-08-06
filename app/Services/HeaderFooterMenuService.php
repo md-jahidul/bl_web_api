@@ -51,23 +51,23 @@ class HeaderFooterMenuService extends ApiBaseService
         $this->apiBaseService = $apiBaseService;
     }
 
-    public function pagesInfo()
-    {
-        $pages = $this->footerMenuRepository
-            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
-
-        foreach ($pages as $pageData){
-            $data[] = [
-                'id' => $pageData->id,
-                'title' => $pageData->en_label_text,
-                'code' => 'DynamicPages',
-                'url' => $pageData->url,
-                'exact' => true,
-                'slug' => $pageData->dynamic_page_slug,
-            ];
-        }
-        return $data;
-    }
+//    public function pagesInfo()
+//    {
+//        $pages = $this->footerMenuRepository
+//            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
+//
+//        foreach ($pages as $pageData){
+//            $data[] = [
+//                'id' => $pageData->id,
+//                'title' => $pageData->en_label_text,
+//                'code' => 'DynamicPages',
+//                'url' => $pageData->url,
+//                'exact' => true,
+//                'slug' => $pageData->dynamic_page_slug,
+//            ];
+//        }
+//        return $data;
+//    }
 
     /**
      * @return JsonResponse
