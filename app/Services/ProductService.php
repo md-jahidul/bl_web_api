@@ -18,6 +18,7 @@ use App\Traits\CrudTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class ProductService extends ApiBaseService
 {
@@ -495,8 +496,20 @@ class ProductService extends ApiBaseService
     public function fourGInternet($type)
     {
         $internetOffers = $this->productRepository->fourGData($type);
-        return $internetOffers;
-//        dd($internetOffers->items());
-        return $this->sendSuccessResponse($internetOffers, '4G Internet Offers');
+        if ($internetOffers) {
+            foreach ($internetOffers as $product) {
+                $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+                unset($product->productCore);
+            }
+            $collection = [
+                'current_page' => $internetOffers->currentPage(),
+                'products' => $internetOffers->items(),
+                'last_page' => $internetOffers->lastPage(),
+                'per_page' => $internetOffers->perPage(),
+                'total' => $internetOffers->total()
+            ];
+            $data = json_decode(json_encode($collection), true);
+            return $this->sendSuccessResponse($data, '4G Internet Offers');
+        }
     }
 }
