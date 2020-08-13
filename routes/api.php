@@ -225,7 +225,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // 4G Internet Offers
     Route::get('four-g-internet/{package_type}', 'API\V1\BanglalinkFourGController@getFourGInternet');
 
+    // 4G Devices
+    Route::get('four-g-devices', 'API\V1\BanglalinkFourGController@getFourGDevices');
 
+    //TODO: this api is not finalized
     Route::get('file-format', 'API\V1\FileFormatController@getFileUrl');
 
 });

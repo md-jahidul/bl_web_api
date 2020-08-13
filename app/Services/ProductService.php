@@ -8,6 +8,7 @@ use App\Exceptions\IdpAuthException;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
+use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\BalanceService;
@@ -61,6 +62,10 @@ class ProductService extends ApiBaseService
     private $responseFormatter;
 
     protected const BALANCE_API_ENDPOINT = "/customer-information/customer-information";
+    /**
+     * @var FourGLandingPageRepository
+     */
+    private $fourGLandingPageRepository;
 
     /**
      * ProductService constructor.
@@ -71,6 +76,7 @@ class ProductService extends ApiBaseService
      * @param BanglalinkCustomerService $banglalinkCustomerService
      * @param BanglalinkLoanService $blLoanProductService
      * @param BalanceService $balanceService
+     * @param FourGLandingPageRepository $fourGLandingPageRepository
      */
     public function __construct
     (
@@ -80,7 +86,8 @@ class ProductService extends ApiBaseService
         ProductBookmarkRepository $productBookmarkRepository,
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
-        BalanceService $balanceService
+        BalanceService $balanceService,
+        FourGLandingPageRepository $fourGLandingPageRepository
     )
     {
         $this->productRepository = $productRepository;
@@ -91,6 +98,7 @@ class ProductService extends ApiBaseService
         $this->blCustomerService = $banglalinkCustomerService;
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
+        $this->fourGLandingPageRepository = $fourGLandingPageRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -495,6 +503,7 @@ class ProductService extends ApiBaseService
      */
     public function fourGInternet($type)
     {
+        $fourGComponent = $this->fourGLandingPageRepository->getComponent('internet_offers');
         $internetOffers = $this->productRepository->fourGData($type);
         if ($internetOffers) {
             foreach ($internetOffers as $product) {
@@ -502,6 +511,8 @@ class ProductService extends ApiBaseService
                 unset($product->productCore);
             }
             $collection = [
+                'component_title_en' => $fourGComponent->title_en,
+                'component_title_bn' => $fourGComponent->title_bn,
                 'current_page' => $internetOffers->currentPage(),
                 'products' => $internetOffers->items(),
                 'last_page' => $internetOffers->lastPage(),
