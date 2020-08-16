@@ -16,10 +16,11 @@ class FourGLandingPageRepository extends BaseRepository
 {
     public $modelName = FourGLandingPage::class;
 
-    public function findWithoutBanner()
+    public function getBannerImage()
     {
-        return $this->model->where('component_type', '!=', 'banner_image')
-            ->get();
+        return $this->model->where('component_type', 'banner_image')
+            ->select('items')
+            ->first();
     }
 
     public function getComponent($type)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\FourGCampaignService;
 use App\Services\FourGDevicesService;
 use App\Services\FourGDeviceTagService;
 use App\Services\ProductService;
@@ -24,17 +25,25 @@ class BanglalinkFourGController extends Controller
      * @var FourGDevicesService
      */
     private $fourGDevicesService;
+    /**
+     * @var FourGCampaignService
+     */
+    private $fourGCampaignService;
 
     /**
      * AboutUsController constructor.
      * @param ProductService $productService
+     * @param FourGDevicesService $fourGDevicesService
+     * @param FourGCampaignService $fourGCampaignService
      */
     public function __construct(
         ProductService $productService,
-        FourGDevicesService $fourGDevicesService
+        FourGDevicesService $fourGDevicesService,
+        FourGCampaignService $fourGCampaignService
     ) {
         $this->productService = $productService;
         $this->fourGDevicesService = $fourGDevicesService;
+        $this->fourGCampaignService = $fourGCampaignService;
     }
 
     /**
@@ -60,20 +69,20 @@ class BanglalinkFourGController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getAboutManagement()
+    public function getCampaignWithBanner()
     {
-//        return $this->aboutUsService->getAboutManagement();
+        return $this->fourGCampaignService->getCampWithBanner();
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws IdpAuthException
-     */
-    public function getEcareersInfo()
-    {
-        return $this->aboutUsService->getEcareersInfo();
-    }
+//    /**
+//     * @param Request $request
+//     * @return JsonResponse
+//     * @throws IdpAuthException
+//     */
+//    public function getEcareersInfo()
+//    {
+//        return $this->aboutUsService->getEcareersInfo();
+//    }
 
 
 }
