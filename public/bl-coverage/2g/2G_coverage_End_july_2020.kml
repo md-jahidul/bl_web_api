@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+ <Document>
+  <name>2G_coverage_End_july_2020</name>
+  <Folder>
+   <name>Grids</name>
+   <NetworkLink>
+    <name>BL_2G_ALL_END_JULY_62_2020_BestServerSS_GSM_M</name>
+    <visibility>1</visibility>
+    <Region>
+     <Lod>
+      <minLodPixels>128</minLodPixels>
+      <maxLodPixels>-1</maxLodPixels>
+     </Lod>
+     <LatLonAltBox>
+      <north>27.1940147240877</north>
+      <south>20.4678360028837</south>
+      <east>92.9784391670434</east>
+      <west>87.9338051261404</west>
+     </LatLonAltBox>
+    </Region>
+    <Link>
+     <href>BL_2G_ALL_END_JULY_62_2020_BestServerSS_GSM_M\BL_2G_ALL_END_JULY_62_2020_BestServerSS_GSM_M.kml</href>
+    </Link>
+   </NetworkLink>
+  </Folder>
+ </Document>
+</kml>
