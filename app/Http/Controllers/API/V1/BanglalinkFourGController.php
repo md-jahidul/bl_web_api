@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\Banglalink\FourGUSIMEligibilityService;
 use App\Services\FourGCampaignService;
 use App\Services\FourGDevicesService;
 use App\Services\FourGDeviceTagService;
@@ -29,21 +30,28 @@ class BanglalinkFourGController extends Controller
      * @var FourGCampaignService
      */
     private $fourGCampaignService;
+    /**
+     * @var FourGUSIMEligibilityService
+     */
+    private $uSIMEligibilityService;
 
     /**
      * AboutUsController constructor.
      * @param ProductService $productService
      * @param FourGDevicesService $fourGDevicesService
      * @param FourGCampaignService $fourGCampaignService
+     * @param FourGUSIMEligibilityService $fourGUSIMEligibilityService
      */
     public function __construct(
         ProductService $productService,
         FourGDevicesService $fourGDevicesService,
-        FourGCampaignService $fourGCampaignService
+        FourGCampaignService $fourGCampaignService,
+        FourGUSIMEligibilityService $fourGUSIMEligibilityService
     ) {
         $this->productService = $productService;
         $this->fourGDevicesService = $fourGDevicesService;
         $this->fourGCampaignService = $fourGCampaignService;
+        $this->uSIMEligibilityService = $fourGUSIMEligibilityService;
     }
 
     /**
@@ -74,15 +82,15 @@ class BanglalinkFourGController extends Controller
         return $this->fourGCampaignService->getCampWithBanner();
     }
 
-//    /**
-//     * @param Request $request
-//     * @return JsonResponse
-//     * @throws IdpAuthException
-//     */
-//    public function getEcareersInfo()
-//    {
-//        return $this->aboutUsService->getEcareersInfo();
-//    }
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws IdpAuthException
+     */
+    public function checkUSIMEligibility($msisdn)
+    {
+        return $this->uSIMEligibilityService->uSIMEligibility($msisdn);
+    }
 
 
 }

@@ -231,6 +231,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // 4G Campaign
     Route::get('four-g-campaign', 'API\V1\BanglalinkFourGController@getCampaignWithBanner');
 
+    // 4G Status Check
+    Route::get('four-g-usim-eligibility/{msisdn}', 'API\V1\BanglalinkFourGController@checkUSIMEligibility');
+
     //TODO: this api is not finalized
     Route::get('file-format', 'API\V1\FileFormatController@getFileUrl');
 
