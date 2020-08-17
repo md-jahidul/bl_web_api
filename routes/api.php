@@ -215,6 +215,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Media Press Release
     Route::get('media-press-release', 'API\V1\MediaController@getPressRelease');
+    Route::get('media-press-release/filter', 'API\V1\MediaController@getPressReleaseFilter');
 
     //Media TVC Video
     Route::get('media-tvc-video', 'API\V1\MediaController@getTvcVideoData');

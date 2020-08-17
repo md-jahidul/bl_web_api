@@ -101,7 +101,8 @@ class FourGUSIMEligibilityService extends BaseService
 
         if ($response_data['status_code'] == 200){
             $response = json_decode($response_data['response'], true)[0];
-            if ($response['simType'] !== "USIM")
+//            dd($response['simType']);
+            if ($response['simType'] == "USIM")
             {
                 $connectionType = $this->connectionType($customerId);
                 if ($connectionType['status'] == "4G") {
@@ -117,7 +118,7 @@ class FourGUSIMEligibilityService extends BaseService
                 }
             } else {
                 $data = ($customer_type == "PREPAID") ? $this->eligibilityMessage['prepaid_non_eligible'] : $this->eligibilityMessage['postpaid_non_eligible'];
-                // Use Test perpase
+                // Use Test perpuse
                 $data['customer_type'] = $customer_type;
             }
             return $this->responseFormatter->sendSuccessResponse($data, '4G USIM Eligibility Check');
