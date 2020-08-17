@@ -51,14 +51,9 @@ class MediaPressNewsEventService extends ApiBaseService
         return $this->sendSuccessResponse($data, 'Press Release Data');
     }
 
-    public function pressReleaseFilterData()
+    public function pressReleaseFilterData($from, $to)
     {
-        $originalDate = "2010-03-21";
-        $newDate = date("d-m-Y", strtotime($originalDate));
-
-        dd($newDate);
-
-        $data = $this->mediaPNERepository->filterByDate();
+        $data = $this->mediaPNERepository->filterByDate($from, $to);
         return $this->sendSuccessResponse($data, 'Press Release Data');
     }
 }

@@ -48,9 +48,9 @@ class MediaController extends Controller
         return $this->mediaPressNewsEventService->pressReleaseData();
     }
 
-    public function getPressReleaseFilter()
+    public function getPressReleaseFilter($from, $to)
     {
-        return $this->mediaPressNewsEventService->pressReleaseFilterData();
+        return $this->mediaPressNewsEventService->pressReleaseFilterData($from, $to);
     }
 
     public function getTvcVideoData()
