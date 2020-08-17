@@ -22,6 +22,6 @@ class FourGDevicesRepository extends BaseRepository
         return $this->model
             ->where('status', 1)
             ->with('deviceTags')
-            ->paginate(4);
+            ->paginate(3);
     }
 }
