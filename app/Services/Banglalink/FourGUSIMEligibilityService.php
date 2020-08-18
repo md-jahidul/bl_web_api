@@ -38,28 +38,38 @@ class FourGUSIMEligibilityService extends BaseService
 
     protected $eligibilityMessage = [
         '4g_usim' => [
-            'message' => 'Dear Customer, you are already enjoying Banglalink 4G internet with your 4G SIM. Dial *5000# to get the best internet offers.',
-            'button' => 'Check Offer',
+            'message_en' => 'Dear Customer, you are already enjoying Banglalink 4G internet with your 4G SIM. Dial *5000# to get the best internet offers.',
+            'message_bn' => 'প্রিয় গ্রাহক, এই অফারটি আপনার জন্য প্রযোজ্য নয়। আপনি যেকোনো বাংলালিংক সিম রিপ্লেসমেন্ট পয়েন্ট থেকে ২০০ টাকা রিপ্লেসমেন্ট চার্জ দিয়ে আপনার বর্তমান সিমটি বদলে 4G সিমটি নিতে পারবেন।',
+            'button_en' => 'Check Offer',
+            'button_bn' => 'বন্ধ',
             'redirect_url' => '/banglalink-4g'
         ],
         "prepaid_non_eligible" => [
-            'message' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 200',
-            'button' => 'Close',
+            'message_en' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 200',
+            'message_bn' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 200',
+            'button_en' => 'Close',
+            'button_bn' => 'Close(BN)',
             'redirect_url' => '/banglalink-4g'
         ],
         "non_4g_prepaid" => [
-            'message' => 'Dear Customer, you are not using 4G sim. Dial*5000*40# or type FREE4G and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
-            'button' => 'Close',
+            'message_en' => 'Dear Customer, you are not using 4G sim. Dial*5000*40# or type FREE4G and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
+            'message_bn' => 'Dear Customer, you are not using 4G sim. Dial*5000*40# or type FREE4G and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
+            'button_en' => 'Close',
+            'button_bn' => 'Close(BN)',
             'redirect_url' => '/banglalink-4g'
         ],
         "postpaid_non_eligible" => [
-            'message' => 'Dear Customer please type "free4G" and send it to 5000 to know your eligibility or visit Banglalink Service Center',
-            'button' => 'Close',
+            'message_en' => 'Dear Customer please type "free4G" and send it to 5000 to know your eligibility or visit Banglalink Service Center',
+            'message_bn' => 'Dear Customer please type "free4G" and send it to 5000 to know your eligibility or visit Banglalink Service Center',
+            'button_en' => 'Close',
+            'button_bn' => 'Close(BN)',
             'redirect_url' => '/banglalink-4g'
         ],
         "non_4g_postpaid" => [
-            'message' => 'Dear Customer, please type "free4G" and send to 5000 to know your 4G SIM replacement offer or visit Banglalink Sales Point',
-            'button' => 'Close',
+            'message_en' => 'Dear Customer, please type "free4G" and send to 5000 to know your 4G SIM replacement offer or visit Banglalink Sales Point',
+            'message_bn' => 'Dear Customer, please type "free4G" and send to 5000 to know your 4G SIM replacement offer or visit Banglalink Sales Point',
+            'button_en' => 'Close',
+            'button_bn' => 'Close(BN)',
             'redirect_url' => '/banglalink-4g'
         ]
     ];
