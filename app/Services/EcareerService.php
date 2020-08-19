@@ -418,8 +418,8 @@ class EcareerService {
                         $sub_data['alt_text'] = $items_value->alt_text;
                         // $sub_data['alt_links'] = $items_value->alt_links;
                         #teams tab content buttons
-                        $sub_data['call_to_action_buttons'] = null;
-//                        $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+//                        $sub_data['call_to_action_buttons'] = null;
+                        $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
                     }
                 }
             }
