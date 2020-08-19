@@ -40,34 +40,18 @@ class MediaPressNewsEventService extends ApiBaseService
     {
         $pressRelease = $this->mediaPNERepository->getPressNewsEvent($moduleType);
         $bannerImage = $this->mediaBannerImageRepository->bannerImage($moduleType);
-
+        $message = ucfirst(str_replace('_', ' ', $moduleType));
         $data = [
             "body_section" => $pressRelease,
             'banner_image' => $bannerImage
         ];
-        return $this->sendSuccessResponse($data, 'Press Release Data');
+        return $this->sendSuccessResponse($data, "$message Data");
     }
 
     public function mediaPressEventFilterData($moduleType, $from, $to)
     {
         $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
-        return $this->sendSuccessResponse($data, 'Press Release Data');
+        $message = ucfirst(str_replace('_', ' ', $moduleType));
+        return $this->sendSuccessResponse($data,"$message Filter Data");
     }
-
-//    public function newsEventData()
-//    {
-//        $pressRelease = $this->mediaPNERepository->getPressNewsEvent('news_event');
-//        $bannerImage = $this->mediaBannerImageRepository->bannerImage(self::MODULE_TYPE);
-//        $data = [
-//            "body_section" => $pressRelease,
-//            'banner_image' => $bannerImage
-//        ];
-//        return $this->sendSuccessResponse($data, 'News Event Data');
-//    }
-//
-//    public function newsEventFilterData($from, $to)
-//    {
-//        $data = $this->mediaPNERepository->filterByDate($from, $to);
-//        return $this->sendSuccessResponse($data, 'News Event Filter Data');
-//    }
 }
