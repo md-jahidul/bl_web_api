@@ -6,6 +6,7 @@ use App\Services\MediaLandingPageService;
 use App\Http\Controllers\Controller;
 use App\Services\MediaPressNewsEventService;
 use App\Services\MediaTvcVideoService;
+use Illuminate\Http\JsonResponse;
 
 class MediaController extends Controller
 {
@@ -21,6 +22,9 @@ class MediaController extends Controller
      * @var MediaPressNewsEventService
      */
     private $mediaPressNewsEventService;
+
+    private const PRESS_RELEASE = "press_release";
+    private const NEWS_EVENT = "news_event";
 
     /**
      * RolesController constructor.
@@ -43,14 +47,35 @@ class MediaController extends Controller
         return $this->mediaLandingPageService->landingData();
     }
 
+    /**
+     * @return JsonResponse|mixed
+     */
     public function getPressRelease()
     {
-        return $this->mediaPressNewsEventService->pressReleaseData();
+        return $this->mediaPressNewsEventService->mediaPressEventData(self::PRESS_RELEASE);
     }
 
     public function getPressReleaseFilter($from, $to)
     {
-        return $this->mediaPressNewsEventService->pressReleaseFilterData($from, $to);
+        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::PRESS_RELEASE, $from, $to);
+    }
+
+    /**
+     * @return JsonResponse|mixed
+     */
+    public function getNewsEvent()
+    {
+        return $this->mediaPressNewsEventService->mediaPressEventData(self::NEWS_EVENT);
+    }
+
+    /**
+     * @param $from
+     * @param $to
+     * @return mixed
+     */
+    public function getNewsEventFilter($from, $to)
+    {
+        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::NEWS_EVENT, $from, $to);
     }
 
     public function getTvcVideoData()

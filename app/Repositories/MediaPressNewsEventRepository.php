@@ -30,11 +30,10 @@ class MediaPressNewsEventRepository extends BaseRepository
         return ($id) ? $data->where('id', $id)->first() : $data->get();
     }
 
-    public function filterByDate($from, $to)
+    public function filterByDate($moduleType, $from, $to)
     {
-//        dd($from);
         return $this->model
-            ->where('type', 'press_release')
+            ->where('type', $moduleType)
             ->whereBetween('date', [$from, $to])
             ->select('id', 'type','title_en', 'title_bn',
                 'short_details_en', 'short_details_en',

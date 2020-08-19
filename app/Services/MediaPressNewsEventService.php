@@ -23,8 +23,6 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     private $mediaBannerImageRepository;
 
-    private const MODULE_TYPE = "press_news_event";
-
     /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
@@ -38,22 +36,38 @@ class MediaPressNewsEventService extends ApiBaseService
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
     }
 
-    public function pressReleaseData()
+    public function mediaPressEventData($moduleType)
     {
-        $pressRelease = $this->mediaPNERepository->getPressNewsEvent('press_release');
-        $bannerImage = $this->mediaBannerImageRepository->bannerImage(self::MODULE_TYPE);
+        $pressRelease = $this->mediaPNERepository->getPressNewsEvent($moduleType);
+        $bannerImage = $this->mediaBannerImageRepository->bannerImage($moduleType);
 
         $data = [
             "body_section" => $pressRelease,
             'banner_image' => $bannerImage
         ];
-
         return $this->sendSuccessResponse($data, 'Press Release Data');
     }
 
-    public function pressReleaseFilterData($from, $to)
+    public function mediaPressEventFilterData($moduleType, $from, $to)
     {
-        $data = $this->mediaPNERepository->filterByDate($from, $to);
+        $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
         return $this->sendSuccessResponse($data, 'Press Release Data');
     }
+
+//    public function newsEventData()
+//    {
+//        $pressRelease = $this->mediaPNERepository->getPressNewsEvent('news_event');
+//        $bannerImage = $this->mediaBannerImageRepository->bannerImage(self::MODULE_TYPE);
+//        $data = [
+//            "body_section" => $pressRelease,
+//            'banner_image' => $bannerImage
+//        ];
+//        return $this->sendSuccessResponse($data, 'News Event Data');
+//    }
+//
+//    public function newsEventFilterData($from, $to)
+//    {
+//        $data = $this->mediaPNERepository->filterByDate($from, $to);
+//        return $this->sendSuccessResponse($data, 'News Event Filter Data');
+//    }
 }
