@@ -24,7 +24,7 @@ class MediaController extends Controller
     private $mediaPressNewsEventService;
 
     private const PRESS_RELEASE = "press_release";
-    private const NEWS_EVENT = "news_event";
+    private const NEWS_EVENT = "news_events";
 
     /**
      * RolesController constructor.
