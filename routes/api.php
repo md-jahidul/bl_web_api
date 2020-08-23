@@ -239,4 +239,6 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // 4G Status Check
     Route::get('four-g-usim-eligibility/{msisdn}', 'API\V1\BanglalinkFourGController@checkUSIMEligibility');
 
+    // Be A Partner
+    Route::get('be-a-partner', 'API\V1\BeAPartnerController@getBeAPartner');
 });
