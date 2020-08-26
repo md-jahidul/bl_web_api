@@ -186,14 +186,14 @@ class ProductService extends ApiBaseService
 
     /**
      * @param $type
+     * @param $offerType
      * @param $request
      * @return mixed
-     * @throws IdpAuthException
      */
-    public function simTypeOffers($type, $request)
+    public function simTypeOffers($type, $offerType)
     {
         try {
-            $products = $this->productRepository->simTypeProduct($type);
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
             $viewAbleProducts = $products;
 
 //            if ($this->isUserLoggedIn($request)) {
@@ -486,5 +486,17 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function fourGInternet($type)
+    {
+        $internetOffers = $this->productRepository->fourGData($type);
+        return $internetOffers;
+//        dd($internetOffers->items());
+        return $this->sendSuccessResponse($internetOffers, '4G Internet Offers');
     }
 }

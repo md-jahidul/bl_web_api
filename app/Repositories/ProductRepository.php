@@ -14,12 +14,37 @@ class ProductRepository extends BaseRepository
      */
     public $modelName = Product::class;
 
+    protected function getOfferTypeId($offerType)
+    {
+        switch ($offerType) {
+            case "internet":
+                return 1;
+                break;
+            case "voice":
+                return 2;
+                break;
+            case "bundles":
+                return 3;
+                break;
+            case "packages":
+                return 4;
+                break;
+            case "others":
+                return 9;
+                break;
+            default:
+                return false; /*Offer type not found*/
+        }
+    }
+
     /**
      * @param $type
+     * @param $offerType
      * @return mixed
      */
-    public function simTypeProduct($type)
+    public function simTypeProduct($type, $offerType)
     {
+//        $offerTypeById = $this->getOfferTypeId($offerType);
         return $this->model->select(
                 'products.id',
                 'products.product_code',
@@ -44,6 +69,7 @@ class ProductRepository extends BaseRepository
 //                'd.url_slug'
             )
 //            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+//            ->where('offer_category_id', $offerTypeById)
             ->where('status', 1)
             ->where('special_product', 0)
             ->startEndDate()
@@ -154,6 +180,7 @@ class ProductRepository extends BaseRepository
                 }
 
             })
+            ->whereIn('offer_category_id', [1, 2, 3])
             ->orderBy('al_core_products.mrp_price')
             ->first();
     }
@@ -243,6 +270,19 @@ class ProductRepository extends BaseRepository
                 'like')
             ->category($type)
             ->first();
+    }
+
+    public function fourGData($type)
+    {
+        return $this->model->where('offer_category_id', 1)
+            ->where('is_four_g_offer', 1)
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->startEndDate()
+            ->productCore()
+            ->category($type)
+            ->limit(2)
+            ->paginate(2);
     }
 
 }

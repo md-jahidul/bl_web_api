@@ -915,7 +915,7 @@ class EcareerService {
                         $sub_items = [];
                         $sub_items['title_en'] = $items_value->title_en;
                         $sub_items['title_bn'] = $items_value->title_bn;
-                        $sub_items['description_en'] = $items_value->description_bn;
+                        $sub_items['description_en'] = $items_value->description_en;
                         $sub_items['description_bn'] = $items_value->description_bn;
 
                         $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;

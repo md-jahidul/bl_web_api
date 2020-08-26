@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Enums\HttpStatusCode;
 
-class EcareerController extends Controller {
+class EcareerController extends Controller
+{
     /**
      * Available eCarrer portals category
      * # life_at_bl_general
@@ -34,7 +35,8 @@ class EcareerController extends Controller {
      */
     private $ecarrerService;
 
-    public function __construct(EcareerService $ecarrerService) {
+    public function __construct(EcareerService $ecarrerService)
+    {
         $this->ecarrerService = $ecarrerService;
     }
 
@@ -42,7 +44,8 @@ class EcareerController extends Controller {
      * eCarrer top banner and footer contact section api
      * @return [type] [description]
      */
-    public function topBannerContact() {
+    public function topBannerContact()
+    {
 
         try {
             $data = [];
@@ -117,7 +120,8 @@ class EcareerController extends Controller {
      * eCarrer life at banglalink page
      * @return [type] [description]
      */
-    public function lifeAtBanglalink() {
+    public function lifeAtBanglalink()
+    {
 
         $data = [];
 
@@ -168,9 +172,6 @@ class EcareerController extends Controller {
             $data['values_section'] = null;
             $data['campus_section'] = null;
         }
-
-
-
 
 
         # Life at banglalink Diversity section
@@ -247,7 +248,7 @@ class EcareerController extends Controller {
 
         # ecarrer Teams section
         #
-    	$life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
+        $life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
 
         if (!empty($life_at_bl_teams) && count($life_at_bl_teams) > 0) {
 
@@ -301,7 +302,6 @@ class EcareerController extends Controller {
         }
 
 
-
         return response()->success($data, 'Data Found!');
     }
 
@@ -309,7 +309,8 @@ class EcareerController extends Controller {
      * private function for life at banglalink data manupulation
      * @return [type] [description]
      */
-    private function lifeAtBanglalinkData($general_value) {
+    private function lifeAtBanglalinkData($general_value)
+    {
 
         $sub_data_news = [];
         $sub_data_news['title_en'] = $general_value->title_en;
@@ -342,29 +343,30 @@ class EcareerController extends Controller {
      * eCarrer vacancy page api
      * @return [type] [description]
      */
-    public function getEcarrerVacancy() {
+    public function getEcarrerVacancy()
+    {
 
         try {
 
             $data = [];
-            
-                   //seo data
-        $category = "vacancy";
-        $seoData = $this->ecarrerService->getSeoData($category);
 
-        $data['seo_data'] = array(
-            'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-            'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
-            'alt_text' => $seoData->alt_text,
-            'page_header' => $seoData->page_header,
-            'schema_markup' => $seoData->schema_markup
-        );
+            //seo data
+            $category = "vacancy";
+            $seoData = $this->ecarrerService->getSeoData($category);
+
+            $data['seo_data'] = array(
+                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'alt_text' => $seoData->alt_text,
+                'page_header' => $seoData->page_header,
+                'schema_markup' => $seoData->schema_markup
+            );
 
             $data['we_hire'] = $this->ecarrerService->getVacancyHire();
             $data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
             $data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
             $data['job_offers'] = $this->ecarrerService->getVacancyLeverJobOffers();
-            
+
 
             return response()->success($data, 'Data Found!');
         } catch (\Exception $e) {
@@ -376,24 +378,25 @@ class EcareerController extends Controller {
      * [eCarrer Programs category sap, ennovators, aip]
      * @return [type]           [description]
      */
-    public function getEcarrerPrograms() {
+    public function getEcarrerPrograms()
+    {
 
         try {
 
             $data = [];
-            
-               //seo data
-        $category = "programs";
-        $seoData = $this->ecarrerService->getSeoData($category);
 
-        $data['seo_data'] = array(
-            'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-            'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
-            'alt_text' => $seoData->alt_text,
-            'page_header' => $seoData->page_header,
-            'schema_markup' => $seoData->schema_markup
-        );
-        
+            //seo data
+            $category = "programs";
+            $seoData = $this->ecarrerService->getSeoData($category);
+
+            $data['seo_data'] = array(
+                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'alt_text' => $seoData->alt_text,
+                'page_header' => $seoData->page_header,
+                'schema_markup' => $seoData->schema_markup
+            );
+
             $ecarrer_sap = $this->ecarrerService->getProgramsSap();
             $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
             $ecarrer_aip = $this->ecarrerService->getProgramsAip();
@@ -418,7 +421,8 @@ class EcareerController extends Controller {
      * eCarrer University list api
      * @return [type] [description]
      */
-    public function ecarrerUniversity() {
+    public function ecarrerUniversity()
+    {
 
         try {
 
@@ -433,7 +437,8 @@ class EcareerController extends Controller {
         }
     }
 
-    public function ecarrerApplicationForm(Request $request) {
+    public function ecarrerApplicationForm(Request $request)
+    {
 
         try {
             # Image validation check
@@ -441,12 +446,12 @@ class EcareerController extends Controller {
             $image_upload_type = ConfigController::customerImageUploadType();
 
             $validator = Validator::make($request->all(), [
-                        'name' => 'required',
-                        'applicant_cv' => 'nullable|mimes:doc,pdf,docx,zip|max:' . $image_upload_size, // 2M
-                        'phone' => 'nullable|numeric',
-                        'email' => 'nullable|email',
-                        'university_id' => 'nullable|integer',
-                        'versity_id' => 'nullable|integer',
+                'name' => 'required',
+                'applicant_cv' => 'nullable|mimes:doc,pdf,docx,zip|max:' . $image_upload_size, // 2M
+                'phone' => 'nullable|numeric',
+                'email' => 'nullable|email',
+                'university_id' => 'nullable|integer',
+                'versity_id' => 'nullable|integer',
             ]);
             if ($validator->fails()) {
                 // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
