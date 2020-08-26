@@ -278,11 +278,25 @@ class ProductRepository extends BaseRepository
             ->where('is_four_g_offer', 1)
             ->where('status', 1)
             ->where('special_product', 0)
+            ->select(
+                'id',
+                'product_code',
+                'url_slug',
+                'schema_markup',
+                'page_header',
+                'tag_category_id',
+                'sim_category_id',
+                'offer_category_id',
+                'offer_info',
+                'name_en',
+                'name_bn',
+                'ussd_bn',
+                'offer_info',
+                'like')
             ->startEndDate()
             ->productCore()
             ->category($type)
-            ->limit(2)
-            ->paginate(2);
+            ->paginate(4);
     }
 
 }

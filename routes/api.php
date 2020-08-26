@@ -215,6 +215,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Media Press Release
     Route::get('media-press-release', 'API\V1\MediaController@getPressRelease');
+    Route::get('media-press-release/filter/{from}/{to}', 'API\V1\MediaController@getPressReleaseFilter');
+
+    //Media News Event
+    Route::get('media-news-event', 'API\V1\MediaController@getNewsEvent');
+    Route::get('media-news-event/filter/{from}/{to}', 'API\V1\MediaController@getNewsEventFilter');
 
     //Media TVC Video
     Route::get('media-tvc-video', 'API\V1\MediaController@getTvcVideoData');
@@ -223,6 +228,17 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('faq/{slug}', 'API\V1\FaqController@getFAQ');
 
     // 4G Internet Offers
-    Route::get('four-g-internet/{package_type}/{last_id?}', 'API\V1\BanglalinkFourGController@getFourGInternet');
+    Route::get('four-g-internet/{package_type}', 'API\V1\BanglalinkFourGController@getFourGInternet');
 
+    // 4G Devices
+    Route::get('four-g-devices', 'API\V1\BanglalinkFourGController@getFourGDevices');
+
+    // 4G Campaign
+    Route::get('four-g-campaign', 'API\V1\BanglalinkFourGController@getCampaignWithBanner');
+
+    // 4G Status Check
+    Route::get('four-g-usim-eligibility/{msisdn}', 'API\V1\BanglalinkFourGController@checkUSIMEligibility');
+
+    // Be A Partner
+    Route::get('be-a-partner', 'API\V1\BeAPartnerController@getBeAPartner');
 });

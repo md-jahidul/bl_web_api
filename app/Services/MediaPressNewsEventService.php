@@ -23,8 +23,6 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     private $mediaBannerImageRepository;
 
-    private const MODULE_TYPE = "press_news_event";
-
     /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
@@ -38,16 +36,22 @@ class MediaPressNewsEventService extends ApiBaseService
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
     }
 
-    public function pressReleaseData()
+    public function mediaPressEventData($moduleType)
     {
-        $pressRelease = $this->mediaPNERepository->getPressNewsEvent('press_release');
-        $bannerImage = $this->mediaBannerImageRepository->bannerImage(self::MODULE_TYPE);
-
+        $pressRelease = $this->mediaPNERepository->getPressNewsEvent($moduleType);
+        $bannerImage = $this->mediaBannerImageRepository->bannerImage($moduleType);
+        $message = ucfirst(str_replace('_', ' ', $moduleType));
         $data = [
             "body_section" => $pressRelease,
             'banner_image' => $bannerImage
         ];
+        return $this->sendSuccessResponse($data, "$message Data");
+    }
 
-        return $this->sendSuccessResponse($data, 'Press Release Data');
+    public function mediaPressEventFilterData($moduleType, $from, $to)
+    {
+        $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
+        $message = ucfirst(str_replace('_', ' ', $moduleType));
+        return $this->sendSuccessResponse($data,"$message Filter Data");
     }
 }
