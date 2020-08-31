@@ -2,10 +2,16 @@
 
 namespace App\Services\Banglalink;
 
+use App\Enums\HttpStatusCode;
+use App\Http\Controllers\API\V1\ConfigController;
+use App\Repositories\LeadCategoryRepository;
+use App\Repositories\LeadProductRepository;
 use App\Repositories\LeadRequestRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
+use App\Traits\FileTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class FnfService
@@ -14,6 +20,7 @@ use Illuminate\Http\Request;
 class LeadRequestService extends ApiBaseService
 {
     use CrudTrait;
+    use FileTrait;
 
     const BUSINESS = 'business';
     const BUSINESS_SUB = 'business';
@@ -27,10 +34,24 @@ class LeadRequestService extends ApiBaseService
      * @var LeadRequestRepository
      */
     protected $leadRequestRepository;
+    /**
+     * @var LeadRequestRepository
+     */
+    private $leadCategoryRepository;
+    /**
+     * @var LeadRequestRepository
+     */
+    private $leadProductRepository;
 
-    public function __construct(LeadRequestRepository $leadRequestRepository)
+    public function __construct(
+        LeadRequestRepository $leadRequestRepository,
+        LeadCategoryRepository $leadCategoryRepository,
+        LeadProductRepository $leadProductRepository
+    )
     {
         $this->leadRequestRepository = $leadRequestRepository;
+        $this->leadCategoryRepository = $leadCategoryRepository;
+        $this->leadProductRepository = $leadProductRepository;
         $this->setActionRepository($leadRequestRepository);
     }
 
@@ -40,8 +61,23 @@ class LeadRequestService extends ApiBaseService
      */
     public function saveRequest($data)
     {
-        $this->save($data);
-        return $this->sendSuccessResponse([], 'Form submit successfully');
+        try {
+            $leadCat = $this->leadCategoryRepository->findOneByProperties(['slug' => $data['lead_category_id']], ['id']);
+            $leadProduct = $this->leadProductRepository->findOneByProperties(['slug' => $data['lead_product_id']], ['id']);
+
+//            if (!empty($data['form_data']['applicant_cv'])) {
+//                $file = $this->upload($data['form_data']['applicant_cv'], 'assetlite/ecarrer/applicant_files');
+//            }
+
+            $data['lead_category_id'] = $leadCat->id;
+            $data['lead_product_id'] = $leadProduct->id;
+
+            $this->save($data);
+
+            return $this->sendSuccessResponse([], 'Form submitted successfully');
+        } catch (\Exception $e) {
+            return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' => $e->getMessage(), 'errors' => []]), HttpStatusCode::VALIDATION_ERROR);
+        }
     }
 
 }

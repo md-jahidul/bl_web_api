@@ -7,17 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class LeadRequest extends Model
 {
     protected $fillable = [
-        'category',
-        'sub_category',
-        'name',
-        'company_name',
-        'mobile',
-        'email',
-        'district',
-        'thana',
-        'address',
-        'quantity',
-        'package',
-        'request_type'
+        'lead_category_id',
+        'lead_product_id',
+        'form_data',
+        'lead_product_type',
+    ];
+
+    protected $casts = [
+        'form_data' => 'array'
     ];
 }
