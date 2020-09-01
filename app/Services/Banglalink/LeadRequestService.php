@@ -63,14 +63,19 @@ class LeadRequestService extends ApiBaseService
     {
         try {
             $leadCat = $this->leadCategoryRepository->findOneByProperties(['slug' => $data['lead_category_id']], ['id']);
-            $leadProduct = $this->leadProductRepository->findOneByProperties(['slug' => $data['lead_product_id']], ['id']);
+
+            if ($data['lead_category_id'] == "ecareer_programs"){
+                $leadProduct = $this->leadProductRepository->findOneByProperties(['slug' => $data['lead_product_id']], ['id'])->id;
+            } else {
+                $leadProduct = $data['lead_product_id'];
+            }
 
             if (!empty($data['form_data']['applicant_cv'])) {
                 $data['form_data']['applicant_cv'] = $this->upload($data['form_data']['applicant_cv'], 'assetlite/ecarrer/applicant_files');
             }
 
             $data['lead_category_id'] = $leadCat->id;
-            $data['lead_product_id'] = $leadProduct->id;
+            $data['lead_product_id'] = $leadProduct;
 
             $this->save($data);
 
