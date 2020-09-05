@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\API\V1\ConfigController;
+use App\Mail\LeadFoundMail;
 use App\Repositories\LeadCategoryRepository;
 use App\Repositories\LeadProductRepository;
 use App\Repositories\LeadRequestRepository;
@@ -11,6 +12,7 @@ use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -79,10 +81,23 @@ class LeadRequestService extends ApiBaseService
 
             $this->save($data);
 
+            $this->sendMail();
+
             return $this->sendSuccessResponse([], 'Form submitted successfully');
         } catch (\Exception $e) {
             return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' => $e->getMessage(), 'errors' => []]), HttpStatusCode::VALIDATION_ERROR);
         }
+    }
+
+    public static function sendMail()
+    {
+        $data = [
+            'to' => 'jahidul@bs-23.net',
+            'subject' => "Sample Subject",
+            'message' => "One request Found"
+        ];
+        Mail::to($data['to'])->send(new LeadFoundMail($data));
+//        return response('Mail send successfully');
     }
 
 }
