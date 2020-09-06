@@ -81,7 +81,7 @@ class LeadRequestService extends ApiBaseService
 
             $this->save($data);
 
-            $this->sendMail();
+//            $this->sendMail();
 
             return $this->sendSuccessResponse([], 'Form submitted successfully');
         } catch (\Exception $e) {
@@ -89,15 +89,15 @@ class LeadRequestService extends ApiBaseService
         }
     }
 
-    public static function sendMail()
-    {
-        $data = [
-            'to' => 'jahidul@bs-23.net',
-            'subject' => "Sample Subject",
-            'message' => "One request Found"
-        ];
-        Mail::to($data['to'])->send(new LeadFoundMail($data));
-//        return response('Mail send successfully');
-    }
+//    public static function sendMail()
+//    {
+//        $data = [
+//            'to' => 'jahidul@bs-23.net',
+//            'subject' => "Sample Subject",
+//            'message' => "One request Found"
+//        ];
+//        Mail::to($data['to'])->send(new LeadFoundMail($data));
+////        return response('Mail send successfully');
+//    }
 
 }
