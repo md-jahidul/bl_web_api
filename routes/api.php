@@ -241,4 +241,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Be A Partner
     Route::get('be-a-partner', 'API\V1\BeAPartnerController@getBeAPartner');
+
+    // Customer Feedback
+    Route::get('customer-feedback/questions', 'API\V1\CustomerFeedbackController@getQuestionAns');
 });
