@@ -38,8 +38,8 @@ class FourGUSIMEligibilityService extends BaseService
 
     protected $eligibilityMessage = [
         '4g_usim' => [
-            'message_en' => 'Dear Customer, you are already enjoying Banglalink 4G internet with your 4G SIM. Dial *5000# to get the best internet offers.',
-            'message_bn' => 'প্রিয় গ্রাহক, আপনি ইতিমধ্যে আপনার 4G সিমটি দিয়ে বাংলালিংক 4G ইন্টারনেট উপভোগ করছেন।  সবচেয়ে ভাল ইন্টারনেট অফার পেতে ডায়েল করুন *5000*',
+            'message_en' => 'Dear Customer, you already have a 4G SIM. Dial *5000# to get the best internet offers and enjoy Banglalink Full Speed 4G.',
+            'message_bn' => 'প্রিয় গ্রাহক, আপনার সিমটি 4G। সেরা ইন্টারনেট অফার পেতে ডায়াল করুন *5000# এবং বাংলালিংক ফুল স্পিড 4G উপভোগ করুন।',
             'button_en' => 'Check Offer',
             'button_bn' => 'ইন্টারনেট কিনুন এখনই',
             'redirect_url' => '/banglalink-4g'
@@ -52,8 +52,8 @@ class FourGUSIMEligibilityService extends BaseService
             'redirect_url' => '/banglalink-4g'
         ],
         "non_4g_prepaid" => [
-            'message_en' => 'Dear Customer, you are not using 4G sim. Dial*5000*40# or type FREE4G and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
-            'message_bn' => 'প্রিয় গ্রাহক,  আপনি 4G সিম ব্যবহার করছেন না। আপনার 4G সিম রিপ্লেসমেন্ট অফার জানতে ডায়েল করুন *5000*40# এ অথবা টাইপ করুন "free4G" এবং পাঠিয়ে দিন ২৫০০  নম্বরে ।',
+            'message_en' => 'Dear Customer, you are not using a 4G SIM. Dial*5000*40# or type “FREE4G” and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
+            'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে ডায়াল *5000*40# অথবা টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
             'button_en' => 'Close',
             'button_bn' => 'বন্ধ',
             'redirect_url' => '/banglalink-4g'
@@ -66,8 +66,8 @@ class FourGUSIMEligibilityService extends BaseService
             'redirect_url' => '/banglalink-4g'
         ],
         "non_4g_postpaid" => [
-            'message_en' => 'Dear Customer, please type "free4G" and send to 5000 to know your 4G SIM replacement offer or visit Banglalink Sales Point',
-            'message_bn' => 'প্রিয় গ্রাহক, অনুগ্রহ করে টাইপ করুন "free4G" এবং আপনার 4G সিম রিপ্লেসমেন্ট অফার জানতে পাঠিয়ে দিন ৫০০০  নম্বরে অথবা ভিজিট করুন বাংলালিংক সেলস পয়েন্টে।',
+            'message_en' => 'Dear Customer, you are not using a 4G SIM. Please type "FREE4G" and send to 2500 to know your 4G SIM replacement offer.',
+            'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
             'button_en' => 'Close',
             'button_bn' => 'বন্ধ',
             'redirect_url' => '/banglalink-4g'

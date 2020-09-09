@@ -55,7 +55,6 @@ class HeaderFooterMenuService extends ApiBaseService
     {
         $pages = $this->footerMenuRepository
             ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
-
         foreach ($pages as $pageData){
             $data[] = [
                 'id' => $pageData->id,
@@ -66,7 +65,7 @@ class HeaderFooterMenuService extends ApiBaseService
                 'slug' => $pageData->dynamic_page_slug,
             ];
         }
-        return $data;
+        return isset($data) ? $data : [];
     }
 
     /**
