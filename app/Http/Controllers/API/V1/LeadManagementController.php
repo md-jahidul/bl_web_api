@@ -34,7 +34,6 @@ class LeadManagementController extends Controller
      */
     public function leadRequestData(Request $request)
     {
-        dd($request->all());
         return $this->leadRequestService->saveRequest($request->all());
     }
 
