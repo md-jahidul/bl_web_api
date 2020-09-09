@@ -48,6 +48,7 @@ class CustomerFeedbackService extends ApiBaseService
         $data = [];
         foreach ($questions as $question){
             $data[] = [
+              'id' => $question->id,
               'question_en' => $question->question_en,
               'question_bn' => $question->question_bn,
               'options_en' => json_decode($question->answers_en),

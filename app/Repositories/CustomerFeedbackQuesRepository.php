@@ -20,7 +20,7 @@ class CustomerFeedbackQuesRepository extends BaseRepository
     public function getData()
     {
         return $this->model->where('status', 1)
-            ->select('question_en', 'question_bn', 'answers_en', 'answers_bn', 'type')
+            ->select('id', 'question_en', 'question_bn', 'answers_en', 'answers_bn', 'type')
             ->orderBy('sort', 'ASC')
             ->get();
     }
