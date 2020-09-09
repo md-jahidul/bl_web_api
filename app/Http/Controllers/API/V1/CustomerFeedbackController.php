@@ -37,5 +37,9 @@ class CustomerFeedbackController extends Controller
         return $this->customerFeedbackService->getQuestionAns();
     }
 
+    public function customerFeedbackSave()
+    {
+        return $this->customerFeedbackService->feedBackSave();
+    }
 
 }
