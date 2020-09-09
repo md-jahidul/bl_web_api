@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\AboutPriyojonResource;
 use App\Repositories\AboutPageRepository;
 use App\Repositories\AboutPriyojonRepository;
+use App\Repositories\CustomerFeedbackPageRepository;
 use App\Repositories\CustomerFeedbackQuesRepository;
 use App\Repositories\CustomerFeedbackRepository;
 use App\Traits\CrudTrait;
@@ -23,18 +24,25 @@ class CustomerFeedbackService extends ApiBaseService
      * @var CustomerFeedbackQuesRepository
      */
     private $customerFeedbackQuesRepo;
+    /**
+     * @var CustomerFeedbackPageRepository
+     */
+    private $customerFeedbackPageRepository;
 
     /**
      * CustomerFeedbackService constructor.
      * @param CustomerFeedbackRepository $customerFeedbackRepository
      * @param CustomerFeedbackQuesRepository $customerFeedbackQuesRepository
+     * @param CustomerFeedbackPageRepository $customerFeedbackPageRepository
      */
     public function __construct(
         CustomerFeedbackRepository $customerFeedbackRepository,
-        CustomerFeedbackQuesRepository $customerFeedbackQuesRepository
+        CustomerFeedbackQuesRepository $customerFeedbackQuesRepository,
+        CustomerFeedbackPageRepository $customerFeedbackPageRepository
     ) {
         $this->customerFeedbackRepository = $customerFeedbackRepository;
         $this->customerFeedbackQuesRepo = $customerFeedbackQuesRepository;
+        $this->customerFeedbackPageRepository = $customerFeedbackPageRepository;
         $this->setActionRepository($customerFeedbackRepository);
     }
 
@@ -59,8 +67,19 @@ class CustomerFeedbackService extends ApiBaseService
         return $this->sendSuccessResponse($data, 'Customer Feedback Questions');
     }
 
-    public function feedBackSave()
+    public function feedBackSave($request)
     {
+        $page = $this->customerFeedbackPageRepository
+            ->findOneByProperties(['page_name' => $request->page_name]);
 
+        if (!$page){
+           $page = $this->customerFeedbackPageRepository->save(['page_name' => $request->page_name]);
+        }
+        $this->save([
+            'rating' => $request->rating,
+            'answers' => $request->answers,
+            'page_id' => $page->id,
+        ]);
+        return $this->sendSuccessResponse([], 'Customer Feedback Save Successfully!');
     }
 }

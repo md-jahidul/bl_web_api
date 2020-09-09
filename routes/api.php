@@ -244,4 +244,5 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Customer Feedback
     Route::get('customer-feedback/questions', 'API\V1\CustomerFeedbackController@getQuestionAns');
+    Route::post('customer-feedback/save', 'API\V1\CustomerFeedbackController@customerFeedbackSave');
 });
