@@ -32,7 +32,7 @@ class LeadManagementController extends Controller
      * @param LeadRequest $request
      * @return string
      */
-    public function leadRequestData(LeadRequest $request)
+    public function leadRequestData(Request $request)
     {
         return $this->leadRequestService->saveRequest($request->all());
     }
