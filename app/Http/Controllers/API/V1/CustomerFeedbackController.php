@@ -41,5 +41,4 @@ class CustomerFeedbackController extends Controller
     {
         return $this->customerFeedbackService->feedBackSave($request);
     }
-
 }
