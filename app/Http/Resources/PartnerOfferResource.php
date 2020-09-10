@@ -19,9 +19,9 @@ class PartnerOfferResource extends JsonResource {
         if (!empty($this->location)) {
             $location = json_decode($this->location);
         }
-        
+
         $offerScaleEn = array('Upto' => "Up To", 'Minimum' => 'Minimum', 'Fixed' => 'Fixed');
-        $offerScaleBn = array('Upto' => "সর্বোচ্ছ", 'Minimum' => 'নূন্যতম', 'Fixed' => 'ফিক্সড');
+        $offerScaleBn = array('Upto' => "সর্বোচ্চ", 'Minimum' => 'নূন্যতম', 'Fixed' => 'ফিক্সড');
 
         return [
             "id" => $this->id ?? null,
