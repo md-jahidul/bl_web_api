@@ -72,12 +72,15 @@ class CustomerFeedbackService extends ApiBaseService
         $page = $this->customerFeedbackPageRepository
             ->findOneByProperties(['page_name' => $request->page_name]);
 
+        $pageName = str_replace('_', ' ', ucfirst($request->page_name));
+
         if (!$page){
-           $page = $this->customerFeedbackPageRepository->save(['page_name' => $request->page_name]);
+           $page = $this->customerFeedbackPageRepository->save(['page_name' => $pageName]);
         }
+
         $this->save([
             'rating' => $request->rating,
-            'answers' => $request->answers,
+            'answers' => json_encode($request->answers),
             'page_id' => $page->id,
         ]);
         return $this->sendSuccessResponse([], 'Customer Feedback Save Successfully!');
