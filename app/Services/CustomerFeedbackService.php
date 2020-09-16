@@ -69,10 +69,10 @@ class CustomerFeedbackService extends ApiBaseService
 
     public function feedBackSave($request)
     {
-        $page = $this->customerFeedbackPageRepository
-            ->findOneByProperties(['page_name' => $request->page_name]);
-
         $pageName = str_replace('_', ' ', ucfirst($request->page_name));
+
+        $page = $this->customerFeedbackPageRepository
+            ->findOneByProperties(['page_name' => $pageName]);
 
         if (!$page){
            $page = $this->customerFeedbackPageRepository->save(['page_name' => $pageName]);
