@@ -64,9 +64,9 @@ class LeadRequestService extends ApiBaseService
     public function saveRequest($data)
     {
         try {
-            $leadCat = $this->leadCategoryRepository->findOneByProperties(['slug' => $data['lead_category_id']], ['id']);
+            $leadCat = $this->leadCategoryRepository->findOneByProperties(['slug' => $data['lead_category_slug']], ['id']);
 
-            if ($data['lead_category_id'] == "ecareer_programs"){
+            if ($data['lead_category_slug'] == "ecareer_programs"){
                 $leadProduct = $this->leadProductRepository->findOneByProperties(['slug' => $data['lead_product_id']], ['id'])->id;
             } else {
                 $leadProduct = $data['lead_product_id'];
