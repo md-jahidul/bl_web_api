@@ -248,4 +248,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Banglalink 3G
     Route::get('banglalink-three-g', 'API\V1\BanglalinkThreeGController@getThreeGData');
+
+    // Corporate Responsibility
+    Route::get('corporate-responsibility/section', 'API\V1\CorporateRespSectionController@getSection');
 });
