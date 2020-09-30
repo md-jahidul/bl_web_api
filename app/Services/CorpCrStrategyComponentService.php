@@ -56,7 +56,7 @@ class CorpCrStrategyComponentService extends ApiBaseService
     public function getComponentWithDetails($urlSlug)
     {
         $data = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
+        ($data) ? $data : $data = json_decode("{}");
         return $this->sendSuccessResponse($data, 'Corporate CR Strategy Details Components Data!');
-
     }
 }
