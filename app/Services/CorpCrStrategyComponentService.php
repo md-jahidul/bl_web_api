@@ -50,11 +50,19 @@ class CorpCrStrategyComponentService extends ApiBaseService
     public function crStrategySection()
     {
         $orderBy = ['column' => 'display_order', 'direction' => 'ASC'];
-        $sections = $this->corpCrStrategySectionRepo->findAll('', '', $orderBy);
+        $sections = $this->corpCrStrategySectionRepo->getSections();
+
+        return $sections;
+
         $data = [];
         foreach ($sections as $section){
             $query = ['page_type' => 'cr_strategy_section', 'page_id' => $section->id];
-            $column = ['title_en', 'title_bn', 'details_en', 'details_bn', 'other_attributes'];
+            $column = [
+                        'title_en',
+                        'title_bn', 'details_en',
+                        'details_bn', 'other_attributes',
+                        'url_slug_en', 'page_header', 'schema_markup'
+                    ];
             $components = $this->corpCrStrategyComponentRepo->findByProperties($query, $column);
             $data[] = [
                 'title_en' => $section->title_en,
