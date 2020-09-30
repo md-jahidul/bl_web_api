@@ -11,4 +11,9 @@ class CorpCrStrategyComponent extends Model
     protected $casts = [
         'other_attributes' => 'array'
     ];
+
+    public function components()
+    {
+        return $this->hasMany(Component::class, 'section_details_id', 'id');
+    }
 }

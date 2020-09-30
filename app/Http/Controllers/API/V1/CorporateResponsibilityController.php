@@ -43,4 +43,9 @@ class CorporateResponsibilityController extends Controller
     {
         return $this->corpCrStrategyComponentService->crStrategySection();
     }
+
+    public function getDetailsComponents($urlSlug)
+    {
+        return $this->corpCrStrategyComponentService->getComponentWithDetails($urlSlug);
+    }
 }
