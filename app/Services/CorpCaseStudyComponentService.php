@@ -43,7 +43,25 @@ class CorpCaseStudyComponentService extends ApiBaseService
     public function caseStudySectionWithComponent()
     {
         $sections = $this->corpCaseStudySectionRepository->getSections();
-        return $this->sendSuccessResponse($sections, 'Corporate CR Strategy Data!');
+
+        $data = [];
+        foreach ($sections as $section){
+            if ($section->section_type == "left_image_right_text"){
+                $data[] = [
+                    'id' => $section->id,
+                    'section_type' => $section->section_type,
+                    'components' => isset($section->components[0]) ? $section->components[0] : json_decode("{}")
+                ];
+            } else {
+                $data[] = [
+                    'id' => $section->id,
+                    'section_type' => $section->section_type,
+                    'components' => $section->components
+                ];
+            }
+        }
+
+        return $this->sendSuccessResponse($data, 'Corporate CR Strategy Data!');
     }
 
     public function getComponentWithDetails($urlSlug)

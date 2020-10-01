@@ -18,7 +18,7 @@ class CorpCaseStudySectionRepository extends BaseRepository
                     'details_en',
                     'other_attributes', 'url_slug_en',
                     'page_header', 'schema_markup');
-                }])
+            }])
             ->orderBy('display_order', 'ASC')
             ->get();
     }
