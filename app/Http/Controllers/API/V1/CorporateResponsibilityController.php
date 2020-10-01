@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Services\CorpCaseStudyComponentService;
 use App\Services\CorpCrStrategyComponentService;
 use App\Services\CorporateRespSectionService;
 use App\Services\MediaLandingPageService;
@@ -20,18 +21,25 @@ class CorporateResponsibilityController extends Controller
      * @var CorpCrStrategyComponentService
      */
     private $corpCrStrategyComponentService;
+    /**
+     * @var CorpCaseStudyComponentService
+     */
+    private $corpCaseStudyComponentService;
 
     /**
      * CorporateRespSectionController constructor.
      * @param CorporateRespSectionService $corporateRespSectionService
      * @param CorpCrStrategyComponentService $corpCrStrategyComponentService
+     * @param CorpCaseStudyComponentService $corpCaseStudyComponentService
      */
     public function __construct(
         CorporateRespSectionService $corporateRespSectionService,
-        CorpCrStrategyComponentService $corpCrStrategyComponentService
+        CorpCrStrategyComponentService $corpCrStrategyComponentService,
+        CorpCaseStudyComponentService $corpCaseStudyComponentService
     ) {
         $this->corporateRespSectionService = $corporateRespSectionService;
         $this->corpCrStrategyComponentService = $corpCrStrategyComponentService;
+        $this->corpCaseStudyComponentService = $corpCaseStudyComponentService;
     }
 
     public function getSection()
@@ -39,6 +47,9 @@ class CorporateResponsibilityController extends Controller
         return $this->corporateRespSectionService->sections();
     }
 
+    /**
+     * @return JsonResponse|mixed
+     */
     public function getCrStrategySection()
     {
         return $this->corpCrStrategyComponentService->crStrategySection();
@@ -47,5 +58,10 @@ class CorporateResponsibilityController extends Controller
     public function getDetailsComponents($urlSlug)
     {
         return $this->corpCrStrategyComponentService->getComponentWithDetails($urlSlug);
+    }
+
+    public function getCaseStudySection()
+    {
+        return $this->corpCaseStudyComponentService->caseStudySectionWithComponent();
     }
 }

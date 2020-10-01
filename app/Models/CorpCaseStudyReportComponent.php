@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CorpCrStrategyComponent extends Model
+class CorpCaseStudyReportComponent extends Model
 {
     protected $casts = [
         'other_attributes' => 'array',
