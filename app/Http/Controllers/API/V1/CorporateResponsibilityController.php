@@ -55,7 +55,7 @@ class CorporateResponsibilityController extends Controller
         return $this->corpCrStrategyComponentService->crStrategySection();
     }
 
-    public function getDetailsComponents($urlSlug)
+    public function getCrStrategyDetailsComponents($urlSlug)
     {
         return $this->corpCrStrategyComponentService->getComponentWithDetails($urlSlug);
     }
@@ -63,5 +63,10 @@ class CorporateResponsibilityController extends Controller
     public function getCaseStudySection()
     {
         return $this->corpCaseStudyComponentService->caseStudySectionWithComponent();
+    }
+
+    public function getCaseStudyDetailsComponents($urlSlug)
+    {
+        return $this->corpCaseStudyComponentService->getComponentWithDetails($urlSlug);
     }
 }

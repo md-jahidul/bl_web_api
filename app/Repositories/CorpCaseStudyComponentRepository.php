@@ -3,14 +3,15 @@
 namespace App\Repositories;
 
 use App\Models\AboutUsBanglalink;
+use App\Models\CorpCaseStudyReportComponent;
 use App\Models\CorpCrStrategyComponent;
 use App\Models\CorporateCrStrategySection;
 
 class CorpCaseStudyComponentRepository extends BaseRepository
 {
-    public $modelName = CorpCrStrategyComponent::class;
+    public $modelName = CorpCaseStudyReportComponent::class;
 
-    protected const PAGE_TYPE = "cr_strategy_component_details";
+    protected const PAGE_TYPE = "case_study_component_details";
 
     public function componentWithDetails($urlSlug)
     {

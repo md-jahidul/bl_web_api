@@ -253,8 +253,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('corporate-responsibility/section', 'API\V1\CorporateResponsibilityController@getSection');
     //CR-strategy Corporate Responsibility
     Route::get('corporate-cr-strategy', 'API\V1\CorporateResponsibilityController@getCrStrategySection');
-    Route::get('corporate-cr-strategy/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getDetailsComponents');
+    Route::get('corporate-cr-strategy/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getCrStrategyDetailsComponents');
 
     // Case Study
     Route::get('corp-case-study-report/section-component', 'API\V1\CorporateResponsibilityController@getCaseStudySection');
+    Route::get('corporate-case-study/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getCaseStudyDetailsComponents');
 });

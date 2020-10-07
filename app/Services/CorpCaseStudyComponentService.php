@@ -10,6 +10,7 @@
 namespace App\Services;
 
 use App\Repositories\AlFaqRepository;
+use App\Repositories\CorpCaseStudyComponentRepository;
 use App\Repositories\CorpCaseStudySectionRepository;
 use App\Repositories\CorpCrStrategyComponentRepository;
 use App\Repositories\CorporateCrStrategySectionRepository;
@@ -28,15 +29,22 @@ class CorpCaseStudyComponentService extends ApiBaseService
      * @var CorpCaseStudySectionRepository
      */
     private $corpCaseStudySectionRepository;
+    /**
+     * @var CorpCaseStudyComponentRepository
+     */
+    private $corpCaseStudyComponentRepository;
 
     /**
      * DigitalServicesService constructor.
      * @param CorpCaseStudySectionRepository $corpCaseStudySectionRepository
+     * @param CorpCaseStudyComponentRepository $corpCaseStudyComponentRepository
      */
     public function __construct(
-        CorpCaseStudySectionRepository $corpCaseStudySectionRepository
+        CorpCaseStudySectionRepository $corpCaseStudySectionRepository,
+        CorpCaseStudyComponentRepository $corpCaseStudyComponentRepository
     ) {
         $this->corpCaseStudySectionRepository = $corpCaseStudySectionRepository;
+        $this->corpCaseStudyComponentRepository = $corpCaseStudyComponentRepository;
         $this->setActionRepository($corpCaseStudySectionRepository);
     }
 
@@ -66,7 +74,7 @@ class CorpCaseStudyComponentService extends ApiBaseService
 
     public function getComponentWithDetails($urlSlug)
     {
-        $data = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
+        $data = $this->corpCaseStudyComponentRepository->componentWithDetails($urlSlug);
         ($data) ? $data : $data = json_decode("{}");
         return $this->sendSuccessResponse($data, 'Corporate CR Strategy Details Components Data!');
     }
