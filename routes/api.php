@@ -258,4 +258,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Case Study
     Route::get('corp-case-study-report/section-component', 'API\V1\CorporateResponsibilityController@getCaseStudySection');
     Route::get('corporate-case-study/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getCaseStudyDetailsComponents');
+
+    // Initiative Tab
+    Route::get('corporate/initiative-tabs', 'API\V1\CorporateResponsibilityController@getInitiativeTabs');
 });
