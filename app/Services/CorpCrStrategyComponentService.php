@@ -12,6 +12,7 @@ namespace App\Services;
 use App\Repositories\AlFaqRepository;
 use App\Repositories\CorpCrStrategyComponentRepository;
 use App\Repositories\CorporateCrStrategySectionRepository;
+use App\Repositories\CorpRespContactUsRepository;
 use App\Repositories\MediaPressNewsEventRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
@@ -32,25 +33,39 @@ class CorpCrStrategyComponentService extends ApiBaseService
      * @var CorporateCrStrategySectionRepository
      */
     private $corpCrStrategySectionRepo;
+    /**
+     * @var CorpRespContactUsRepository
+     */
+    private $contactUsRepository;
 
     /**
      * DigitalServicesService constructor.
      * @param CorpCrStrategyComponentRepository $corpCrStrategyComponentRepository
      * @param CorporateCrStrategySectionRepository $corporateCrStrategySectionRepository
+     * @param CorpRespContactUsRepository $contactUsRepository
      */
     public function __construct(
         CorpCrStrategyComponentRepository $corpCrStrategyComponentRepository,
-        CorporateCrStrategySectionRepository $corporateCrStrategySectionRepository
+        CorporateCrStrategySectionRepository $corporateCrStrategySectionRepository,
+        CorpRespContactUsRepository $contactUsRepository
     ) {
         $this->corpCrStrategyComponentRepo = $corpCrStrategyComponentRepository;
         $this->corpCrStrategySectionRepo = $corporateCrStrategySectionRepository;
+        $this->contactUsRepository = $contactUsRepository;
         $this->setActionRepository($corpCrStrategyComponentRepository);
     }
 
     public function crStrategySection()
     {
         $sections = $this->corpCrStrategySectionRepo->getSections();
-        return $this->sendSuccessResponse($sections, 'Corporate CR Strategy Data!');
+        $contactUsInfo = $this->contactUsRepository->getContactContent();
+
+        $data = [
+            'components' => $sections,
+            'contact_us' => $contactUsInfo
+        ];
+
+        return $this->sendSuccessResponse($data, 'Corporate CR Strategy Data!');
     }
 
     public function getComponentWithDetails($urlSlug)
