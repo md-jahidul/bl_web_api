@@ -10,6 +10,7 @@
 namespace App\Services;
 
 use App\Repositories\CorporateInitiativeTabRepository;
+use App\Repositories\CorpRespContactUsRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -23,20 +24,34 @@ class CorporateInitiativeTabService extends ApiBaseService
      * @var CorporateInitiativeTabRepository
      */
     private $initiativeTabRepository;
+    /**
+     * @var CorpRespContactUsRepository
+     */
+    private $contactUsRepository;
 
     /**
      * DigitalServicesService constructor.
      * @param CorporateInitiativeTabRepository $initiativeTabRepository
+     * @param CorpRespContactUsRepository $contactUsRepository
      */
-    public function __construct(CorporateInitiativeTabRepository $initiativeTabRepository)
-    {
+    public function __construct(
+        CorporateInitiativeTabRepository $initiativeTabRepository,
+        CorpRespContactUsRepository $contactUsRepository
+    ) {
         $this->initiativeTabRepository = $initiativeTabRepository;
+        $this->contactUsRepository = $contactUsRepository;
         $this->setActionRepository($initiativeTabRepository);
     }
 
     public function getTabs()
     {
-        $data = $this->initiativeTabRepository->getTabs();
+        $tabs = $this->initiativeTabRepository->getTabs();
+
+        $contactUsInfo = $this->contactUsRepository->getContactContent('initiative');
+        $data = [
+            'tabs' => $tabs,
+            'contact_us' => $contactUsInfo
+        ];
         return $this->sendSuccessResponse($data, 'Corporate Initiative Tabs Data!!');
     }
 }

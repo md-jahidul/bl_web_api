@@ -58,20 +58,20 @@ class CorpCrStrategyComponentService extends ApiBaseService
     public function crStrategySection()
     {
         $sections = $this->corpCrStrategySectionRepo->getSections();
-        $contactUsInfo = $this->contactUsRepository->getContactContent();
-
-        $data = [
-            'components' => $sections,
-            'contact_us' => $contactUsInfo
-        ];
-
-        return $this->sendSuccessResponse($data, 'Corporate CR Strategy Data!');
+        return $this->sendSuccessResponse($sections, 'Corporate CR Strategy Data!');
     }
 
     public function getComponentWithDetails($urlSlug)
     {
-        $data = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
-        ($data) ? $data : $data = json_decode("{}");
+        $components = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
+        ($components) ? $components : $data = json_decode("{}");
+        $contactUsInfo = $this->contactUsRepository->getContactContent('cr_strategy_details');
+
+        $data = [
+            'components' => $components,
+            'contact_us' => $contactUsInfo
+        ];
+
         return $this->sendSuccessResponse($data, 'Corporate CR Strategy Details Components Data!');
     }
 }

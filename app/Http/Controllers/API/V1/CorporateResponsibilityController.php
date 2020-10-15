@@ -105,9 +105,6 @@ class CorporateResponsibilityController extends Controller
         return $this->corpCaseStudyComponentService->getComponentWithDetails($urlSlug);
     }
 
-//    /**
-//     * Initiative Tab
-//     */
     /**
      * @return JsonResponse|mixed
      */

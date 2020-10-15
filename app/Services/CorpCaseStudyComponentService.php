@@ -14,6 +14,7 @@ use App\Repositories\CorpCaseStudyComponentRepository;
 use App\Repositories\CorpCaseStudySectionRepository;
 use App\Repositories\CorpCrStrategyComponentRepository;
 use App\Repositories\CorporateCrStrategySectionRepository;
+use App\Repositories\CorpRespContactUsRepository;
 use App\Repositories\MediaPressNewsEventRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
@@ -33,49 +34,65 @@ class CorpCaseStudyComponentService extends ApiBaseService
      * @var CorpCaseStudyComponentRepository
      */
     private $corpCaseStudyComponentRepository;
+    /**
+     * @var CorpRespContactUsRepository
+     */
+    private $contactUsRepository;
 
     /**
      * DigitalServicesService constructor.
      * @param CorpCaseStudySectionRepository $corpCaseStudySectionRepository
      * @param CorpCaseStudyComponentRepository $corpCaseStudyComponentRepository
+     * @param CorpRespContactUsRepository $contactUsRepository
      */
     public function __construct(
         CorpCaseStudySectionRepository $corpCaseStudySectionRepository,
-        CorpCaseStudyComponentRepository $corpCaseStudyComponentRepository
+        CorpCaseStudyComponentRepository $corpCaseStudyComponentRepository,
+        CorpRespContactUsRepository $contactUsRepository
     ) {
         $this->corpCaseStudySectionRepository = $corpCaseStudySectionRepository;
         $this->corpCaseStudyComponentRepository = $corpCaseStudyComponentRepository;
+        $this->contactUsRepository = $contactUsRepository;
         $this->setActionRepository($corpCaseStudySectionRepository);
     }
 
     public function caseStudySectionWithComponent()
     {
         $sections = $this->corpCaseStudySectionRepository->getSections();
-
-        $data = [];
+        $components = [];
         foreach ($sections as $section){
             if ($section->section_type == "left_image_right_text"){
-                $data[] = [
+                $components[] = [
                     'id' => $section->id,
                     'section_type' => $section->section_type,
                     'components' => isset($section->components[0]) ? $section->components[0] : json_decode("{}")
                 ];
             } else {
-                $data[] = [
+                $components[] = [
                     'id' => $section->id,
                     'section_type' => $section->section_type,
                     'components' => $section->components
                 ];
             }
         }
+        $contactUsInfo = $this->contactUsRepository->getContactContent('case_study_and_report');
+        $data = [
+            'components' => $components,
+            'contact_us' => $contactUsInfo
+        ];
 
         return $this->sendSuccessResponse($data, 'Corporate CR Strategy Data!');
     }
 
     public function getComponentWithDetails($urlSlug)
     {
-        $data = $this->corpCaseStudyComponentRepository->componentWithDetails($urlSlug);
-        ($data) ? $data : $data = json_decode("{}");
+        $components = $this->corpCaseStudyComponentRepository->componentWithDetails($urlSlug);
+        ($components) ? $components : $components = json_decode("{}");
+        $contactUsInfo = $this->contactUsRepository->getContactContent('case_study_and_report_details');
+        $data = [
+            'components' => $components,
+            'contact_us' => $contactUsInfo
+        ];
         return $this->sendSuccessResponse($data, 'Corporate CR Strategy Details Components Data!');
     }
 }
