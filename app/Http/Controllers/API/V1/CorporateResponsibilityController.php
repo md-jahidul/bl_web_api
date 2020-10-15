@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Services\CorpCaseStudyComponentService;
+use App\Services\CorpContactInfoService;
 use App\Services\CorpCrStrategyComponentService;
 use App\Services\CorpInitiativeTabComponentService;
 use App\Services\CorporateInitiativeTabService;
 use App\Services\CorporateRespSectionService;
-use App\Services\MediaLandingPageService;
 use App\Http\Controllers\Controller;
-use App\Services\MediaPressNewsEventService;
-use App\Services\MediaTvcVideoService;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class CorporateResponsibilityController extends Controller
@@ -35,6 +34,10 @@ class CorporateResponsibilityController extends Controller
      * @var CorpInitiativeTabComponentService
      */
     private $initiativeTabComponentService;
+    /**
+     * @var CorpContactInfoService
+     */
+    private $contactInfoService;
 
     /**
      * CorporateRespSectionController constructor.
@@ -43,19 +46,22 @@ class CorporateResponsibilityController extends Controller
      * @param CorpCaseStudyComponentService $corpCaseStudyComponentService
      * @param CorporateInitiativeTabService $corporateInitiativeTabService
      * @param CorpInitiativeTabComponentService $initiativeTabComponentService
+     * @param CorpContactInfoService $contactInfoService
      */
     public function __construct(
         CorporateRespSectionService $corporateRespSectionService,
         CorpCrStrategyComponentService $corpCrStrategyComponentService,
         CorpCaseStudyComponentService $corpCaseStudyComponentService,
         CorporateInitiativeTabService $corporateInitiativeTabService,
-        CorpInitiativeTabComponentService $initiativeTabComponentService
+        CorpInitiativeTabComponentService $initiativeTabComponentService,
+        CorpContactInfoService $contactInfoService
     ) {
         $this->corporateRespSectionService = $corporateRespSectionService;
         $this->corpCrStrategyComponentService = $corpCrStrategyComponentService;
         $this->corpCaseStudyComponentService = $corpCaseStudyComponentService;
         $this->corporateInitiativeTabService = $corporateInitiativeTabService;
         $this->initiativeTabComponentService = $initiativeTabComponentService;
+        $this->contactInfoService = $contactInfoService;
     }
 
     /**
@@ -120,5 +126,15 @@ class CorporateResponsibilityController extends Controller
     public function getInitiativeTabComponent($slug)
     {
         return $this->initiativeTabComponentService->getTabComponents($slug);
+    }
+
+    /**
+     * @param Request $request
+     * @param $slug
+     * @return JsonResponse|mixed
+     */
+    public function getContactInfoSave(Request $request, $slug)
+    {
+        return $this->contactInfoService->storeContactInfo($request->all(), $slug);
     }
 }
