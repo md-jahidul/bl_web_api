@@ -10,29 +10,12 @@
 namespace App\Services;
 
 use App\Repositories\CorpContactUsInfoRepository;
-use App\Repositories\CorpCrStrategyComponentRepository;
-use App\Repositories\CorporateCrStrategySectionRepository;
-use App\Repositories\CorpRespContactUsRepository;
 use App\Traits\CrudTrait;
-use App\Traits\FileTrait;
 
 class CorpContactInfoService extends ApiBaseService
 {
     use CrudTrait;
-    use FileTrait;
 
-    /**
-     * @var CorpCrStrategyComponentRepository
-     */
-    private $corpCrStrategyComponentRepo;
-    /**
-     * @var CorporateCrStrategySectionRepository
-     */
-    private $corpCrStrategySectionRepo;
-    /**
-     * @var CorpRespContactUsRepository
-     */
-    private $contactUsRepository;
     /**
      * @var CorpContactUsInfoRepository
      */
@@ -49,9 +32,8 @@ class CorpContactInfoService extends ApiBaseService
         $this->setActionRepository($corpContactUsInfoRepository);
     }
 
-    public function storeContactInfo($data, $pageSlug)
+    public function storeContactInfo($data)
     {
-        $data['page_slug'] = $pageSlug;
         $this->save($data);
         return $this->sendSuccessResponse([], 'Contact Information Saved!');
     }

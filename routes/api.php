@@ -266,5 +266,5 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('corporate/initiative-tabs/component/{url_slug}', 'API\V1\CorporateResponsibilityController@getInitiativeTabComponent');
 
     //Corporate Res Contact Info Save
-    Route::post('corporate/contact-info-save/{page_slug}', 'API\V1\CorporateResponsibilityController@getContactInfoSave');
+    Route::post('corporate/contact-info-save', 'API\V1\CorporateResponsibilityController@getContactInfoSave');
 });

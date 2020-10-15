@@ -9,7 +9,6 @@
 
 namespace App\Repositories;
 
-use App\Models\CorporateRespSection;
 use App\Models\CorpResContactUsPage;
 
 class CorpRespContactUsRepository extends BaseRepository
@@ -23,7 +22,7 @@ class CorpRespContactUsRepository extends BaseRepository
             ->with(['fields' => function($q){
                 $q->select('id', 'page_id', 'input_label_en', 'input_label_bn', 'field_name', 'data_type', 'type');
             }])
-            ->select('id', 'page_type', 'component_title_en', 'component_title_bn', 'send_button_en', 'send_button_bn')
+            ->select('id', 'page_type', 'component_title_en', 'component_title_bn', 'address_en', 'address_bn', 'send_button_en', 'send_button_bn')
             ->first();
     }
 }

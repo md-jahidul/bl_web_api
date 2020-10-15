@@ -133,8 +133,8 @@ class CorporateResponsibilityController extends Controller
      * @param $slug
      * @return JsonResponse|mixed
      */
-    public function getContactInfoSave(Request $request, $slug)
+    public function getContactInfoSave(Request $request)
     {
-        return $this->contactInfoService->storeContactInfo($request->all(), $slug);
+        return $this->contactInfoService->storeContactInfo($request->all());
     }
 }
