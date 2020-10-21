@@ -76,9 +76,20 @@ class LeadRequestService extends ApiBaseService
                 $data['form_data']['applicant_cv'] = $this->upload($data['form_data']['applicant_cv'], 'assetlite/ecarrer/applicant_files');
             }
 
+            if (!empty($data['form_data']['legal_status']['company_files'])) {
+                $companyName = $data['form_data']['basic']['company_name'];
+                $upload_date = date('Y-m-d-h-i-s');
+                $file = request()->file('form_data.legal_status.company_files');
+                $fileType = $file->getClientOriginalExtension();
+                $filePath = $upload_date . '_'. $companyName. "." . $fileType;
+                $directory = 'assetlite/corporate_responsibility/company_files';
+                $data['form_data']['legal_status']['company_files'] = $this->uploadOrgFileName($data['form_data']['legal_status']['company_files'], $directory, $filePath);
+            }
+
             $data['lead_category_id'] = $leadCat->id;
             $data['lead_product_id'] = $leadProduct;
 
+//            dd($data);
             $this->save($data);
 
 //            $this->sendMail();
