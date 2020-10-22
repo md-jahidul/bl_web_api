@@ -89,6 +89,7 @@ class Product extends Model
 
     public function other_related_product()
     {
-        return $this->hasMany(OtherRelatedProduct::class, $this->offer_info['other_offer_type_id']);
+        $fKey = isset($this->offer_info['other_offer_type_id']) ? $this->offer_info['other_offer_type_id'] : 0;
+        return $this->hasMany(OtherRelatedProduct::class, $fKey);
     }
 }
