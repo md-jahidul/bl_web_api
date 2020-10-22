@@ -139,7 +139,7 @@ class ProductRepository extends BaseRepository
                 'status',
                 'like')
             ->category($type)
-            ->with('product_details', 'related_product', 'other_related_product')
+            ->with('product_details', 'related_product') /*other_related_product*/
             ->first();
     }
 
