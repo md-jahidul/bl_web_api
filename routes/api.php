@@ -267,4 +267,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Corporate Res Contact Info Save
     Route::post('corporate/contact-info-save', 'API\V1\CorporateResponsibilityController@getContactInfoSave');
+
+    // Referral Get Code
+    Route::get('referral-code/{mobileNo}', 'API\V1\AppServiceDetailsController@getReferralCode');
 });
