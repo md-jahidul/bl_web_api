@@ -262,7 +262,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
 
-        $referralInfo = $this->alReferralInfoRepository->findOneByProperties(['app_id' => $product_id]);
+        $referralInfo = $this->alReferralInfoRepository->findOneByProperties(['app_id' => $product_id, 'status' => 1]);
 
         $data['referral_info'] = isset($referralInfo) ? $referralInfo : null;
 

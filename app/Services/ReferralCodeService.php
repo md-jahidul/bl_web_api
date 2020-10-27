@@ -12,6 +12,7 @@ use App\Repositories\AppServiceTabRepository;
 use App\Repositories\ReferralCodeRepository;
 use App\Traits\CrudTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class ReferralCodeService extends ApiBaseService
 {
@@ -35,9 +36,18 @@ class ReferralCodeService extends ApiBaseService
 
     public function referralCodeGenerator($mobileNo)
     {
-        $letter = chr(rand(65,90));
-        dd($letter);
-//        return $this->sendSuccessResponse($data, 'Referral Code');
+        $referralCode = Str::random(12);
+        $existCode = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo]);
+
+        if (!$existCode) {
+            $refCodeStore['mobile_no'] = $mobileNo;
+            $refCodeStore['referral_code'] = $referralCode;
+            $this->referralCodeRepository->findOneByProperties(['referral_code' => $referralCode]);
+            $nowCode = $this->save($refCodeStore);
+        }
+
+        $data['referral_code'] = isset($existCode->referral_code) ? $existCode->referral_code : $nowCode->referral_code;
+        return $this->sendSuccessResponse($data, 'Referral Code');
     }
 
 }
