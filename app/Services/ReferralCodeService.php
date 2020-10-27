@@ -34,20 +34,48 @@ class ReferralCodeService extends ApiBaseService
         $this->setActionRepository($referralCodeRepository);
     }
 
-    public function referralCodeGenerator($mobileNo)
+    public function referralCodeGenerator($mobileNo, $appId)
     {
-        $referralCode = Str::random(12);
         $existCode = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo]);
 
         if (!$existCode) {
-            $refCodeStore['mobile_no'] = $mobileNo;
-            $refCodeStore['referral_code'] = $referralCode;
-            $this->referralCodeRepository->findOneByProperties(['referral_code' => $referralCode]);
-            $nowCode = $this->save($refCodeStore);
+            $this->codeStore($mobileNo, $appId);
         }
 
-        $data['referral_code'] = isset($existCode->referral_code) ? $existCode->referral_code : $nowCode->referral_code;
+        $multipleCode =  $this->referralCodeRepository->findByProperties(['mobile_no' => $mobileNo], ['app_id']);
+        if ($multipleCode) {
+            $multiAppId = [];
+            foreach ($multipleCode as $value) {
+                $multiAppId[] = $value->app_id;
+            }
+        }
+
+        if (isset($multiAppId) && !in_array($appId, $multiAppId)) {
+            $this->codeStore($mobileNo, $appId);
+        }
+
+        $data['referral_code'] = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo, 'app_id' => $appId])->referral_code;
         return $this->sendSuccessResponse($data, 'Referral Code');
+    }
+
+    public function codeStore($mobileNo, $appId)
+    {
+        $referralCode = Str::random(12);
+        $refCodeStore['mobile_no'] = $mobileNo;
+        $refCodeStore['referral_code'] = $referralCode;
+        $refCodeStore['app_id'] = $appId;
+        return $this->save($refCodeStore);
+    }
+
+    public function shareReferralCount($data)
+    {
+        $referredUser = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $data['mobile_no'], 'app_id' => $data['app_id']]);
+        if ($referredUser) {
+            $countShare['share_count'] = $referredUser['share_count']+1;
+            $referredUser->update($countShare);
+            return $this->sendSuccessResponse([], 'Referral code shared successfully!!');
+        }
+        return $this->sendErrorResponse('App info not found');
     }
 
 }

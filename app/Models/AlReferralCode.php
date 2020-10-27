@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class AlReferralCode extends Model
 {
-    protected $fillable = ['mobile_no', 'referral_code'];
+    protected $fillable = ['app_id', 'mobile_no', 'referral_code', 'share_count'];
 }

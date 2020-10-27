@@ -130,9 +130,14 @@ class AppServiceDetailsController extends Controller
 
     }
 
-    public function getReferralCode($mobileNo)
+    public function getReferralCode($mobileNo, $appId)
     {
-        return $this->referralCodeService->referralCodeGenerator($mobileNo);
+        return $this->referralCodeService->referralCodeGenerator($mobileNo, $appId);
+    }
+
+    public function shareReferralCode(Request $request)
+    {
+        return $this->referralCodeService->shareReferralCount($request->all());
     }
 
 

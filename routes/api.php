@@ -269,5 +269,6 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('corporate/contact-info-save', 'API\V1\CorporateResponsibilityController@getContactInfoSave');
 
     // Referral Get Code
-    Route::get('referral-code/{mobileNo}', 'API\V1\AppServiceDetailsController@getReferralCode');
+    Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
+    Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
 });
