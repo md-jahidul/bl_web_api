@@ -11,6 +11,7 @@ use App\Repositories\AppServiceProductRepository;
 use App\Repositories\AppServiceTabRepository;
 use App\Repositories\ReferralCodeRepository;
 use App\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
@@ -34,39 +35,49 @@ class ReferralCodeService extends ApiBaseService
         $this->setActionRepository($referralCodeRepository);
     }
 
+    /**
+     * @param $mobileNo
+     * @param $appId
+     * @return JsonResponse|mixed
+     */
     public function referralCodeGenerator($mobileNo, $appId)
     {
-        $existCode = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo]);
-
+        $existCode = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo, 'app_id' => $appId]);
+        $referralCode = Str::random(12);
         if (!$existCode) {
-            $this->codeStore($mobileNo, $appId);
+            $refCodeStore['mobile_no'] = $mobileNo;
+            $refCodeStore['app_id'] = $appId;
+            $refCode = $this->codeStore($referralCode);
+            $refCodeStore['referral_code'] = $refCode;
+            $this->save($refCodeStore);
         }
 
-        $multipleCode =  $this->referralCodeRepository->findByProperties(['mobile_no' => $mobileNo], ['app_id']);
-        if ($multipleCode) {
-            $multiAppId = [];
-            foreach ($multipleCode as $value) {
-                $multiAppId[] = $value->app_id;
-            }
-        }
-
-        if (isset($multiAppId) && !in_array($appId, $multiAppId)) {
-            $this->codeStore($mobileNo, $appId);
-        }
-
-        $data['referral_code'] = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo, 'app_id' => $appId])->referral_code;
+        $data = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $mobileNo, 'app_id' => $appId], ['referral_code']);
         return $this->sendSuccessResponse($data, 'Referral Code');
     }
 
-    public function codeStore($mobileNo, $appId)
+    /**
+     * @param $referralCode
+     * @param $mobileNo
+     * @param $appId
+     * @return Model
+     */
+    public function codeStore($referralCode)
     {
-        $referralCode = Str::random(12);
-        $refCodeStore['mobile_no'] = $mobileNo;
-        $refCodeStore['referral_code'] = $referralCode;
-        $refCodeStore['app_id'] = $appId;
-        return $this->save($refCodeStore);
+        $existingCode = $this->referralCodeRepository->findOneByProperties(['referral_code' => $referralCode]);
+        if (isset($existingCode->referral_code)) {
+            if ($existingCode->referral_code == $referralCode) {
+                $uniqueRefCode = Str::random(12);
+                $referralCode = $this->codeStore($uniqueRefCode);
+            }
+        }
+        return $referralCode;
     }
 
+    /**
+     * @param $data
+     * @return JsonResponse|mixed
+     */
     public function shareReferralCount($data)
     {
         $referredUser = $this->referralCodeRepository->findOneByProperties(['mobile_no' => $data['mobile_no'], 'app_id' => $data['app_id']]);
