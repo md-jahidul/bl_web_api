@@ -110,6 +110,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
 
+    Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
+
 
     Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');
     Route::get('search-suggestion/{keyword}', 'API\V1\SearchController@getSearchSuggestion');
