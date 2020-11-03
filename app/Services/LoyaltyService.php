@@ -58,8 +58,6 @@ class LoyaltyService extends ApiBaseService
     private function parseOfferData($catTitle, $catKey, $redeemOptions)
     {
         $offer_details = [];
-        $offer_details['category'] = $catTitle;
-        $offer_details['data'] = [];
 
         foreach ($redeemOptions as $key => $segment) {
             $catName = str_replace(' ', '_', strtolower($segment['offerCategoryName']));
@@ -70,7 +68,12 @@ class LoyaltyService extends ApiBaseService
                     case "tours_and_travel":
                     case "health_and_beauty_care":
                     case "food_and_beverage":
-                        $offer_details['data'][] =  $this->parseProduct($segment);
+                    $offer_details['offer_category_name'] = $segment['offerCategoryName'];
+                    $offer_details['discount_rate'] = $segment['offerDescription'];
+                    $offer_details['partner_logo'] = $segment['imageURL'];
+                    $offer_details['partner_name'] = $segment['partnerName'];
+                    $offer_details['pop_up_details'] = $segment['offerLongDescription'];
+
                     break;
                 }
             }
