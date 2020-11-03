@@ -62,6 +62,11 @@ class PriyojonController extends Controller
        return $this->partnerOfferService->priyojonOffers();
     }
 
+    public function partnerCampaignOffers()
+    {
+        return $this->partnerOfferService->campaign();
+    }
+
     /**
      * @return mixed
      */

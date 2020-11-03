@@ -26,7 +26,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('header-footer', 'API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page', 'API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
+//    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
 
     Route::get('offers/{type}/{offer_type?}', 'API\V1\ProductController@simPackageOffers');
 
@@ -62,14 +62,6 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');
     Route::get('recharge-offers', 'API\V1\ProductController@rechargeOffers');
 
-    Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
-    Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
-    Route::get('priyojon-discount-offers/{page}', 'API\V1\PriyojonController@discountOffers');
-    Route::get('priyojon-offers-like/{id}', 'API\V1\PriyojonController@offerLike');
-
-    Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
-
-    Route::get('offer-details/{id}', 'API\V1\PartnerOfferController@offerDetails');
 
     Route::post('ssl', 'API\V1\SslCommerzController@ssl');
     Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
@@ -111,6 +103,14 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
 
     Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
+    Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
+
+    Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
+    Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
+    Route::get('priyojon-discount-offers/{page}', 'API\V1\PriyojonController@discountOffers');
+    Route::get('priyojon-offers-like/{id}', 'API\V1\PriyojonController@offerLike');
+    Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
+    Route::get('offer-details/{id}', 'API\V1\PartnerOfferController@offerDetails');
 
 
     Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');

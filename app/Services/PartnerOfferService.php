@@ -120,4 +120,10 @@ class PartnerOfferService extends ApiBaseService {
         }
     }
 
+    public function campaign()
+    {
+        $campaignOffers = $this->partnerOfferRepository->findByProperties(['is_campaign' => 1]);
+        return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
+    }
+
 }
