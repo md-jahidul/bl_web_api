@@ -62,9 +62,10 @@ class LoyaltyController extends Controller
         return $this->loyaltyService->getRedeemOptions(1903303978);
     }
 
-    public function partnerCatWithOffers()
+    public function partnerCatWithOffers(Request $request)
     {
-        return $this->loyaltyService->partnerOffers(1903303978);
+        $customer = $this->customerService->getCustomerDetails($request);
+        return $this->loyaltyService->partnerOffers($customer->phone);
     }
 
     public function partnerOfferLike($offerId)
