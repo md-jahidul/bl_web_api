@@ -91,20 +91,22 @@ class LoyaltyService extends ApiBaseService
     {
         // This categories is fix
         $partnerCats = [
-            'fashion_and_lifestyle' => 'Fashion_and_lifestyle',
-            'electronics_and_furniture' => 'Electronics_and_furniture',
-            'tours_and_travel' => 'Tours_and_travel',
-            'health_and_beauty_care' => 'Health_and_beauty_care',
-            "food_and_beverage" => 'Food_and_beverage'
+            'fashion_and_lifestyle' => 'Fashion and lifestyle',
+            'electronics_and_furniture' => 'Electronics and furniture',
+            'tours_and_travel' => 'Tours and travel',
+            'health_and_beauty_care' => 'Health and beauty care',
+            "food_and_beverage" => 'Food and beverage'
         ];
         // All Loyalty offers
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
 
         $catWithOffers = [];
         foreach ($partnerCats as $catKey => $item) {
-            $catWithOffers[] = $this->parseOfferData($item, $catKey, $redeemOptions['data']);
+            $data = $this->parseOfferData($item, $catKey, $redeemOptions['data']);
+            if ($data) {
+                $catWithOffers[] = $data;
+            }
         }
-
         return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
     }
 
