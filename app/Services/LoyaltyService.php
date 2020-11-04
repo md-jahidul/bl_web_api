@@ -10,7 +10,10 @@ namespace App\Services;
 
 
 use App\Enums\HttpStatusCode;
+use App\Models\LmsPartnerOfferLike;
+use App\Repositories\LmsPartnerOfferLikeRepository;
 use App\Services\Banglalink\BanglalinkLoyaltyService;
+use Illuminate\Http\JsonResponse;
 
 class LoyaltyService extends ApiBaseService
 {
@@ -19,14 +22,22 @@ class LoyaltyService extends ApiBaseService
      * @var BanglalinkLoyaltyService
      */
     protected $blLoyaltyService;
+    /**
+     * @var LmsPartnerOfferLikeRepository
+     */
+    private $likeRepository;
 
     /**
      * LoyaltyService constructor.
      * @param BanglalinkLoyaltyService $blLoyaltyService
+     * @param LmsPartnerOfferLikeRepository $likeRepository
      */
-    public function __construct(BanglalinkLoyaltyService $blLoyaltyService)
-    {
+    public function __construct(
+        BanglalinkLoyaltyService $blLoyaltyService,
+        LmsPartnerOfferLikeRepository $likeRepository
+    ) {
         $this->blLoyaltyService = $blLoyaltyService;
+        $this->likeRepository = $likeRepository;
     }
 
     public function getPriyojonStatus($mobile, $connectionType)
@@ -47,14 +58,6 @@ class LoyaltyService extends ApiBaseService
         return $this->sendSuccessResponse($result['data'], 'Loyalty data');
     }
 
-    public function parseProduct($segment)
-    {
-        $product = [];
-        $product['name'] = $segment['offerDescriptionWeb'];
-        $product['offerShortDescription'] = $segment['offerShortDescription'];
-        return $product;
-    }
-
     private function parseOfferData($catTitle, $catKey, $redeemOptions)
     {
         $offer_details = [];
@@ -68,12 +71,15 @@ class LoyaltyService extends ApiBaseService
                     case "tours_and_travel":
                     case "health_and_beauty_care":
                     case "food_and_beverage":
-                    $offer_details['offer_category_name'] = $segment['offerCategoryName'];
-                    $offer_details['discount_rate'] = $segment['offerDescription'];
-                    $offer_details['partner_logo'] = $segment['imageURL'];
-                    $offer_details['partner_name'] = $segment['partnerName'];
-                    $offer_details['pop_up_details'] = $segment['offerLongDescription'];
-
+                        $offerId = (int)$segment['offerID'];
+                        $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
+                        $offer_details['offer_id'] = $offerId;
+                        $offer_details['offer_category_name'] = $segment['offerCategoryName'];
+                        $offer_details['discount_rate'] = $segment['offerDescription'];
+                        $offer_details['partner_logo'] = $segment['imageURL'];
+                        $offer_details['partner_name'] = $segment['partnerName'];
+                        $offer_details['pop_up_details'] = $segment['offerLongDescription'];
+                        $offer_details['like'] = $likeInfo ? $likeInfo['like'] : 0;
                     break;
                 }
             }
@@ -102,9 +108,24 @@ class LoyaltyService extends ApiBaseService
         return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
     }
 
-    public function redeemOffer($mobile)
+    /**
+     * @param $offerId
+     * @return JsonResponse|mixed
+     */
+    public function partnerOfferLike($offerId)
     {
-
+        $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
+        if ($likeInfo) {
+            $likeInfo->update([
+                'like' => $likeInfo->like + 1
+            ]);
+        } else {
+            $this->likeRepository->save([
+                'offer_id' => $offerId,
+                'like' => 1
+            ]);
+        }
+        return $this->sendSuccessResponse([], 'Partner offers like successfully!');
     }
 
 }

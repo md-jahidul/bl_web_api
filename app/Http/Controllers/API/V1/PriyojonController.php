@@ -37,7 +37,7 @@ class PriyojonController extends Controller
     /**
      * @return mixed
      */
-    public function PriyojonHeader()
+    public function priyojonHeader()
     {
         try{
             $priyojonHeader = Priyojon::where('parent_id', 0)->with('children')->get();

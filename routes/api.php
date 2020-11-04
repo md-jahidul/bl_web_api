@@ -99,12 +99,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
 
     //Loyalty or Priyojon section
+        // Bl API Hub part
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
-
+    Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
+        // CMS part
     Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
     Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
-
     Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
     Route::get('priyojon-discount-offers/{page}', 'API\V1\PriyojonController@discountOffers');

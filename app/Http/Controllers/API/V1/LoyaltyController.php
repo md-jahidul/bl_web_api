@@ -67,5 +67,9 @@ class LoyaltyController extends Controller
         return $this->loyaltyService->partnerOffers(1903303978);
     }
 
+    public function partnerOfferLike($offerId)
+    {
+        return $this->loyaltyService->partnerOfferLike($offerId);
+    }
 
 }
