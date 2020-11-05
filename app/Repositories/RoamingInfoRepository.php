@@ -25,6 +25,9 @@ class RoamingInfoRepository extends BaseRepository {
                 $data[$key]['name_en'] = $v->name_en;
                 $data[$key]['name_bn'] = $v->name_bn;
                 $data[$key]['url_slug'] = $v->url_slug;
+                $data[$key]['page_header'] = $v->page_header;
+                $data[$key]['page_header_bn'] = $v->page_header_bn;
+                $data[$key]['schema_markup'] = $v->schema_markup;
                 $data[$key]['card_text_en'] = $v->card_text_en;
                 $data[$key]['card_text_bn'] = $v->card_text_bn;
                 $data[$key]['likes'] = $v->likes;
@@ -48,6 +51,7 @@ class RoamingInfoRepository extends BaseRepository {
         $data['banner_mobile'] = $info->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $info->banner_mobile;
         $data['alt_text'] = $info->alt_text;
         $data['page_header'] = $info->page_header;
+        $data['page_header_bn'] = $info->page_header_bn;
         $data['schema_markup'] = $info->schema_markup;
         $data['likes'] = $info->likes;
 
