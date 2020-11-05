@@ -107,9 +107,6 @@ class LoyaltyService extends ApiBaseService
                 $catWithOffers[] = $data;
             }
         }
-
-        dd($catWithOffers);
-
         return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
     }
 
