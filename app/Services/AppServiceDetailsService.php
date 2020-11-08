@@ -227,7 +227,12 @@ class AppServiceDetailsService extends ApiBaseService
 
         $additional_details = $this->getProductDetailsOthersInfo($product_id);
 
-        $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
+		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
+		
+		$data['page_header'] = $product_info->page_header;
+		$data['page_header_bn'] = $product_info->page_header_bn;
+		$data['schema_markup'] = $product_info->schema_markup;
+		$data['url_slug'] = $product_info->url_slug;
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
