@@ -35,27 +35,90 @@ class LoyaltyService extends ApiBaseService
     public function __construct(
         BanglalinkLoyaltyService $blLoyaltyService,
         LmsPartnerOfferLikeRepository $likeRepository
-    ) {
+    )
+    {
         $this->blLoyaltyService = $blLoyaltyService;
         $this->likeRepository = $likeRepository;
     }
 
-    public function getPriyojonStatus($mobile, $connectionType)
+    public function getPriyojonStatus($mobile)
     {
-        //  $result = $this->blLoyaltyService->getPriyojonStatus($mobile, $connectionType);
-        // return $this->sendSuccessResponse($result['data'], 'Loyalty data');
-        return $this->sendSuccessResponse([], 'Loyalty data');
+        $result = $this->blLoyaltyService->getPriyojonStatus($mobile);
+        return $this->sendSuccessResponse($result['data'], 'Loyalty Status');
     }
 
-    public function getRedeemOptions($mobile)
+    public function offerTest($segment)
     {
-        $subscriberId = substr($mobile, 2);
-        //$subscriberId = '1903303978'; //TODO: Remove from production
+        $data = [];
+        $offer_details['offer_id'] = $segment['offerID'];
+        $data['offer_category_name'] = $segment['offerCategoryName'];
+        $data['discount_rate'] = $segment['offerDescription'];
+        $data['partner_logo'] = $segment['imageURL'];
+        return $data;
+    }
 
-//        dd($subscriberId);
+    private function parseRedeemOffer($catTitle, $catKey, $redeemOptions)
+    {
+        $offer_details = [];
 
-        $result = $this->blLoyaltyService->getRedeemOptions($mobile);
-        return $this->sendSuccessResponse($result['data'], 'Loyalty data');
+        foreach ($redeemOptions as $key => $segment) {
+            $catName = str_replace(' ', '_', strtolower($segment['offerCategoryName']));
+            if ($catKey == $catName) {
+                $offer_details['offer_category_name'] = $segment['offerCategoryName'];
+                $offer_details['discount_rate'] = $segment['offerDescription'];
+                $offer_details['partner_logo'] = $segment['imageURL'];
+                $offer_details['partner_name'] = $segment['partnerName'];
+
+//                switch ($catName) {
+//                    case "physical_gift":
+//                    case "internet_offers":
+//                        $offerId = (int)$segment['offerID'];
+//                        $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
+//                        $offer_details[] = [
+//                            "offer_id" => $offerId,
+//                            "offer_category_name" => $segment['offerCategoryName'],
+//                            "discount_rate" => $segment['offerCategoryName'],
+//                            "data" => $segment['offerDescriptionWeb'],
+//                            "like" => $likeInfo['like'],
+//                        ];
+//                        $offer_details = $data;
+//                        break;
+//                }
+            }
+        }
+
+        return $offer_details;
+    }
+
+    public function getRedeemOffers($mobile)
+    {
+        $redeemCats = [
+            'internet_offers' => 'Internet Offers',
+            'physical_gift' => 'Physical Gift',
+            'bundles_offers' => 'Bundles Offers',
+            'sms_offers' => 'Health and beauty care',
+        ];
+
+        $redeemOptions = $this->blLoyaltyService->getRedeemOptions($mobile);
+
+        $catWithOffers = [];
+        foreach ($redeemOptions['data'] as $catKey => $segment) {
+//            $data = $this->parseRedeemOffer($item, $catKey, $redeemOptions['data']);
+
+            $offer_details['offer_category_name'] = $segment['offerCategoryName'];
+            $offer_details['discount_rate'] = $segment['offerDescription'];
+            $offer_details['partner_logo'] = $segment['imageURL'];
+            $offer_details['partner_name'] = $segment['partnerName'];
+
+
+//            if ($data) {
+//                $offer_details[] = $data;
+//            }
+        }
+
+//        dd($catWithOffers);
+
+        return $this->sendSuccessResponse($offer_details, 'Loyalty data');
     }
 
     private function parseOfferData($catTitle, $catKey, $redeemOptions)
@@ -80,7 +143,7 @@ class LoyaltyService extends ApiBaseService
                         $offer_details['partner_name'] = $segment['partnerName'];
                         $offer_details['pop_up_details'] = $segment['offerLongDescription'];
                         $offer_details['like'] = $likeInfo ? $likeInfo['like'] : 0;
-                    break;
+                        break;
                 }
             }
         }

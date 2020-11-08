@@ -14,8 +14,8 @@ use App\Services\ApiBaseService;
 
 class BanglalinkLoyaltyService extends BaseService
 {
-    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
-//    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
+//    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
+    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
     protected $redeemOptionEndPoint = '/loyalty/loyalty/get-priyojon-redeem-options';
 
     protected $apiBaseService;
@@ -29,9 +29,10 @@ class BanglalinkLoyaltyService extends BaseService
         $this->apiBaseService = $apiBaseService;
     }
 
-    public function getPriyojonStatus($subscriberId, $connectionType)
+    public function getPriyojonStatus($subscriberId)
     {
-        $url = $this->statusEndPoint . '?msisdn=' . $subscriberId . '&subscriptionType=' . $connectionType;
+        $customerId =  substr($subscriberId, 3);
+        $url = $this->statusEndPoint . '?customerId=' . $customerId;
         $result = $this->get($url);
 
         if ($result['status_code'] == 200) {

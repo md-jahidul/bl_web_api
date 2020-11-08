@@ -46,11 +46,8 @@ class LoyaltyController extends Controller
 
     public function priyojonStatus(Request $request)
     {
-        // $customer = $this->customerService->getCustomerDetails($request);
-        // $connectionType = $customerInfo['balance_data']['connection_type'];
-       // return $this->loyaltyService->getPriyojonStatus($customer->msisdn, "PREPAID");
-
-        return $this->loyaltyService->getPriyojonStatus("01987", "PREPAID");
+        $customer = $this->customerService->getCustomerDetails($request);
+        return $this->loyaltyService->getPriyojonStatus($customer->msisdn);
     }
 
     public function redeemOptions(Request $request)
@@ -59,7 +56,7 @@ class LoyaltyController extends Controller
 
 //        dd($customer);
 
-        return $this->loyaltyService->getRedeemOptions(1903303978);
+        return $this->loyaltyService->getRedeemOffers(1409900110);
     }
 
     public function partnerCatWithOffers(Request $request)
