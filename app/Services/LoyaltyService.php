@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\BLApiHubException;
 use App\Models\LmsPartnerOfferLike;
 use App\Repositories\LmsPartnerOfferLikeRepository;
 use App\Services\Banglalink\BanglalinkLoyaltyService;
@@ -47,127 +48,136 @@ class LoyaltyService extends ApiBaseService
         return $this->sendSuccessResponse($result['data'], 'Loyalty Status');
     }
 
-    public function offerTest($segment)
-    {
-        $data = [];
-        $offer_details['offer_id'] = $segment['offerID'];
-        $data['offer_category_name'] = $segment['offerCategoryName'];
-        $data['discount_rate'] = $segment['offerDescription'];
-        $data['partner_logo'] = $segment['imageURL'];
-        return $data;
-    }
-
-    private function parseRedeemOffer($catTitle, $catKey, $redeemOptions)
+    private function parseTelcoProduct($offer)
     {
         $offer_details = [];
+        $offer_description = $offer['offerDescriptionWeb'];
+        $offers = explode(';', $offer_description);
 
-        foreach ($redeemOptions as $key => $segment) {
-            $catName = str_replace(' ', '_', strtolower($segment['offerCategoryName']));
-            if ($catKey == $catName) {
-                $offer_details['offer_category_name'] = $segment['offerCategoryName'];
-                $offer_details['discount_rate'] = $segment['offerDescription'];
-                $offer_details['partner_logo'] = $segment['imageURL'];
-                $offer_details['partner_name'] = $segment['partnerName'];
+        $offer_details ['offer_id'] = $offer['offerID'];
+        $offer_details['offer_category_name'] = $offer['offerCategoryName'];
 
-//                switch ($catName) {
-//                    case "physical_gift":
-//                    case "internet_offers":
-//                        $offerId = (int)$segment['offerID'];
-//                        $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
-//                        $offer_details[] = [
-//                            "offer_id" => $offerId,
-//                            "offer_category_name" => $segment['offerCategoryName'],
-//                            "discount_rate" => $segment['offerCategoryName'],
-//                            "data" => $segment['offerDescriptionWeb'],
-//                            "like" => $likeInfo['like'],
-//                        ];
-//                        $offer_details = $data;
-//                        break;
-//                }
+        foreach ($offers as $segment) {
+            $data = explode('|', $segment);
+            $type = $data[0];
+            switch ($type) {
+                case "VOICE":
+                    $offer_details ['minute_volume'] = (int)$data[1];
+                    break;
+                case "SMS":
+                    $offer_details ['sms_volume'] = (int)$data[1];
+                    break;
+                case "DATA":
+                    if (strtolower($data[2]) == 'gb') {
+                        $mb = (int)$data[1] * 1024 ;
+                    } else {
+                        $mb = (int)$data[1];
+                    }
+                    $offer_details ['internet_volume_mb'] = $mb;
+                    break;
+                case "TK":
+                    $offer_details ['price_tk'] = (int)$data[1];
+                    break;
+                case "POINT":
+                    $offer_details ['point'] = (int)$data[1];
+                    break;
+                case "VAL":
+                    $valUnit = strtolower($data[2]);
+                    if ($valUnit == "hours"){
+                        $day = $data[1] / 24;
+                        $valUnit = ($day > 1) ? "Days" : "Day";
+                    }else{
+                        $day = $data[1];
+                    }
+                    $offer_details ['validity_days'] = (int)$day;
+                    $offer_details ['validity_unit'] = ucfirst(strtolower($valUnit));
+                    break;
+                case "CAT":
+                    if ($data[1] == "DAT") {
+                        $offerType = "data";
+                    } elseif ($data[1] == "VOI") {
+                        $offerType = "voice";
+                    } elseif ($data[1] == "MIX"){
+                        $offerType = "bundles";
+                    } else{
+                        $offerType = $data[1];
+                    }
+                    $offer_details['offer_type'] = strtolower($offerType);
+                    break;
             }
         }
 
         return $offer_details;
     }
 
+    /**
+     * @param $mobile
+     * @return JsonResponse|mixed
+     * @throws BLApiHubException
+     */
     public function getRedeemOffers($mobile)
     {
         $redeemCats = [
-            'internet_offers' => 'Internet Offers',
-            'physical_gift' => 'Physical Gift',
-            'bundles_offers' => 'Bundles Offers',
-            'sms_offers' => 'Health and beauty care',
+            'internet_offers',
+            'talk_time_offers',
+            'physical_gift'
         ];
-
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($mobile);
-
-        $catWithOffers = [];
-        foreach ($redeemOptions['data'] as $catKey => $segment) {
-//            $data = $this->parseRedeemOffer($item, $catKey, $redeemOptions['data']);
-
-            $offer_details['offer_category_name'] = $segment['offerCategoryName'];
-            $offer_details['discount_rate'] = $segment['offerDescription'];
-            $offer_details['partner_logo'] = $segment['imageURL'];
-            $offer_details['partner_name'] = $segment['partnerName'];
-
-
-//            if ($data) {
-//                $offer_details[] = $data;
-//            }
-        }
-
-//        dd($catWithOffers);
-
-        return $this->sendSuccessResponse($offer_details, 'Loyalty data');
-    }
-
-    private function parseOfferData($catTitle, $catKey, $redeemOptions)
-    {
         $offer_details = [];
-
-        foreach ($redeemOptions as $key => $segment) {
-            $catName = str_replace(' ', '_', strtolower($segment['offerCategoryName']));
-            if ($catKey == $catName) {
-                switch ($catName) {
-                    case "fashion_and_lifestyle":
-                    case "electronics_and_furniture":
-                    case "tours_and_travel":
-                    case "health_and_beauty_care":
-                    case "food_and_beverage":
-                        $offerId = (int)$segment['offerID'];
-                        $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
-                        $offer_details['offer_id'] = $offerId;
-                        $offer_details['offer_category_name'] = $segment['offerCategoryName'];
-                        $offer_details['discount_rate'] = $segment['offerDescription'];
-                        $offer_details['partner_logo'] = $segment['imageURL'];
-                        $offer_details['partner_name'] = $segment['partnerName'];
-                        $offer_details['pop_up_details'] = $segment['offerLongDescription'];
-                        $offer_details['like'] = $likeInfo ? $likeInfo['like'] : 0;
-                        break;
+        foreach ($redeemOptions['data'] as $segment) {
+            $catName = str_replace([' ', '-'], '_', strtolower($segment['offerCategoryName']));
+            if (in_array($catName, $redeemCats)) {
+                if ($catName == 'internet_offers' || $catName == 'talk_time_offers'){
+                    $products = $this->parseTelcoProduct($segment);
+                    $offer_details[] = $products;
+                }else{
+                    $offer_details[] = [
+                        "offer_id" => $segment['offerID'],
+                        "offer_category_name" => $segment['offerCategoryName'],
+                        "offer_image" => $segment['imageURL'],
+                        "offer_title" => $segment['offerDescription'],
+                        "point" => $segment['offerPrice'],
+                    ];
                 }
             }
         }
-        return $offer_details;
+        return $this->sendSuccessResponse($offer_details, 'Loyalty data');
     }
 
+    /**
+     * @param $msisdn
+     * @return JsonResponse|mixed
+     * @throws BLApiHubException
+     */
     public function partnerOffers($msisdn)
     {
         // This categories is fix
         $partnerCats = [
-            'fashion_and_lifestyle' => 'Fashion and lifestyle',
-            'electronics_and_furniture' => 'Electronics and furniture',
-            'tours_and_travel' => 'Tours and travel',
-            'health_and_beauty_care' => 'Health and beauty care',
-            "food_and_beverage" => 'Food and beverage'
+            'fashion_and_lifestyle',
+            'electronics_and_furniture',
+            'tours_and_travel' ,
+            'health_and_beauty_care',
+            'health_&_beauty_care',
+            'food_and_beverage'
         ];
         // All Loyalty offers
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
 
         $catWithOffers = [];
-        foreach ($partnerCats as $catKey => $item) {
-            $data = $this->parseOfferData($item, $catKey, $redeemOptions['data']);
-            if ($data) {
-                $catWithOffers[] = $data;
+        foreach ($redeemOptions['data'] as $segment) {
+            $catName = str_replace([' ', '-'], '_', strtolower($segment['offerCategoryName']));
+            if (in_array($catName, $partnerCats)) {
+                $offerId = (int)$segment['offerID'];
+                $likeInfo = $this->likeRepository->findOneByProperties(['offer_id' => $offerId]);
+                $catWithOffers[] = [
+                    'offer_id' => $offerId,
+                    'offer_category_name' => $segment['offerCategoryName'],
+                    'discount_rate' => $segment['offerDescription'],
+                    'partner_logo' => $segment['imageURL'],
+                    'partner_name' => $segment['partnerName'],
+                    'pop_up_details' => $segment['offerLongDescription'],
+                    'like' => $likeInfo ? $likeInfo['like'] : 0
+                ];
             }
         }
         return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
