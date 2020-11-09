@@ -203,4 +203,11 @@ class LoyaltyService extends ApiBaseService
         return $this->sendSuccessResponse([], 'Partner offers like successfully!');
     }
 
+    public function purchaseRedeemOffer($customer, $offerId)
+    {
+        $msisdn = substr($customer->phone, 1);
+        $response = $this->blLoyaltyService->redeemOfferPurchase($msisdn, $offerId);
+        return $this->sendSuccessResponse($response, "Purchase request successfully send");
+    }
+
 }

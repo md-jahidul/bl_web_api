@@ -104,7 +104,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
     Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
     Route::get('loyalty/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
-    Route::get('loyalty/redeem-offer-purchase', 'API\V1\LoyaltyController@redeemOfferPurchase');
+    Route::get('loyalty/redeem-offer-purchase/{offerId}', 'API\V1\LoyaltyController@redeemOfferPurchase');
 
         // CMS part
     Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
