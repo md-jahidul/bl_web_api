@@ -56,7 +56,12 @@ class LoyaltyController extends Controller
 
 //        dd($customer);
 
-        return $this->loyaltyService->getRedeemOffers(1409900110);
+        return $this->loyaltyService->getRedeemOffers(1409900160);
+    }
+
+    public function redeemOfferPurchase(Request $request)
+    {
+        return $this->purchaseRedeemOffer($request);
     }
 
     public function partnerCatWithOffers(Request $request)

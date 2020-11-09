@@ -55,7 +55,7 @@ class LoyaltyService extends ApiBaseService
         $offers = explode(';', $offer_description);
 
         $offer_details ['offer_id'] = $offer['offerID'];
-        $offer_details['offer_category_name'] = $offer['offerCategoryName'];
+        $offer_details['offer_category_name'] = "Telco Offers";
 
         foreach ($offers as $segment) {
             $data = explode('|', $segment);
