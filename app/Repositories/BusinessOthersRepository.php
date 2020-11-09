@@ -84,6 +84,9 @@ class BusinessOthersRepository extends BaseRepository {
             $data[$count]['name_bn'] = $s->name_bn;
             $data[$count]['short_details_en'] = $s->home_short_details_en;
             $data[$count]['short_details_bn'] = $s->home_short_details_bn;
+            $data[$count]['page_header'] = $s->page_header;
+            $data[$count]['page_header_bn'] = $s->page_header_bn;
+            $data[$count]['schema_markup'] = $s->schema_markup;
             $data[$count]['url_slug'] = $s->url_slug;
 
             $count++;
@@ -108,6 +111,7 @@ class BusinessOthersRepository extends BaseRepository {
         $data['offer_details_bn'] = $service->offer_details_bn;
         $data['url_slug'] = $service->url_slug;
         $data['page_header'] = $service->page_header;
+        $data['page_header_bn'] = $service->page_header_bn;
         $data['schema_markup'] = $service->schema_markup;
 
         return $data;

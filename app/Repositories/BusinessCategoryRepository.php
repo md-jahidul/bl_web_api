@@ -37,6 +37,7 @@ class BusinessCategoryRepository extends BaseRepository {
             $data[$count]['banner_photo_mobile'] = $v->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $v->banner_image_mobile;
             $data[$count]['url_slug'] = $v->url_slug;
             $data[$count]['page_header'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header_bn;
             $data[$count]['schema_markup'] = $v->schema_markup;
 
             $count++;
@@ -67,6 +68,7 @@ class BusinessCategoryRepository extends BaseRepository {
             $data[$count]['banner_photo_mobile'] = $v->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $v->banner_image_mobile;
             $data[$count]['url_slug'] = $v->url_slug;
             $data[$count]['page_header'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header;
             $data[$count]['schema_markup'] = $v->schema_markup;
             $count++;
         }
