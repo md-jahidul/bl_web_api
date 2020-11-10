@@ -185,18 +185,20 @@ class ProductLoanService extends BaseService
         $availableLoanProducts = [];
         foreach ($loanProducts as $loan) {
             $product = AlCoreProduct::where('product_code', $loan['code'])->first();
-            if (empty($product)) {
-                return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
+//            if (empty($product)) {
+//                return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
+//            }
+            if (!empty($product)) {
+                $product = array(
+                    'product_code' => $product->product_code,
+                    'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
+                    'title' => $product->name,
+                    'internet_volume_mb' => $product->internet_volume_mb,
+                    'price_tk' => $product->mrp_price,
+                    'validity' => $product->validity,
+                    'validity_unit' => $product->validity_unit
+                );
             }
-            $product = array(
-                'product_code' => $product->product_code,
-                'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
-                'title' => $product->name,
-                'internet_volume_mb' => $product->internet_volume_mb,
-                'price_tk' => $product->mrp_price,
-                'validity' => $product->validity,
-                'validity_unit' => $product->validity_unit
-            );
 
             if ($loanType == $product['type']) {
                 array_push($availableLoanProducts, $product);
