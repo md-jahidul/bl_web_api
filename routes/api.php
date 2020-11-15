@@ -116,6 +116,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('about-page/{slug}', 'API\V1\PriyojonController@getAboutPage');
     Route::get('offer-details/{id}', 'API\V1\PartnerOfferController@offerDetails');
 
+    Route::get('priyojon-about-page/banner/{slug}', 'API\V1\PriyojonController@aboutBannerImage');
+
     //Web Site Search
     Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');
     Route::get('search-suggestion/{keyword}', 'API\V1\SearchController@getSearchSuggestion');

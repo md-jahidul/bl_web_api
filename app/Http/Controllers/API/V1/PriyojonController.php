@@ -86,4 +86,9 @@ class PriyojonController extends Controller
     {
         return $this->partnerOfferService->offerLike($id);
     }
+
+    public function aboutBannerImage($slug)
+    {
+        return $this->aboutPriyojonService->lmsAboutBanner($slug);
+    }
 }
