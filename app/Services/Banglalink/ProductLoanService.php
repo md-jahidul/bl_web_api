@@ -120,20 +120,19 @@ class ProductLoanService extends BaseService
         ];
     }
 
-    public function getLoanInfo($request, $loanType)
+    public function getLoanInfo($request, $loanType, $msisdn)
     {
-        $user = $this->customerService->getCustomerDetails($request);
-
-//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber(8801962424479);
-
-        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
+//        $user = $this->customerService->getCustomerDetails($request);
+        $msisdn = "88" . $msisdn;
+        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
+//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
 
         $customer_type = $customerInfo->getData()->data->connectionType;
         $customer_account_id = $customerInfo->getData()->data->package->customerId;
 
-        if (!$user) {
-            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
-        }
+//        if (!$user) {
+//            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+//        }
 
         // Customer type check
         if ($customer_type == 'POSTPAID') {
