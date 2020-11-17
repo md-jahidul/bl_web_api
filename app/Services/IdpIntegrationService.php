@@ -104,7 +104,7 @@ class IdpIntegrationService
      */
     public static function tokenValidationRequest($token)
     {
-        return static::post('/api/v1/check/user/token', $token);
+        return static::post('/api/check/user/token', $token);
     }
 
 

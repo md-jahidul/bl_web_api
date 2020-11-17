@@ -38,11 +38,65 @@ class LoyaltyService extends ApiBaseService
 
     public function getRedeemOptions($mobile)
     {
-        $subscriberId = substr($mobile, 1);
+        $subscriberId = substr($mobile, 2);
         //$subscriberId = '1903303978'; //TODO: Remove from production
 
-        $result = $this->blLoyaltyService->getRedeemOptions($subscriberId);
+//        dd($subscriberId);
+
+        $result = $this->blLoyaltyService->getRedeemOptions($mobile);
         return $this->sendSuccessResponse($result['data'], 'Loyalty data');
+    }
+
+    public function parseProduct($segment)
+    {
+        $product = [];
+        $product['name'] = $segment['offerDescriptionWeb'];
+        $product['offerShortDescription'] = $segment['offerShortDescription'];
+        return $product;
+    }
+
+    private function parseOfferData($catTitle, $catKey, $redeemOptions)
+    {
+        $offer_details = [];
+        $offer_details['category'] = $catTitle;
+        $offer_details['data'] = [];
+
+        foreach ($redeemOptions as $key => $segment) {
+            $catName = str_replace(' ', '_', strtolower($segment['offerCategoryName']));
+            if ($catKey == $catName) {
+                switch ($catName) {
+                    case "fashion_and_lifestyle":
+                    case "electronics_and_furniture":
+                    case "tours_and_travel":
+                    case "health_and_beauty_care":
+                    case "food_and_beverage":
+                        $offer_details['data'][] =  $this->parseProduct($segment);
+                    break;
+                }
+            }
+        }
+        return $offer_details;
+    }
+
+    public function partnerOffers($msisdn)
+    {
+        // This categories is fix
+        $partnerCats = [
+            'fashion_and_lifestyle' => 'Fashion_and_lifestyle',
+            'electronics_and_furniture' => 'Electronics_and_furniture',
+            'tours_and_travel' => 'Tours_and_travel',
+            'health_and_beauty_care' => 'Health_and_beauty_care',
+            "food_and_beverage" => 'Food_and_beverage'
+        ];
+        // All Loyalty offers
+        $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
+
+        $catWithOffers = [];
+        foreach ($partnerCats as $catKey => $item) {
+            $catWithOffers[] = $this->parseOfferData($item, $catKey, $redeemOptions['data']);
+        }
+
+        return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
     }
 
     public function redeemOffer($mobile)

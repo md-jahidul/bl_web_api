@@ -110,6 +110,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
 
+    Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
+
 
     Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');
     Route::get('search-suggestion/{keyword}', 'API\V1\SearchController@getSearchSuggestion');
@@ -248,4 +250,27 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Banglalink 3G
     Route::get('banglalink-three-g', 'API\V1\BanglalinkThreeGController@getThreeGData');
+
+    // Corporate Responsibility
+    Route::get('corporate-responsibility/section', 'API\V1\CorporateResponsibilityController@getSection');
+    //CR-strategy Corporate Responsibility
+    Route::get('corporate-cr-strategy', 'API\V1\CorporateResponsibilityController@getCrStrategySection');
+    Route::get('corporate-cr-strategy/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getCrStrategyDetailsComponents');
+
+    // Case Study
+    Route::get('corp-case-study-report/section-component', 'API\V1\CorporateResponsibilityController@getCaseStudySection');
+    Route::get('corporate-case-study/details-components/{url_slug}', 'API\V1\CorporateResponsibilityController@getCaseStudyDetailsComponents');
+
+    // Initiative Tab
+    Route::get('corporate/initiative-tabs', 'API\V1\CorporateResponsibilityController@getInitiativeTabs');
+
+    // Initiative Component
+    Route::get('corporate/initiative-tabs/component/{url_slug}', 'API\V1\CorporateResponsibilityController@getInitiativeTabComponent');
+
+    //Corporate Res Contact Info Save
+    Route::post('corporate/contact-info-save', 'API\V1\CorporateResponsibilityController@getContactInfoSave');
+
+    // Referral Get Code
+    Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
+    Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
 });
