@@ -34,6 +34,9 @@ class BusinessPackageRepository extends BaseRepository {
             $data[$count]['alt_text'] = $p->card_banner_alt_text;
             $data[$count]['short_details_en'] = $p->short_details;
             $data[$count]['short_details_bn'] = $p->short_details_bn;
+            $data[$count]['page_header'] = $p->page_header;
+            $data[$count]['page_header_bn'] = $p->page_header_bn;
+            $data[$count]['schema_markup'] = $p->schema_markup;
             $data[$count]['url_slug'] = $p->url_slug;
 
             $count++;
@@ -60,6 +63,7 @@ class BusinessPackageRepository extends BaseRepository {
             $data['offer_details_bn'] = $package->offer_details_bn;
             $data['url_slug'] = $package->url_slug;
             $data['page_header'] = $package->page_header;
+            $data['page_header_bn'] = $package->page_header_bn;
             $data['schema_markup'] = $package->schema_markup;
         }
         return $data;

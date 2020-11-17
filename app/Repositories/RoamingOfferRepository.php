@@ -36,6 +36,9 @@ class RoamingOfferRepository extends BaseRepository {
                 $data[$k]['offers'][$key]['name_en'] = $v->name_en;
                 $data[$k]['offers'][$key]['name_bn'] = $v->name_bn;
                 $data[$k]['offers'][$key]['url_slug'] = $v->url_slug;
+                $data[$k]['offers'][$key]['page_header'] = $v->page_header;
+                $data[$k]['offers'][$key]['page_header_bn'] = $v->page_header_bn;
+                $data[$k]['offers'][$key]['schema_markup'] = $v->schema_markup;
                 $data[$k]['offers'][$key]['card_text_en'] = $v->card_text_en;
                 $data[$k]['offers'][$key]['card_text_bn'] = $v->card_text_bn;
                 $data[$k]['offers'][$key]['likes'] = $v->likes;
@@ -62,7 +65,9 @@ class RoamingOfferRepository extends BaseRepository {
         $data['banner_web'] = $offer->banner_web == "" ? "" : config('filesystems.image_host_url') . $offer->banner_web;
         $data['banner_mobile'] = $offer->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $offer->banner_mobile;
         $data['alt_text'] = $offer->alt_text;
+        $data['url_slug'] = $offer->url_slug;
         $data['page_header'] = $offer->page_header;
+        $data['page_header_bn'] = $offer->page_header_bn;
         $data['schema_markup'] = $offer->schema_markup;
         $data['likes'] = $offer->likes;
 

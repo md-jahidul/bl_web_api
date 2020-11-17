@@ -62,6 +62,7 @@ class AppServiceTabRepository extends BaseRepository
                 'url_slug',
                 'schema_markup',
                 'page_header',
+                'page_header_bn',
                 'alias'
             )
             ->get();

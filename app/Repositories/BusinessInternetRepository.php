@@ -48,6 +48,9 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['tag_category_id'] = $p->tag_id;
             $data[$count]['ussd_en'] = $p->activation_ussd_code;
             $data[$count]['balance_check_ussd_code'] = $p->balance_check_ussd_code;
+            $data[$count]['page_header'] = $p->page_header;
+            $data[$count]['page_header_bn'] = $p->page_header_bn;
+            $data[$count]['schema_markup'] = $p->schema_markup;
             $data[$count]['url_slug'] = $p->url_slug;
             $data[$count]['likes'] = $p->likes;
             $count++;
@@ -88,6 +91,7 @@ class BusinessInternetRepository extends BaseRepository {
         $data['alt_text'] = $internet->alt_text;
         $data['url_slug'] = $internet->url_slug;
         $data['page_header'] = $internet->page_header;
+        $data['page_header_bn'] = $internet->page_header;
         $data['schema_markup'] = $internet->schema_markup;
         $data['likes'] = $internet->likes;
 
