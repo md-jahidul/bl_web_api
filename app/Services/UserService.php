@@ -165,7 +165,7 @@ class UserService extends ApiBaseService
 
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
         if (!$user)  return null;
-        
+
         $user_data = [];
         if( !empty($idpUserData) ){
 
