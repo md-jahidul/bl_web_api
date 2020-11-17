@@ -120,20 +120,19 @@ class ProductLoanService extends BaseService
         ];
     }
 
-    public function getLoanInfo($request, $loanType)
+    public function getLoanInfo($request, $loanType, $msisdn)
     {
-        $user = $this->customerService->getCustomerDetails($request);
-
-//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber(8801962424479);
-
-        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
+//        $user = $this->customerService->getCustomerDetails($request);
+        $msisdn = "88" . $msisdn;
+        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
+//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
 
         $customer_type = $customerInfo->getData()->data->connectionType;
         $customer_account_id = $customerInfo->getData()->data->package->customerId;
 
-        if (!$user) {
-            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
-        }
+//        if (!$user) {
+//            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+//        }
 
         // Customer type check
         if ($customer_type == 'POSTPAID') {
@@ -185,18 +184,20 @@ class ProductLoanService extends BaseService
         $availableLoanProducts = [];
         foreach ($loanProducts as $loan) {
             $product = AlCoreProduct::where('product_code', $loan['code'])->first();
-            if (empty($product)) {
-                return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
+//            if (empty($product)) {
+//                return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
+//            }
+            if (!empty($product)) {
+                $product = array(
+                    'product_code' => $product->product_code,
+                    'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
+                    'title' => $product->name,
+                    'internet_volume_mb' => $product->internet_volume_mb,
+                    'price_tk' => $product->mrp_price,
+                    'validity' => $product->validity,
+                    'validity_unit' => $product->validity_unit
+                );
             }
-            $product = array(
-                'product_code' => $product->product_code,
-                'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
-                'title' => $product->name,
-                'internet_volume_mb' => $product->internet_volume_mb,
-                'price_tk' => $product->mrp_price,
-                'validity' => $product->validity,
-                'validity_unit' => $product->validity_unit
-            );
 
             if ($loanType == $product['type']) {
                 array_push($availableLoanProducts, $product);

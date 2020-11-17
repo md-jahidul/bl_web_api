@@ -104,7 +104,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
-    Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
 
     //Loyalty or Priyojon section
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
