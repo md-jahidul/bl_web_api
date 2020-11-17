@@ -96,4 +96,32 @@ class PartnerOfferRepository extends BaseRepository {
         return $priyojonOffers;
     }
 
+    public function campaignOffers()
+    {
+        return DB::table('partner_offers as po')
+            ->where('po.is_active', 1)
+            ->where('po.is_campaign', 1)
+            ->join('partners as p', 'po.partner_id', '=', 'p.id')
+            ->select(
+                'po.campaign_img',
+                'po.offer_scale',
+                'po.offer_value',
+                'po.offer_unit',
+                'po.validity_en',
+                'po.validity_bn',
+                'po.like',
+                'po.get_offer_msg_en',
+                'po.get_offer_msg_bn',
+                'po.btn_text_en',
+                'po.btn_text_bn',
+                'po.alt_text_en',
+                'po.alt_text_bn',
+
+                'p.company_name_en',
+                'p.company_name_bn',
+                'p.company_logo'
+            )
+            ->orderBy('po.display_order')
+            ->get();
+    }
 }

@@ -82,23 +82,24 @@ class BaseRepository implements BaseRepositoryContract
     /**
      * Find resource
      *
-     * @param $field
-     * @param $value
+     * @param array $searchCriteria
+     * @param null $relation
+     * @param array|null $orderBy
+     * @param string[] $fields
      * @return \Illuminate\Support\Collection|null|static
      */
-    public function findBy(array $searchCriteria = [], $relation = null, array $orderBy = null)
+    public function findBy(array $searchCriteria = [], $relation = null, $fields = ['*'], array $orderBy = null)
     {
         $model = $this->prepareModelForRelationAndOrder($relation, $orderBy);
         $limit = !empty($searchCriteria['per_page']) ? (int)$searchCriteria['per_page'] : 15; // it's needed for pagination
 
         $queryBuilder = $model->where(function ($query) use ($searchCriteria) {
-
             $this->applySearchCriteriaInQueryBuilder($query, $searchCriteria);
         });
         if (!empty($searchCriteria['per_page'])) {
             return $queryBuilder->paginate($limit);
         }
-        return $queryBuilder->get();
+        return $queryBuilder->get($fields);
     }
 
     /**
@@ -145,6 +146,21 @@ class BaseRepository implements BaseRepositoryContract
         }
 
         return $query->get($fields);
+    }
+
+    /**
+     * Find resource
+     *
+     * @param $query
+     * @param array $searchCriteria
+     * @return \Illuminate\Support\Collection|null|static
+     */
+    public function applySearchCriteriaInQueryBuilder($query, array $searchCriteria)
+    {
+        foreach ($searchCriteria as $key => $value) {
+            $query->where($key, $value);
+        }
+        return $query->get();
     }
 
     /**

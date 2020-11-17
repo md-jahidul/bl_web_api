@@ -14,9 +14,10 @@ use App\Services\ApiBaseService;
 
 class BanglalinkLoyaltyService extends BaseService
 {
-    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
-//    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
+//    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
+    protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
     protected $redeemOptionEndPoint = '/loyalty/loyalty/get-priyojon-redeem-options';
+    protected $redeemPurchaseEndPoint = '/loyalty/loyalty/purchase-priyojon-redeem';
 
     protected $apiBaseService;
 
@@ -29,9 +30,10 @@ class BanglalinkLoyaltyService extends BaseService
         $this->apiBaseService = $apiBaseService;
     }
 
-    public function getPriyojonStatus($subscriberId, $connectionType)
+    public function getPriyojonStatus($subscriberId)
     {
-        $url = $this->statusEndPoint . '?msisdn=' . $subscriberId . '&subscriptionType=' . $connectionType;
+        $customerId =  substr($subscriberId, 3);
+        $url = $this->statusEndPoint . '?customerId=' . $customerId;
         $result = $this->get($url);
 
         if ($result['status_code'] == 200) {
@@ -59,8 +61,16 @@ class BanglalinkLoyaltyService extends BaseService
         throw new BLApiHubException("Internal service error", $result['status_code']);
     }
 
-    public function redeemOffer($subscriberId, $offerId)
+    public function redeemOfferPurchase($msisdn, $offerId)
     {
+        $purchaseUrl = $this->redeemPurchaseEndPoint;
+        $body = ["msisdn" => $msisdn, "offerId" => $offerId, "channelID" => 25, "salesChannelID" => 24];
+        $result = $this->post($purchaseUrl, $body);
 
+        if ($result['status_code'] == 200) {
+            $response = json_decode($result['response'], true);
+            return $response['data'];
+        }
+        throw new BLApiHubException("Internal service error", $result['status_code']);
     }
 }

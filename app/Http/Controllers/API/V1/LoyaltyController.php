@@ -46,26 +46,31 @@ class LoyaltyController extends Controller
 
     public function priyojonStatus(Request $request)
     {
-        // $customer = $this->customerService->getCustomerDetails($request);
-        // $connectionType = $customerInfo['balance_data']['connection_type'];
-       // return $this->loyaltyService->getPriyojonStatus($customer->msisdn, "PREPAID");
-
-        return $this->loyaltyService->getPriyojonStatus("01987", "PREPAID");
+        $customer = $this->customerService->getCustomerDetails($request);
+        return $this->loyaltyService->getPriyojonStatus($customer->msisdn);
     }
 
     public function redeemOptions(Request $request)
     {
 //        $customer = $this->customerService->getCustomerDetails($request);
-
-//        dd($customer);
-
-        return $this->loyaltyService->getRedeemOptions(1903303978);
+        return $this->loyaltyService->getRedeemOffers(1962424630); //$customer->phone
     }
 
-    public function partnerCatWithOffers()
+    public function redeemOfferPurchase(Request $request, $offerId)
     {
-        return $this->loyaltyService->partnerOffers(1903303978);
+        $customer = $this->customerService->getCustomerDetails($request);
+        return $this->loyaltyService->purchaseRedeemOffer($customer, $offerId);
     }
 
+    public function partnerCatWithOffers(Request $request)
+    {
+        $customer = $this->customerService->getCustomerDetails($request);
+        return $this->loyaltyService->partnerOffers($customer->phone);
+    }
+
+    public function partnerOfferLike($offerId)
+    {
+        return $this->loyaltyService->partnerOfferLike($offerId);
+    }
 
 }
