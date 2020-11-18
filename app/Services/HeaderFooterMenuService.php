@@ -66,12 +66,13 @@ class HeaderFooterMenuService extends ApiBaseService
 //                'slug' => $pageData->dynamic_page_slug,
 //            ];
 //        }
-        $routes = FrontEndDynamicRoute::all('id', 'code', 'url', 'exact', 'children');
+        $routes = FrontEndDynamicRoute::all('id', 'code', 'url', 'slug', 'exact', 'children');
         foreach ($routes as $pageData){
             $data[] = [
                 'id' => $pageData->id,
                 'code' => $pageData->code,
                 'url' => $pageData->url,
+                'slug' => $pageData->slug,
                 'exact' => ($pageData->exact) ? true : false,
                 'children' => $pageData->children,
             ];
