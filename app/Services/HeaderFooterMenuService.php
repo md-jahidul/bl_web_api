@@ -72,7 +72,7 @@ class HeaderFooterMenuService extends ApiBaseService
                 'id' => $pageData->id,
                 'code' => $pageData->code,
                 'url' => $pageData->url,
-                'slug' => $pageData->slug,
+                'key' => $pageData->key,
                 'exact' => ($pageData->exact) ? true : false,
                 'children' => $pageData->children,
             ];
