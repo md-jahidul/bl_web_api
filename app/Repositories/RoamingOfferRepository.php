@@ -36,6 +36,7 @@ class RoamingOfferRepository extends BaseRepository {
                 $data[$k]['offers'][$key]['name_en'] = $v->name_en;
                 $data[$k]['offers'][$key]['name_bn'] = $v->name_bn;
                 $data[$k]['offers'][$key]['url_slug'] = $v->url_slug;
+                $data[$k]['offers'][$key]['url_slug_bn'] = $v->url_slug_bn;
                 $data[$k]['offers'][$key]['page_header'] = $v->page_header;
                 $data[$k]['offers'][$key]['page_header_bn'] = $v->page_header_bn;
                 $data[$k]['offers'][$key]['schema_markup'] = $v->schema_markup;
@@ -51,10 +52,9 @@ class RoamingOfferRepository extends BaseRepository {
         return $data;
     }
 
-    public function getOtherOffersDetails($offerId) {
-
-        $offer = $this->model->findOrFail($offerId);
-
+    public function getOtherOffersDetails($offerSlug) 
+    {   
+        $offer = $this->model->where('url_slug', $offerSlug)->orWhere('url_slug_bn', $offerSlug)->first();
 
         $data = [];
 
@@ -66,12 +66,13 @@ class RoamingOfferRepository extends BaseRepository {
         $data['banner_mobile'] = $offer->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $offer->banner_mobile;
         $data['alt_text'] = $offer->alt_text;
         $data['url_slug'] = $offer->url_slug;
+        $data['url_slug_bn'] = $offer->url_slug_bn;
         $data['page_header'] = $offer->page_header;
         $data['page_header_bn'] = $offer->page_header_bn;
         $data['schema_markup'] = $offer->schema_markup;
         $data['likes'] = $offer->likes;
 
-        $components = RoamingOtherOfferComponents::where('parent_id', $offerId)->orderBy('position')->get();
+        $components = RoamingOtherOfferComponents::where('parent_id', $offer->id)->orderBy('position')->get();
         $data['components'] = [];
         foreach ($components as $k => $val) {
 
