@@ -118,7 +118,7 @@ class ProductRepository extends BaseRepository
      * @param $id
      * @return mixed
      */
-    public function detailProducts($type, $slug)
+    public function detailProducts($slug)
     {
         return $data = $this->model->where('url_slug', $slug)
             ->orWhere('url_slug_bn', $slug)
@@ -143,7 +143,6 @@ class ProductRepository extends BaseRepository
                 'offer_info',
                 'status',
                 'like')
-            ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }

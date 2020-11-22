@@ -99,9 +99,9 @@ class ProductController extends Controller
      * @param $id
      * @return mixed
      */
-    public function productDetails($type, $slug)
+    public function productDetails($slug)
     {
-        return $productDetail = $this->productService->details($type, $slug);
+        return $productDetail = $this->productService->details($slug);
     }
 
     public function eligibleCheck($mobile, $productCode)

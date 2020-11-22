@@ -283,10 +283,10 @@ class ProductService extends ApiBaseService
      * @param $id
      * @return mixed
      */
-    public function details($type, $slug)
+    public function details($slug)
     {
         try {
-            $productDetail = $this->productRepository->detailProducts($type, $slug);
+            $productDetail = $this->productRepository->detailProducts($slug);
 
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
