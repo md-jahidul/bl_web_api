@@ -279,4 +279,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Referral Get Code
     Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
     Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
+
+    // Test File Name
+    Route::get('file/view', 'API\V1\FileViewController@viewFile');
+    Route::get('show-file/{fileName}', 'API\V1\FileViewController@showFile');
+
 });
