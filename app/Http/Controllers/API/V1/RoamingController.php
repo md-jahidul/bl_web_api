@@ -88,9 +88,9 @@ class RoamingController extends Controller
      * @return Json Response
      * @Bulbul Mahmud Nito || 26/03/2020
      */
-    public function otherOfferDetails($offerId)
+    public function otherOfferDetails($offerSlug)
     {
-        return $this->roammingService->otherOfferDetalis($offerId);
+        return $this->roammingService->otherOfferDetalis($offerSlug);
     }
     
       /**
@@ -159,9 +159,9 @@ class RoamingController extends Controller
      * @return Json Response
      * @Bulbul Mahmud Nito || 27/03/2020
      */
-    public function infoTipsDetails($infoId)
+    public function infoTipsDetails($infoSlug)
     {
-        return $this->roammingService->infoTipsDetails($infoId);
+        return $this->roammingService->infoTipsDetails($infoSlug);
     }
 
 }
