@@ -45,6 +45,7 @@ class AppServiceTabRepository extends BaseRepository
                             'app_store_link',
                             'google_play_link',
                             'url_slug',
+                            'url_slug_bn',
                             'other_info'
                         ])
                         ->where('status', 1)
