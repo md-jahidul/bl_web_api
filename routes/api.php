@@ -36,7 +36,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
 
 
-    Route::get('product-details/{id}', 'API\V1\ProductDetailsController@productDetails');
+    Route::get('product-other-details/{slug}', 'API\V1\ProductDetailsController@productDetails');
 
 
     // QUICK LAUNCH  ====================================
