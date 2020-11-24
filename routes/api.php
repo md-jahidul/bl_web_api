@@ -282,6 +282,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Test File Name
     Route::get('file/view', 'API\V1\FileViewController@viewFile');
-    Route::get('show-file/{fileName}', 'API\V1\FileViewController@showFile');
+//    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
+    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\PartnerOfferController@showFile');
 
 });
