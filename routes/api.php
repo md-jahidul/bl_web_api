@@ -196,7 +196,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 
     // App and service get details page with product id
-    Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
+    Route::get('app-service/details/{slug}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
 
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');

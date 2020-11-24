@@ -70,9 +70,9 @@ class AppServiceDetailsController extends Controller
      * @param  [type] $product_id [description]
      * @return [type]             [description]
      */
-    public function appServiceDetailsComponent($product_id)
+    public function appServiceDetailsComponent($slug)
     {
-        return $this->appServiceDetailsService->getDetails($product_id);
+        return $this->appServiceDetailsService->getDetails($slug);
 
 //          try{
 //            $data = null;
