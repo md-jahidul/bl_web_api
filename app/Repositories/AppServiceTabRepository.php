@@ -61,6 +61,7 @@ class AppServiceTabRepository extends BaseRepository
                 'banner_image_mobile',
                 'banner_alt_text',
                 'url_slug',
+                'url_slug_bn',
                 'schema_markup',
                 'page_header',
                 'page_header_bn',
