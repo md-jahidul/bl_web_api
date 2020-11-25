@@ -9,6 +9,7 @@ use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
+use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -19,6 +20,8 @@ use DB;
 use Carbon\Carbon;
 
 class PartnerOfferController extends Controller {
+
+    use FileTrait;
 
     protected $response = [];
 
@@ -51,6 +54,18 @@ class PartnerOfferController extends Controller {
         );
     }
 
+    public function showFile($dirLocation, $fileName)
+    {
+        $fileName = explode('.', $fileName)[0];
+
+        $decode = base64_decode($dirLocation);
+
+//        $offers = OfferCategory::where('banner_alt_text', $fileName)->first();
+//        return $this->view($offers->banner_image_url);
+
+        return $this->view($decode);
+    }
+
     public function offerCategories() {
         $tags = TagCategory::all();
         $sim = SimCategory::all();
@@ -60,7 +75,16 @@ class PartnerOfferController extends Controller {
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
                 if (!empty($value['banner_image_url'])) {
-                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+
+                    $encrypted = base64_encode($value['banner_image_url']);
+
+                    $extension = explode('.', $value['banner_image_url']);
+                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
+                    $fileName = $value['banner_alt_text'] . $extension;
+
+
+                    $value['banner_image_url'] = request()->root() . "/api/v1/show-file/$encrypted/" . $fileName;
+//                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
                 }
                 if (!empty($value['banner_image_mobile'])) {
                     $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
@@ -134,22 +158,22 @@ class PartnerOfferController extends Controller {
                 $data['offer_details_bn'] = $productDetail->partner_offer_details->offer_details_bn;
                 $data['avail_en'] = $productDetail->partner_offer_details->avail_en;
                 $data['avail_bn'] = $productDetail->partner_offer_details->avail_bn;
-                
+
                 $phone = json_decode($productDetail->phone);
-                
+
                 $data['phone_en'] = !empty($phone) ? $phone->en : "";
                 $data['phone_bn'] = !empty($phone) ? $phone->bn : "";
-                
+
                 $location = json_decode($productDetail->location);
-                
+
                 $data['location_en'] = !empty($location) ? $location->en : "";
                 $data['location_bn'] = !empty($location) ? $location->bn : "";
                 $data['area_en'] = $productDetail->area_en;
                 $data['area_bn'] = $productDetail->area_bn;
-                
+
                 $banner = "";
                 if($productDetail->partner_offer_details->banner_image_url != ""){
-                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url; 
+                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
                 }
                 $data['banner_image_url'] = $banner;
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;
