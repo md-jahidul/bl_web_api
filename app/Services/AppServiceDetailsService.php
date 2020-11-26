@@ -232,6 +232,7 @@ class AppServiceDetailsService extends ApiBaseService
 		$data['page_header_bn'] = $product_info->page_header_bn;
 		$data['schema_markup'] = $product_info->schema_markup;
 		$data['url_slug'] = $product_info->url_slug;
+		$data['url_slug_bn'] = $product_info->url_slug_bn;
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
