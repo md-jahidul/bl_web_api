@@ -281,8 +281,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
 
     // Test File Name
-    Route::get('file/view', 'API\V1\FileViewController@viewFile');
+    Route::get('test-offers', 'API\V1\FileViewController@offerList');
 //    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
-    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\PartnerOfferController@showFile');
+    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
 
 });
