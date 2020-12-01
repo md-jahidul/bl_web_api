@@ -37,6 +37,7 @@ class BusinessOthersRepository extends BaseRepository {
             $data['top'][$countTop]['short_details_en'] = $s->short_details;
             $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
             $data['top'][$countTop]['url_slug'] = $s->url_slug;
+            $data['top'][$countTop]['url_slug_bn'] = $s->url_slug_bn;
             $countTop++;
         }
 
@@ -64,6 +65,7 @@ class BusinessOthersRepository extends BaseRepository {
             $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
             $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
             $data['slider'][$countSlider]['url_slug'] = $s->url_slug;
+            $data['slider'][$countSlider]['url_slug_bn'] = $s->url_slug_bn;
             $countSlider++;
         }
         return $data;
@@ -88,14 +90,15 @@ class BusinessOthersRepository extends BaseRepository {
             $data[$count]['page_header_bn'] = $s->page_header_bn;
             $data[$count]['schema_markup'] = $s->schema_markup;
             $data[$count]['url_slug'] = $s->url_slug;
+            $data[$count]['url_slug_bn'] = $s->url_slug_bn;
 
             $count++;
         }
         return $data;
     }
 
-    public function getServiceById($serviceId) {
-        $service = $this->model->where('id', $serviceId)->first();
+    public function getServiceBySlug($serviceSlug) {
+        $service = $this->model->where('url_slug', $serviceSlug)->orWhere('url_slug_bn', $serviceSlug)->first();
 
         $data['id'] = $service->id;
         $data['slug'] = $service->type;
@@ -110,6 +113,7 @@ class BusinessOthersRepository extends BaseRepository {
         $data['offer_details_en'] = $service->offer_details_en;
         $data['offer_details_bn'] = $service->offer_details_bn;
         $data['url_slug'] = $service->url_slug;
+        $data['url_slug_bn'] = $service->url_slug_bn;
         $data['page_header'] = $service->page_header;
         $data['page_header_bn'] = $service->page_header_bn;
         $data['schema_markup'] = $service->schema_markup;
