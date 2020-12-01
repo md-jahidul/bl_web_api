@@ -72,5 +72,14 @@ return [
 
     ],
     'image_host_url' => env('IMAGE_HOST_URL', 'http://172.16.8.160:8443/uploads/'),
-    'image_host' => env('IMAGE_HOST', 'http://172.16.8.160:8443')
+    'image_host' => env('IMAGE_HOST', 'http://172.16.8.160:8443'),
+
+    // File Location
+    'moduleType' => [
+        'OfferCategory' => [
+            'image_name_en' => 'banner_alt_text',
+            'image_name_bn' => 'banner_alt_text_bn',
+            'exact_path' => 'banner_image_url'
+        ]
+    ]
 ];
