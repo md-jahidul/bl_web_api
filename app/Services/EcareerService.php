@@ -879,6 +879,8 @@ class EcareerService {
             $sub_data['title_en'] = $tab_title->first()->title_en;
             $sub_data['title_bn'] = $tab_title->first()->title_bn;
             $sub_data['slug'] = $tab_title->first()->slug;
+            $sub_data['url_slug'] = $tab_title->first()->route_slug;
+            $sub_data['url_slug_bn'] = $tab_title->first()->route_slug_bn;
 
             $results = $sub_data;
         }
