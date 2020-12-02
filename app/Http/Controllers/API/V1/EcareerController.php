@@ -57,6 +57,9 @@ class EcareerController extends Controller
                     $sub_data_banner['title_en'] = $value->title_en;
                     $sub_data_banner['title_bn'] = $value->title_bn;
                     $sub_data_banner['slug'] = $value->slug;
+                    $sub_data_banner['url_slug'] = $value->route_slug;
+                    $sub_data_banner['url_slug_bn'] = $value->route_slug_bn;
+
 
                     $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
                     $sub_data_banner['alt_text'] = $value->alt_text;

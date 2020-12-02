@@ -52,6 +52,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['page_header_bn'] = $p->page_header_bn;
             $data[$count]['schema_markup'] = $p->schema_markup;
             $data[$count]['url_slug'] = $p->url_slug;
+            $data[$count]['url_slug_bn'] = $p->url_slug_bn;
             $data[$count]['likes'] = $p->likes;
             $count++;
         }
@@ -59,9 +60,9 @@ class BusinessInternetRepository extends BaseRepository {
         return $data;
     }
 
-    public function getInternetPackageDetails($internetId) {
+    public function getInternetPackageDetails($internetSlug) {
 
-        $internet = $this->model->findOrFail($internetId);
+        $internet = $this->model->where('url_slug', $internetSlug)->orWhere('url_slug_bn', $internetSlug)->first();
 
 
 
@@ -90,6 +91,7 @@ class BusinessInternetRepository extends BaseRepository {
         $data['banner_photo'] = $internet->banner_photo != "" ? config('filesystems.image_host_url') . $internet->banner_photo : "";
         $data['alt_text'] = $internet->alt_text;
         $data['url_slug'] = $internet->url_slug;
+        $data['url_slug_bn'] = $internet->url_slug_bn;
         $data['page_header'] = $internet->page_header;
         $data['page_header_bn'] = $internet->page_header;
         $data['schema_markup'] = $internet->schema_markup;
@@ -129,6 +131,7 @@ class BusinessInternetRepository extends BaseRepository {
             $data['related_product'][$count]['activation_ussd_code'] = $rp->activation_ussd_code;
             $data['related_product'][$count]['balance_check_ussd_code'] = $rp->balance_check_ussd_code;
             $data['related_product'][$count]['url_slug'] = $rp->url_slug;
+            $data['related_product'][$count]['url_slug_bn'] = $rp->url_slug_bn;
             $data['related_product'][$count]['likes'] = $rp->likes;
 
             $data['related_product'][$count]['tag_en'] = "";

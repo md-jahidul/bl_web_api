@@ -38,14 +38,15 @@ class BusinessPackageRepository extends BaseRepository {
             $data[$count]['page_header_bn'] = $p->page_header_bn;
             $data[$count]['schema_markup'] = $p->schema_markup;
             $data[$count]['url_slug'] = $p->url_slug;
+            $data[$count]['url_slug_bn'] = $p->url_slug_bn;
 
             $count++;
         }
         return $data;
     }
 
-    public function getPackageById($packageId) {
-        $package = $this->model->where('id', $packageId)->first();
+    public function getPackageById($packageSlug) {
+        $package = $this->model->where('url_slug', $packageSlug)->orWhere('url_slug_bn', $packageSlug)->first();
         $data = [];
         if (!empty($package)) {
             $data['id'] = $package->id;
@@ -62,6 +63,7 @@ class BusinessPackageRepository extends BaseRepository {
             $data['offer_details_en'] = $package->offer_details;
             $data['offer_details_bn'] = $package->offer_details_bn;
             $data['url_slug'] = $package->url_slug;
+            $data['url_slug_bn'] = $package->url_slug_bn;
             $data['page_header'] = $package->page_header;
             $data['page_header_bn'] = $package->page_header_bn;
             $data['schema_markup'] = $package->schema_markup;
