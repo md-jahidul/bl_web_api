@@ -280,9 +280,12 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
     Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
 
-    // Test File Name
-    Route::get('test-offers', 'API\V1\FileViewController@offerList');
+    //Image File Viewer
+    Route::get('test-offers', 'API\V1\ImageFileViewerController@offerList');
 //    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
-    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
+
+    Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
+    Route::get('banner-image/mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
+    Route::get('content-image/{model}/{fileName}', 'API\V1\ImageFileViewerController@contentIamge');
 
 });

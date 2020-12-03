@@ -6,25 +6,39 @@ use App\Http\Controllers\Controller;
 
 //use App\Models\OfferCategory;
 use App\Models\OfferCategory;
+use App\Services\ImageFileViewerService;
 use App\Traits\FileTrait;
 use Illuminate\Http\JsonResponse;
 
 use App\Models;
 
 
-class FileViewController extends Controller
+class ImageFileViewerController extends Controller
 {
-    use FileTrait;
 
-    public function showFile($modelName, $fileName)
+    /**
+     * @var ImageFileViewerService
+     */
+    private $fileViewerService;
+
+    /**
+     * ImageFileViewerService constructor.
+     * @param ImageFileViewerService $fileViewerService
+     */
+    public function __construct(ImageFileViewerService $fileViewerService)
     {
-        $fileName = explode('.', $fileName)[0];
-        $model = str_replace('.', '', "App\Models\.$modelName");
+        $this->fileViewerService = $fileViewerService;
+    }
 
-        $data = config('filesystems.moduleType.'.$modelName);
+    public function bannerImageWeb($modelName, $fileName)
+    {
+        return $this->fileViewerService->bannerImageWeb($modelName, $fileName);
 
-        $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
-        return $this->view($offers->{ $data['exact_path'] });
+    }
+
+    public function bannerImageMobile($modelName, $fileName)
+    {
+        //
     }
 
     /**
@@ -37,6 +51,7 @@ class FileViewController extends Controller
         $offers = OfferCategory::where('parent_id', 0)->get();
 
         foreach ($offers as $cat) {
+            dd($cat->banner_image_url);
 //            $encrypted = base64_encode($cat->banner_image_url);
             $extension = explode('.', $cat->banner_image_url);
             $extension = isset($extension[1]) ? ".".$extension[1] : null;
