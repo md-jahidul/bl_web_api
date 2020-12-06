@@ -16,8 +16,6 @@ class ImageFileViewerService extends ApiBaseService
 {
     use FileTrait;
 
-
-
 //
 //    /**
 //     * @var $aboutPageRepository
@@ -52,14 +50,20 @@ class ImageFileViewerService extends ApiBaseService
 //        $this->setActionRepository($aboutPageRepository);
 //    }
 
+    public function imageViewer($modelName, $fileName)
+    {
+        $fileName = explode('.', $fileName)[0];
+        $model = str_replace('.', '', "App\Models\.$modelName");
+
+        $data = config('filesystems.moduleType.'.$modelName);
+
+        $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
+        return $this->view($offers->{ $data['exact_path'] });
+    }
+
     public function bannerImageWeb($modelName, $fileName)
     {
-
+        return $this->imageViewer($modelName, $fileName);
     }
 
-    public function lmsAboutBanner($slug)
-    {
-        $data = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => $slug], ['page_type', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']);
-        return $this->sendSuccessResponse($data, 'Loyalty About Us info');
-    }
 }

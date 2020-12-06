@@ -51,8 +51,6 @@ class ImageFileViewerController extends Controller
         $offers = OfferCategory::where('parent_id', 0)->get();
 
         foreach ($offers as $cat) {
-            dd($cat->banner_image_url);
-//            $encrypted = base64_encode($cat->banner_image_url);
             $extension = explode('.', $cat->banner_image_url);
             $extension = isset($extension[1]) ? ".".$extension[1] : null;
             $fileNameEn = $cat->banner_alt_text . $extension;

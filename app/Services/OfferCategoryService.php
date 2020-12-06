@@ -85,4 +85,9 @@ class OfferCategoryService extends ApiBaseService
         }
         return $this->sendSuccessResponse( $packageProduct, 'Package related products!', [], [],HttpStatusCode::SUCCESS);
     }
+
+    public function offerCatList()
+    {
+
+    }
 }

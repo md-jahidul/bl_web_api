@@ -30,7 +30,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('offers/{type}/{offer_type?}', 'API\V1\ProductController@simPackageOffers');
 
-    Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
+    // Offers Categories
+    Route::get('offers-categories', 'API\V1\OfferCategoryController@offerCategories');
+
     Route::get('product-details/{slug}', 'API\V1\ProductController@productDetails');
 
     Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
