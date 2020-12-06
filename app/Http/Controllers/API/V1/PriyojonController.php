@@ -7,7 +7,9 @@ use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
 use App\Services\AboutPageService;
 use App\Services\PartnerOfferService;
+use App\Services\PriyojonService;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -19,39 +21,33 @@ class PriyojonController extends Controller
      */
     private $partnerOfferService;
     private $aboutPriyojonService;
+    /**
+     * @var PriyojonService
+     */
+    private $priyojonService;
 
     /**
      * PriyojonController constructor.
+     * @param PriyojonService $priyojonService
      * @param PartnerOfferService $partnerOfferService
      * @param AboutPageService $aboutPriyojonService
      */
     public function __construct(
+        PriyojonService $priyojonService,
         PartnerOfferService $partnerOfferService,
         AboutPageService $aboutPriyojonService
     ) {
+        $this->priyojonService = $priyojonService;
         $this->partnerOfferService = $partnerOfferService;
         $this->aboutPriyojonService = $aboutPriyojonService;
     }
 
-
     /**
-     * @return mixed
+     * @return JsonResponse|mixed
      */
-    public function PriyojonHeader()
+    public function priyojonHeader()
     {
-        try{
-            $priyojonHeader = Priyojon::where('parent_id', 0)->with('children')->get();
-
-            if (isset($priyojonHeader)) {
-
-                return response()->success($priyojonHeader, 'Data Found!');
-            }
-
-            return response()->error('Data Not Found!');
-
-        }catch (QueryException $e) {
-            return response()->error('Something wrong!', $e->getMessage());
-        }
+        return $this->priyojonService->headerMenu();
     }
 
     /**
@@ -62,7 +58,14 @@ class PriyojonController extends Controller
        return $this->partnerOfferService->priyojonOffers();
     }
 
+    public function partnerCampaignOffers()
+    {
+        return $this->partnerOfferService->campaign();
+    }
+
     /**
+     * @param Request $request
+     * @param $page
      * @return mixed
      */
     public function discountOffers(Request $request, $page)
@@ -82,5 +85,10 @@ class PriyojonController extends Controller
     public function offerLike($id)
     {
         return $this->partnerOfferService->offerLike($id);
+    }
+
+    public function aboutBannerImage($slug)
+    {
+        return $this->aboutPriyojonService->lmsAboutBanner($slug);
     }
 }
