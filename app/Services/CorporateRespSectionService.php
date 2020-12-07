@@ -33,7 +33,7 @@ class CorporateRespSectionService extends ApiBaseService
 
     public function sections()
     {
-        $data = $this->corpRespSection->getAll();
+        $data = $this->corpRespSection->findByProperties(['status' => 1]);
         return $this->sendSuccessResponse($data, 'Corporate Responsibility Section Data');
     }
 }
