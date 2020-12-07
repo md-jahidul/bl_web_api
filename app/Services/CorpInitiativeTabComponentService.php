@@ -46,11 +46,13 @@ class CorpInitiativeTabComponentService extends ApiBaseService
     {
         $tabId = $this->initiativeTabRepository->findOneByProperties(['url_slug_en' => $slug], ['id', 'url_slug_en']);
         $tabId = isset($tabId) ? $tabId->id : null;
-        $data = $this->tabComponentRepository->findByProperties(['initiative_tab_id' => $tabId],
-            [
-                'initiative_tab_id', 'component_type', 'component_title_en', 'component_title_bn',
-                'editor_en', 'editor_bn', 'multiple_attributes'
-            ]);
+        $data = $this->tabComponentRepository->list($tabId);
+
+//        $data = $this->tabComponentRepository->findByProperties(['initiative_tab_id' => $tabId],
+//            [
+//                'initiative_tab_id', 'component_type', 'component_title_en', 'component_title_bn',
+//                'editor_en', 'editor_bn', 'multiple_attributes'
+//            ]);
         return $this->sendSuccessResponse($data, "Corporate Initiative Tab Component");
     }
 

@@ -20,6 +20,8 @@ class CorpInitiativeTabComponentRepository extends BaseRepository
     {
         return $this->model->where('initiative_tab_id', $tabId)
             ->orderBy('component_order', 'ASC')
+            ->select('initiative_tab_id', 'component_type', 'component_title_en', 'component_title_bn',
+                'editor_en', 'editor_bn', 'multiple_attributes')
             ->get();
     }
 }
