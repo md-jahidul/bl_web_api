@@ -74,7 +74,7 @@ class AboutPageService extends ApiBaseService
 
                     $priyojonAlias = $slug == self::PRIYOJON ? 'about-priyojon' : 'about';
 
-                    $priyojonMenu = $this->priyojonRepository->findMenuForSlug($priyojonAlias);
+                    $priyojonMenu = $this->priyojonRepository->getMenuForSlug($priyojonAlias);
 
                     $data = [
                         "details" => $aboutDetails,

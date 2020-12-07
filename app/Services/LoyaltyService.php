@@ -151,7 +151,7 @@ class LoyaltyService extends ApiBaseService
             }
         }
 
-        $priyojonMenu = $this->priyojonRepository->findMenuForSlug('redeem-point');
+        $priyojonMenu = $this->priyojonRepository->getMenuForSlug('redeem-point');
 
         $data = [
             'alias' => $priyojonMenu->alias,

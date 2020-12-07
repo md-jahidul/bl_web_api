@@ -75,7 +75,7 @@ class PartnerOfferService extends ApiBaseService {
                 $partnerOffers = PartnerOfferResource::collection($partnerOffers);
             }
 
-            $priyojonMenu = $this->priyojonRepository->findMenuForSlug('partner');
+            $priyojonMenu = $this->priyojonRepository->getMenuForSlug('partner');
 
             $data = [
                 'alias' => $priyojonMenu->alias,
