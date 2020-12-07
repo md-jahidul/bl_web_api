@@ -13,6 +13,7 @@ use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
 use App\Models\LmsPartnerOfferLike;
 use App\Repositories\LmsPartnerOfferLikeRepository;
+use App\Repositories\PriyojonRepository;
 use App\Services\Banglalink\BanglalinkLoyaltyService;
 use Illuminate\Http\JsonResponse;
 
@@ -29,17 +30,25 @@ class LoyaltyService extends ApiBaseService
     private $likeRepository;
 
     /**
+     * @var $priyojonRepository
+     */
+    protected $priyojonRepository;
+
+    /**
      * LoyaltyService constructor.
      * @param BanglalinkLoyaltyService $blLoyaltyService
      * @param LmsPartnerOfferLikeRepository $likeRepository
+     * @param PriyojonRepository $priyojonRepository
      */
     public function __construct(
         BanglalinkLoyaltyService $blLoyaltyService,
-        LmsPartnerOfferLikeRepository $likeRepository
+        LmsPartnerOfferLikeRepository $likeRepository,
+        PriyojonRepository $priyojonRepository
     )
     {
         $this->blLoyaltyService = $blLoyaltyService;
         $this->likeRepository = $likeRepository;
+        $this->priyojonRepository = $priyojonRepository;
     }
 
     public function getPriyojonStatus($mobile)
@@ -141,7 +150,17 @@ class LoyaltyService extends ApiBaseService
                 }
             }
         }
-        return $this->sendSuccessResponse($offer_details, 'Loyalty data');
+
+        $priyojonMenu = $this->priyojonRepository->findMenuForSlug('redeem-point');
+
+        $data = [
+            'alias' => $priyojonMenu->alias,
+            'url_slug_en' => $priyojonMenu->url_slug_en,
+            'url_slug_bn' => $priyojonMenu->url_slug_bn,
+            'offer-details' => $offer_details
+        ];
+
+        return $this->sendSuccessResponse($data, 'Loyalty data');
     }
 
     /**
