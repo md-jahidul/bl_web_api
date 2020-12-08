@@ -172,7 +172,7 @@ class LoyaltyService extends ApiBaseService
                 $catWithOffers[] = [
                     'offer_id' => $offerId,
                     'offer_category_name' => $segment['offerCategoryName'],
-                    'discount_rate' => $segment['offerDescription'],
+                    'discount_rate' => $segment['offerShortDescription'],
                     'partner_logo' => $segment['imageURL'],
                     'partner_name' => $segment['partnerName'],
                     'pop_up_details' => $segment['offerLongDescription'],
