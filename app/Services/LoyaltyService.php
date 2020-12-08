@@ -120,7 +120,7 @@ class LoyaltyService extends ApiBaseService
         $redeemCats = [
             'internet_offers',
             'talk_time_offers',
-            'physical_gift'
+//            'physical_gift'
         ];
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($mobile);
         $offer_details = [];
