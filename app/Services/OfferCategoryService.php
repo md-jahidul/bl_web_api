@@ -10,6 +10,10 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Models\DurationCategory;
+use App\Models\OfferCategory;
+use App\Models\SimCategory;
+use App\Models\TagCategory;
 use App\Repositories\OfferCategoryRepository;
 use App\Repositories\ProductRepository;
 use App\Traits\CrudTrait;
@@ -29,16 +33,25 @@ class OfferCategoryService extends ApiBaseService
      * @var ProductRepository
      */
     private $productRepository;
+    /**
+     * @var ImageFileViewerService
+     */
+    private $fileViewerService;
 
     /**
      * OfferCategoryService constructor.
      * @param OfferCategoryRepository $offerCategoryRepository
      * @param ProductRepository $productRepository
+     * @param ImageFileViewerService $fileViewerService
      */
-    public function __construct(OfferCategoryRepository $offerCategoryRepository, ProductRepository $productRepository)
-    {
+    public function __construct(
+        OfferCategoryRepository $offerCategoryRepository,
+        ProductRepository $productRepository,
+        ImageFileViewerService $fileViewerService
+    ) {
         $this->offerCategoryRepository = $offerCategoryRepository;
         $this->productRepository = $productRepository;
+        $this->fileViewerService = $fileViewerService;
     }
 
     public function bindDynamicValues($obj, $json_data = 'offer_info', $data = null)
@@ -88,6 +101,58 @@ class OfferCategoryService extends ApiBaseService
 
     public function offerCatList()
     {
+        $tags = TagCategory::all();
+        $sim = SimCategory::all();
+        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
 
+        if (!empty($offer)) {
+            $offer_final = array_map(function($value) {
+                if (!empty($value['banner_image_url'])) {
+
+                    $encrypted = base64_encode($value['banner_image_url']);
+
+                    $extension = explode('.', $value['banner_image_url']);
+                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
+                    $fileName = $value['banner_alt_text'] . $extension;
+
+                    $model = "OfferCategory";
+
+//                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
+//                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
+                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+                }
+                if (!empty($value['banner_image_mobile'])) {
+                    $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
+                }
+                return $value;
+            }, $offer->toArray());
+        } else {
+            $offer_final = [];
+        }
+
+        $duration = DurationCategory::all();
+
+        $data[] = [
+                'tag' => $tags,
+                'sim' => $sim,
+                'offer' => $offer_final,
+                'duration' => $duration
+            ];
+
+//        return response()->json(
+//            [
+//                'status' => 200,
+//                'success' => true,
+//                'message' => 'Data Found!',
+//                'data' => [
+//                    'tag' => $tags,
+//                    'sim' => $sim,
+//                    'offer' => $offer_final,
+//                    'duration' => $duration
+//                ]
+//            ]
+//        );
+
+        return $this->sendSuccessResponse($data, 'Offer Categories');
     }
 }

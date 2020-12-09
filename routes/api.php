@@ -286,8 +286,12 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('test-offers', 'API\V1\ImageFileViewerController@offerList');
 //    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
 
+    // SEO Image URL generator test
     Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
     Route::get('banner-image/mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
     Route::get('content-image/{model}/{fileName}', 'API\V1\ImageFileViewerController@contentIamge');
 
 });
+
+
+//Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');

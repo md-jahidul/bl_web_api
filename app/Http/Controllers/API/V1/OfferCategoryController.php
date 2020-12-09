@@ -32,7 +32,7 @@ class OfferCategoryController extends Controller
 
     public function offerCategories() {
 
-        return $this->offerCategoryService->
+        return $this->offerCategoryService->offerCatList();
 
         $tags = TagCategory::all();
         $sim = SimCategory::all();
