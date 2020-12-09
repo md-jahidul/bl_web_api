@@ -117,9 +117,9 @@ class OfferCategoryService extends ApiBaseService
 
                     $model = "OfferCategory";
 
-//                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
+                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
 //                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
-                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+//                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
                 }
                 if (!empty($value['banner_image_mobile'])) {
                     $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
