@@ -12,4 +12,9 @@ use App\Models\Priyojon;
 class PriyojonRepository extends BaseRepository
 {
     protected $modelName = Priyojon::class;
+
+    public function getMenuForSlug($alias)
+    {
+        return $this->model->where('alias', $alias)->first();
+    }
 }
