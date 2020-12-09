@@ -4,6 +4,7 @@ namespace App\Services;
 
 //use App\Repositories\AppServiceProductegoryRepository;
 
+use App\Repositories\AlReferralInfoRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Exception;
@@ -13,11 +14,9 @@ use Illuminate\Http\Response;
 use App\Repositories\AppServiceProductRepository;
 use App\Repositories\AppServiceProductDetailsRepository;
 
-class AppServiceDetailsService
+class AppServiceDetailsService extends ApiBaseService
 {
 	use CrudTrait;
-	use FileTrait;
-
 
 	/**
 	 * @var $appServiceProductDetailsRepository
@@ -29,16 +28,26 @@ class AppServiceDetailsService
 	 * @var AppServiceProductDetailsRepository
 	 */
 	protected $appServiceProductRepository;
+    /**
+     * @var AlReferralInfoRepository
+     */
+    private $alReferralInfoRepository;
 
 
-	/**
-	 * AppServiceProductService constructor.
-	 * @param AppServiceProductDetailsRepository $appServiceProductDetailsRepository
-	 */
-	public function __construct(AppServiceProductDetailsRepository $appServiceProductDetailsRepository, AppServiceProductRepository $appServiceProductRepository)
-	{
+    /**
+     * AppServiceProductService constructor.
+     * @param AppServiceProductDetailsRepository $appServiceProductDetailsRepository
+     * @param AppServiceProductRepository $appServiceProductRepository
+     * @param AlReferralInfoRepository $alReferralInfoRepository
+     */
+	public function __construct(
+	    AppServiceProductDetailsRepository $appServiceProductDetailsRepository,
+        AppServiceProductRepository $appServiceProductRepository,
+        AlReferralInfoRepository $alReferralInfoRepository
+    ) {
 		$this->appServiceProductDetailsRepository = $appServiceProductDetailsRepository;
 		$this->appServiceProductRepository = $appServiceProductRepository;
+		$this->alReferralInfoRepository = $alReferralInfoRepository;
 		$this->setActionRepository($appServiceProductDetailsRepository);
 	}
 
@@ -128,19 +137,19 @@ class AppServiceDetailsService
 						$sub_item['editor_bn'] = $item->editor_bn;
 						$sub_item['image'] = !empty($item->image) ? config('filesystems.image_host_url') . $item->image : null;
 						$sub_item['alt_text'] = $item->alt_text;
-                                                
+
                                                 $sub_item['video'] = NULL;
-                                                
+
                                                 $other_attr_array = json_decode($item->other_attributes, true);
                                                 $sub_item['other_attributes'] = $item->other_attributes;
 
 						if( !empty($item->other_attributes) ){
-							
+
 							foreach ($other_attr_array as $key => $value) {
 								$sub_item[$key] = $value;
 							}
 						}
-                                                        
+
                                                 if(!empty($item->video)){
                                                     if($other_attr_array['video_type'] == 'youtube_video'){
                                                         $sub_item['video'] = $item->video;
@@ -148,7 +157,7 @@ class AppServiceDetailsService
                                                         $sub_item['video'] = config('filesystems.image_host_url');
                                                     }
                                                 }
-						
+
 						$sub_item['alt_links'] = $item->alt_links;
 
 						// Multiple attributed formated
@@ -188,7 +197,7 @@ class AppServiceDetailsService
 							$sub_item['multiple_attributes'] = null;
 						}
 
-						
+
 
 						$sub_data['component'][] = $sub_item;
 
@@ -208,5 +217,55 @@ class AppServiceDetailsService
 		return $data;
 	}
 
+	public function getDetails($product_id)
+    {
+        $data = null;
 
+        # get app and service product info
+        $product_info = $this->getProductInformationByID($product_id);
+
+
+        $additional_details = $this->getProductDetailsOthersInfo($product_id);
+
+        $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
+
+        $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
+
+        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
+
+        # Get App tab details component
+        if( $product_info->appServiceTab->alias == 'app' ){
+            # Get component "text with image right", "text with image bottom"
+            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+
+            // $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
+
+            // $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
+
+            // $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
+        }
+        elseif( $product_info->appServiceTab->alias == 'vas' ){
+
+            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+        }
+        elseif( $product_info->appServiceTab->alias == 'financial' ){
+
+            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+        }
+        elseif( $product_info->appServiceTab->alias == 'others' ){
+
+            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+        }
+        else{
+            $data['section_component'] = null;
+        }
+
+        $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
+
+        $referralInfo = $this->alReferralInfoRepository->findOneByProperties(['app_id' => $product_id, 'status' => 1]);
+
+        $data['referral_info'] = isset($referralInfo) ? $referralInfo : null;
+
+        return $this->sendSuccessResponse($data, 'App and Service Details Info');
+    }
 }
