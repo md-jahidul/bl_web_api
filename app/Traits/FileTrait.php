@@ -29,6 +29,24 @@ trait FileTrait
         );
         return $path;
     }
+
+    /**
+     * Uplaod a file
+     * @param $file
+     * @param $directoryPath
+     * @param $fileName
+     * @return file path
+     */
+    protected function uploadOrgFileName($file, $directoryPath, $fileName)
+    {
+        $path = $file->storeAs(
+            $directoryPath,
+            $fileName,
+            $this->disk
+        );
+        return $path;
+    }
+
     /**
      * Download the attachments
      * @param filePath full file path including folder name and file name with extension relative to base path
