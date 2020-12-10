@@ -51,11 +51,10 @@ class AmarOfferService extends BaseService
 
     public function getAmarOfferListUrl($msisdn, $customerType)
     {
-//        amar-offers?channelId=26&msisdn=8801409900110&serviceTypeId=1
         $channelId = 8;
-        $serviceType = 1;
+        $serviceType = ($customerType == "PREPAID") ? 1 : 2;
 
-        return self::AMAR_OFFER_API_ENDPOINT . "?" . "msisdn=$msisdn";
+        return self::AMAR_OFFER_API_ENDPOINT . "?" . "channelId=$channelId"."&msisdn=$msisdn"."&serviceTypeId=$serviceType";
     }
 
     public function getAmarOfferDetailsUrl($msisdn, $offer_id)
