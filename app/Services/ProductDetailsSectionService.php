@@ -75,13 +75,14 @@ class ProductDetailsSectionService extends ApiBaseService
     }
 
 
-    public function productDetails($productId)
+    public function productDetails($slug)
     {
-        $parentProduct = Product::where('id', $productId)
+        $parentProduct = Product::where('url_slug', $slug)->orWhere('url_slug_bn', $slug)
             ->select(
                 'id',
                 'product_code',
                 'url_slug',
+                'url_slug_bn',
                 'schema_markup',
                 'page_header',
                 'offer_category_id',
@@ -102,13 +103,13 @@ class ProductDetailsSectionService extends ApiBaseService
 
         $offerType = OfferCategory::where('id', $offerTypeId)->select('id', 'name_en', 'alias')->first();
 
-        $sections = $this->productDetailsSectionRepository->section($productId);
+        $sections = $this->productDetailsSectionRepository->section($parentProduct->id);
 
         foreach ($sections as $section){
             ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
         }
 
-        $bannerRelatedData = $this->bannerImgRelatedProductRepository->findOneByProperties(['product_id' => $productId]);
+        $bannerRelatedData = $this->bannerImgRelatedProductRepository->findOneByProperties(['product_id' => $parentProduct->id]);
         $products = [];
         if (isset($bannerRelatedData->related_product_id)){
             foreach ($bannerRelatedData->related_product_id as $id){

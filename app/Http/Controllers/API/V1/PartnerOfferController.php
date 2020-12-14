@@ -9,6 +9,7 @@ use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
+use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -19,6 +20,8 @@ use DB;
 use Carbon\Carbon;
 
 class PartnerOfferController extends Controller {
+
+    use FileTrait;
 
     protected $response = [];
 
@@ -47,43 +50,6 @@ class PartnerOfferController extends Controller {
                             'success' => true,
                             'message' => 'Data Found!',
                             'data' => $this->getPartnerOffersData()
-                        ]
-        );
-    }
-
-    public function offerCategories() {
-        $tags = TagCategory::all();
-        $sim = SimCategory::all();
-        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
-
-
-        if (!empty($offer)) {
-            $offer_final = array_map(function($value) {
-                if (!empty($value['banner_image_url'])) {
-                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
-                }
-                if (!empty($value['banner_image_mobile'])) {
-                    $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
-                }
-                return $value;
-            }, $offer->toArray());
-        } else {
-            $offer_final = [];
-        }
-
-        $duration = DurationCategory::all();
-
-        return response()->json(
-                        [
-                            'status' => 200,
-                            'success' => true,
-                            'message' => 'Data Found!',
-                            'data' => [
-                                'tag' => $tags,
-                                'sim' => $sim,
-                                'offer' => $offer_final,
-                                'duration' => $duration
-                            ]
                         ]
         );
     }
@@ -134,22 +100,22 @@ class PartnerOfferController extends Controller {
                 $data['offer_details_bn'] = $productDetail->partner_offer_details->offer_details_bn;
                 $data['avail_en'] = $productDetail->partner_offer_details->avail_en;
                 $data['avail_bn'] = $productDetail->partner_offer_details->avail_bn;
-                
+
                 $phone = json_decode($productDetail->phone);
-                
+
                 $data['phone_en'] = !empty($phone) ? $phone->en : "";
                 $data['phone_bn'] = !empty($phone) ? $phone->bn : "";
-                
+
                 $location = json_decode($productDetail->location);
-                
+
                 $data['location_en'] = !empty($location) ? $location->en : "";
                 $data['location_bn'] = !empty($location) ? $location->bn : "";
                 $data['area_en'] = $productDetail->area_en;
                 $data['area_bn'] = $productDetail->area_bn;
-                
+
                 $banner = "";
                 if($productDetail->partner_offer_details->banner_image_url != ""){
-                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url; 
+                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
                 }
                 $data['banner_image_url'] = $banner;
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;

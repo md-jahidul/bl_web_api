@@ -164,19 +164,19 @@ class UserService extends ApiBaseService
         $customerInfo = array();
 
         $user = $this->userRepository->findOneBy(['phone' => $mobile]);
-        if (!$user)
-            return null;
-
+        if (!$user)  return null;
+        
         $user_data = [];
         if( !empty($idpUserData) ){
 
-            if( isset($idpUserData->data) ){
+            if(isset($idpUserData->data) ){
                 $idpUserData = json_decode($idpUserData->data);
-                $idpUserData = $idpUserData->data;
+                $idpUserData = $idpUserData->data ?? null;
             }
             else{
                 $idpUserData = json_decode($idpUserData);
             }
+
 
             $user_data["id"] =  $user->id ?? null;
             $user_data["phone"] = $user->phone ?? null;

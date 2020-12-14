@@ -30,13 +30,15 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('offers/{type}/{offer_type?}', 'API\V1\ProductController@simPackageOffers');
 
-    Route::get('offers-categories', 'API\V1\PartnerOfferController@offerCategories');
-    Route::get('product-details/{type}/{id}', 'API\V1\ProductController@productDetails');
+    // Offers Categories
+    Route::get('offers-categories', 'API\V1\OfferCategoryController@offerCategories');
+
+    Route::get('product-details/{slug}', 'API\V1\ProductController@productDetails');
 
     Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
 
 
-    Route::get('product-details/{id}', 'API\V1\ProductDetailsController@productDetails');
+    Route::get('product-other-details/{slug}', 'API\V1\ProductDetailsController@productDetails');
 
 
     // QUICK LAUNCH  ====================================
@@ -96,7 +98,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
-    Route::get('product/loan/{loanType}', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
 
     //Loyalty or Priyojon section
         // Bl API Hub part
@@ -135,13 +137,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('business-home-data', 'API\V1\BusinessController@index');
     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
     Route::get('business-packages', 'API\V1\BusinessController@packages');
-    Route::get('business-packages-details/{packageId}', 'API\V1\BusinessController@packageById');
+    Route::get('business-packages-details/{packageSlug}', 'API\V1\BusinessController@packageBySlug');
     Route::get('business-internet-package', 'API\V1\BusinessController@internet');
-    Route::get('business-internet-details/{internetId}', 'API\V1\BusinessController@internetDetails');
+    Route::get('business-internet-details/{internetSlug}', 'API\V1\BusinessController@internetDetails');
     Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
     Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
-    Route::get('business-enterprise-package-details/{serviceId}', 'API\V1\BusinessController@enterpriseProductDetails');
+    Route::get('business-enterprise-package-details/{serviceSlug}', 'API\V1\BusinessController@enterpriseProductDetails');
 
 
     //roaming Module APIs
@@ -150,13 +152,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('roaming-operator-list/{countryEn}', 'API\V1\RoamingController@getOperators');
     Route::get('roaming-page/{pageSlug}', 'API\V1\RoamingController@roamingGeneralPage');
     Route::get('roaming-offers', 'API\V1\RoamingController@offerPage');
-    Route::get('roaming-offers-details/{offerId}', 'API\V1\RoamingController@otherOfferDetails');
+    Route::get('roaming-offers-details/{offerSlug}', 'API\V1\RoamingController@otherOfferDetails');
     Route::get('roaming-rates-and-bundle/{country}/{operator}', 'API\V1\RoamingController@ratesAndBundle');
     Route::get('roaming-bundle-like/{bundleId}', 'API\V1\RoamingController@bundleLike');
     Route::get('roaming-other-offer-like/{offerId}', 'API\V1\RoamingController@otherOfferLike');
     Route::get('roaming-rates', 'API\V1\RoamingController@roamingRates');
     Route::get('roaming-info-tips', 'API\V1\RoamingController@infoTips');
-    Route::get('roaming-info-tips-details/{infoId}', 'API\V1\RoamingController@infoTipsDetails');
+    Route::get('roaming-info-tips-details/{infoSlug}', 'API\V1\RoamingController@infoTipsDetails');
 
     // eCarrer api
     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
@@ -196,7 +198,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('sales-service/thana-by-district', 'API\V1\SalesServiceController@salesServiceThanaByDistricts');
 
     // App and service get details page with product id
-    Route::get('app-service/details/{id}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
+    Route::get('app-service/details/{slug}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
 
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
@@ -279,4 +281,17 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Referral Get Code
     Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
     Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
+
+    //Image File Viewer
+    Route::get('test-offers', 'API\V1\ImageFileViewerController@offerList');
+//    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
+
+    // SEO Image URL generator test
+    Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
+    Route::get('banner-image/mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
+    Route::get('content-image/{model}/{fileName}', 'API\V1\ImageFileViewerController@contentIamge');
+
 });
+
+
+//Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');

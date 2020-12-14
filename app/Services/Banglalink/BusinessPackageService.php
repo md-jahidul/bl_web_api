@@ -33,7 +33,7 @@ class BusinessPackageService {
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
      * @param BusinessRelatedProductRepository $relatedProductRepo
      */
-    public function __construct(ApiBaseService $responseFormatter, BusinessPackageRepository $packageRepo, 
+    public function __construct(ApiBaseService $responseFormatter, BusinessPackageRepository $packageRepo,
             BusinessFeaturesRepository $featureRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo,
             BusinessRelatedProductRepository $relatedProductRepo) {
         $this->packageRepo = $packageRepo;
@@ -57,14 +57,14 @@ class BusinessPackageService {
      * Get business package by id
      * @return Response
      */
-    public function getPackageById($packageId) {
-        $data['packageDetails'] = $this->packageRepo->getPackageById($packageId);
-        
-        $data['feature'] = $this->_getFeaturesByPackage($packageId);
-        
+    public function getPackageBySlug($packageSlug) {
+        $data['packageDetails'] = $this->packageRepo->getPackageById($packageSlug);
+
+        $data['feature'] = $this->_getFeaturesByPackage($data['packageDetails']['id']);
+
         $parentType = 1;
-        $data['relatedPackages'] = $this->relatedProductRepo->getPackageRelatedProduct($packageId, $parentType);
-        
+        $data['relatedPackages'] = $this->relatedProductRepo->getPackageRelatedProduct($data['packageDetails']['id'], $parentType);
+
         return $this->responseFormatter->sendSuccessResponse($data, 'Business Package Details');
     }
 

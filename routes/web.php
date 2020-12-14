@@ -20,3 +20,7 @@ Route::get('/', function () {
 //    return view('index');
 //} )->where('path', '.*');
 
+
+
+Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
+

@@ -24,6 +24,11 @@ class RoamingGeneralPageRepository extends BaseRepository {
         $data['title_bn'] = $page->title_bn;
         $data['short_description_en'] = $page->short_description_en;
         $data['short_description_bn'] = $page->short_description_bn;
+        $data['url_slug_en'] = $page->url_slug_en;
+        $data['url_slug_bn'] = $page->url_slug_bn;
+        $data['page_header_en'] = $page->page_header_en;
+        $data['page_header_bn'] = $page->page_header_bn;
+        $data['schema_markup'] = $page->schema_markup;
         
         $count = 0;
         

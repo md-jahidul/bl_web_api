@@ -19,7 +19,7 @@ class CorpCaseStudyComponentRepository extends BaseRepository
             ->where('status', 1)
             ->select(
                 'id', 'title_en', 'title_bn', 'details_en', 'details_bn',
-                'url_slug_en', 'banner'
+                'url_slug_en', 'url_slug_en', 'banner'
             )
             ->with(['components' => function ($q) {
                 $q->orderBy('component_order', 'ASC')

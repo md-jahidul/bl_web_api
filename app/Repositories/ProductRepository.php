@@ -49,8 +49,10 @@ class ProductRepository extends BaseRepository
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
+                'products.url_slug_bn',
                 'products.schema_markup',
                 'products.page_header',
+                'products.page_header_bn',
                 'products.rate_cutter_unit',
                 'products.rate_cutter_offer',
                 'products.name_en',
@@ -116,17 +118,20 @@ class ProductRepository extends BaseRepository
      * @param $id
      * @return mixed
      */
-    public function detailProducts($type, $id)
+    public function detailProducts($slug)
     {
-        return $data = $this->model->where('id', $id)
+        return $data = $this->model->where('url_slug', $slug)
+            ->orWhere('url_slug_bn', $slug)
             ->productCore()
             ->select(
                 'id',
                 'product_code',
                 'rate_cutter_offer',
                 'url_slug',
+                'url_slug_bn',
                 'schema_markup',
                 'page_header',
+                'page_header_bn',
                 'sim_category_id',
                 'offer_category_id',
                 'offer_info',
@@ -138,7 +143,6 @@ class ProductRepository extends BaseRepository
                 'offer_info',
                 'status',
                 'like')
-            ->category($type)
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }

@@ -34,6 +34,7 @@ class BusinessRelatedProductRepository extends BaseRepository {
             $related[$count]['short_details_en'] = $p->short_details;
             $related[$count]['short_details_bn'] = $p->short_details_bn;
             $related[$count]['url_slug'] = $p->url_slug;
+            $related[$count]['url_slug_bn'] = $p->url_slug_bn;
 
             $count++;
         }
@@ -59,6 +60,7 @@ class BusinessRelatedProductRepository extends BaseRepository {
             $related[$count]['short_details_en'] = $p->short_details;
             $related[$count]['short_details_bn'] = $p->short_details_bn;
             $related[$count]['url_slug'] = $p->url_slug;
+            $related[$count]['url_slug_bn'] = $p->url_slug_bn;
 
             $count++;
         }
