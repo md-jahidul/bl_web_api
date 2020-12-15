@@ -183,6 +183,7 @@ class LoyaltyService extends ApiBaseService
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
 
         $catWithOffers = [];
+
         foreach ($redeemOptions['data'] as $segment) {
             $catName = str_replace([' ', '-'], '_', strtolower($segment['offerCategoryName']));
             if (in_array($catName, $partnerCats)) {
@@ -199,7 +200,17 @@ class LoyaltyService extends ApiBaseService
                 ];
             }
         }
-        return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
+
+        $priyojonMenu = $this->priyojonRepository->getMenuForSlug('partner');
+
+        $data = [
+            'alias' => $priyojonMenu->alias,
+            'url_slug_en' => $priyojonMenu->url_slug_en,
+            'url_slug_bn' => $priyojonMenu->url_slug_bn,
+            'partnerOffers' => $catWithOffers
+        ];
+
+        return $this->sendSuccessResponse($data, 'Partner categories with offers');
     }
 
     /**
