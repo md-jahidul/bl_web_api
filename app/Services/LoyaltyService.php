@@ -157,7 +157,7 @@ class LoyaltyService extends ApiBaseService
             'alias' => $priyojonMenu->alias,
             'url_slug_en' => $priyojonMenu->url_slug_en,
             'url_slug_bn' => $priyojonMenu->url_slug_bn,
-            'offer-details' => $offer_details
+            'offer_details' => $offer_details
         ];
 
         return $this->sendSuccessResponse($data, 'Loyalty data');
