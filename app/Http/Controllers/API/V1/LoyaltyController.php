@@ -52,8 +52,9 @@ class LoyaltyController extends Controller
 
     public function redeemOptions(Request $request)
     {
-//        $customer = $this->customerService->getCustomerDetails($request);
-        return $this->loyaltyService->getRedeemOffers(1962424630); //$customer->phone
+        $customer = $this->customerService->getCustomerDetails($request);
+        $mobile = substr($customer->phone, 1);
+        return $this->loyaltyService->getRedeemOffers($mobile); // 1962424630
     }
 
     public function redeemOfferPurchase(Request $request, $offerId)
