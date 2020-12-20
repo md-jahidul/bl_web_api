@@ -85,7 +85,7 @@ return [
         ],
         'RoamingCategory' => [
             'image_name_en' => 'banner_name',
-            'image_name_bn' => 'banner_name_web_bn',
+            'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
             'model' => 'roaming-category'

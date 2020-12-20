@@ -99,7 +99,7 @@ class RoamingService {
             $data[$count]['alt_text'] = $v->alt_text;
             $data[$count]['alt_text_bn'] = $v->alt_text_bn;
             $imgData = $this->imageFileViewerService->prepareImageData($v, $keyData);
-            $data = array_merge($data, $imgData);
+            $data[$count] = array_merge($data[$count], $imgData);
 
             $count++;
         }
@@ -197,7 +197,7 @@ class RoamingService {
         $response = $this->infoRepo->getInfoTips();
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips');
     }
-    
+
     /**
      * Get roaming other offer details
      * @return Response
