@@ -10,14 +10,12 @@ use App\Repositories\LmsBenefitRepository;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
+use mysql_xdevapi\Exception;
 
 
 class ImageFileViewerService extends ApiBaseService
 {
     use FileTrait;
-
-//    public function
-
 
     public function imageViewer($bannerType, $modelName, $fileName)
     {
@@ -32,7 +30,11 @@ class ImageFileViewerService extends ApiBaseService
 
     public function getBannerImage($bannerType, $modelName, $fileName)
     {
-        return $this->imageViewer($bannerType, $modelName, $fileName);
+        try {
+            return $this->imageViewer($bannerType, $modelName, $fileName);
+        } catch (\Exception $exception){
+            return abort(404);
+        }
     }
 
     public function prepareImageData($value, $keyData)
