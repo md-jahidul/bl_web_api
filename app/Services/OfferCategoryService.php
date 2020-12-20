@@ -119,13 +119,13 @@ class OfferCategoryService extends ApiBaseService
 
                 if (!empty($value['banner_image_url'])) {
                     $bannerType = "banner-web";
-                    $value['banner_image_url_en'] = request()->root() . "/$bannerType/$model/$fileNameEn";
-                    $value['banner_image_url_bn'] = request()->root() . "/$bannerType/$model/$fileNameBn";
+                    $value['banner_image_url_en'] = "/$bannerType/$model/$fileNameEn";
+                    $value['banner_image_url_bn'] = "/$bannerType/$model/$fileNameBn";
                 }
                 if (!empty($value['banner_image_mobile'])) {
                     $bannerType = "banner-mobile";
-                    $value['banner_image_mobile_en'] = request()->root() . "/$bannerType/$model/$fileNameEn";
-                    $value['banner_image_mobile_bn'] = request()->root() . "/$bannerType/$model/$fileNameBn";
+                    $value['banner_image_mobile_en'] = "/$bannerType/$model/$fileNameEn";
+                    $value['banner_image_mobile_bn'] = "/$bannerType/$model/$fileNameBn";
                 }
                 unset($value['banner_image_url'], $value['banner_image_mobile']);
                 return $value;
