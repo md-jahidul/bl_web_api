@@ -103,10 +103,7 @@ class OfferCategoryService extends ApiBaseService
     {
         $tags = TagCategory::all();
         $sim = SimCategory::all();
-        $offer = $this->offerCategoryRepository->findByProperties(['parent_id' => 0], [
-            'id', 'parent_id', 'name_en', 'name_bn', 'alias', 'banner_alt_text', 'banner_alt_text_bn', 'url_slug', 'url_slug_bn',
-            'banner_name', 'banner_name_bn', 'schema_markup', 'page_header', 'page_header_bn', 'banner_image_url', 'banner_image_mobile'
-        ]);
+        $offer = $this->offerCategoryRepository->categories();
 
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
