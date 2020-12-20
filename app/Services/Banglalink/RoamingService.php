@@ -13,6 +13,7 @@ use App\Repositories\RoamingOperatorRepository;
 use App\Repositories\RoamingGeneralPageRepository;
 use App\Repositories\RoamingOfferRepository;
 use App\Repositories\RoamingInfoRepository;
+use App\Services\ImageFileViewerService;
 use Illuminate\Http\Response;
 
 class RoamingService {
@@ -32,21 +33,35 @@ class RoamingService {
     public $responseFormatter;
 
     /**
+     * @var $imageFileViewerService
+     */
+
+    private $imageFileViewerService;
+
+    /**
      * RoamingService constructor.
      * @param RoamingCategoryRepository $catRepo
      * @param RoamingGeneralPageRepository $gnPageRepo
      * @param RoamingOperatorRepository $operatorRepo
      * @param RoamingOfferRepository $offerRepo
      * @param RoamingInfoRepository $infoRepo
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
-    ApiBaseService $responseFormatter, RoamingCategoryRepository $catRepo, RoamingGeneralPageRepository $gnPageRepo, RoamingOperatorRepository $operatorRepo, RoamingOfferRepository $offerRepo, RoamingInfoRepository $infoRepo
+        ApiBaseService $responseFormatter,
+        RoamingCategoryRepository $catRepo,
+        RoamingGeneralPageRepository $gnPageRepo,
+        RoamingOperatorRepository $operatorRepo,
+        RoamingOfferRepository $offerRepo,
+        RoamingInfoRepository $infoRepo,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->catRepo = $catRepo;
         $this->gnPageRepo = $gnPageRepo;
         $this->operatorRepo = $operatorRepo;
         $this->offerRepo = $offerRepo;
         $this->infoRepo = $infoRepo;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->responseFormatter = $responseFormatter;
     }
 
@@ -54,9 +69,42 @@ class RoamingService {
      * Get roaming categories
      * @return Response
      */
-    public function getCategories() {
-        $response = $this->catRepo->getCategoryList();
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Category List');
+    public function getCategories()
+    {
+        $categories = $this->catRepo->getCategoryList();
+        $data = [];
+        $count = 0;
+
+        $slugs = array(
+            1 => 'offer',
+            2 => 'about-roaming',
+            3 => 'roaming-rates',
+            4 => 'bill-payment',
+            5 => 'info-tips',
+        );
+
+        $keyData = config('filesystems.moduleType.RoamingCategory');
+
+
+        foreach ($categories as $v) {
+            $data[$count]['id'] = $v->id;
+            $data[$count]['category_slug'] = $slugs[$v->id];
+            $data[$count]['url_slug'] = $v->url_slug;
+            $data[$count]['url_slug_bn'] = $v->url_slug_bn;
+            $data[$count]['page_header'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header_bn;
+            $data[$count]['schema_markup'] = $v->schema_markup;
+            $data[$count]['name_en'] = $v->name_en;
+            $data[$count]['name_bn'] = $v->name_bn;
+            $data[$count]['alt_text'] = $v->alt_text;
+            $data[$count]['alt_text_bn'] = $v->alt_text_bn;
+            $imgData = $this->imageFileViewerService->prepareImageData($v, $keyData);
+            $data = array_merge($data, $imgData);
+
+            $count++;
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Category List');
     }
 
     /**
@@ -149,7 +197,6 @@ class RoamingService {
         $response = $this->infoRepo->getInfoTips();
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips');
     }
-    
     
     /**
      * Get roaming other offer details

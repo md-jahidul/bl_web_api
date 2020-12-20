@@ -80,13 +80,15 @@ return [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_image_url',
-            'exact_path_mobile' => 'banner_image_mobile'
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model' => 'offer-category'
         ],
         'RoamingCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_web_bn',
             'exact_path_web' => 'banner_web',
-            'exact_path_mobile' => 'banner_mobile'
+            'exact_path_mobile' => 'banner_mobile',
+            'model' => 'roaming-category'
         ]
     ],
 
