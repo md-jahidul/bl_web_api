@@ -30,16 +30,16 @@ class ImageFileViewerController extends Controller
         $this->fileViewerService = $fileViewerService;
     }
 
-    public function bannerImageWeb($modelName, $fileName)
+    public function bannerImage($bannerType, $modelName, $fileName)
     {
-        return $this->fileViewerService->bannerImageWeb($modelName, $fileName);
+        return $this->fileViewerService->getBannerImage($bannerType, $modelName, $fileName);
 
     }
 
-    public function bannerImageMobile($modelName, $fileName)
-    {
-        //
-    }
+//    public function bannerImageMobile($modelName, $fileName)
+//    {
+//        return $this->fileViewerService->getBannerImage($modelName, $fileName);
+//    }
 
     /**
      * @return JsonResponse
