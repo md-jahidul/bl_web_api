@@ -291,6 +291,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('banner-image/mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
     Route::get('content-image/{model}/{fileName}', 'API\V1\ImageFileViewerController@contentIamge');
 
+    Route::get('fixed-page/meta-tag/{key}', 'API\V1\FixedPageMateTagController@getFixedMateTag');
+
 });
 
 
