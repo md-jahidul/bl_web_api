@@ -7,6 +7,7 @@
 
 namespace App\Services\Banglalink;
 
+use App\Models\RoamingOtherOfferComponents;
 use App\Services\ApiBaseService;
 use App\Repositories\RoamingCategoryRepository;
 use App\Repositories\RoamingOperatorRepository;
@@ -15,6 +16,7 @@ use App\Repositories\RoamingOfferRepository;
 use App\Repositories\RoamingInfoRepository;
 use App\Services\ImageFileViewerService;
 use Illuminate\Http\Response;
+
 
 class RoamingService {
 
@@ -148,8 +150,41 @@ class RoamingService {
      * @return Response
      */
     public function otherOfferDetalis($offerSlug) {
-        $response = $this->offerRepo->getOtherOffersDetails($offerSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Other Offer Details');
+        $offer = $this->offerRepo->getOtherOffersDetails($offerSlug);
+
+        $data = [];
+        $keyData = config('filesystems.moduleType.RoamingOtherOffer');
+
+        $data['name_en'] = $offer->name_en;
+        $data['name_bn'] = $offer->name_bn;
+        $data['short_text_en'] = $offer->short_text_en;
+        $data['short_text_bn'] = $offer->short_text_bn;
+        $data['alt_text'] = $offer->alt_text;
+        $data['url_slug'] = $offer->url_slug;
+        $data['url_slug_bn'] = $offer->url_slug_bn;
+        $data['page_header'] = $offer->page_header;
+        $data['page_header_bn'] = $offer->page_header_bn;
+        $data['schema_markup'] = $offer->schema_markup;
+        $data['likes'] = $offer->likes;
+        $imgData = $this->imageFileViewerService->prepareImageData($offer, $keyData);
+        $data = array_merge($data, $imgData);
+
+        $components = RoamingOtherOfferComponents::where('parent_id', $offer->id)->orderBy('position')->get();
+        $data['components'] = [];
+        foreach ($components as $k => $val) {
+
+            $textEn = json_decode($val->body_text_en);
+            $textBn = json_decode($val->body_text_bn);
+
+            $data['components'][$k]['component_type'] = $val->component_type;
+            $data['components'][$k]['data_en'] = $textEn;
+            $data['components'][$k]['data_bn'] = $textBn;
+        }
+
+        $data['details_en'] = $offer->details_en;
+        $data['details_bn'] = $offer->details_en;
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Other Offer Details');
     }
 
     /**
