@@ -96,12 +96,20 @@ return [
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
             'model' => 'roaming-other-offer'
+        ],
+        'RoamingInfo' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_web',
+            'exact_path_mobile' => 'banner_mobile',
+            'model' => 'roaming-info-tips'
         ]
     ],
 
     'modelList' => [
         'offer-category' => 'OfferCategory',
         'roaming-category' => 'RoamingCategory',
-        'roaming-other-offer' => 'RoamingOtherOffer'
+        'roaming-other-offer' => 'RoamingOtherOffer',
+        'roaming-info-tips' => 'RoamingInfo'
     ]
 ];

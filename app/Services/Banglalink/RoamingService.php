@@ -7,6 +7,7 @@
 
 namespace App\Services\Banglalink;
 
+use App\Models\RoamingInfoComponents;
 use App\Models\RoamingOtherOfferComponents;
 use App\Services\ApiBaseService;
 use App\Repositories\RoamingCategoryRepository;
@@ -238,8 +239,39 @@ class RoamingService {
      * @return Response
      */
     public function infoTipsDetails($infoSlug) {
-        $response = $this->infoRepo->getInfoDetails($infoSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips Details');
+        $info = $this->infoRepo->getInfoDetails($infoSlug);
+
+        $data = [];
+        $keyData = config('filesystems.moduleType.RoamingInfo');
+
+        $data['name_en'] = $info->name_en;
+        $data['name_bn'] = $info->name_bn;
+        $data['short_text_en'] = $info->short_text_en;
+        $data['short_text_bn'] = $info->short_text_bn;
+        $data['url_slug'] = $info->url_slug;
+        $data['url_slug_bn'] = $info->url_slug_bn;
+        $data['alt_text'] = $info->alt_text;
+        $data['page_header'] = $info->page_header;
+        $data['page_header_bn'] = $info->page_header_bn;
+        $data['schema_markup'] = $info->schema_markup;
+        $data['likes'] = $info->likes;
+        $imgData = $this->imageFileViewerService->prepareImageData($info, $keyData);
+        $data = array_merge($data, $imgData);
+
+        $components = RoamingInfoComponents::where('parent_id', $info->id)->orderBy('position')->get();
+        $data['components'] = [];
+        foreach ($components as $k => $val) {
+
+            $textEn = json_decode($val->body_text_en);
+            $textBn = json_decode($val->body_text_bn);
+
+            $data['components'][$k]['component_type'] = $val->component_type;
+            $data['components'][$k]['data_en'] = $textEn;
+            $data['components'][$k]['data_bn'] = $textBn;
+
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Info & Tips Details');
     }
 
 }
