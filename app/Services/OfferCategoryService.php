@@ -103,34 +103,35 @@ class OfferCategoryService extends ApiBaseService
     {
         $tags = TagCategory::all();
         $sim = SimCategory::all();
-        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        $offer = $this->offerCategoryRepository->categories();
 
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
+
+                $extension = explode('.', $value['banner_image_url']);
+                $extension = isset($extension[1]) ? ".".$extension[1] : null;
+                $fileNameEn = $value['banner_name'] . $extension;
+                $fileNameBn = $value['banner_name_bn'] . $extension;
+                $model = "offer-category";
+
                 if (!empty($value['banner_image_url'])) {
-
-                    $encrypted = base64_encode($value['banner_image_url']);
-
-                    $extension = explode('.', $value['banner_image_url']);
-                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
-                    $fileName = $value['banner_alt_text'] . $extension;
-
-                    $model = "OfferCategory";
-
-                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
-//                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
-//                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+                    $bannerType = "banner-web";
+                    $value['banner_image_url_en'] = "/$bannerType/$model/$fileNameEn";
+                    $value['banner_image_url_bn'] = "/$bannerType/$model/$fileNameBn";
                 }
                 if (!empty($value['banner_image_mobile'])) {
-                    $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
+                    $bannerType = "banner-mobile";
+                    $value['banner_image_mobile_en'] = "/$bannerType/$model/$fileNameEn";
+                    $value['banner_image_mobile_bn'] = "/$bannerType/$model/$fileNameBn";
                 }
+                unset($value['banner_image_url'], $value['banner_image_mobile']);
                 return $value;
             }, $offer->toArray());
         } else {
             $offer_final = [];
         }
-
         $duration = DurationCategory::all();
+
 
         $data[] = [
                 'tag' => $tags,
@@ -138,21 +139,6 @@ class OfferCategoryService extends ApiBaseService
                 'offer' => $offer_final,
                 'duration' => $duration
             ];
-
-//        return response()->json(
-//            [
-//                'status' => 200,
-//                'success' => true,
-//                'message' => 'Data Found!',
-//                'data' => [
-//                    'tag' => $tags,
-//                    'sim' => $sim,
-//                    'offer' => $offer_final,
-//                    'duration' => $duration
-//                ]
-//            ]
-//        );
-
         return $this->sendSuccessResponse($data, 'Offer Categories');
     }
 }
