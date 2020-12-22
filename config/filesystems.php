@@ -103,6 +103,20 @@ return [
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
             'model' => 'roaming-info-tips'
+        ],
+        'AppServiceTab' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model' => 'app-service-tab',
+        ],
+        'AppServiceProduct' => [
+            'image_name_en' => 'product_img_en',
+            'image_name_bn' => 'product_img_bn',
+            'exact_path_web' => 'product_img_url',
+            'exact_path_mobile' => 'product_img_url',
+            'model' => 'app-service-product',
         ]
     ],
 
@@ -110,6 +124,8 @@ return [
         'offer-category' => 'OfferCategory',
         'roaming-category' => 'RoamingCategory',
         'roaming-other-offer' => 'RoamingOtherOffer',
-        'roaming-info-tips' => 'RoamingInfo'
+        'roaming-info-tips' => 'RoamingInfo',
+        'app-service-product' => 'AppServiceProduct',
+        'app-service-tab' => 'AppServiceTab'
     ]
 ];

@@ -37,25 +37,33 @@ class AppAndService extends ApiBaseService
     protected $appServiceBookmarkRepository;
 
     /**
+     * @var ImageFileViewerService
+     */
+    protected $imageFileViewerService;
+
+    /**
      * AboutPageService constructor.
      * @param CustomerService $customerService
      * @param AppServiceTabRepository $appServiceTabRepository
      * @param AppServiceCategoryRepository $appServiceCategoryRepository
      * @param AppServiceProductRepository $appServiceProductRepository
      * @param AppServiceBookmarkRepository $appServiceBookmarkRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         CustomerService $customerService,
         AppServiceTabRepository $appServiceTabRepository,
         AppServiceCategoryRepository $appServiceCategoryRepository,
         AppServiceProductRepository $appServiceProductRepository,
-        AppServiceBookmarkRepository $appServiceBookmarkRepository
+        AppServiceBookmarkRepository $appServiceBookmarkRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->customerService = $customerService;
         $this->appServiceTabRepository = $appServiceTabRepository;
         $this->appServiceCategoryRepository = $appServiceCategoryRepository;
         $this->appServiceProductRepository = $appServiceProductRepository;
         $this->appServiceBookmarkRepository = $appServiceBookmarkRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     /**
@@ -63,10 +71,58 @@ class AppAndService extends ApiBaseService
      */
     public function appServiceData()
     {
-        $data = $this->appServiceTabRepository->appServiceCollection();
+        $tabs = $this->appServiceTabRepository->appServiceCollection();
+
+        $data = [];
+        $keyData = config('filesystems.moduleType.AppServiceTab');
+        $i = 0;
+
+        foreach ($tabs as $tab) {
+            $imgData = $this->imageFileViewerService->prepareImageData($tab, $keyData);
+
+            $categories = $this->getCategoriesByTab($tab->id);
+
+            unset($tab->banner_image_url, $tab->banner_image_mobile);
+
+            $data[$i] = array_merge($tab->toArray(), $imgData);;
+            $data[$i]['categories'] = $categories;
+
+            $i++;
+        }
+
         return $this->sendSuccessResponse($data,'Internet packs list', config('filesystems.image_host_url'));
     }
 
+    public function getCategoriesByTab($tabId)
+    {
+        $catList = [];
+        $categories = $this->appServiceCategoryRepository->getCategoriesByTab($tabId);
+
+        foreach ($categories as $category) {
+            $products = $this->getProductsByCategory($category->id);
+            $category->products = $products;
+            $catList[] = $category;
+        }
+
+        return $catList;
+    }
+
+    public  function getProductsByCategory($catId)
+    {
+        $productList = [];
+        $products = $this->appServiceProductRepository->getProductsByCategory($catId);
+        $keyData = config('filesystems.moduleType.AppServiceProduct');
+
+        foreach ($products as $product) {
+            $imgData = $this->imageFileViewerService->prepareImageData($product, $keyData);
+            unset($product->product_img_url);
+            $product = array_merge($product->toArray(), $imgData);
+
+            $productList[] = (object) $product;
+        }
+
+        return $productList;
+    }
 
     public function packageList($provider)
     {
