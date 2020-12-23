@@ -106,24 +106,12 @@ class OfferCategoryService extends ApiBaseService
         $offer = $this->offerCategoryRepository->categories();
 
         if (!empty($offer)) {
-            $offer_final = array_map(function($value) {
+            $keyData = config('filesystems.moduleType.OfferCategory');
+            $offer_final = array_map(function($value) use ($keyData) {
 
-                $extension = explode('.', $value['banner_image_url']);
-                $extension = isset($extension[1]) ? ".".$extension[1] : null;
-                $fileNameEn = $value['banner_name'] . $extension;
-                $fileNameBn = $value['banner_name_bn'] . $extension;
-                $model = "offer-category";
+                $imgData = $this->fileViewerService->prepareImageData($value, $keyData);
+                $value = array_merge($value, $imgData);
 
-                if (!empty($value['banner_image_url'])) {
-                    $bannerType = "banner-web";
-                    $value['banner_image_url_en'] = "/$bannerType/$model/$fileNameEn";
-                    $value['banner_image_url_bn'] = "/$bannerType/$model/$fileNameBn";
-                }
-                if (!empty($value['banner_image_mobile'])) {
-                    $bannerType = "banner-mobile";
-                    $value['banner_image_mobile_en'] = "/$bannerType/$model/$fileNameEn";
-                    $value['banner_image_mobile_bn'] = "/$bannerType/$model/$fileNameBn";
-                }
                 unset($value['banner_image_url'], $value['banner_image_mobile']);
                 return $value;
             }, $offer->toArray());
