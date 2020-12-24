@@ -124,6 +124,27 @@ return [
             'exact_path_web' => 'image',
             'exact_path_mobile' => 'banner_image_mobile',
             'model' => 'app-service-product-detail',
+        ],
+        'BusinessCategory' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_photo',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model' => 'business-category',
+        ],
+        'BusinessNews' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_en',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => 'image_url',
+            'model' => 'business-news',
+        ],
+        'BusinessHomeBanner' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_name',
+            'exact_path_mobile' => 'image_name_mobile',
+            'model' => 'business-home-banner',
         ]
     ],
 
@@ -133,6 +154,9 @@ return [
         'roaming-other-offer' => 'RoamingOtherOffer',
         'roaming-info-tips' => 'RoamingInfo',
         'app-service-product' => 'AppServiceProduct',
-        'app-service-tab' => 'AppServiceTab'
+        'app-service-tab' => 'AppServiceTab',
+        'business-category' => 'BusinessCategory',
+        'business-news' => 'BusinessNews',
+        'business-home-banner' => 'BusinessHomeBanner'
     ]
 ];
