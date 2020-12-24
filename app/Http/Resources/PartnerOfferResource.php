@@ -54,11 +54,6 @@ class PartnerOfferResource extends JsonResource {
             "other_attributes" => $this->other_attributes ?? null,
             "offer_type_en" => $this->offer_type_en ?? null,
             "offer_type_bn" => $this->offer_type_bn ?? null,
-            "page_header'," => $this->page_header ?? null,
-            "page_header_bn'," => $this->page_header_bn ?? null,
-            "schema_markup'," => $this->schema_markup ?? null,
-            "url_slug_en'," => $this->url_slug_en ?? null,
-            "url_slug_bn'" => $this->url_slug_bn ?? null,
             "company_name_en" => $this->company_name_en ?? null,
             "company_name_bn" => $this->company_name_bn,
             "company_logo" => (!empty($this->company_logo)) ? config("filesystems.image_host_url") . $this->company_logo : null
