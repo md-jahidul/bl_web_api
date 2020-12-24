@@ -88,10 +88,10 @@ class BusinessHomeService {
         $data['categories'] = $this->getHomeCategoryList();
         $data['sliding_speed'] = $this->speedRepo->getSpeeds();
         $data['top_banners'] = $this->getHomeBanners();
-        $data['enterprise_solutions'] = $this->businessOtherRepo->getHomeOtherService();
+        $data['enterprise_solutions'] = $this->getHomeOtherService();
 
         $homeShow = 1; //home show is true
-        $data['packages'] = $this->businessPackageRepo->getPackageList($homeShow);
+        $data['packages'] = $this->getPackageList($homeShow);
 
         $data['news'] = $this->getNews();
         $data['internet'] = $this->businessInternetRepo->getInternetPackageList($homeShow);
@@ -169,6 +169,69 @@ class BusinessHomeService {
             $count++;
         }
 
+        return $data;
+    }
+
+    public function getPackageList($homeShow = 0)
+    {
+        $packageData = $this->businessPackageRepo->getPackageList($homeShow);
+        $packageKeyData = config('filesystems.moduleType.BusinessPackages');
+
+        $data = [];
+        $count = 0;
+
+        foreach ($packageData as $package) {
+            $imgData = $this->imageFileViewerService->prepareImageData($package, $packageKeyData);
+            $data[$count]['slug'] = 'packages';
+            unset($package->card_banner_web, $package->card_banner_mobile);
+            $data[$count] = array_merge($package->toArray(), $imgData);
+
+            $count++;
+        }
+        return $data;
+    }
+
+    public function getHomeOtherService()
+    {
+        $services = $this->businessOtherRepo->getHomeOtherService();
+        $data = [];
+        $countTop = 0;
+
+        foreach ($services['servicesTop'] as $s) {
+            $data['top'][$countTop]['id'] = $s->id;
+            $data['top'][$countTop]['slug'] = $s->type;
+            $data['top'][$countTop]['icon'] = $s->icon == "" ? "" : config('filesystems.image_host_url') . $s->icon;
+            $data['top'][$countTop]['name_en'] = $s->name;
+            $data['top'][$countTop]['name_bn'] = $s->name_bn;
+            $data['top'][$countTop]['home_short_details_en'] = $s->home_short_details_en;
+            $data['top'][$countTop]['home_short_details_bn'] = $s->home_short_details_bn;
+            $data['top'][$countTop]['short_details_en'] = $s->short_details;
+            $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
+            $data['top'][$countTop]['url_slug'] = $s->url_slug;
+            $data['top'][$countTop]['url_slug_bn'] = $s->url_slug_bn;
+            $countTop++;
+        }
+
+        $otherKeyData = config('filesystems.moduleType.BusinessOthers');
+        $countSlider = 0;
+
+        foreach ($services['servicesSlider'] as $s) {
+            $imgData = $this->imageFileViewerService->prepareImageData($s, $otherKeyData);
+            $data['slider'][$countSlider]['id'] = $s->id;
+            $data['slider'][$countSlider]['slug'] = $s->type;
+            $data['slider'][$countSlider]['alt_text'] = $s->alt_text;
+            $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
+            $data['slider'][$countSlider]['name_en'] = $s->name;
+            $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
+            $data['slider'][$countSlider]['home_short_details_en'] = $s->home_short_details_en;
+            $data['slider'][$countSlider]['home_short_details_bn'] = $s->home_short_details_bn;
+            $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
+            $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
+            $data['slider'][$countSlider]['url_slug'] = $s->url_slug;
+            $data['slider'][$countSlider]['url_slug_bn'] = $s->url_slug_bn;
+            $data['slider'][$countSlider] = array_merge($data['slider'][$countSlider], $imgData);
+            $countSlider++;
+        }
         return $data;
     }
     /**

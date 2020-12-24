@@ -145,6 +145,20 @@ return [
             'exact_path_web' => 'image_name',
             'exact_path_mobile' => 'image_name_mobile',
             'model' => 'business-home-banner',
+        ],
+        'BusinessPackages' => [
+            'image_name_en' => 'card_banner_name_en',
+            'image_name_bn' => 'card_banner_name_bn',
+            'exact_path_web' => 'card_banner_web',
+            'exact_path_mobile' => 'card_banner_mobile',
+            'model' => 'business-package',
+        ],
+        'BusinessOthers' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_photo',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model' => 'business-others',
         ]
     ],
 
@@ -157,6 +171,7 @@ return [
         'app-service-tab' => 'AppServiceTab',
         'business-category' => 'BusinessCategory',
         'business-news' => 'BusinessNews',
-        'business-home-banner' => 'BusinessHomeBanner'
+        'business-home-banner' => 'BusinessHomeBanner',
+        'business-others' => 'BusinessOthers'
     ]
 ];

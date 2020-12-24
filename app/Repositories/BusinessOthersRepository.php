@@ -14,7 +14,7 @@ class BusinessOthersRepository extends BaseRepository {
     public $modelName = BusinessOthers::class;
 
     public function getHomeOtherService() {
-        $servcesTop = $this->model
+        $services['servicesTop'] = $this->model
                         ->where(
                                 array(
                                     'status' => 1,
@@ -23,52 +23,56 @@ class BusinessOthersRepository extends BaseRepository {
                         )
                         ->orderBy('sort')->get();
 
-        $data = [];
-        $countTop = 0;
+        $services['servicesSlider'] = $this->model
+            ->where(
+                array(
+                    'status' => 1,
+                    'in_home_slider' => 1
+                )
+            )
+            ->orderBy('sort')->get();
 
-        foreach ($servcesTop as $s) {
-            $data['top'][$countTop]['id'] = $s->id;
-            $data['top'][$countTop]['slug'] = $s->type;
-            $data['top'][$countTop]['icon'] = $s->icon == "" ? "" : config('filesystems.image_host_url') . $s->icon;
-            $data['top'][$countTop]['name_en'] = $s->name;
-            $data['top'][$countTop]['name_bn'] = $s->name_bn;
-            $data['top'][$countTop]['home_short_details_en'] = $s->home_short_details_en;
-            $data['top'][$countTop]['home_short_details_bn'] = $s->home_short_details_bn;
-            $data['top'][$countTop]['short_details_en'] = $s->short_details;
-            $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
-            $data['top'][$countTop]['url_slug'] = $s->url_slug;
-            $data['top'][$countTop]['url_slug_bn'] = $s->url_slug_bn;
-            $countTop++;
-        }
+        return $services;
 
-        $servcesSlider = $this->model
-                        ->where(
-                                array(
-                                    'status' => 1,
-                                    'in_home_slider' => 1
-                                )
-                        )
-                        ->orderBy('sort')->get();
-        $countSlider = 0;
-        foreach ($servcesSlider as $s) {
-
-            $data['slider'][$countSlider]['id'] = $s->id;
-            $data['slider'][$countSlider]['slug'] = $s->type;
-            $data['slider'][$countSlider]['banner_photo'] = $s->banner_photo == "" ? "" : config('filesystems.image_host_url') . $s->banner_photo;
-            $data['slider'][$countSlider]['banner_photo_mobile'] = $s->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $s->banner_image_mobile;
-            $data['slider'][$countSlider]['alt_text'] = $s->alt_text;
-            $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
-            $data['slider'][$countSlider]['name_en'] = $s->name;
-            $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
-            $data['slider'][$countSlider]['home_short_details_en'] = $s->home_short_details_en;
-            $data['slider'][$countSlider]['home_short_details_bn'] = $s->home_short_details_bn;
-            $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
-            $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
-            $data['slider'][$countSlider]['url_slug'] = $s->url_slug;
-            $data['slider'][$countSlider]['url_slug_bn'] = $s->url_slug_bn;
-            $countSlider++;
-        }
-        return $data;
+//        $data = [];
+//        $countTop = 0;
+//
+//        foreach ($servcesTop as $s) {
+//            $data['top'][$countTop]['id'] = $s->id;
+//            $data['top'][$countTop]['slug'] = $s->type;
+//            $data['top'][$countTop]['icon'] = $s->icon == "" ? "" : config('filesystems.image_host_url') . $s->icon;
+//            $data['top'][$countTop]['name_en'] = $s->name;
+//            $data['top'][$countTop]['name_bn'] = $s->name_bn;
+//            $data['top'][$countTop]['home_short_details_en'] = $s->home_short_details_en;
+//            $data['top'][$countTop]['home_short_details_bn'] = $s->home_short_details_bn;
+//            $data['top'][$countTop]['short_details_en'] = $s->short_details;
+//            $data['top'][$countTop]['short_details_bn'] = $s->short_details_bn;
+//            $data['top'][$countTop]['url_slug'] = $s->url_slug;
+//            $data['top'][$countTop]['url_slug_bn'] = $s->url_slug_bn;
+//            $countTop++;
+//        }
+//
+//
+//        $countSlider = 0;
+//        foreach ($servcesSlider as $s) {
+//
+//            $data['slider'][$countSlider]['id'] = $s->id;
+//            $data['slider'][$countSlider]['slug'] = $s->type;
+//            $data['slider'][$countSlider]['banner_photo'] = $s->banner_photo == "" ? "" : config('filesystems.image_host_url') . $s->banner_photo;
+//            $data['slider'][$countSlider]['banner_photo_mobile'] = $s->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $s->banner_image_mobile;
+//            $data['slider'][$countSlider]['alt_text'] = $s->alt_text;
+//            $data['slider'][$countSlider]['icon'] = config('filesystems.image_host_url') . $s->icon;
+//            $data['slider'][$countSlider]['name_en'] = $s->name;
+//            $data['slider'][$countSlider]['name_bn'] = $s->name_bn;
+//            $data['slider'][$countSlider]['home_short_details_en'] = $s->home_short_details_en;
+//            $data['slider'][$countSlider]['home_short_details_bn'] = $s->home_short_details_bn;
+//            $data['slider'][$countSlider]['short_details_en'] = $s->short_details;
+//            $data['slider'][$countSlider]['short_details_bn'] = $s->short_details_bn;
+//            $data['slider'][$countSlider]['url_slug'] = $s->url_slug;
+//            $data['slider'][$countSlider]['url_slug_bn'] = $s->url_slug_bn;
+//            $countSlider++;
+//        }
+//        return $data;
     }
 
     public function getOtherService($type) {
