@@ -32,6 +32,7 @@ class AppServiceDetailsService extends ApiBaseService
      * @var AlReferralInfoRepository
      */
     private $alReferralInfoRepository;
+    private $imageFileViewerService;
 
 
     /**
@@ -39,15 +40,18 @@ class AppServiceDetailsService extends ApiBaseService
      * @param AppServiceProductDetailsRepository $appServiceProductDetailsRepository
      * @param AppServiceProductRepository $appServiceProductRepository
      * @param AlReferralInfoRepository $alReferralInfoRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
 	public function __construct(
 	    AppServiceProductDetailsRepository $appServiceProductDetailsRepository,
         AppServiceProductRepository $appServiceProductRepository,
-        AlReferralInfoRepository $alReferralInfoRepository
+        AlReferralInfoRepository $alReferralInfoRepository,
+        ImageFileViewerService  $imageFileViewerService
     ) {
 		$this->appServiceProductDetailsRepository = $appServiceProductDetailsRepository;
 		$this->appServiceProductRepository = $appServiceProductRepository;
 		$this->alReferralInfoRepository = $alReferralInfoRepository;
+		$this->imageFileViewerService = $imageFileViewerService;
 		$this->setActionRepository($appServiceProductDetailsRepository);
 	}
 
@@ -74,10 +78,11 @@ class AppServiceDetailsService extends ApiBaseService
 		$get_product_details_banner = $this->appServiceProductDetailsRepository->appServiceDetailsOtherInfo($product_id);
 
 		if( !empty($get_product_details_banner) ){
-			$results['banner']['image'] = !empty($get_product_details_banner->image) ? config('filesystems.image_host_url') . $get_product_details_banner->image : null;
+		    $detailKeyData = config('filesystems.moduleType.AppServiceProductDetail');
+		    $imgData = $this->imageFileViewerService->prepareImageData($get_product_details_banner, $detailKeyData);
 			$results['banner']['alt_text'] = $get_product_details_banner->alt_text;
-
-			$results['banner']['image_mobile'] = !empty($get_product_details_banner->banner_image_mobile) ? config('filesystems.image_host_url') . $get_product_details_banner->banner_image_mobile : null;
+			$results['banner']['alt_text_bn'] = $get_product_details_banner->alt_text_bn;
+			$results['banner'] = array_merge($results['banner'], $imgData);
 
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
 			$all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;
@@ -85,10 +90,21 @@ class AppServiceDetailsService extends ApiBaseService
 			$results['releated_products']['title_bn'] = $get_product_details_banner->title_bn;
 
 			if( !empty($all_releated_products_ids) ){
+			    $productList = [];
 			    $get_all_releated_products = $this->appServiceProductRepository->findByIds($all_releated_products_ids);
-			}
 
-			$results['releated_products']['products'] = !empty($get_all_releated_products) ? $get_all_releated_products : null;
+                $productKeyData = config('filesystems.moduleType.AppServiceProduct');
+
+                foreach ($get_all_releated_products as $product) {
+                    $imgData = $this->imageFileViewerService->prepareImageData($product, $productKeyData);
+                    $product = array_merge($product->toArray(), $imgData);
+
+                    $productList[] = (object) $product;
+                }
+
+            }
+
+			$results['releated_products']['products'] = !empty($productList) ? $productList : null;
 		}
 
 		return $results;
@@ -223,11 +239,20 @@ class AppServiceDetailsService extends ApiBaseService
 
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
-		
+
+        # get dynamic image name
+        $keyData = config('filesystems.moduleType.AppServiceProduct');
+        $imgData = $this->imageFileViewerService->prepareImageData($product_info, $keyData);
+        $product_info->image_name_web_en = $imgData['banner_image_web_en'];
+        $product_info->image_name_web_bn = $imgData['banner_image_web_bn'];
+        $product_info->image_name_mobile_en = $imgData['banner_image_mobile_en'];
+        $product_info->image_name_mobile_bn = $imgData['banner_image_mobile_bn'];
+
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
+
 		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
-		
+
 		$data['page_header'] = $product_info->page_header;
 		$data['page_header_bn'] = $product_info->page_header_bn;
 		$data['schema_markup'] = $product_info->schema_markup;
