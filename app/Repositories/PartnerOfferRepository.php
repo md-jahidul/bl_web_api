@@ -50,7 +50,15 @@ class PartnerOfferRepository extends BaseRepository {
                 ->join('partners as p', 'po.partner_id', '=', 'p.id')
                 ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
                 ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                ->select('po.*', 'a.area_en', 'a.area_bn', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
+                ->select('po.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo',
+                        'pc.name_en AS offer_type_en',
+                        'pc.name_bn AS offer_type_bn',
+                        'pc.page_header',
+                        'pc.page_header_bn',
+                        'pc.schema_markup',
+                        'pc.url_slug_en',
+                        'pc.url_slug_bn'
+                )
                 ->orderBy('po.display_order')
                 ->get();
 
