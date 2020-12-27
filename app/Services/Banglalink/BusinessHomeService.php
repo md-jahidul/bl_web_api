@@ -183,7 +183,7 @@ class BusinessHomeService {
         foreach ($packageData as $package) {
             $imgData = $this->imageFileViewerService->prepareImageData($package, $packageKeyData);
             $data[$count]['slug'] = 'packages';
-            unset($package->card_banner_web, $package->card_banner_mobile);
+            unset($package->card_banner_web, $package->card_banner_mobile, $package->card_banner_name_en, $package->card_banner_name_bn);
             $data[$count] = array_merge($package->toArray(), $imgData);
 
             $count++;

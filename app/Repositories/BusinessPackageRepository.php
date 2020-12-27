@@ -37,29 +37,6 @@ class BusinessPackageRepository extends BaseRepository {
                                 'url_slug_bn')->get();
 
         return $packageData;
-
-//        $data = [];
-//        $count = 0;
-//        foreach ($packageData as $p) {
-//
-//            $data[$count]['id'] = $p->id;
-//            $data[$count]['slug'] = 'packages';
-//            $data[$count]['name_en'] = $p->name;
-//            $data[$count]['name_bn'] = $p->name_bn;
-//            $data[$count]['banner_photo'] = $p->card_banner_web == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_web;
-//            $data[$count]['banner_photo_mobile'] = $p->card_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_mobile;
-//            $data[$count]['alt_text'] = $p->card_banner_alt_text;
-//            $data[$count]['short_details_en'] = $p->short_details;
-//            $data[$count]['short_details_bn'] = $p->short_details_bn;
-//            $data[$count]['page_header'] = $p->page_header;
-//            $data[$count]['page_header_bn'] = $p->page_header_bn;
-//            $data[$count]['schema_markup'] = $p->schema_markup;
-//            $data[$count]['url_slug'] = $p->url_slug;
-//            $data[$count]['url_slug_bn'] = $p->url_slug_bn;
-//
-//            $count++;
-//        }
-//        return $data;
     }
 
     public function getPackageById($packageSlug) {
