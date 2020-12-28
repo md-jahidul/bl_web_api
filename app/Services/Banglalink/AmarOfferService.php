@@ -30,21 +30,32 @@ class AmarOfferService extends BaseService
      */
     protected $customerService;
 
+    /**
+     * @var BanglalinkCustomerService
+     */
+    private $blCustomerService;
+
     public function __construct
     (
         ApiBaseService $apiBaseService,
         CustomerService $customerService,
-        AmarOfferDetailsRepository $amarOfferDetailsRepository
+        AmarOfferDetailsRepository $amarOfferDetailsRepository,
+        BanglalinkCustomerService $blCustomerService
 
     ) {
         $this->amarOfferDetailsRepository = $amarOfferDetailsRepository;
         $this->responseFormatter = $apiBaseService;
         $this->customerService = $customerService;
+        $this->blCustomerService = $blCustomerService;
     }
 
-    public function getAmarOfferListUrl($msisdn)
+    public function getAmarOfferListUrl($msisdn, $customerType)
     {
-        return self::AMAR_OFFER_API_ENDPOINT . "?" . "msisdn=$msisdn";
+        $channelId = 7;
+        $channel = "Website";
+        $serviceType = ($customerType == "PREPAID") ? 1 : 2;
+
+        return self::AMAR_OFFER_API_ENDPOINT . "?" . "channel=$channel" . "&channelId=$channelId" . "&msisdn=$msisdn" . "&serviceTypeId=$serviceType";
     }
 
     public function getAmarOfferDetailsUrl($msisdn, $offer_id)
@@ -149,7 +160,9 @@ class AmarOfferService extends BaseService
     public function getAmarOfferList(Request $request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3)));
+        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
+        $customer_type = $infoBl->getData()->data->connectionType;
+        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
         $bannerImage = $this->amarOfferDetailsRepository
             ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
 
@@ -178,12 +191,11 @@ class AmarOfferService extends BaseService
      */
     private function prepareBuyOfferResponse($response)
     {
-        if (isset($response->Status) && $response->Status == 'success') {
+        if (isset($response->ID)) {
             return [
               'purchase_id' => $response->ID
             ];
         }
-
         throw new AmarOfferBuyException();
     }
 
@@ -196,10 +208,17 @@ class AmarOfferService extends BaseService
     public function buyAmarOffer(Request $request)
     {
         $customer = $this->customerService->getCustomerDetails($request);
+
+
         $response_data = $this->post($this->getBuyAmarOfferUrl(), [
+            'channel' => 'Website',
+            'channelId' => 7,
             'msisdn'  => substr($customer->msisdn, 3),
             'offerID' => $request->offer_id
         ]);
+
+
+//        dd($response_data);
         $offer_data = json_decode($response_data['response']);
         $formatted_data = $this->prepareBuyOfferResponse($offer_data);
 
