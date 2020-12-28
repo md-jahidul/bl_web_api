@@ -24,6 +24,7 @@ class BusinessPackageService {
     protected $featureRepo;
     protected $asgnFeatureRepo;
     protected $relatedProductRepo;
+    protected $businessHomeService;
     public $responseFormatter;
 
     /**
@@ -32,23 +33,31 @@ class BusinessPackageService {
      * @param BusinessFeaturesRepository $featureRepo
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
      * @param BusinessRelatedProductRepository $relatedProductRepo
+     * @param BusinessHomeService $businessHomeService
      */
-    public function __construct(ApiBaseService $responseFormatter, BusinessPackageRepository $packageRepo,
-            BusinessFeaturesRepository $featureRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo,
-            BusinessRelatedProductRepository $relatedProductRepo) {
+    public function __construct(
+        ApiBaseService $responseFormatter,
+        BusinessPackageRepository $packageRepo,
+        BusinessFeaturesRepository $featureRepo,
+        BusinessAssignedFeaturesRepository $asgnFeatureRepo,
+        BusinessRelatedProductRepository $relatedProductRepo,
+        BusinessHomeService $businessHomeService
+    ) {
         $this->packageRepo = $packageRepo;
         $this->featureRepo = $featureRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
         $this->relatedProductRepo = $relatedProductRepo;
-         $this->responseFormatter = $responseFormatter;
+        $this->businessHomeService = $businessHomeService;
+        $this->responseFormatter = $responseFormatter;
     }
 
     /**
      * Get business product categories
      * @return Response
      */
-    public function getPackages() {
-        $response = $this->packageRepo->getPackageList();
+    public function getPackages()
+    {
+        $response = $this->businessHomeService->getPackageList();
         return $this->responseFormatter->sendSuccessResponse($response, 'Business Package List');
     }
 
@@ -78,6 +87,6 @@ class BusinessPackageService {
         return $response;
     }
 
-    
+
 
 }
