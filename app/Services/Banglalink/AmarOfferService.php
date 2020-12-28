@@ -191,12 +191,11 @@ class AmarOfferService extends BaseService
      */
     private function prepareBuyOfferResponse($response)
     {
-        if (isset($response->Status) && $response->Status == 'success') {
+        if (isset($response->ID)) {
             return [
               'purchase_id' => $response->ID
             ];
         }
-
         throw new AmarOfferBuyException();
     }
 
@@ -210,13 +209,16 @@ class AmarOfferService extends BaseService
     {
         $customer = $this->customerService->getCustomerDetails($request);
 
+
         $response_data = $this->post($this->getBuyAmarOfferUrl(), [
             'channel' => 'Website',
             'channelId' => 7,
-            'msisdn'  => $customer->msisdn,
+            'msisdn'  => substr($customer->msisdn, 3),
             'offerID' => $request->offer_id
         ]);
 
+
+//        dd($response_data);
         $offer_data = json_decode($response_data['response']);
         $formatted_data = $this->prepareBuyOfferResponse($offer_data);
 
