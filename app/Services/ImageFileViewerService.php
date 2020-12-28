@@ -50,14 +50,14 @@ class ImageFileViewerService extends ApiBaseService
 
         if (!empty($value[$keyData['exact_path_web']])) {
             $bannerType = "banner-web";
-            $imgData['banner_image_web_en'] = "/$bannerType/$model/$fileNameEn";
-            $imgData['banner_image_web_bn'] = "/$bannerType/$model/$fileNameBn";
+            $imgData['banner_image_web_en'] = "$bannerType/$model/$fileNameEn";
+            $imgData['banner_image_web_bn'] = "$bannerType/$model/$fileNameBn";
         }
 
         if (!empty($value[$keyData['exact_path_mobile']])) {
             $bannerType = "banner-mobile";
-            $imgData['banner_image_mobile_en'] = "/$bannerType/$model/$fileNameEn";
-            $imgData['banner_image_mobile_bn'] = "/$bannerType/$model/$fileNameBn";
+            $imgData['banner_image_mobile_en'] = "$bannerType/$model/$fileNameEn";
+            $imgData['banner_image_mobile_bn'] = "$bannerType/$model/$fileNameBn";
         }
 
         return $imgData;

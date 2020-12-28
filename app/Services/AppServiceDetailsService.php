@@ -243,13 +243,12 @@ class AppServiceDetailsService extends ApiBaseService
         # get dynamic image name
         $keyData = config('filesystems.moduleType.AppServiceProduct');
         $imgData = $this->imageFileViewerService->prepareImageData($product_info, $keyData);
-        $product_info->image_name_web_en = $imgData['banner_image_web_en'];
-        $product_info->image_name_web_bn = $imgData['banner_image_web_bn'];
-        $product_info->image_name_mobile_en = $imgData['banner_image_mobile_en'];
-        $product_info->image_name_mobile_bn = $imgData['banner_image_mobile_bn'];
+        $product_info->image_name_web_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;
+        $product_info->image_name_web_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;;
+        $product_info->image_name_mobile_en = isset($imgData['banner_image_mobile_en']) ? $imgData['banner_image_mobile_en'] : null;;
+        $product_info->image_name_mobile_bn = isset($imgData['banner_image_mobile_bn']) ? $imgData['banner_image_mobile_bn'] : null;;
 
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
-
 
 		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
 
