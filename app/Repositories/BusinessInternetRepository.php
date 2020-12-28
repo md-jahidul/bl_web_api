@@ -93,7 +93,7 @@ class BusinessInternetRepository extends BaseRepository {
         $data['url_slug'] = $internet->url_slug;
         $data['url_slug_bn'] = $internet->url_slug_bn;
         $data['page_header'] = $internet->page_header;
-        $data['page_header_bn'] = $internet->page_header;
+        $data['page_header_bn'] = $internet->page_header_bn;
         $data['schema_markup'] = $internet->schema_markup;
         $data['likes'] = $internet->likes;
 
