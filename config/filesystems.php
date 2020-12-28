@@ -159,6 +159,13 @@ return [
             'exact_path_web' => 'banner_photo',
             'exact_path_mobile' => 'banner_image_mobile',
             'model' => 'business-others',
+        ],
+        'BusinessInternet' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_photo',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model' => 'business-internet',
         ]
     ],
 
@@ -172,6 +179,7 @@ return [
         'business-category' => 'BusinessCategory',
         'business-news' => 'BusinessNews',
         'business-home-banner' => 'BusinessHomeBanner',
-        'business-others' => 'BusinessOthers'
+        'business-others' => 'BusinessOthers',
+        'business-internet' => 'BusinessInternet'
     ]
 ];
