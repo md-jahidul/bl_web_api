@@ -209,10 +209,14 @@ class AmarOfferService extends BaseService
     public function buyAmarOffer(Request $request)
     {
         $customer = $this->customerService->getCustomerDetails($request);
+
         $response_data = $this->post($this->getBuyAmarOfferUrl(), [
-            'msisdn'  => substr($customer->msisdn, 3),
+            'channel' => 'Website',
+            'channelId' => 7,
+            'msisdn'  => $customer->msisdn,
             'offerID' => $request->offer_id
         ]);
+
         $offer_data = json_decode($response_data['response']);
         $formatted_data = $this->prepareBuyOfferResponse($offer_data);
 
