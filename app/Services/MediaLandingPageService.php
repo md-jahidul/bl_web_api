@@ -48,6 +48,9 @@ class MediaLandingPageService extends ApiBaseService
         $data['title_en'] = $componentsData->title_en;
         $data['title_bn'] = $componentsData->title_bn;
         $data['component_type'] = $componentsData->component_type;
+        $data['page_header'] = $componentsData->page_header;
+        $data['page_header_bn'] = $componentsData->page_header_bn;
+        $data['schema_markup'] = $componentsData->schema_markup;
         if ($type == 'press_release' || $type == 'news_events'){
             foreach ($componentsData->items as $id){
                 $data['sliding_speed'] = $componentsData->sliding_speed;
@@ -91,9 +94,22 @@ class MediaLandingPageService extends ApiBaseService
         foreach ($components as $items){
             $allComponents[] = $this->factoryComponent($items);
         }
+
+        $bannerData = $this->mediaBannerImageRepository->bannerImage('landing_page');
         $data = [
             'components' => isset($allComponents) ? $allComponents : [],
-            'banner_image' => $this->mediaBannerImageRepository->bannerImage('landing_page')
+            'banner_image' => [
+                'id' => $bannerData->id,
+                'moduleType' => $bannerData->module_type,
+                'banner_image_url' => $bannerData->banner_image_url,
+                'banner_mobile_view' => $bannerData->banner_mobile_view,
+                'alt_text_en' => $bannerData->banner_mobile_view
+            ],
+            'seo_data' => [
+                'page_header' => $bannerData->page_header,
+                'page_header_bn' => $bannerData->page_header_bn,
+                'schema_markup' => $bannerData->schema_markup
+            ]
         ];
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
     }
