@@ -11,7 +11,10 @@ class DynamicPageRepository extends BaseRepository {
 
     public function page($slug)
     {
-        $dynamicPageSlug = FrontEndDynamicRoute::where('url', $slug)->first();
+
+        $dynamicPageSlug = FrontEndDynamicRoute::where('url', 'like', '%'. $slug)
+            ->where('is_dynamic_page', 1)
+            ->first();
 
         if (isset($dynamicPageSlug->key)) {
             return $this->model->where('url_slug', $dynamicPageSlug->key)
