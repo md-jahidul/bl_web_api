@@ -17,12 +17,13 @@ class ImageFileViewerService extends ApiBaseService
 {
     use FileTrait;
 
-    public function imageViewer($bannerType, $modelName, $fileName)
+    public function imageViewer($bannerType, $modelKey, $fileName)
     {
-        $modelKey = config('filesystems.modelList.' . $modelName);
+        $modelKey = config('filesystems.modelKeyList.' . $modelKey);
         $fileName = explode('.', $fileName)[0];
-        $model = str_replace('.', '', "App\Models\.$modelKey");
         $data = config('filesystems.moduleType.' . $modelKey);
+        $modelName = $data['model'];
+        $model = str_replace('.', '', "App\Models\.$modelName");
 
         $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
         return ($bannerType == "banner-web") ? $this->view($offers->{$data['exact_path_web']}) : $this->view($offers->{$data['exact_path_mobile']});
@@ -45,7 +46,7 @@ class ImageFileViewerService extends ApiBaseService
         $fileNameEn = $value[$keyData['image_name_en']] . $extension;
         $fileNameBn = $value[$keyData['image_name_bn']] . $extension;
 
-        $model = $keyData['model'];
+        $model = $keyData['model-key'];
         $imgData = [];
 
         if (!empty($value[$keyData['exact_path_web']])) {
