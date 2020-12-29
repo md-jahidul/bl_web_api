@@ -76,6 +76,7 @@ return [
 
     // File Location
     'moduleType' => [
+        /* Preapaid, Postpaid Module */
         'OfferCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -84,6 +85,8 @@ return [
             'model-key' => 'offer-category',
             'model' => 'OfferCategory',
         ],
+
+        /* Roaming Module */
         'RoamingCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -108,6 +111,8 @@ return [
             'model-key' => 'roaming-info-tips',
             'model' => 'RoamingInfo'
         ],
+
+        /* App & Service Module */
         'AppServiceTab' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -132,6 +137,8 @@ return [
             'model-key' => 'app-service-product-detail',
             'model' => 'AppServiceProductDetail',
         ],
+
+        /* Business Module */
         'BusinessCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -162,6 +169,14 @@ return [
             'exact_path_web' => 'card_banner_web',
             'exact_path_mobile' => 'card_banner_mobile',
             'model-key' => 'business-package',
+            'model' => 'BusinessPackages'
+        ],
+        'BusinessPackageDetails' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_photo',
+            'exact_path_mobile' => 'banner-image-mobile',
+            'model-key' => 'business-package-details',
             'model' => 'BusinessPackages'
         ],
         'BusinessOthers' => [
@@ -197,11 +212,14 @@ return [
         'roaming-info-tips' => 'RoamingInfo',
         'app-service-product' => 'AppServiceProduct',
         'app-service-tab' => 'AppServiceTab',
+        'app-service-product-detail' => 'AppServiceProductDetail',
         'business-category' => 'BusinessCategory',
         'business-news' => 'BusinessNews',
         'business-home-banner' => 'BusinessHomeBanner',
+        'business-package' => 'BusinessPackages',
         'business-others' => 'BusinessOthers',
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
+        'business-package-details' => 'BusinessPackages',
     ]
 ];
