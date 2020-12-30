@@ -12,6 +12,7 @@ use App\Repositories\BusinessPackageRepository;
 use App\Repositories\BusinessFeaturesRepository;
 use App\Repositories\BusinessAssignedFeaturesRepository;
 use App\Repositories\BusinessRelatedProductRepository;
+use App\Services\ImageFileViewerService;
 use Illuminate\Http\Response;
 
 class BusinessPackageService {
@@ -25,6 +26,7 @@ class BusinessPackageService {
     protected $asgnFeatureRepo;
     protected $relatedProductRepo;
     protected $businessHomeService;
+    protected $imageFileViewerService;
     public $responseFormatter;
 
     /**
@@ -34,6 +36,7 @@ class BusinessPackageService {
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
      * @param BusinessRelatedProductRepository $relatedProductRepo
      * @param BusinessHomeService $businessHomeService
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         ApiBaseService $responseFormatter,
@@ -41,13 +44,15 @@ class BusinessPackageService {
         BusinessFeaturesRepository $featureRepo,
         BusinessAssignedFeaturesRepository $asgnFeatureRepo,
         BusinessRelatedProductRepository $relatedProductRepo,
-        BusinessHomeService $businessHomeService
+        BusinessHomeService $businessHomeService,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->packageRepo = $packageRepo;
         $this->featureRepo = $featureRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
         $this->relatedProductRepo = $relatedProductRepo;
         $this->businessHomeService = $businessHomeService;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->responseFormatter = $responseFormatter;
     }
 
@@ -67,7 +72,17 @@ class BusinessPackageService {
      * @return Response
      */
     public function getPackageBySlug($packageSlug) {
-        $data['packageDetails'] = $this->packageRepo->getPackageById($packageSlug);
+        $package = $this->packageRepo->getPackageById($packageSlug);
+        $data = [];
+        if (!empty($package)) {
+            $keyData = config('filesystems.moduleType.BusinessPackageDetails');
+            $imgData = $this->imageFileViewerService->prepareImageData($package, $keyData);
+            unset($package->banner_photo, $package->banner_image_mobile, $package->banner_name, $package->banner_name_bn);
+
+            $data['packageDetails'] = array_merge($package->toArray(), $imgData);
+            $data['packageDetails']['slug'] = 'packages';
+
+        }
 
         $data['feature'] = $this->_getFeaturesByPackage($data['packageDetails']['id']);
 

@@ -108,13 +108,24 @@ class BusinessOthersService {
      * Get business package by id
      * @return Response
      */
-    public function getServiceBySlug($serviceSlug) {
+    public function getServiceBySlug($serviceSlug)
+    {
         $service = $this->otherRepo->getServiceBySlug($serviceSlug);
+
+        $service['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
+        $serviceKeyData = config('filesystems.moduleType.BusinessOtherDetails');
+        $imgData = $this->imageFileViewerService->prepareImageData($service, $serviceKeyData);
+
+        $service = array_merge($service->toArray(), $imgData);
+        unset($service['details_banner_web'],
+              $service['details_banner_name'],
+              $service['details_banner_name_bn'],
+              $service['details_banner_mobile']);
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($service['id']);
 
-        $data['feature'] = $this->_getFeaturesByService($service['slug'], $service['id']);
+        $data['feature'] = $this->_getFeaturesByService($service['type'], $service['id']);
 
         $parentType = 2;
         $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($service['id'], $parentType);

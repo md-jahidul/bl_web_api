@@ -76,110 +76,150 @@ return [
 
     // File Location
     'moduleType' => [
+        /* Preapaid, Postpaid Module */
         'OfferCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_image_url',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'offer-category'
+            'model-key' => 'offer-category',
+            'model' => 'OfferCategory',
         ],
+
+        /* Roaming Module */
         'RoamingCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
-            'model' => 'roaming-category'
+            'model-key' => 'roaming-category',
+            'model' => 'RoamingCategory'
         ],
         'RoamingOtherOffer' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
-            'model' => 'roaming-other-offer'
+            'model-key' => 'roaming-other-offer',
+            'model' => 'RoamingOtherOffer'
         ],
         'RoamingInfo' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_web',
             'exact_path_mobile' => 'banner_mobile',
-            'model' => 'roaming-info-tips'
+            'model-key' => 'roaming-info-tips',
+            'model' => 'RoamingInfo'
         ],
+
+        /* App & Service Module */
         'AppServiceTab' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_image_url',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'app-service-tab',
+            'model-key' => 'app-service-tab',
+            'model' => 'AppServiceTab'
         ],
         'AppServiceProduct' => [
             'image_name_en' => 'product_img_en',
             'image_name_bn' => 'product_img_bn',
             'exact_path_web' => 'product_img_url',
             'exact_path_mobile' => 'product_img_url',
-            'model' => 'app-service-product',
+            'model-key' => 'app-service-product',
+            'model' => 'AppServiceProduct'
         ],
         'AppServiceProductDetail' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'image',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'app-service-product-detail',
+            'model-key' => 'app-service-product-detail',
+            'model' => 'AppServiceProductDetail',
         ],
+
+        /* Business Module */
         'BusinessCategory' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_photo',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'business-category',
+            'model-key' => 'business-category',
+            'model' => 'BusinessCategory'
         ],
         'BusinessNews' => [
             'image_name_en' => 'image_name_en',
             'image_name_bn' => 'image_name_en',
             'exact_path_web' => 'image_url',
             'exact_path_mobile' => 'image_url',
-            'model' => 'business-news',
+            'model-key' => 'business-news',
+            'model' => 'BusinessNews'
         ],
         'BusinessHomeBanner' => [
             'image_name_en' => 'image_name_en',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image_name',
             'exact_path_mobile' => 'image_name_mobile',
-            'model' => 'business-home-banner',
+            'model-key' => 'business-home-banner',
+            'model' => 'BusinessHomeBanner'
         ],
         'BusinessPackages' => [
             'image_name_en' => 'card_banner_name_en',
             'image_name_bn' => 'card_banner_name_bn',
             'exact_path_web' => 'card_banner_web',
             'exact_path_mobile' => 'card_banner_mobile',
-            'model' => 'business-package',
+            'model-key' => 'business-package',
+            'model' => 'BusinessPackages'
+        ],
+        'BusinessPackageDetails' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_photo',
+            'exact_path_mobile' => 'banner-image-mobile',
+            'model-key' => 'business-package-details',
+            'model' => 'BusinessPackages'
         ],
         'BusinessOthers' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_photo',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'business-others',
+            'model-key' => 'business-others',
+            'model' => 'BusinessOthers'
+        ],
+        'BusinessOtherDetails' => [
+            'image_name_en' => 'details_banner_name',
+            'image_name_bn' => 'details_banner_name_bn',
+            'exact_path_web' => 'details_banner_web',
+            'exact_path_mobile' => 'details_banner_mobile',
+            'model-key' => 'business-other-details',
+            'model' => 'BusinessOthers'
         ],
         'BusinessInternet' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
             'exact_path_web' => 'banner_photo',
             'exact_path_mobile' => 'banner_image_mobile',
-            'model' => 'business-internet',
+            'model-key' => 'business-internet',
+            'model' => 'BusinessInternet'
         ]
     ],
 
-    'modelList' => [
+    'modelKeyList' => [
         'offer-category' => 'OfferCategory',
         'roaming-category' => 'RoamingCategory',
         'roaming-other-offer' => 'RoamingOtherOffer',
         'roaming-info-tips' => 'RoamingInfo',
         'app-service-product' => 'AppServiceProduct',
         'app-service-tab' => 'AppServiceTab',
+        'app-service-product-detail' => 'AppServiceProductDetail',
         'business-category' => 'BusinessCategory',
         'business-news' => 'BusinessNews',
         'business-home-banner' => 'BusinessHomeBanner',
+        'business-package' => 'BusinessPackages',
         'business-others' => 'BusinessOthers',
-        'business-internet' => 'BusinessInternet'
+        'business-internet' => 'BusinessInternet',
+        'business-other-details' => 'BusinessOtherDetails',
+        'business-package-details' => 'BusinessPackages',
     ]
 ];
