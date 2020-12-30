@@ -58,13 +58,13 @@ class PartnerOfferController extends Controller {
      * @param $products
      * @return array
      */
-    public function offerDetails($id) {
+    public function offerDetails($slug) {
         try {
-
             $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn')
                     ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
                     ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
-                    ->where('partner_offers.id', $id)
+                    ->where('partner_offers.url_slug', $slug)
+                    ->orWhere('partner_offers.url_slug_bn', $slug)
                     ->with(['partner_offer_details', 'partner' => function ($query) {
                             $query->select([
                                 'id',
