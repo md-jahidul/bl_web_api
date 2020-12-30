@@ -59,6 +59,9 @@ class EcareerController extends Controller
                     $sub_data_banner['slug'] = $value->slug;
                     $sub_data_banner['url_slug'] = $value->route_slug;
                     $sub_data_banner['url_slug_bn'] = $value->route_slug_bn;
+                    $sub_data_banner['page_header'] = $value->page_header;
+                    $sub_data_banner['page_header_bn'] = $value->page_header_bn;
+                    $sub_data_banner['schema_markup'] = $value->schema_markup;
 
 
                     $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
@@ -137,6 +140,7 @@ class EcareerController extends Controller
             'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
             'alt_text' => $seoData->alt_text,
             'page_header' => $seoData->page_header,
+            'page_header_bn' => $seoData->page_header_bn,
             'schema_markup' => $seoData->schema_markup
         );
 
@@ -362,6 +366,7 @@ class EcareerController extends Controller
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -397,6 +402,7 @@ class EcareerController extends Controller
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
