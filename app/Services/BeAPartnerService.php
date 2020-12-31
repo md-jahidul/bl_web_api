@@ -71,8 +71,6 @@ class BeAPartnerService extends ApiBaseService
                 'page_header' => $beAPartnerData->page_header,
                 'page_header_bn' => $beAPartnerData->page_header_bn,
                 'schema_markup' => $beAPartnerData->schema_markup,
-                'url_slug_en' => $beAPartnerData->url_slug_en,
-                'url_slug_bn' => $beAPartnerData->url_slug_bn,
                 'banner_image' => $beAPartnerData->banner_image,
                 'components' => $components,
             ];
