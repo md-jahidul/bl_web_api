@@ -70,7 +70,7 @@ class BusinessCategoryRepository extends BaseRepository {
             $data[$count]['url_slug'] = $v->url_slug;
             $data[$count]['url_slug_bn'] = $v->url_slug_bn;
             $data[$count]['page_header'] = $v->page_header;
-            $data[$count]['page_header_bn'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header_bn;
             $data[$count]['schema_markup'] = $v->schema_markup;
             $count++;
         }

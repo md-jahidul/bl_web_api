@@ -58,13 +58,13 @@ class PartnerOfferController extends Controller {
      * @param $products
      * @return array
      */
-    public function offerDetails($id) {
+    public function offerDetails($slug) {
         try {
-
             $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn')
                     ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
                     ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
-                    ->where('partner_offers.id', $id)
+                    ->where('partner_offers.url_slug', $slug)
+                    ->orWhere('partner_offers.url_slug_bn', $slug)
                     ->with(['partner_offer_details', 'partner' => function ($query) {
                             $query->select([
                                 'id',
@@ -76,6 +76,7 @@ class PartnerOfferController extends Controller {
                         }])
                     ->first();
             $data = [];
+//            dd($productDetail);
             if (isset($productDetail)) {
                 $data['id'] = $productDetail->id;
                 $data['company_name_en'] = $productDetail->company_name_en;
@@ -113,11 +114,13 @@ class PartnerOfferController extends Controller {
                 $data['area_en'] = $productDetail->area_en;
                 $data['area_bn'] = $productDetail->area_bn;
 
-                $banner = "";
-                if($productDetail->partner_offer_details->banner_image_url != ""){
-                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
-                }
-                $data['banner_image_url'] = $banner;
+                $data['page_header'] = $productDetail->page_header;
+                $data['page_header_bn'] = $productDetail->page_header_bn;
+                $data['schema_markup'] = $productDetail->schema_markup;
+                $data['url_slug'] = $productDetail->url_slug;
+                $data['url_slug_bn'] = $productDetail->url_slug_bn;
+
+                $data['banner_image_url'] = $productDetail->partner_offer_details->banner_image_url;
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;
                 $data['apple_app_store_link'] = $productDetail->partner->apple_app_store_link;
                 $data['google_play_link'] = $productDetail->partner->google_play_link;
