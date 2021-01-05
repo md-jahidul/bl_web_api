@@ -15,6 +15,7 @@ class CorpCrStrategyComponentRepository extends BaseRepository
     public function componentWithDetails($urlSlug)
     {
         return $this->model->where('url_slug_en', $urlSlug)
+            ->orWhere('url_slug_bn', $urlSlug)
             ->where('status', 1)
             ->select(
                 'id', 'title_en', 'title_bn', 'details_en', 'details_bn',
