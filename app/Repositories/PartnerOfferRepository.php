@@ -133,6 +133,9 @@ class PartnerOfferRepository extends BaseRepository {
                 'po.alt_text_en',
                 'po.alt_text_bn',
 
+                'po.url_slug',
+                'po.url_slug_bn',
+
                 'p.company_name_en',
                 'p.company_name_bn',
                 'p.company_logo'
