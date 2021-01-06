@@ -65,6 +65,7 @@ class PartnerOfferController extends Controller {
                     ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
                     ->where('partner_offers.url_slug', $slug)
                     ->orWhere('partner_offers.url_slug_bn', $slug)
+                    ->orWhere('partner_offers.id', $slug)
                     ->with(['partner_offer_details', 'partner' => function ($query) {
                             $query->select([
                                 'id',
