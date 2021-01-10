@@ -202,6 +202,14 @@ return [
             'exact_path_mobile' => 'banner_image_mobile',
             'model-key' => 'business-internet',
             'model' => 'BusinessInternet'
+        ],
+        'EcareerPortal' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => 'image_mobile',
+            'model-key' => 'ecareer-portal',
+            'model' => 'EcareerPortal'
         ]
     ],
 
@@ -221,5 +229,6 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
+        'ecareer-portal' => 'EcareerPortal'
     ]
 ];
