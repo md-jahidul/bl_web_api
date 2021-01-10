@@ -243,6 +243,22 @@ return [
             'model-key' => 'about-page-right',
             'model' => 'AboutPage'
         ],
+        'EcareerPortal' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => 'image_mobile',
+            'model-key' => 'ecareer-portal',
+            'model' => 'EcareerPortal'
+        ],
+        'EcareerPortalItem' => [
+            'image_name_en' => 'image_name',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => '',
+            'model-key' => 'ecareer-portal-item',
+            'model' => 'EcarrerPortalItem'
+        ]
     ],
 
     'modelKeyList' => [
@@ -265,6 +281,8 @@ return [
         'partner-offer-details' => 'PartnerOfferDetail',
         'lms-about-banner' => 'LmsAboutBannerImage',
         'about-page-left' => 'AboutPageLeftImg',
-        'about-page-right' => 'AboutPageRightImg'
-    ]
+        'about-page-right' => 'AboutPageRightImg',
+        'ecareer-portal' => 'EcareerPortal',
+        'ecareer-portal-item' => 'EcareerPortalItem'
+    ],
 ];
