@@ -229,6 +229,7 @@ class EcareerService {
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -280,6 +281,7 @@ class EcareerService {
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -331,6 +333,7 @@ class EcareerService {
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
