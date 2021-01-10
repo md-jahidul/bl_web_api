@@ -210,6 +210,14 @@ return [
             'exact_path_mobile' => 'image_mobile',
             'model-key' => 'ecareer-portal',
             'model' => 'EcareerPortal'
+        ],
+        'EcareerPortalItem' => [
+            'image_name_en' => 'image_name',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => 'image',
+            'model-key' => 'ecareer-portal-item',
+            'model' => 'EcarrerPortalItem'
         ]
     ],
 
@@ -229,6 +237,7 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
-        'ecareer-portal' => 'EcareerPortal'
+        'ecareer-portal' => 'EcareerPortal',
+        'ecareer-portal-item' => 'EcareerPortalItem'
     ]
 ];
