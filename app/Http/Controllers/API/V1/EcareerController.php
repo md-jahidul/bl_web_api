@@ -349,9 +349,7 @@ class EcareerController extends Controller
      */
     public function getEcarrerVacancy()
     {
-
         try {
-
             $data = [];
 
             //seo data
@@ -359,12 +357,13 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $data['seo_data'] = array_merge($data['seo_data'], $this->ecarrerService->getPortalImageData($seoData));
 
             $data['we_hire'] = $this->ecarrerService->getVacancyHire();
             $data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();

@@ -588,24 +588,14 @@ class EcareerService {
             foreach ($vacancy_hire as $parent_value) {
 
                 $sub_data = [];
+                $sub_data = array_merge($sub_data, $this->getPortalItemImageData($parent_value));
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
-
-
-                // if( !empty($events_value->portalItems) ){
-                //    foreach ($events_value->portalItems as $portal_items) {
-                //       $sub_items = [];
-                //       $sub_items['title_en'] = $portal_items->title_en;
-                //       $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
-                //       $sub_items['alt_text'] = $portal_items->alt_text;
-                //       $sub_data['item_list'][] = $sub_items;
-                //    }
-                // }
+                $sub_data['alt_text_bn'] = $parent_value->alt_text_bn;
 
                 $results = $sub_data;
             } // Foreach end
@@ -631,7 +621,6 @@ class EcareerService {
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['video'] = $parent_value->video;
 
                 $results = $sub_data;
@@ -654,13 +643,14 @@ class EcareerService {
             foreach ($vacancy_news_media as $parent_value) {
 
                 $sub_data = [];
+                $sub_data = array_merge($sub_data, $this->getPortalItemImageData($parent_value));
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
+                $sub_data['alt_text_bn'] = $parent_value->alt_text_bn;
 
                 $results[] = $sub_data;
             } // Foreach end
