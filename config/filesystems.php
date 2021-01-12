@@ -202,6 +202,22 @@ return [
             'exact_path_mobile' => 'banner_image_mobile',
             'model-key' => 'business-internet',
             'model' => 'BusinessInternet'
+        ],
+        'Priyojon' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'priyojon',
+            'model' => 'Priyojon'
+        ],
+        'PartnerOfferDetail' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'partner-offer-details',
+            'model' => 'PartnerOfferDetail'
         ]
     ],
 
@@ -221,5 +237,7 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
+        'priyojon' => 'Priyojon',
+        'partner-offer-details' => 'PartnerOfferDetail'
     ]
 ];
