@@ -203,6 +203,46 @@ return [
             'model-key' => 'business-internet',
             'model' => 'BusinessInternet'
         ],
+        'Priyojon' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'priyojon',
+            'model' => 'Priyojon'
+        ],
+        'PartnerOfferDetail' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'partner-offer-details',
+            'model' => 'PartnerOfferDetail'
+        ],
+        'LmsAboutBannerImage' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'lms-about-banner',
+            'model' => 'LmsAboutBannerImage'
+        ],
+        'AboutPageLeftImg' => [
+            'image_name_en' => 'left_img_name_en',
+            'image_name_bn' => 'left_img_name_bn',
+            'exact_path_web' => 'left_side_img',
+            'exact_path_mobile' => '',
+            'model-key' => 'about-page-left',
+            'model' => 'AboutPage'
+        ],
+        'AboutPageRightImg' => [
+            'image_name_en' => 'right_img_name_en',
+            'image_name_bn' => 'right_img_name_bn',
+            'exact_path_web' => 'right_side_ing',
+            'exact_path_mobile' => '',
+            'model-key' => 'about-page-right',
+            'model' => 'AboutPage'
+        ],
         'EcareerPortal' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -215,7 +255,7 @@ return [
             'image_name_en' => 'image_name',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image',
-            'exact_path_mobile' => 'image',
+            'exact_path_mobile' => '',
             'model-key' => 'ecareer-portal-item',
             'model' => 'EcarrerPortalItem'
         ]
@@ -237,7 +277,12 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
+        'priyojon' => 'Priyojon',
+        'partner-offer-details' => 'PartnerOfferDetail',
+        'lms-about-banner' => 'LmsAboutBannerImage',
+        'about-page-left' => 'AboutPageLeftImg',
+        'about-page-right' => 'AboutPageRightImg',
         'ecareer-portal' => 'EcareerPortal',
         'ecareer-portal-item' => 'EcareerPortalItem'
-    ]
+    ],
 ];

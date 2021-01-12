@@ -35,10 +35,12 @@ class EcareerController extends Controller
      * @var [type]
      */
     private $ecarrerService;
-    protected $imageFileViewerService;
+    private $imageFileViewerService;
 
-    public function __construct(EcareerService $ecarrerService, ImageFileViewerService $imageFileViewerService)
-    {
+    public function __construct(
+        EcareerService $ecarrerService,
+        ImageFileViewerService  $imageFileViewerService
+    ) {
         $this->ecarrerService = $ecarrerService;
         $this->imageFileViewerService = $imageFileViewerService;
     }
@@ -133,7 +135,6 @@ class EcareerController extends Controller
      */
     public function lifeAtBanglalink()
     {
-
         $data = [];
 
         //seo data
@@ -328,6 +329,7 @@ class EcareerController extends Controller
         return response()->success($data, 'Data Found!');
     }
 
+
     /**
      * private function for life at banglalink data manupulation
      * @return [type] [description]
@@ -370,9 +372,7 @@ class EcareerController extends Controller
      */
     public function getEcarrerVacancy()
     {
-
         try {
-
             $data = [];
 
             //seo data
@@ -380,13 +380,14 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $data['seo_data'] = array_merge($data['seo_data'], $this->ecarrerService->getPortalImageData($seoData));
 
             $data['we_hire'] = $this->ecarrerService->getVacancyHire();
             $data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
@@ -406,7 +407,6 @@ class EcareerController extends Controller
      */
     public function getEcarrerPrograms()
     {
-
         try {
 
             $data = [];
@@ -416,13 +416,14 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $data['seo_data'] = array_merge($data['seo_data'], $this->ecarrerService->getPortalImageData($seoData));
 
             $ecarrer_sap = $this->ecarrerService->getProgramsSap();
             $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
