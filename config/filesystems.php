@@ -202,7 +202,17 @@ return [
             'exact_path_mobile' => 'banner_image_mobile',
             'model-key' => 'business-internet',
             'model' => 'BusinessInternet'
+        ],
+        'CorpCrStrategyDetailsComponent' => [
+            'image_name_en' => 'img_name_en',
+            'image_name_bn' => 'img_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-cr-strategy-details-component',
+            'model' => 'Component',
+            'image_type' => 'body-image'
         ]
+
     ],
 
     'modelKeyList' => [
@@ -221,5 +231,6 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
+        'corp-cr-strategy-details-component' => 'CorpCrStrategyDetailsComponent',
     ]
 ];
