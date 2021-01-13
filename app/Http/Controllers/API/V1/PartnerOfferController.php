@@ -9,6 +9,7 @@ use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
+use App\Services\ImageFileViewerService;
 use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -19,13 +20,21 @@ use App\Models\Product;
 use DB;
 use Carbon\Carbon;
 
-class PartnerOfferController extends Controller {
+class PartnerOfferController extends Controller
+{
+
+    /**
+     * @var $imageFileViewerService
+     */
+    private $imageFileViewerService;
 
     use FileTrait;
 
     protected $response = [];
 
-    public function __construct() {
+    public function __construct(ImageFileViewerService $imageFileViewerService)
+    {
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->response = [
             'status' => 200,
             'success' => true,
@@ -113,12 +122,11 @@ class PartnerOfferController extends Controller {
                 $data['area_en'] = $productDetail->area_en;
                 $data['area_bn'] = $productDetail->area_bn;
 
-                $banner = "";
-                if($productDetail->partner_offer_details->banner_image_url != ""){
-                   $banner = config('filesystems.image_host_url') . $productDetail->partner_offer_details->banner_image_url;
-                }
-                $data['banner_image_url'] = $banner;
+                $keyData = config('filesystems.moduleType.PartnerOfferDetail');
+                $data = array_merge($data, $this->imageFileViewerService->prepareImageData($productDetail->partner_offer_details, $keyData));
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;
+                $data['banner_alt_text_bn'] = $productDetail->partner_offer_details->banner_alt_text_bn;
+
                 $data['apple_app_store_link'] = $productDetail->partner->apple_app_store_link;
                 $data['google_play_link'] = $productDetail->partner->google_play_link;
                 $data['company_website'] = $productDetail->partner->company_website;
