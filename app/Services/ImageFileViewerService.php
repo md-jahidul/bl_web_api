@@ -24,7 +24,6 @@ class ImageFileViewerService extends ApiBaseService
         $data = config('filesystems.moduleType.' . $modelKey);
         $modelName = $data['model'];
         $model = str_replace('.', '', "App\Models\.$modelName");
-
         $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
         return ($bannerType == "banner-web") ? $this->view($offers->{$data['exact_path_web']}) : $this->view($offers->{$data['exact_path_mobile']});
     }
@@ -49,16 +48,23 @@ class ImageFileViewerService extends ApiBaseService
         $model = $keyData['model-key'];
         $imgData = [];
 
-        if (!empty($value[$keyData['exact_path_web']])) {
-            $bannerType = "banner-web";
-            $imgData['banner_image_web_en'] = "$bannerType/$model/$fileNameEn";
-            $imgData['banner_image_web_bn'] = "$bannerType/$model/$fileNameBn";
-        }
-
-        if (!empty($value[$keyData['exact_path_mobile']])) {
-            $bannerType = "banner-mobile";
-            $imgData['banner_image_mobile_en'] = "$bannerType/$model/$fileNameEn";
-            $imgData['banner_image_mobile_bn'] = "$bannerType/$model/$fileNameBn";
+        if (isset($keyData['image_type']) && $keyData['image_type'] == "body-image") {
+            if (!empty($value[$keyData['exact_path_web']])) {
+                $bannerType = "images";
+                $imgData['image_url_en'] = "$bannerType/$model/$fileNameEn";
+                $imgData['image_url_bn'] = "$bannerType/$model/$fileNameBn";
+            }
+        } else {
+            if (!empty($value[$keyData['exact_path_web']])) {
+                $imageType = "banner-web";
+                $imgData['banner_image_web_en'] = "$imageType/$model/$fileNameEn";
+                $imgData['banner_image_web_bn'] = "$imageType/$model/$fileNameBn";
+            }
+            if (!empty($value[$keyData['exact_path_mobile']])) {
+                $bannerType = "banner-mobile";
+                $imgData['banner_image_mobile_en'] = "$bannerType/$model/$fileNameEn";
+                $imgData['banner_image_mobile_bn'] = "$bannerType/$model/$fileNameBn";
+            }
         }
 
         return $imgData;
