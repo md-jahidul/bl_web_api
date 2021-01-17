@@ -28,7 +28,9 @@ class AboutUsResource extends JsonResource
             'alt_text'                => $this->alt_text ?? null,
             'schema_markup'           => $this->schema_markup ?? null,
             'page_header'             => $this->page_header ?? null,
+            'page_header_bn'             => $this->page_header_bn ?? null,
             'url_slug'                => $this->url_slug ?? null,
+            'url_slug_bn'                => $this->url_slug_bn ?? null,
             'content_image'           => env('IMAGE_HOST_URL') . $this->content_image ?? null
         ];
 
