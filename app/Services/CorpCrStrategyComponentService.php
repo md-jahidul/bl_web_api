@@ -65,15 +65,10 @@ class CorpCrStrategyComponentService extends ApiBaseService
         $components = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
 
         $collection = collect($components['components'])->map(function ($name, $key) {
-
             $multiImage = collect($name->multiple_attributes)->map(function ($data) {
-
                 $keyData = config('filesystems.moduleType.CorpCrStrategyDetailsComponent');
-
+                dd($data);
                 $fileViewer = $this->fileViewerService->prepareImageData($data, $keyData);
-
-//                dd($fileViewer);
-
                 return [
                     "alt_text_bn" => $data['alt_text_en'],
                     "alt_text_en" => $data['alt_text_bn'],
@@ -81,7 +76,6 @@ class CorpCrStrategyComponentService extends ApiBaseService
                     "image_url_bn" => $fileViewer['image_url_bn'],
                 ];
             });
-
 
             return [
                 "id" => $name->id,

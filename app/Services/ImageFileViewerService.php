@@ -5,12 +5,8 @@ namespace App\Services;
 use App\Http\Resources\AboutPriyojonResource;
 use App\Repositories\AboutPageRepository;
 use App\Repositories\AboutPriyojonRepository;
-use App\Repositories\LmsAboutBannerRepository;
-use App\Repositories\LmsBenefitRepository;
-use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
-use Illuminate\Database\QueryException;
-use mysql_xdevapi\Exception;
+use Illuminate\Support\Facades\DB;
 
 
 class ImageFileViewerService extends ApiBaseService
@@ -24,14 +20,30 @@ class ImageFileViewerService extends ApiBaseService
         $data = config('filesystems.moduleType.' . $modelKey);
         $modelName = $data['model'];
         $model = str_replace('.', '', "App\Models\.$modelName");
+
+
+        if (isset($data['component_page_type'])){
+            $dd = DB::table('components')
+//            $dd = $model::
+            ->where('page_type', $data['component_page_type'])
+//                ->where('section_details_id', 13)
+                ->whereJsonContains('multiple_attributes', ['img_name_bn' => 'image-name-bangla-2'])
+                ->first();
+            dd($dd);
+
+            dd($fileName);
+            $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
+
+        }
+
         $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
         return ($bannerType == "banner-web") ? $this->view($offers->{$data['exact_path_web']}) : $this->view($offers->{$data['exact_path_mobile']});
     }
 
     public function getBannerImage($bannerType, $modelName, $fileName)
     {
+        return $this->imageViewer($bannerType, $modelName, $fileName);
         try {
-            return $this->imageViewer($bannerType, $modelName, $fileName);
         } catch (\Exception $exception){
             return abort(404);
         }

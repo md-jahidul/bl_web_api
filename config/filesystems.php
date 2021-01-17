@@ -210,6 +210,7 @@ return [
             'exact_path_mobile' => null,
             'model-key' => 'corp-cr-strategy-details-component',
             'model' => 'Component',
+            'component_page_type' => 'cr_strategy_component_details',
             'image_type' => 'body-image'
         ],
         'Priyojon' => [
