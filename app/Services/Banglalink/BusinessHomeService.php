@@ -182,9 +182,13 @@ class BusinessHomeService {
 
         foreach ($packageData as $package) {
             $imgData = $this->imageFileViewerService->prepareImageData($package, $packageKeyData);
-            $data[$count]['slug'] = 'packages';
-            unset($package->card_banner_web, $package->card_banner_mobile, $package->card_banner_name_en, $package->card_banner_name_bn);
             $data[$count] = array_merge($package->toArray(), $imgData);
+            $data[$count]['slug'] = 'packages';
+            $data[$count]['banner_alt_text'] = $package->card_banner_alt_text;
+            $data[$count]['banner_alt_text_bn'] = $package->card_banner_alt_text_bn;
+            unset($data[$count]['card_banner_web'], $data[$count]['card_banner_mobile'],
+            $data[$count]['card_banner_name_en'], $data[$count]['card_banner_name_bn'],
+            $data[$count]['card_banner_alt_text'],$data[$count]['card_banner_alt_text_bn']);
 
             $count++;
         }
@@ -238,9 +242,39 @@ class BusinessHomeService {
      * Get business categories
      * @return Response
      */
-    public function getCategories() {
-        $response = $this->businessCatRepo->getCategoryList();
-        return $this->responseFormatter->sendSuccessResponse($response, 'Business Category List');
+    public function getCategories()
+    {
+        $categories = $this->businessCatRepo->getCategoryList();
+        $catKeyData = config('filesystems.moduleType.BusinessCategory');
+
+        $data = [];
+        $count = 0;
+
+        $slugs = array(
+            1 => 'packages',
+            2 => 'internet',
+            3 => 'business-solution',
+            4 => 'iot',
+            5 => 'others',
+        );
+        foreach ($categories as $v) {
+            $data[$count]['id'] = $v->id;
+            $data[$count]['slug'] = $slugs[$v->id];
+            $data[$count]['name_en'] = $v->name;
+            $data[$count]['name_bn'] = $v->name_bn;
+            $data[$count]['banner_alt_text'] = $v->alt_text;
+            $data[$count]['banner_alt_text_bn'] = $v->alt_text_bn;
+            $imgData = $this->imageFileViewerService->prepareImageData($v, $catKeyData);
+            $data[$count] = array_merge($data[$count], $imgData);
+            $data[$count]['url_slug'] = $v->url_slug;
+            $data[$count]['url_slug_bn'] = $v->url_slug_bn;
+            $data[$count]['page_header'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header;
+            $data[$count]['schema_markup'] = $v->schema_markup;
+            $count++;
+        }
+        
+        return $this->responseFormatter->sendSuccessResponse($data, 'Business Category List');
     }
 
 }
