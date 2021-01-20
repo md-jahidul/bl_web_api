@@ -237,6 +237,7 @@ class EcareerService {
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -289,6 +290,7 @@ class EcareerService {
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -341,6 +343,7 @@ class EcareerService {
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 

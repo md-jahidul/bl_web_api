@@ -54,20 +54,25 @@ class EcareerController extends Controller
 
         try {
             $data = [];
+            $keyData = config('filesystems.moduleType.EcareerPortal');
+
             // Top banner menu
             $top_banners = $this->ecarrerService->ecarrerSectionsList('life_at_bl_topbanner');
             if (!empty($top_banners)) {
                 foreach ($top_banners as $key => $value) {
+                    $imgData = $this->imageFileViewerService->prepareImageData($value, $keyData);
                     $sub_data_banner = [];
+                    $sub_data_banner = array_merge($sub_data_banner, $imgData);
                     $sub_data_banner['title_en'] = $value->title_en;
                     $sub_data_banner['title_bn'] = $value->title_bn;
                     $sub_data_banner['slug'] = $value->slug;
                     $sub_data_banner['url_slug'] = $value->route_slug;
                     $sub_data_banner['url_slug_bn'] = $value->route_slug_bn;
-
-
-                    $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
+                    $sub_data_banner['page_header'] = $value->page_header;
+                    $sub_data_banner['page_header_bn'] = $value->page_header_bn;
+                    $sub_data_banner['schema_markup'] = $value->schema_markup;
                     $sub_data_banner['alt_text'] = $value->alt_text;
+                    $sub_data_banner['alt_text_bn'] = $value->alt_text;
 
                     $data['top_menu_banner'][] = $sub_data_banner;
                 }
@@ -378,6 +383,7 @@ class EcareerController extends Controller
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -413,6 +419,7 @@ class EcareerController extends Controller
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
