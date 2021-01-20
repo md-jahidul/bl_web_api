@@ -22,15 +22,18 @@ class CorpCrStrategyComponentRepository extends BaseRepository
             )
             ->with(['components' => function ($q) {
                 $q->orderBy('component_order', 'ASC')
+                    ->with('componentMultiData')
                     ->where('page_type', self::PAGE_TYPE)
                     ->select(
                         'id', 'section_details_id', 'page_type',
                         'component_type', 'title_en', 'title_bn',
                         'editor_en', 'editor_bn', 'extra_title_bn',
                         'extra_title_en', 'multiple_attributes',
-                        'video', 'image', 'alt_text', 'other_attributes'
+                        'video', 'image', 'alt_text', 'alt_text_bn',
+                        'image_name_en','image_name_bn', 'other_attributes'
                     )
                     ->where('status', 1);
+
             }])
             ->first();
     }

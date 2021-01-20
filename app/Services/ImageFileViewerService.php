@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Resources\AboutPriyojonResource;
-use App\Repositories\AboutPageRepository;
 use App\Repositories\AboutPriyojonRepository;
 use App\Traits\FileTrait;
 use Illuminate\Support\Facades\DB;
@@ -17,33 +16,30 @@ class ImageFileViewerService extends ApiBaseService
     {
         $modelKey = config('filesystems.modelKeyList.' . $modelKey);
         $fileName = explode('.', $fileName)[0];
+
         $data = config('filesystems.moduleType.' . $modelKey);
         $modelName = $data['model'];
         $model = str_replace('.', '', "App\Models\.$modelName");
 
-
-        if (isset($data['component_page_type'])){
-            $dd = DB::table('components')
-//            $dd = $model::
-            ->where('page_type', $data['component_page_type'])
-//                ->where('section_details_id', 13)
-                ->whereJsonContains('multiple_attributes', ['img_name_bn' => 'image-name-bangla-2'])
-                ->first();
-            dd($dd);
-
-            dd($fileName);
-            $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
-
+        // Body Section Image
+        if (isset($data['image_type']) && $data['image_type'] == 'body-image'){
+            $offers = $model::where($data['image_name_en'], $fileName)
+                ->orWhere($data['image_name_bn'], $fileName);
+            if (isset($data['component_page_type']))
+                $offers = $offers->where('page_type', $data['component_page_type']);
+            $imgBasePath = $offers->first();
+            return $this->view($imgBasePath->{$data['exact_path_web']});
         }
 
+        // Banner Section Image
         $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
         return ($bannerType == "banner-web") ? $this->view($offers->{$data['exact_path_web']}) : $this->view($offers->{$data['exact_path_mobile']});
     }
 
     public function getBannerImage($bannerType, $modelName, $fileName)
     {
-        return $this->imageViewer($bannerType, $modelName, $fileName);
         try {
+            return $this->imageViewer($bannerType, $modelName, $fileName);
         } catch (\Exception $exception){
             return abort(404);
         }
@@ -57,19 +53,25 @@ class ImageFileViewerService extends ApiBaseService
         $fileNameEn = $value[$keyData['image_name_en']] . $extension;
         $fileNameBn = $value[$keyData['image_name_bn']] . $extension;
 
+//        dd($value[$keyData['image_name_en']]);
+//        dd($value[$keyData['exact_path_web']]);
+
         $model = $keyData['model-key'];
         $imgData = [];
 
+
         if (isset($keyData['image_type']) && $keyData['image_type'] == "body-image") {
+
             if (!empty($value[$keyData['exact_path_web']])) {
                 $bannerType = "images";
-                $imgData['image_url_en'] = "$bannerType/$model/$fileNameEn";
+                $imgData['image_url_en'] = ($value[$keyData['image_name_en']]) ? "$bannerType/$model/$fileNameEn" : '/uploads/' . $value[$keyData['exact_path_web']];
                 $imgData['image_url_bn'] = "$bannerType/$model/$fileNameBn";
             }
         } else {
             if (!empty($value[$keyData['exact_path_web']])) {
                 $imageType = "banner-web";
-                $imgData['banner_image_web_en'] = "$imageType/$model/$fileNameEn";
+                $imgData['banner_image_web_en'] = ($value[$keyData['image_name_en']]) ? "$imageType/$model/$fileNameEn" : '/uploads/' . $value[$keyData['exact_path_web']];
+//                $imgData['banner_image_web_en'] = "$imageType/$model/$fileNameEn";
                 $imgData['banner_image_web_bn'] = "$imageType/$model/$fileNameBn";
             }
             if (!empty($value[$keyData['exact_path_mobile']])) {

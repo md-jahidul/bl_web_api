@@ -12,13 +12,16 @@ class CorporateCrStrategySectionRepository extends BaseRepository
     public function getSections()
     {
         return $this->model->select('id', 'section_type', 'title_en', 'title_bn')
+            ->where('status', 1)
             ->with(['components' => function($q){
-                $q->select('id',
+                $q->where('status', 1)
+                   ->select('id',
                     'section_id', 'title_en',
                     'title_bn', 'details_en',
-                    'details_en',
-                    'other_attributes', 'url_slug_en',
-                    'url_slug_bn',
+                    'details_en', 'image_name_en',
+                    'image_base_url',
+                    'image_name_bn', 'other_attributes',
+                    'url_slug_en', 'url_slug_bn',
                     'page_header', 'schema_markup');
                 }])
             ->orderBy('display_order', 'ASC')
