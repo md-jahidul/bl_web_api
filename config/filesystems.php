@@ -125,9 +125,10 @@ return [
             'image_name_en' => 'product_img_en',
             'image_name_bn' => 'product_img_bn',
             'exact_path_web' => 'product_img_url',
-            'exact_path_mobile' => 'product_img_url',
+            'exact_path_mobile' => null,
             'model-key' => 'app-service-product',
-            'model' => 'AppServiceProduct'
+            'model' => 'AppServiceProduct',
+            'image_type' => 'body-image'
         ],
         'AppServiceProductDetail' => [
             'image_name_en' => 'banner_name',

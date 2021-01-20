@@ -117,10 +117,12 @@ class BusinessOthersService {
         $imgData = $this->imageFileViewerService->prepareImageData($service, $serviceKeyData);
 
         $service = array_merge($service->toArray(), $imgData);
-        unset($service['details_banner_web'],
-              $service['details_banner_name'],
-              $service['details_banner_name_bn'],
-              $service['details_banner_mobile']);
+        $service['banner_alt_text'] = $service['details_alt_text'];
+        $service['banner_alt_text_bn'] = $service['details_alt_text_bn'];
+
+        unset($service['details_banner_web'], $service['details_banner_name'],
+        $service['details_banner_name_bn'], $service['details_banner_mobile'],
+        $service['details_alt_text'], $service['details_alt_text_bn']);
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($service['id']);

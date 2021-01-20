@@ -115,7 +115,7 @@ class AppAndService extends ApiBaseService
 
         foreach ($products as $product) {
             $imgData = $this->imageFileViewerService->prepareImageData($product, $keyData);
-            unset($product->product_img_url);
+            unset($product->product_img_url, $product->product_img_en, $product->product_img_bn);
             $product = array_merge($product->toArray(), $imgData);
 
             $productList[] = (object) $product;
