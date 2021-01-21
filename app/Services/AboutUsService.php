@@ -43,6 +43,11 @@ class AboutUsService extends ApiBaseService
      */
     private $sliderImageRepository;
 
+    /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
+
 
     /**
      * AboutUsService constructor.
@@ -51,19 +56,22 @@ class AboutUsService extends ApiBaseService
      * @param AboutUsEcareerRepository $aboutUsEcareerRepository
      * @param SliderRepository $sliderRepository
      * @param SliderImageRepository $sliderImageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         AboutUsRepository $aboutUsRepository,
         ManagementRepository $managementRepository,
         AboutUsEcareerRepository $aboutUsEcareerRepository,
         SliderRepository $sliderRepository,
-        SliderImageRepository $sliderImageRepository
+        SliderImageRepository $sliderImageRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->aboutUsRepository = $aboutUsRepository;
         $this->managementRepository = $managementRepository;
         $this->aboutUsEcareerRepository = $aboutUsEcareerRepository;
         $this->sliderRepository = $sliderRepository;
         $this->sliderImageRepository = $sliderImageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
 
@@ -76,8 +84,22 @@ class AboutUsService extends ApiBaseService
             $sliderData = $this->sliderRepository->getSliderInfo('about_media');
             $sliderImage = $this->sliderImageRepository->aboutUsSliders($sliderData->id);
             $sliderImage = SliderImageResource::collection($sliderImage);
-            $data = $this->aboutUsRepository->getAboutBanglalink();
-            $formatted_data = AboutUsResource::collection($data);
+
+            $abouts = $this->aboutUsRepository->getAboutBanglalink();
+            $data = [];
+
+            foreach ($abouts as $key => $about) {
+                $bannerKeyData = config('filesystems.moduleType.AboutUsBanglalink');
+                $contentKeyData = config('filesystems.moduleType.AboutUsBanglalinkContent');
+
+                $bannerImgData = $this->imageFileViewerService->prepareImageData($about, $bannerKeyData);
+                $contentImgData = $this->imageFileViewerService->prepareImageData($about, $contentKeyData);
+
+               $data[$key] = array_merge($about->toArray(), $bannerImgData);
+               $data[$key] = (object) array_merge($data[$key], $contentImgData);
+            }
+
+            $formatted_data = AboutUsResource::collection(collect($data));
             $component['banner'] = $formatted_data;
             $component['slider'] = [ 'slider_data' => $sliderData, 'slider_images' => $sliderImage];
             return $this->sendSuccessResponse($component, 'About Banglalink', [], HttpStatusCode::SUCCESS);

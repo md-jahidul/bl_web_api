@@ -299,10 +299,10 @@ class ProductService extends ApiBaseService
             $keyData = config('filesystems.moduleType.ProductDetails');
             $imgData = $this->imageFileViewerService->prepareImageData($productDetail->product_details, $keyData);
 
-            $productDetail->product_details->banner_name_web_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;;
-            $productDetail->product_details->banner_name_web_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;;
-            $productDetail->product_details->banner_name_mobile_en = isset($imgData['banner_image_mobile_en']) ? $imgData['banner_image_mobile_en'] : null;;
-            $productDetail->product_details->banner_name_mobile_bn = isset($imgData['banner_image_mobile_bn']) ? $imgData['banner_image_mobile_bn'] : null;;
+            $productDetail->product_details->banner_image_web_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;;
+            $productDetail->product_details->banner_image_web_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;;
+            $productDetail->product_details->banner_image_mobile_en = isset($imgData['banner_image_mobile_en']) ? $imgData['banner_image_mobile_en'] : null;;
+            $productDetail->product_details->banner_image_mobile_bn = isset($imgData['banner_image_mobile_bn']) ? $imgData['banner_image_mobile_bn'] : null;;
 
             unset($productDetail->product_details->banner_image_url, $productDetail->product_details->banner_image_mobile);
 

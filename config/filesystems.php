@@ -276,6 +276,23 @@ return [
             'exact_path_mobile' => '',
             'model-key' => 'ecareer-portal-item',
             'model' => 'EcarrerPortalItem'
+        ],
+        'AboutUsBanglalink' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model-key' => 'about-us',
+            'model' => 'AboutUsBanglalink'
+        ],
+        'AboutUsBanglalinkContent' => [
+            'image_name_en' => 'content_img_name',
+            'image_name_bn' => 'content_img_name_bn',
+            'exact_path_web' => 'content_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-us-content',
+            'model' => 'AboutUsBanglalink',
+            'image_type' => 'body-image'
         ]
 
     ],
@@ -304,6 +321,8 @@ return [
         'about-page-left' => 'AboutPageLeftImg',
         'about-page-right' => 'AboutPageRightImg',
         'ecareer-portal' => 'EcareerPortal',
-        'ecareer-portal-item' => 'EcareerPortalItem'
+        'ecareer-portal-item' => 'EcareerPortalItem',
+        'about-us' => 'AboutUsBanglalink',
+        'about-us-content' => 'AboutUsBanglalinkContent'
     ]
 ];
