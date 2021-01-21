@@ -85,6 +85,14 @@ return [
             'model-key' => 'offer-category',
             'model' => 'OfferCategory',
         ],
+        'ProductDetails' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model-key' => 'product-details',
+            'model' => 'ProductDetail',
+        ],
 
         /* Roaming Module */
         'RoamingCategory' => [
@@ -274,6 +282,7 @@ return [
 
     'modelKeyList' => [
         'offer-category' => 'OfferCategory',
+        'product-details' => 'ProductDetails',
         'roaming-category' => 'RoamingCategory',
         'roaming-other-offer' => 'RoamingOtherOffer',
         'roaming-info-tips' => 'RoamingInfo',
