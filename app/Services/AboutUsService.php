@@ -82,30 +82,61 @@ class AboutUsService extends ApiBaseService
     {
         try {
             $sliderData = $this->sliderRepository->getSliderInfo('about_media');
-            $sliderImage = $this->sliderImageRepository->aboutUsSliders($sliderData->id);
-            $sliderImage = SliderImageResource::collection($sliderImage);
+            $sliderImages = $this->getSliderImagesFormattedData($sliderData->id);
+            $formatted_data = $this->getAboutBanglalinkFormattedData();
 
-            $abouts = $this->aboutUsRepository->getAboutBanglalink();
-            $data = [];
-
-            foreach ($abouts as $key => $about) {
-                $bannerKeyData = config('filesystems.moduleType.AboutUsBanglalink');
-                $contentKeyData = config('filesystems.moduleType.AboutUsBanglalinkContent');
-
-                $bannerImgData = $this->imageFileViewerService->prepareImageData($about, $bannerKeyData);
-                $contentImgData = $this->imageFileViewerService->prepareImageData($about, $contentKeyData);
-
-               $data[$key] = array_merge($about->toArray(), $bannerImgData);
-               $data[$key] = (object) array_merge($data[$key], $contentImgData);
-            }
-
-            $formatted_data = AboutUsResource::collection(collect($data));
             $component['banner'] = $formatted_data;
-            $component['slider'] = [ 'slider_data' => $sliderData, 'slider_images' => $sliderImage];
+            $component['slider'] = [ 'slider_data' => $sliderData, 'slider_images' => $sliderImages];
+
             return $this->sendSuccessResponse($component, 'About Banglalink', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getAboutBanglalinkFormattedData()
+    {
+        $abouts = $this->aboutUsRepository->getAboutBanglalink();
+
+        $data = [];
+
+        foreach ($abouts as $key => $about) {
+            $bannerKeyData = config('filesystems.moduleType.AboutUsBanglalink');
+            $contentKeyData = config('filesystems.moduleType.AboutUsBanglalinkContent');
+
+            $bannerImgData = $this->imageFileViewerService->prepareImageData($about, $bannerKeyData);
+            $contentImgData = $this->imageFileViewerService->prepareImageData($about, $contentKeyData);
+
+            $data[$key] = array_merge($about->toArray(), $bannerImgData);
+            $data[$key] = (object) array_merge($data[$key], $contentImgData);
+        }
+
+        return AboutUsResource::collection(collect($data));
+    }
+
+    /**
+     * @param $sliderInfoId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getSliderImagesFormattedData($sliderInfoId)
+    {
+        $sliderImages = $this->sliderImageRepository->aboutUsSliders($sliderInfoId);
+
+        $sliderKeyData = config('filesystems.moduleType.AlSliderImage');
+
+        $data = [];
+
+        foreach ($sliderImages as $key => $slider) {
+
+            $imgData = $this->imageFileViewerService->prepareImageData($slider, $sliderKeyData);
+
+            $data[$key] = (object) array_merge($slider->toArray(), $imgData);
+        }
+
+        return SliderImageResource::collection(collect($data));
     }
 
     /**

@@ -293,8 +293,15 @@ return [
             'model-key' => 'about-us-content',
             'model' => 'AboutUsBanglalink',
             'image_type' => 'body-image'
-        ]
-
+        ],
+        'AlSliderImage' => [
+            'image_name_en' => 'image_name',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => 'mobile_view_img',
+            'model-key' => 'al-slider',
+            'model' => 'AlSliderImage',
+        ],
     ],
 
     'modelKeyList' => [
@@ -323,6 +330,7 @@ return [
         'ecareer-portal' => 'EcareerPortal',
         'ecareer-portal-item' => 'EcareerPortalItem',
         'about-us' => 'AboutUsBanglalink',
-        'about-us-content' => 'AboutUsBanglalinkContent'
+        'about-us-content' => 'AboutUsBanglalinkContent',
+        'al-slider' => 'AlSliderImage'
     ]
 ];

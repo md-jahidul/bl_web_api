@@ -20,9 +20,12 @@ class SliderImageResource extends JsonResource
             'id'                  => $this->id ?? null,
             'title_en'            => $this->title_en ?? null,
             'title_bn'            => $this->title_bn ?? null,
-            'image_url'           => env('IMAGE_HOST_URL') . $this->image_url ?? null,
-            'mobile_view_img'     => ($this->mobile_view_img) ? env('IMAGE_HOST_URL') . $this->mobile_view_img : null,
+            'banner_image_web_en'     => $this->banner_image_web_en ?? null,
+            'banner_image_web_bn'     => $this->banner_image_web_bn ?? null,
+            'banner_image_mobile_en'  => $this->banner_image_mobile_en ?? null,
+            'banner_image_mobile_bn'  => $this->banner_image_mobile_bn ?? null,
             'alt_text'            => $this->alt_text ?? null,
+            'alt_text_bn'            => $this->alt_text_bn ?? null,
             'other_attributes'    => $this->other_attributes ?? null,
         ];
     }
