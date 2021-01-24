@@ -302,6 +302,24 @@ return [
             'model-key' => 'al-slider',
             'model' => 'AlSliderImage',
         ],
+        'AboutManagementProfile' => [
+            'image_name_en' => 'profile_img_name',
+            'image_name_bn' => 'profile_img_name_bn',
+            'exact_path_web' => 'profile_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-management-profile',
+            'model' => 'AboutUsManangement',
+            'image_type' => 'body-image'
+        ],
+        'AboutManagementBanner' => [
+            'image_name_en' => 'banner_img_name',
+            'image_name_bn' => 'banner_img_name_bn',
+            'exact_path_web' => 'banner_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-management-modal',
+            'model' => 'AboutUsManangement',
+            'image_type' => 'body-image'
+        ]
     ],
 
     'modelKeyList' => [
@@ -331,6 +349,8 @@ return [
         'ecareer-portal-item' => 'EcareerPortalItem',
         'about-us' => 'AboutUsBanglalink',
         'about-us-content' => 'AboutUsBanglalinkContent',
-        'al-slider' => 'AlSliderImage'
+        'al-slider' => 'AlSliderImage',
+        'about-management-profile' => 'AboutManagementProfile',
+        'about-management-modal' => 'AboutManagementBanner'
     ]
 ];

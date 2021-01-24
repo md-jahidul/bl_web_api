@@ -145,8 +145,25 @@ class AboutUsService extends ApiBaseService
     public function getAboutManagement()
     {
         try {
-            $data = $this->managementRepository->getAboutManagement();
-            $formatted_data = ManagementResource::collection($data);
+            $peoples = $this->managementRepository->getAboutManagement();
+
+            $data = [];
+            $profileKeyData = config('filesystems.moduleType.AboutManagementProfile');
+            $bannerKeyData = config('filesystems.moduleType.AboutManagementBanner');
+
+            foreach ($peoples as $key => $people) {
+                $profileImgData = $this->imageFileViewerService->prepareImageData($people, $profileKeyData);
+                $bannerImgData = $this->imageFileViewerService->prepareImageData($people, $bannerKeyData);
+
+                $imgData['profile_img_url_en'] = $profileImgData['image_url_en'];
+                $imgData['profile_img_url_bn'] = $profileImgData['image_url_bn'];
+                $imgData['banner_img_url_en']  = $bannerImgData['image_url_en'];
+                $imgData['banner_img_url_bn']  = $bannerImgData['image_url_bn'];
+
+                $data[$key] = (object) array_merge($people->toArray(), $imgData);
+            }
+
+            $formatted_data = ManagementResource::collection(collect($data));
             return $this->sendSuccessResponse($formatted_data, 'Banglalink Management', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
