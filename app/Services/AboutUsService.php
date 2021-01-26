@@ -177,11 +177,19 @@ class AboutUsService extends ApiBaseService
     {
         try {
 
-            $data = $this->aboutUsEcareerRepository->getEcareersInfo();
+            $eCareer = $this->aboutUsEcareerRepository->getEcareersInfo();
             $formatted_data = [];
+            $keyData = config('filesystems.moduleType.EcareerPortalItem');
 
-            if( $data != null){
-                $arr_data = AboutUsEcareerResource::make($data);
+            foreach ($eCareer->aboutUsEcareerItems as $key => $item) {
+                $imgData = $this->imageFileViewerService->prepareImageData($item, $keyData);
+
+                $eCareer->aboutUsEcareerItems[$key]->image_url_en = $imgData['image_url_en'];
+                $eCareer->aboutUsEcareerItems[$key]->image_url_bn = $imgData['image_url_bn'];
+            }
+
+            if( $eCareer != null){
+                $arr_data = AboutUsEcareerResource::make($eCareer);
                 $formatted_data = json_decode (json_encode ($arr_data), FALSE);
             }
 

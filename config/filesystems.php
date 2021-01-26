@@ -273,9 +273,10 @@ return [
             'image_name_en' => 'image_name',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image',
-            'exact_path_mobile' => '',
+            'exact_path_mobile' => null,
             'model-key' => 'ecareer-portal-item',
-            'model' => 'EcarrerPortalItem'
+            'model' => 'EcarrerPortalItem',
+            'image_type' => 'body-image'
         ],
         'AboutUsBanglalink' => [
             'image_name_en' => 'banner_name',
