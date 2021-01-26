@@ -25,22 +25,31 @@ class MediaLandingPageService extends ApiBaseService
     private $mediaBannerImageRepository;
 
     /**
+     * @var ImageFileViewerService
+     *
+     */
+    private $imageFileViewerService;
+
+    /**
      * DigitalServicesService constructor.
      * @param MediaLandingPageRepository $mediaLandingPageRepository
      * @param MediaTvcVideoRepository $mediaTvcVideoRepository
      * @param MediaPressNewsEventRepository $mediaPressNewsEventRepository
      * @param MediaBannerImageRepository $mediaBannerImageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         MediaLandingPageRepository $mediaLandingPageRepository,
         MediaTvcVideoRepository $mediaTvcVideoRepository,
         MediaPressNewsEventRepository $mediaPressNewsEventRepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaTvcVideoRepository = $mediaTvcVideoRepository;
         $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     public function getMediaFeatureData($componentsData, $type = null)
@@ -53,7 +62,9 @@ class MediaLandingPageService extends ApiBaseService
                 $data['sliding_speed'] = $componentsData->sliding_speed;
 
                 $pressNewsEvent = $this->mediaPressNewsEventRepository->getPressNewsEvent($type, $id);
+
                 if ($pressNewsEvent) {
+                   $pressNewsEvent = $this->getPressNewsImgData($pressNewsEvent);
                     $data['data'][] = $pressNewsEvent;
                 }
             }
@@ -66,6 +77,25 @@ class MediaLandingPageService extends ApiBaseService
             }
         }
         return $data;
+    }
+
+    public function getPressNewsImgData($pressNewsEvent)
+    {
+        $thumbKeyData = config('filesystems.moduleType.MediaPressNewsEventThumbnail');
+        $detailsKeyData = config('filesystems.moduleType.MediaPressNewsEventDetails');
+
+        $thumbnailData = $this->imageFileViewerService->prepareImageData($pressNewsEvent, $thumbKeyData);
+        $detailsImgData = $this->imageFileViewerService->prepareImageData($pressNewsEvent, $detailsKeyData);
+
+        $pressNewsEvent->thumbnail_image_en = $thumbnailData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->thumbnail_image;
+        $pressNewsEvent->thumbnail_image_bn = $thumbnailData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->thumbnail_image;
+        $pressNewsEvent->details_image_en = $detailsImgData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->details_image;
+        $pressNewsEvent->details_image_bn = $detailsImgData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->details_image;
+
+        unset($pressNewsEvent->details_image, $pressNewsEvent->thumbnail_image, $pressNewsEvent->details_image_name_en,
+            $pressNewsEvent->details_image_name_bn, $pressNewsEvent->thumbnail_image_name_en, $pressNewsEvent->thumbnail_image_name_bn);
+
+        return $pressNewsEvent;
     }
 
     public function factoryComponent($componentsData) {
@@ -91,9 +121,16 @@ class MediaLandingPageService extends ApiBaseService
         foreach ($components as $items){
             $allComponents[] = $this->factoryComponent($items);
         }
+
+        $bannerImage = $this->mediaBannerImageRepository->bannerImage('landing_page');
+        $bannerKey = config('filesystems.moduleType.MediaBannerImage');
+        $imgData = $this->imageFileViewerService->prepareImageData($bannerImage, $bannerKey);
+        $bannerImage = array_merge($bannerImage->toArray(), $imgData);
+        unset($bannerImage['banner_image_url'], $bannerImage['banner_mobile_view']);
+
         $data = [
             'components' => isset($allComponents) ? $allComponents : [],
-            'banner_image' => $this->mediaBannerImageRepository->bannerImage('landing_page')
+            'banner_image' => (object) $bannerImage
         ];
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
     }
