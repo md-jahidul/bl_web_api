@@ -22,29 +22,58 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var MediaBannerImageRepository
      */
     private $mediaBannerImageRepository;
+    /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
+    /**
+     * @var MediaLandingPageService
+     */
+    private $mediaLandingPageService;
 
     /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
      * @param MediaBannerImageRepository $mediaBannerImageRepository
+     * @param ImageFileViewerService $imageFileViewerService
+     * @param MediaLandingPageService $mediaLandingPageService
      */
     public function __construct(
         MediaPressNewsEventRepository $mediaPNERepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ImageFileViewerService $imageFileViewerService,
+        MediaLandingPageService $mediaLandingPageService
     ) {
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
+        $this->mediaLandingPageService = $mediaLandingPageService;
     }
 
     public function mediaPressEventData($moduleType)
     {
-        $pressRelease = $this->mediaPNERepository->getPressNewsEvent($moduleType);
+        $pressReleases = $this->mediaPNERepository->getPressNewsEvent($moduleType);
+
+        foreach ($pressReleases as $key => $pressRelease) {
+            $pressReleases[$key] = $this->mediaLandingPageService->getPressNewsImgData($pressRelease);
+        }
+
         $bannerImage = $this->mediaBannerImageRepository->bannerImage($moduleType);
+
+        $bannerKey = config('filesystems.moduleType.MediaBannerImage');
+
+        if($bannerImage) {
+            $imgData = $this->imageFileViewerService->prepareImageData($bannerImage, $bannerKey);
+            $bannerImage = array_merge($bannerImage->toArray(), $imgData);
+            unset($bannerImage['banner_image_url'], $bannerImage['banner_mobile_view']);
+        }
+
         $message = ucfirst(str_replace('_', ' ', $moduleType));
         $data = [
-            "body_section" => $pressRelease,
-            'banner_image' => $bannerImage
+            "body_section" => $pressReleases,
+            'banner_image' =>  $bannerImage
         ];
+
         return $this->sendSuccessResponse($data, "$message Data");
     }
 

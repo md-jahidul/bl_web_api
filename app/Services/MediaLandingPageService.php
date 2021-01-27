@@ -25,22 +25,31 @@ class MediaLandingPageService extends ApiBaseService
     private $mediaBannerImageRepository;
 
     /**
+     * @var ImageFileViewerService
+     *
+     */
+    private $imageFileViewerService;
+
+    /**
      * DigitalServicesService constructor.
      * @param MediaLandingPageRepository $mediaLandingPageRepository
      * @param MediaTvcVideoRepository $mediaTvcVideoRepository
      * @param MediaPressNewsEventRepository $mediaPressNewsEventRepository
      * @param MediaBannerImageRepository $mediaBannerImageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         MediaLandingPageRepository $mediaLandingPageRepository,
         MediaTvcVideoRepository $mediaTvcVideoRepository,
         MediaPressNewsEventRepository $mediaPressNewsEventRepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaTvcVideoRepository = $mediaTvcVideoRepository;
         $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     public function getMediaFeatureData($componentsData, $type = null)
@@ -56,7 +65,9 @@ class MediaLandingPageService extends ApiBaseService
                 $data['sliding_speed'] = $componentsData->sliding_speed;
 
                 $pressNewsEvent = $this->mediaPressNewsEventRepository->getPressNewsEvent($type, $id);
+
                 if ($pressNewsEvent) {
+                   $pressNewsEvent = $this->getPressNewsImgData($pressNewsEvent);
                     $data['data'][] = $pressNewsEvent;
                 }
             }
@@ -69,6 +80,26 @@ class MediaLandingPageService extends ApiBaseService
             }
         }
         return $data;
+    }
+
+    public function getPressNewsImgData($event)
+    {
+        $thumbKeyData = config('filesystems.moduleType.MediaPressNewsEventThumbnail');
+        $detailsKeyData = config('filesystems.moduleType.MediaPressNewsEventDetails');
+
+        $thumbnailData = $this->imageFileViewerService->prepareImageData($event, $thumbKeyData);
+        $detailsImgData = $this->imageFileViewerService->prepareImageData($event, $detailsKeyData);
+
+
+        $event->thumbnail_image_en = $thumbnailData['image_url_en'] ?? '/uploads/' . $event->thumbnail_image;
+        $event->thumbnail_image_bn = $thumbnailData['image_url_en'] ?? '/uploads/' . $event->thumbnail_image;
+        $event->details_image_en = $detailsImgData['image_url_en'] ?? '/uploads/' . $event->details_image;
+        $event->details_image_bn = $detailsImgData['image_url_en'] ?? '/uploads/' . $event->details_image;
+
+        unset($event->details_image, $event->thumbnail_image, $event->details_image_name_en,
+            $event->details_image_name_bn, $event->thumbnail_image_name_en, $event->thumbnail_image_name_bn);
+
+        return $event;
     }
 
     public function factoryComponent($componentsData) {
@@ -96,21 +127,22 @@ class MediaLandingPageService extends ApiBaseService
         }
 
         $bannerData = $this->mediaBannerImageRepository->bannerImage('landing_page');
+
+        $bannerKey = config('filesystems.moduleType.MediaBannerImage');
+        $imgData = $this->imageFileViewerService->prepareImageData($bannerData, $bannerKey);
+        $bannerData = array_merge($bannerData->toArray(), $imgData);
+        unset($bannerData['banner_image_url'], $bannerData['banner_mobile_view']);
+
         $data = [
             'components' => isset($allComponents) ? $allComponents : [],
-            'banner_image' => [
-                'id' => $bannerData->id,
-                'moduleType' => $bannerData->module_type,
-                'banner_image_url' => $bannerData->banner_image_url,
-                'banner_mobile_view' => $bannerData->banner_mobile_view,
-                'alt_text_en' => $bannerData->banner_mobile_view
-            ],
+            'banner_image' => array_diff_key($bannerData, array_flip(["page_header", "page_header_bn", "schema_markup"])),
             'seo_data' => [
-                'page_header' => $bannerData->page_header,
-                'page_header_bn' => $bannerData->page_header_bn,
-                'schema_markup' => $bannerData->schema_markup
+                'page_header' => $bannerData['page_header'],
+                'page_header_bn' => $bannerData['page_header_bn'],
+                'schema_markup' => $bannerData['schema_markup']
             ]
         ];
+
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
     }
 
