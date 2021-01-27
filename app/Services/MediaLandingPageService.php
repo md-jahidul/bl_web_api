@@ -79,23 +79,24 @@ class MediaLandingPageService extends ApiBaseService
         return $data;
     }
 
-    public function getPressNewsImgData($pressNewsEvent)
+    public function getPressNewsImgData($event)
     {
         $thumbKeyData = config('filesystems.moduleType.MediaPressNewsEventThumbnail');
         $detailsKeyData = config('filesystems.moduleType.MediaPressNewsEventDetails');
 
-        $thumbnailData = $this->imageFileViewerService->prepareImageData($pressNewsEvent, $thumbKeyData);
-        $detailsImgData = $this->imageFileViewerService->prepareImageData($pressNewsEvent, $detailsKeyData);
+        $thumbnailData = $this->imageFileViewerService->prepareImageData($event, $thumbKeyData);
+        $detailsImgData = $this->imageFileViewerService->prepareImageData($event, $detailsKeyData);
 
-        $pressNewsEvent->thumbnail_image_en = $thumbnailData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->thumbnail_image;
-        $pressNewsEvent->thumbnail_image_bn = $thumbnailData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->thumbnail_image;
-        $pressNewsEvent->details_image_en = $detailsImgData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->details_image;
-        $pressNewsEvent->details_image_bn = $detailsImgData['image_url_en'] ?? '/uploads/' . $pressNewsEvent->details_image;
 
-        unset($pressNewsEvent->details_image, $pressNewsEvent->thumbnail_image, $pressNewsEvent->details_image_name_en,
-            $pressNewsEvent->details_image_name_bn, $pressNewsEvent->thumbnail_image_name_en, $pressNewsEvent->thumbnail_image_name_bn);
+        $event->thumbnail_image_en = $thumbnailData['image_url_en'] ?? '/uploads/' . $event->thumbnail_image;
+        $event->thumbnail_image_bn = $thumbnailData['image_url_en'] ?? '/uploads/' . $event->thumbnail_image;
+        $event->details_image_en = $detailsImgData['image_url_en'] ?? '/uploads/' . $event->details_image;
+        $event->details_image_bn = $detailsImgData['image_url_en'] ?? '/uploads/' . $event->details_image;
 
-        return $pressNewsEvent;
+        unset($event->details_image, $event->thumbnail_image, $event->details_image_name_en,
+            $event->details_image_name_bn, $event->thumbnail_image_name_en, $event->thumbnail_image_name_bn);
+
+        return $event;
     }
 
     public function factoryComponent($componentsData) {
