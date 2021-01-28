@@ -390,6 +390,15 @@ return [
             'model' => 'EthicsFiles',
             'image_type' => 'body-image'
         ],
+        'QuickLaunch' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => null,
+            'model-key' => 'quick-launch',
+            'model' => 'QuickLaunchItem',
+            'image_type' => 'body-image'
+        ],
     ],
 
     'modelKeyList' => [
@@ -428,6 +437,7 @@ return [
         'media-news-thumbnail' => 'MediaPressNewsEventThumbnail',
         'media-news-details' => 'MediaPressNewsEventDetails',
         'ethics-compliance' => 'EthicsAndComplianceBanner',
-        'ethics-files' => 'EthicsFiles'
+        'ethics-files' => 'EthicsFiles',
+        'quick-launch' => 'QuickLaunch'
     ]
 ];
