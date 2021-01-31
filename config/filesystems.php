@@ -85,6 +85,14 @@ return [
             'model-key' => 'offer-category',
             'model' => 'OfferCategory',
         ],
+        'ProductDetails' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model-key' => 'product-details',
+            'model' => 'ProductDetail',
+        ],
 
         /* Roaming Module */
         'RoamingCategory' => [
@@ -338,14 +346,112 @@ return [
             'image_name_en' => 'image_name',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image',
-            'exact_path_mobile' => '',
+            'exact_path_mobile' => null,
             'model-key' => 'ecareer-portal-item',
-            'model' => 'EcarrerPortalItem'
-        ]
+            'model' => 'EcarrerPortalItem',
+            'image_type' => 'body-image'
+        ],
+        'AboutUsBanglalink' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image',
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model-key' => 'about-us',
+            'model' => 'AboutUsBanglalink'
+        ],
+        'AboutUsBanglalinkContent' => [
+            'image_name_en' => 'content_img_name',
+            'image_name_bn' => 'content_img_name_bn',
+            'exact_path_web' => 'content_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-us-content',
+            'model' => 'AboutUsBanglalink',
+            'image_type' => 'body-image'
+        ],
+        'AlSliderImage' => [
+            'image_name_en' => 'image_name',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => null,
+            'model-key' => 'al-slider',
+            'model' => 'AlSliderImage',
+            'image_type' => 'body-image'
+        ],
+        'AboutManagementProfile' => [
+            'image_name_en' => 'profile_img_name',
+            'image_name_bn' => 'profile_img_name_bn',
+            'exact_path_web' => 'profile_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-management-profile',
+            'model' => 'AboutUsManangement',
+            'image_type' => 'body-image'
+        ],
+        'AboutManagementBanner' => [
+            'image_name_en' => 'banner_img_name',
+            'image_name_bn' => 'banner_img_name_bn',
+            'exact_path_web' => 'banner_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'about-management-modal',
+            'model' => 'AboutUsManangement',
+            'image_type' => 'body-image'
+        ],
+        'MediaBannerImage' => [
+            'image_name_en' => 'banner_name_en',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'media-banner',
+            'model' => 'MediaBannerImage'
+        ],
+        'MediaPressNewsEventThumbnail' => [
+            'image_name_en' => 'thumbnail_image_name_en',
+            'image_name_bn' => 'thumbnail_image_name_bn',
+            'exact_path_web' => 'thumbnail_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'media-news-thumbnail',
+            'model' => 'MediaPressNewsEvent',
+            'image_type' => 'body-image'
+        ],
+        'MediaPressNewsEventDetails' => [
+            'image_name_en' => 'details_image_name_en',
+            'image_name_bn' => 'details_image_name_bn',
+            'exact_path_web' => 'details_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'media-news-details',
+            'model' => 'MediaPressNewsEvent',
+            'image_type' => 'body-image'
+        ],
+        'EthicsAndComplianceBanner' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_web',
+            'exact_path_mobile' => 'banner_mobile',
+            'model-key' => 'ethics-compliance',
+            'model' => 'EthicsInfo',
+        ],
+        'EthicsFiles' => [
+            'image_name_en' => 'file_name_en',
+            'image_name_bn' => 'file_name_bn',
+            'exact_path_web' => 'file_path',
+            'exact_path_mobile' => null,
+            'model-key' => 'ethics-files',
+            'model' => 'EthicsFiles',
+            'image_type' => 'body-image'
+        ],
+        'QuickLaunch' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => null,
+            'model-key' => 'quick-launch',
+            'model' => 'QuickLaunchItem',
+            'image_type' => 'body-image'
+        ],
     ],
 
     'modelKeyList' => [
         'offer-category' => 'OfferCategory',
+        'product-details' => 'ProductDetails',
         'roaming-category' => 'RoamingCategory',
         'roaming-other-offer' => 'RoamingOtherOffer',
         'roaming-info-tips' => 'RoamingInfo',
@@ -376,6 +482,17 @@ return [
         'about-page-left' => 'AboutPageLeftImg',
         'about-page-right' => 'AboutPageRightImg',
         'ecareer-portal' => 'EcareerPortal',
-        'ecareer-portal-item' => 'EcareerPortalItem'
+        'ecareer-portal-item' => 'EcareerPortalItem',
+        'about-us' => 'AboutUsBanglalink',
+        'about-us-content' => 'AboutUsBanglalinkContent',
+        'al-slider' => 'AlSliderImage',
+        'about-management-profile' => 'AboutManagementProfile',
+        'about-management-modal' => 'AboutManagementBanner',
+        'media-banner' => 'MediaBannerImage',
+        'media-news-thumbnail' => 'MediaPressNewsEventThumbnail',
+        'media-news-details' => 'MediaPressNewsEventDetails',
+        'ethics-compliance' => 'EthicsAndComplianceBanner',
+        'ethics-files' => 'EthicsFiles',
+        'quick-launch' => 'QuickLaunch'
     ]
 ];

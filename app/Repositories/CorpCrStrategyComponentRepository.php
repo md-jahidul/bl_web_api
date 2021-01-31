@@ -14,13 +14,6 @@ class CorpCrStrategyComponentRepository extends BaseRepository
 
     public function componentWithDetails($urlSlug)
     {
-//<<<<<<< Updated upstream
-//        return $this->model->where('url_slug_en', $urlSlug)
-//            ->where('status', 1)
-//            ->select(
-//                'id', 'title_en', 'title_bn', 'details_en', 'details_bn',
-//                'url_slug_en', 'url_slug_bn', 'banner'
-//=======
         return $this->model->where('status', 1)
             ->where('url_slug_en', $urlSlug)
             ->orWhere('url_slug_bn', $urlSlug)
@@ -29,7 +22,6 @@ class CorpCrStrategyComponentRepository extends BaseRepository
                 'url_slug_en', 'url_slug_bn', 'page_header', 'page_header_bn',
                 'schema_markup', 'banner', 'banner_image_web', 'banner_image_mobile',
                 'banner_name_en', 'banner_name_bn'
-//>>>>>>> Stashed changes
             )
             ->with(['components' => function ($q) {
                 $q->orderBy('component_order', 'ASC')

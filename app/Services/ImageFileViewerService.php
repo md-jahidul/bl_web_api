@@ -56,24 +56,23 @@ class ImageFileViewerService extends ApiBaseService
         $model = $keyData['model-key'];
         $imgData = [];
 
-
         if (isset($keyData['image_type']) && $keyData['image_type'] == "body-image") {
 
             if (!empty($value[$keyData['exact_path_web']])) {
                 $bannerType = "images";
-                $imgData['image_url_en'] = ($value[$keyData['image_name_en']]) ? "$bannerType/$model/$fileNameEn" : 'uploads/' . $value[$keyData['exact_path_web']];
-                $imgData['image_url_bn'] = ($value[$keyData['image_name_bn']]) ? "$bannerType/$model/$fileNameBn" : 'uploads/' . $value[$keyData['exact_path_web']];
+                $imgData['image_url_en'] = ($value[$keyData['image_name_en']]) ? "/$bannerType/$model/$fileNameEn" : '/uploads/' . $value[$keyData['exact_path_web']];
+                $imgData['image_url_bn'] = ($value[$keyData['image_name_bn']]) ? "/$bannerType/$model/$fileNameBn" : '/uploads/' . $value[$keyData['exact_path_web']];
             }
         } else {
             if (!empty($value[$keyData['exact_path_web']])) {
                 $imageType = "banner-web";
-                $imgData['banner_image_web_en'] = ($value[$keyData['image_name_en']]) ? "$imageType/$model/$fileNameEn" : 'uploads/' . $value[$keyData['exact_path_web']];
-                $imgData['banner_image_web_bn'] = ($value[$keyData['image_name_bn']]) ? "$imageType/$model/$fileNameBn" : 'uploads/' . $value[$keyData['exact_path_web']];
+                $imgData['banner_image_web_en'] = ($value[$keyData['image_name_en']]) ? "/$imageType/$model/$fileNameEn" : '/uploads/' . $value[$keyData['exact_path_web']];
+                $imgData['banner_image_web_bn'] = ($value[$keyData['image_name_bn']]) ? "/$imageType/$model/$fileNameBn" : '/uploads/' . $value[$keyData['exact_path_web']];
             }
             if (!empty($value[$keyData['exact_path_mobile']])) {
                 $bannerType = "banner-mobile";
-                $imgData['banner_image_mobile_en'] = ($value[$keyData['image_name_bn']]) ? "$bannerType/$model/$fileNameEn" : 'uploads/' . $value[$keyData['exact_path_mobile']];
-                $imgData['banner_image_mobile_bn'] = ($value[$keyData['image_name_bn']]) ? "$bannerType/$model/$fileNameBn" : 'uploads/' . $value[$keyData['exact_path_mobile']];
+                $imgData['banner_image_mobile_en'] = ($value[$keyData['image_name_en']]) ? "/$bannerType/$model/$fileNameEn" : '/uploads/' . $value[$keyData['exact_path_mobile']];
+                $imgData['banner_image_mobile_bn'] = ($value[$keyData['image_name_bn']]) ? "/$bannerType/$model/$fileNameBn" : '/uploads/' . $value[$keyData['exact_path_mobile']];
             }
         }
 

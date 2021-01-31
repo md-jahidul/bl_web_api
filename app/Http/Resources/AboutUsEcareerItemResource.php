@@ -21,9 +21,11 @@ class AboutUsEcareerItemResource extends JsonResource
             'description_en'      => $this->description_en ?? null,
             'description_bn'      => $this->description_bn ?? null,
             'is_active'           => $this->is_active ?? null,
-            'link'           => $this->alt_links ?? null,
-            'image'               => env('IMAGE_HOST_URL') . "/" . $this->image ?? null,
-
+            'link'                => $this->alt_links ?? null,
+            'alt_text'            => $this->alt_text ?? null,
+            'alt_text_bn'         => $this->alt_text_bn ?? null,
+            'image_url_en'        => $this->image_url_en ?? null,
+            'image_url_bn'        => $this->image_url_bn ?? null,
         ];
 
     }
