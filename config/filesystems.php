@@ -206,6 +206,15 @@ return [
         ],
 
         /* Corporate Responsibility Module */
+        'CorpResponsibilityTab' => [
+            'image_name_en' => 'banner_image_name',
+            'image_name_bn' => 'banner_image_name_bn',
+            'exact_path_web' => "banner_image_url",
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'corp-responsibility-tab',
+            'model' => 'CorporateRespSection',
+        ],
+
         'CorpCrStrategyComponent' => [
             'image_name_en' => 'image_name_en',
             'image_name_bn' => 'image_name_bn',
@@ -213,8 +222,16 @@ return [
             'exact_path_mobile' => null,
             'model-key' => 'corp-cr-strategy-component',
             'model' => 'CorpCrStrategyComponent',
-//            'component_page_type' => 'cr_strategy_component',
             'image_type' => 'body-image'
+        ],
+
+        'CorpCrStrategyDetailsComponentBanner' => [
+            'image_name_en' => 'banner_name_en',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => "banner_image_web",
+            'exact_path_mobile' => 'banner_image_mobile',
+            'model-key' => 'corp-cr-strategy-details-component-banner',
+            'model' => 'CorpCrStrategyComponent',
         ],
 
         'CorpCrStrategyDetailsComponent' => [
@@ -236,6 +253,36 @@ return [
             'model-key' => 'corp-cr-strategy-details-component-multi-img',
             'model' => 'ComponentMultiData',
             'component_page_type' => 'cr_strategy_component_details',
+            'image_type' => 'body-image'
+        ],
+
+        'CorpIntMultiComponent' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-initiative-multi-component',
+            'model' => 'CorpIntComponentMultiItem',
+            'image_type' => 'body-image'
+        ],
+
+        'CorpIntTabComponent' => [
+            'image_name_en' => 'single_image_name_en',
+            'image_name_bn' => 'single_image_name_bn',
+            'exact_path_web' => 'single_base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-initiative-tab-component',
+            'model' => 'CorpInitiativeTabComponent',
+            'image_type' => 'body-image'
+        ],
+
+        'CorpIntBatchComponent' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-initiative-batch-component',
+            'model' => 'CorpIntComponentMultiItem',
             'image_type' => 'body-image'
         ],
 
@@ -295,7 +342,6 @@ return [
             'model-key' => 'ecareer-portal-item',
             'model' => 'EcarrerPortalItem'
         ]
-
     ],
 
     'modelKeyList' => [
@@ -314,9 +360,16 @@ return [
         'business-internet' => 'BusinessInternet',
         'business-other-details' => 'BusinessOtherDetails',
         'business-package-details' => 'BusinessPackages',
+
+        'corp-responsibility-tab' => 'CorpResponsibilityTab',
         'corp-cr-strategy-component' => 'CorpCrStrategyComponent',
+        'corp-cr-strategy-details-component-banner' => 'CorpCrStrategyDetailsComponentBanner',
         'corp-cr-strategy-details-component' => 'CorpCrStrategyDetailsComponent',
         'corp-cr-strategy-details-component-multi-img' => 'CorpCrStrategyDetailsComponentMultiImg',
+        'corp-initiative-multi-component' => 'CorpIntMultiComponent',
+        'corp-initiative-batch-component' => 'CorpIntBatchComponent',
+        'corp-initiative-tab-component' => 'CorpIntTabComponent',
+
         'priyojon' => 'Priyojon',
         'partner-offer-details' => 'PartnerOfferDetail',
         'lms-about-banner' => 'LmsAboutBannerImage',

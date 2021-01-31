@@ -136,8 +136,8 @@ class CorpCrStrategyComponentService extends ApiBaseService
                 "extra_title_bn" => $name->extra_title_bn,
                 "extra_title_en" => $name->extra_title_en,
                 "video" => $name->video,
-                "image_url_en" => isset($fileViewer["image_url_en"]) ? $fileViewer["image_url_en"] :  $name->image,
-                "image_url_bn" => isset($fileViewer['image_url_bn']) ? $fileViewer['image_url_bn'] :  $name->image,
+                "image_url_en" => $fileViewer["image_url_en"],
+                "image_url_bn" => $fileViewer['image_url_bn'],
 //                "image_url_bn" => $name->image,
                 "alt_text" => $name->alt_text,
                 "alt_text_bn" => $name->alt_text_bn,
@@ -148,6 +148,14 @@ class CorpCrStrategyComponentService extends ApiBaseService
 
         unset($components['components']);
         $components['components'] = $collection;
+
+        $keyData = config('filesystems.moduleType.CorpCrStrategyDetailsComponentBanner');
+        $bannerImg = $this->fileViewerService->prepareImageData($components, $keyData);
+        $components->banner = array_merge($components->banner, $bannerImg);
+        unset($components['banner_image_web']);
+        unset($components['banner_image_mobile']);
+        unset($components['banner_name_en']);
+        unset($components['banner_name_bn']);
 
         ($components) ? $components : $data = json_decode("{}");
         return $this->sendSuccessResponse($components, 'Corporate CR Strategy Details Components Data!');
