@@ -325,9 +325,10 @@ return [
             'image_name_en' => 'image_name',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image_url',
-            'exact_path_mobile' => 'mobile_view_img',
+            'exact_path_mobile' => null,
             'model-key' => 'al-slider',
             'model' => 'AlSliderImage',
+            'image_type' => 'body-image'
         ],
         'AboutManagementProfile' => [
             'image_name_en' => 'profile_img_name',
