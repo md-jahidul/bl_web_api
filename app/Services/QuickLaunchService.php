@@ -22,15 +22,25 @@ class QuickLaunchService
     protected $apiBaseService;
 
     /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
+
+    /**
      * QuickLaunchService constructor.
      * @param QuickLaunchRepository $quickLaunchRepository
      * @param ApiBaseService $apiBaseService
+     * @param ImageFileViewerService $imageFileViewerService
      */
-    public function __construct(QuickLaunchRepository $quickLaunchRepository, ApiBaseService $apiBaseService)
-    {
+    public function __construct(
+        QuickLaunchRepository $quickLaunchRepository,
+        ApiBaseService $apiBaseService,
+        ImageFileViewerService $imageFileViewerService
+    ) {
         $this->quickLaunchRepository = $quickLaunchRepository;
         $this->apiBaseService = $apiBaseService;
         $this->setActionRepository($quickLaunchRepository);
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     /**
@@ -40,8 +50,15 @@ class QuickLaunchService
     public function itemList($type)
     {
         $quickLaunchItems = $this->quickLaunchRepository->getQuickLaunch($type);
-        return $quickLaunchItems = QuickLaunchResource::collection($quickLaunchItems);
-//         return $this->apiBaseService->sendSuccessResponse($quickLaunchItems, 'Data Found');
+        $keyData = config('filesystems.moduleType.QuickLaunch');
+
+        foreach ($quickLaunchItems as $key => $item) {
+            $imgData = $this->imageFileViewerService->prepareImageData($item, $keyData);
+
+            $quickLaunchItems[$key] = (object) array_merge($item->toArray(), $imgData);
+        }
+
+        return  QuickLaunchResource::collection($quickLaunchItems);
     }
 
     public function itemListButton($type)
