@@ -235,7 +235,7 @@ class HomeService extends ApiBaseService
 
         $data = [
             'metatags' => $metainfo,
-            'components' => $value
+            'components' => json_decode($value)
         ];
 
         return $this->sendSuccessResponse($data, 'Home page components data');
