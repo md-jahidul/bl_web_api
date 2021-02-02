@@ -294,6 +294,35 @@ return [
             'image_type' => 'body-image'
         ],
 
+        'CorpCaseStudyComponent' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-case-study-component',
+            'model' => 'CorpCaseStudyReportComponent',
+            'image_type' => 'body-image'
+        ],
+
+        'CorpCaseStudyComponentDetails' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => null,
+            'model-key' => 'corp-case-study-component-details',
+            'model' => 'Component',
+            'component_page_type' =>'case_study_component_details',
+            'image_type' => 'body-image'
+        ],
+        'CorpCaseStudyDetailsBanner' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'banner_web',
+            'exact_path_mobile' => 'banner_mobile',
+            'model-key' => 'corp-case-study-details-banner',
+            'model' => 'CorpCaseStudyDetailsBanner',
+        ],
+
         'Priyojon' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -475,6 +504,9 @@ return [
         'corp-initiative-multi-component' => 'CorpIntMultiComponent',
         'corp-initiative-batch-component' => 'CorpIntBatchComponent',
         'corp-initiative-tab-component' => 'CorpIntTabComponent',
+        'corp-case-study-component' => 'CorpCaseStudyComponent',
+        'corp-case-study-component-details' => 'CorpCaseStudyComponentDetails',
+        'corp-case-study-details-banner' => 'CorpCaseStudyDetailsBanner',
 
         'priyojon' => 'Priyojon',
         'partner-offer-details' => 'PartnerOfferDetail',

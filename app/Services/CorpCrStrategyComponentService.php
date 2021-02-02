@@ -65,7 +65,7 @@ class CorpCrStrategyComponentService extends ApiBaseService
                 $keyData = config('filesystems.moduleType.CorpCrStrategyComponent');
                 $fileViewer = $this->fileViewerService->prepareImageData($data, $keyData);
 
-                dd($fileViewer);
+//                dd($fileViewer);
 
                 return [
                     "id" => $data->id,
