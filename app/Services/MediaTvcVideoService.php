@@ -33,22 +33,39 @@ class MediaTvcVideoService extends ApiBaseService
     private const MODULE_TYPE = "tvc_video";
 
     /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
+
+    /**
      * MediaTvcVideoService constructor.
      * @param MediaTvcVideoRepository $mediaTvcVideoRepository
      * @param MediaBannerImageRepository $mediaBannerImageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         MediaTvcVideoRepository $mediaTvcVideoRepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->mediaTvcVideoRepository = $mediaTvcVideoRepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     public function getTvcVideoData()
     {
         $tvcVideos = $this->mediaTvcVideoRepository->getVideoItems();
         $bannerImage = $this->mediaBannerImageRepository->bannerImage(self::MODULE_TYPE);
+
+        $bannerKey = config('filesystems.moduleType.MediaBannerImage');
+
+        if($bannerImage) {
+            $imgData = $this->imageFileViewerService->prepareImageData($bannerImage, $bannerKey);
+            $bannerImage = array_merge($bannerImage->toArray(), $imgData);
+            unset($bannerImage['banner_image_url'], $bannerImage['banner_mobile_view']);
+        }
+
         $data = [
             "body_section" => $tvcVideos,
             'banner_image' => $bannerImage
