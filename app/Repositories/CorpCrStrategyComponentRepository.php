@@ -14,11 +14,14 @@ class CorpCrStrategyComponentRepository extends BaseRepository
 
     public function componentWithDetails($urlSlug)
     {
-        return $this->model->where('url_slug_en', $urlSlug)
-            ->where('status', 1)
+        return $this->model->where('status', 1)
+            ->where('url_slug_en', $urlSlug)
+            ->orWhere('url_slug_bn', $urlSlug)
             ->select(
                 'id', 'title_en', 'title_bn', 'details_en', 'details_bn',
-                'url_slug_en', 'url_slug_bn', 'banner'
+                'url_slug_en', 'url_slug_bn', 'page_header', 'page_header_bn',
+                'schema_markup', 'banner', 'banner_image_web', 'banner_image_mobile',
+                'banner_name_en', 'banner_name_bn'
             )
             ->with(['components' => function ($q) {
                 $q->orderBy('component_order', 'ASC')
@@ -33,7 +36,6 @@ class CorpCrStrategyComponentRepository extends BaseRepository
                         'image_name_en','image_name_bn', 'other_attributes'
                     )
                     ->where('status', 1);
-
             }])
             ->first();
     }
