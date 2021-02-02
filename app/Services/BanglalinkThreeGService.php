@@ -24,22 +24,34 @@ class BanglalinkThreeGService extends ApiBaseService
      * @var BanglalinkThreeGRepository
      */
     private $banglalinkThreeGRepository;
+    /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
 
 
     /**
      * DigitalServicesService constructor.
      * @param BanglalinkThreeGRepository $banglalinkThreeGRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
-        BanglalinkThreeGRepository $banglalinkThreeGRepository
+        BanglalinkThreeGRepository $banglalinkThreeGRepository,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->banglalinkThreeGRepository = $banglalinkThreeGRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->setActionRepository($banglalinkThreeGRepository);
     }
 
     public function threeGdata()
     {
         $bannerImage = $this->banglalinkThreeGRepository->findOneByProperties(['type' => 'banner_image']);
+        $bannerKeyData = config('filesystems.moduleType.ThreeGLandingPage');
+
+        $imgData = $this->imageFileViewerService->prepareImageData($bannerImage['other_attributes'], $bannerKeyData);
+
+        $bannerImage['other_attributes'] = (object) array_merge($bannerImage['other_attributes'], $imgData);
         $data = [
             'body_section' => $this->banglalinkThreeGRepository->findWithoutBanner(),
             'banner' => $bannerImage['other_attributes']
