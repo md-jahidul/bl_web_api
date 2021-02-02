@@ -126,15 +126,13 @@ class CorpCaseStudyComponentService extends ApiBaseService
     {
         $components = $this->corpCaseStudyComponentRepository->componentWithDetails($urlSlug);
 
-
-
         $banner = $this->bannerRepository->findOneByProperties(['details_id' => $components->id]);
         $keyData = config('filesystems.moduleType.CorpCaseStudyDetailsBanner');
         $fileViewer = $this->fileViewerService->prepareImageData($banner, $keyData);
 
         $bannerImg = [
-            'alt_text_en' => $banner->alt_text_en,
-            'alt_text_bn' => $banner->alt_text_bn,
+            'alt_text_en' => ($banner->alt_text_en) ?? null,
+            'alt_text_bn' => ($banner->alt_text_bn) ?? null,
             'banner_image_web_en' => isset($fileViewer["banner_image_web_en"]) ? $fileViewer["banner_image_web_en"] : null,
             'banner_image_web_bn' => isset($fileViewer['banner_image_web_bn']) ? $fileViewer['banner_image_web_bn'] : null,
             'banner_image_mobile_en' => isset($fileViewer["banner_image_mobile_en"]) ? $fileViewer["banner_image_mobile_en"] : null,
