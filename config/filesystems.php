@@ -450,10 +450,9 @@ return [
             'image_name_en' => 'image_name',
             'image_name_bn' => 'image_name_bn',
             'exact_path_web' => 'image_url',
-            'exact_path_mobile' => null,
+            'exact_path_mobile' => 'mobile_view_img',
             'model-key' => 'al-slider',
             'model' => 'AlSliderImage',
-            'image_type' => 'body-image'
         ],
         'AboutManagementProfile' => [
             'image_name_en' => 'profile_img_name',
@@ -525,6 +524,49 @@ return [
             'model' => 'QuickLaunchItem',
             'image_type' => 'body-image'
         ],
+        'FourGDeviceLogo' => [
+            'image_name_en' => 'logo_img_name_en',
+            'image_name_bn' => 'logo_img_name_bn',
+            'exact_path_web' => 'card_logo',
+            'exact_path_mobile' => null,
+            'model-key' => 'four-g-device-logo',
+            'model' => 'FourGDevice',
+            'image_type' => 'body-image'
+        ],
+        'FourGDeviceThumbnail' => [
+            'image_name_en' => 'thumbnail_img_name_en',
+            'image_name_bn' => 'thumbnail_img_name_bn',
+            'exact_path_web' => 'thumbnail_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'four-g-device-thumbnail',
+            'model' => 'FourGDevice',
+            'image_type' => 'body-image'
+        ],
+        'FourGCampaign' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image_url',
+            'exact_path_mobile' => null,
+            'model-key' => 'four-g-campaign',
+            'model' => 'FourGCampaign',
+            'image_type' => 'body-image'
+        ],
+        'FourGLandingPage' => [
+            'image_name_en' => 'banner_name_en',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'four-g-banner',
+            'model' => 'FourGLandingPage',
+        ],
+        'ThreeGLandingPage' => [
+            'image_name_en' => 'banner_name_en',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'banner_mobile_view',
+            'model-key' => 'three-g-banner',
+            'model' => 'BanglalinkThreeG',
+        ],
     ],
 
     'modelKeyList' => [
@@ -581,6 +623,11 @@ return [
         'media-news-details' => 'MediaPressNewsEventDetails',
         'ethics-compliance' => 'EthicsAndComplianceBanner',
         'ethics-files' => 'EthicsFiles',
-        'quick-launch' => 'QuickLaunch'
+        'quick-launch' => 'QuickLaunch',
+        'four-g-device-logo' => 'FourGDeviceLogo',
+        'four-g-device-thumbnail' => 'FourGDeviceThumbnail',
+        'four-g-campaign' => 'FourGCampaign',
+        'four-g-banner' => 'FourGLandingPage',
+        'three-g-banner' => 'ThreeGLandingPage'
     ]
 ];
