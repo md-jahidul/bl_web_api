@@ -36,24 +36,35 @@ class BeAPartnerService extends ApiBaseService
     private $componentRepository;
 
     protected const PAGE_TYPE = 'be_a_partner';
+    /**
+     * @var ImageFileViewerService
+     */
+    private $fileViewerService;
 
     /**
      * DigitalServicesService constructor.
      * @param BeAPartnerRepository $beAPartnerRepository
      * @param ComponentRepository $componentRepository
+     * @param ImageFileViewerService $fileViewerService
      */
     public function __construct(
         BeAPartnerRepository $beAPartnerRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        ImageFileViewerService $fileViewerService
     ) {
         $this->beAPartnerRepository = $beAPartnerRepository;
         $this->componentRepository = $componentRepository;
+        $this->fileViewerService = $fileViewerService;
     }
 
     public function beAPartnerData()
     {
         $beAPartnerData = $this->beAPartnerRepository->getOneData();
         $components = $this->componentRepository->getComponentByPageType(self::PAGE_TYPE);
+
+        $keyData = config('filesystems.moduleType.BeAPartner');
+        $fileViewer = $this->fileViewerService->prepareImageData($beAPartnerData, $keyData);
+
         $data = [
           'title_en' => $beAPartnerData->title_en,
           'title_bn' => $beAPartnerData->title_bn,
@@ -65,7 +76,10 @@ class BeAPartnerService extends ApiBaseService
           'interested_button_en' => $beAPartnerData->interested_button_en,
           'interested_button_bn' => $beAPartnerData->interested_button_bn,
           'interested_url' => $beAPartnerData->interested_url,
-          'banner_image' => $beAPartnerData->banner_image,
+          'banner_image_web_en' => isset($fileViewer["banner_image_web_en"]) ? $fileViewer["banner_image_web_en"] : null,
+          'banner_image_web_bn' => isset($fileViewer['banner_image_web_bn']) ? $fileViewer['banner_image_web_bn'] : null,
+          'banner_image_mobile_en' => isset($fileViewer["banner_image_mobile_en"]) ? $fileViewer["banner_image_mobile_en"] : null,
+          'banner_image_mobile_bn' => isset($fileViewer['banner_image_mobile_bn']) ? $fileViewer['banner_image_mobile_bn'] : null,
           'components' => $components
         ];
         return $this->sendSuccessResponse($data, 'Be a partner Data');

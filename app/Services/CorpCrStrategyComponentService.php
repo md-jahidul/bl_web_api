@@ -138,7 +138,6 @@ class CorpCrStrategyComponentService extends ApiBaseService
                 "video" => $name->video,
                 "image_url_en" => $fileViewer["image_url_en"],
                 "image_url_bn" => $fileViewer['image_url_bn'],
-//                "image_url_bn" => $name->image,
                 "alt_text" => $name->alt_text,
                 "alt_text_bn" => $name->alt_text_bn,
                 "other_attributes" => $name->other_attributes,

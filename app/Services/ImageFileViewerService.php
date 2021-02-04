@@ -31,6 +31,7 @@ class ImageFileViewerService extends ApiBaseService
             $imgBasePath = $offers->first();
             return $this->view($imgBasePath->{$data['exact_path_web']});
         }
+
         // Banner Section Image
         $offers = $model::where($data['image_name_en'], $fileName)->orWhere($data['image_name_bn'], $fileName)->first();
         return ($bannerType == "banner-web") ? $this->view($offers->{$data['exact_path_web']}) : $this->view($offers->{$data['exact_path_mobile']});

@@ -13,6 +13,7 @@ use App\Repositories\BannerImgRelatedProductRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\ProductDetailsSectionRepository;
 use App\Services\ApiBaseService;
+use App\Services\ImageFileViewerService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Exception;
@@ -36,6 +37,10 @@ class ProductDetailsSectionService extends ApiBaseService
      * @var BannerImgRelatedProductRepository
      */
     private $bannerImgRelatedProductRepository;
+    /**
+     * @var ImageFileViewerService
+     */
+    private $fileViewerService;
 
 
     /**
@@ -43,15 +48,18 @@ class ProductDetailsSectionService extends ApiBaseService
      * @param ProductDetailsSectionRepository $productDetailsSectionRepository
      * @param BannerImgRelatedProductRepository $bannerImgRelatedProductRepository
      * @param ComponentRepository $componentRepository
+     * @param ImageFileViewerService $fileViewerService
      */
     public function __construct(
         ProductDetailsSectionRepository $productDetailsSectionRepository,
         BannerImgRelatedProductRepository $bannerImgRelatedProductRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        ImageFileViewerService $fileViewerService
     ) {
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->bannerImgRelatedProductRepository = $bannerImgRelatedProductRepository;
         $this->componentRepository = $componentRepository;
+        $this->fileViewerService = $fileViewerService;
         $this->setActionRepository($productDetailsSectionRepository);
     }
 
@@ -145,9 +153,29 @@ class ProductDetailsSectionService extends ApiBaseService
 
         $data['product'] = $parentProduct;
 
-        foreach ($sections as $category => $section) {
-            $data['section'] = $sections;
-        }
+
+        $sectionCollection = collect($sections)->map(function ($section){
+            $keyData = config('filesystems.moduleType.OfferOtherDetailsTab');
+            $fileViewer = $this->fileViewerService->prepareImageData($section, $keyData);
+            return [
+                "id" => $section->id,
+                "product_id" => $section->product_id,
+                "section_type" => $section->section_type,
+                "title_en" => $section->title_en,
+                "title_bn" => $section->title_bn,
+                'banner_image_web_en' => isset($fileViewer["banner_image_web_en"]) ? $fileViewer["banner_image_web_en"] : null,
+                'banner_image_web_bn' => isset($fileViewer['banner_image_web_bn']) ? $fileViewer['banner_image_web_bn'] : null,
+                'banner_image_mobile_en' => isset($fileViewer["banner_image_mobile_en"]) ? $fileViewer["banner_image_mobile_en"] : null,
+                'banner_image_mobile_bn' => isset($fileViewer['banner_image_mobile_bn']) ? $fileViewer['banner_image_mobile_bn'] : null,
+                "alt_text" => $section->alt_text,
+                "alt_text_bn" => $section->alt_text_bn,
+            ];
+
+        });
+//        foreach ($sections as $category => $section) {
+//
+//        }
+        $data['section'] = $sectionCollection;
         $data['related_products'] = $products;
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
