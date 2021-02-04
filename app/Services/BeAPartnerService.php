@@ -76,6 +76,8 @@ class BeAPartnerService extends ApiBaseService
           'interested_button_en' => $beAPartnerData->interested_button_en,
           'interested_button_bn' => $beAPartnerData->interested_button_bn,
           'interested_url' => $beAPartnerData->interested_url,
+          'alt_text_en' => $beAPartnerData->alt_text_en,
+          'alt_text_bn' => $beAPartnerData->alt_text_bn,
           'banner_image_web_en' => isset($fileViewer["banner_image_web_en"]) ? $fileViewer["banner_image_web_en"] : null,
           'banner_image_web_bn' => isset($fileViewer['banner_image_web_bn']) ? $fileViewer['banner_image_web_bn'] : null,
           'banner_image_mobile_en' => isset($fileViewer["banner_image_mobile_en"]) ? $fileViewer["banner_image_mobile_en"] : null,
