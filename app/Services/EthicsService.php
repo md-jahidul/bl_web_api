@@ -49,6 +49,7 @@ class EthicsService extends ApiBaseService
             if ($data) {
                 $imgData = $this->imageFileViewerService->prepareImageData($data, $keyData);
                 $data = array_merge($data->toArray(), $imgData);
+                unset($data['banner_web'], $data['banner_mobile'], $data['banner_name'], $data['banner_name_bn']);
             }
 
             $files = $this->ethicsRepository->getFiles();

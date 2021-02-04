@@ -51,10 +51,14 @@ class BanglalinkThreeGService extends ApiBaseService
 
         $imgData = $this->imageFileViewerService->prepareImageData($bannerImage['other_attributes'], $bannerKeyData);
 
-        $bannerImage['other_attributes'] = (object) array_merge($bannerImage['other_attributes'], $imgData);
+        $other_attributes = (object) array_merge($bannerImage['other_attributes'], $imgData);
+
+        unset($other_attributes->banner_name_en, $other_attributes->banner_name_bn,
+            $other_attributes->banner_image_url, $other_attributes->banner_mobile_view);
+
         $data = [
             'body_section' => $this->banglalinkThreeGRepository->findWithoutBanner(),
-            'banner' => $bannerImage['other_attributes']
+            'banner' => $other_attributes
         ];
         return $this->sendSuccessResponse($data, '3G Info With Banner Image');
     }

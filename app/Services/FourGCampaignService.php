@@ -56,7 +56,7 @@ class FourGCampaignService extends ApiBaseService
 
         $fourGBanner = (object) array_merge($fourGBanner->items, $this->imageFileViewerService->prepareImageData($fourGBanner->items, $bannerKey));
 
-        unset($fourGBanner->banner_image_url, $fourGBanner->banner_mobile_view);
+        unset($fourGBanner->banner_image_url, $fourGBanner->banner_mobile_view, $fourGBanner->banner_name_en, $fourGBanner->banner_name_bn);
 
         $campaign = $this->fourGCampaign();
 
