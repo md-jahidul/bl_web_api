@@ -143,10 +143,15 @@ class ProductDetailsSectionService extends ApiBaseService
             }
         }
 
+        $keyData = config('filesystems.moduleType.OfferOtherDetailsBanner');
+        $fileViewer = $this->fileViewerService->prepareImageData($bannerRelatedData, $keyData);
         $data['header'] = [
-            "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
-            "banner_mobile_view" => isset($bannerRelatedData->mobile_view_img_url) ? $bannerRelatedData->mobile_view_img_url : null,
+            'banner_image_web_en' => isset($fileViewer["banner_image_web_en"]) ? $fileViewer["banner_image_web_en"] : null,
+            'banner_image_web_bn' => isset($fileViewer['banner_image_web_bn']) ? $fileViewer['banner_image_web_bn'] : null,
+            'banner_image_mobile_en' => isset($fileViewer["banner_image_mobile_en"]) ? $fileViewer["banner_image_mobile_en"] : null,
+            'banner_image_mobile_bn' => isset($fileViewer['banner_image_mobile_bn']) ? $fileViewer['banner_image_mobile_bn'] : null,
             "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
+            "alt_text_bn" => isset($bannerRelatedData->alt_text_bn) ? $bannerRelatedData->alt_text_bn : null,
             "isTab" => isset($isTab) ? $isTab : null,
             "product_type" => isset($offerType) ? $offerType->alias : null
         ];
