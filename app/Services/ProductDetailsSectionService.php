@@ -153,8 +153,53 @@ class ProductDetailsSectionService extends ApiBaseService
 
         $data['product'] = $parentProduct;
 
+//        dd($sections);
 
         $sectionCollection = collect($sections)->map(function ($section){
+            $componentCollection = collect($section['components'])->map(function ($component){
+                $componentMulti = collect($component['componentMultiData'])->map(function ($componentMultiData){
+                    $keyData = config('filesystems.moduleType.OfferOtherMultiComponent');
+                    $fileViewer = $this->fileViewerService->prepareImageData($componentMultiData, $keyData);
+                    return [
+                        "component_id" => $componentMultiData->component_id,
+                        "page_type" => $componentMultiData->page_type,
+                        "title_en" => $componentMultiData->title_en,
+                        "title_bn" => $componentMultiData->title_bn,
+                        "details_en" => $componentMultiData->details_en,
+                        "details_bn" => $componentMultiData->details_bn,
+                        "alt_text_en" => $componentMultiData->alt_text_en,
+                        "alt_text_bn" => $componentMultiData->alt_text_bn,
+                        "image_url_en" => isset($fileViewer["image_url_en"]) ? $fileViewer["image_url_en"] : null,
+                        "image_url_bn" => isset($fileViewer['image_url_bn']) ? $fileViewer['image_url_bn'] : null,
+                    ];
+                });
+                return [
+                    "id" => $component->id,
+                    "section_details_id" => $component->section_details_id,
+                    "page_type" => $component->page_type,
+                    "title_en" => $component->title_en,
+                    "title_bn" => $component->title_bn,
+                    "slug" => $component->slug,
+                    "description_en" => $component->description_en,
+                    "description_bn" => $component->description_bn,
+                    "editor_en" => $component->editor_en,
+                    "editor_bn" => $component->editor_bn,
+                    "video" => $component->video,
+                    "alt_links" => $component->alt_links,
+                    "button_en" => $component->button_en,
+                    "button_bn" => $component->button_bn,
+                    "button_link" => $component->button_link,
+                    "offer_type_id" => $component->offer_type_id,
+                    "offer_type" => $component->offer_type,
+                    "extra_title_bn" => $component->extra_title_bn,
+                    "extra_title_en" => $component->extra_title_en,
+                    "component_type" => $component->component_type,
+                    "is_default" => $component->is_default,
+                    "other_attributes" => $component->other_attributes,
+                    "multiple_attributes" => $componentMulti,
+                ];
+            });
+
             $keyData = config('filesystems.moduleType.OfferOtherDetailsTab');
             $fileViewer = $this->fileViewerService->prepareImageData($section, $keyData);
             return [
@@ -169,12 +214,10 @@ class ProductDetailsSectionService extends ApiBaseService
                 'banner_image_mobile_bn' => isset($fileViewer['banner_image_mobile_bn']) ? $fileViewer['banner_image_mobile_bn'] : null,
                 "alt_text" => $section->alt_text,
                 "alt_text_bn" => $section->alt_text_bn,
+                'components' => $componentCollection
             ];
-
         });
-//        foreach ($sections as $category => $section) {
-//
-//        }
+
         $data['section'] = $sectionCollection;
         $data['related_products'] = $products;
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
