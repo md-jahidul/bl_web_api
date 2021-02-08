@@ -372,6 +372,27 @@ return [
             'model' => 'ProductDetailsSection',
         ],
 
+        'OfferOtherMultiComponent' => [
+            'image_name_en' => 'img_name_en',
+            'image_name_bn' => 'img_name_bn',
+            'exact_path_web' => 'base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'offer-other-component',
+            'component_page_type' => 'product_details',
+            'model' => 'ComponentMultiData',
+            'image_type' => 'body-image'
+        ],
+
+        'OfferOtherDetailsBanner' => [
+            'image_name_en' => 'banner_name',
+            'image_name_bn' => 'banner_name_bn',
+            'exact_path_web' => 'banner_image_url',
+            'exact_path_mobile' => 'mobile_view_img_url',
+            'model-key' => 'offer-other-details-banner',
+            'model' => 'BannerImgRelatedProduct',
+        ],
+
+
         'Priyojon' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -605,6 +626,9 @@ return [
         'be-a-partner' => 'BeAPartner',
 
         'offer-other-details-tab' => 'OfferOtherDetailsTab',
+
+        'offer-other-component' => 'OfferOtherMultiComponent',
+        'offer-other-details-banner' => 'OfferOtherDetailsBanner',
 
         'priyojon' => 'Priyojon',
         'partner-offer-details' => 'PartnerOfferDetail',

@@ -9,19 +9,10 @@
 
 namespace App\Services;
 
-use App\Repositories\AlFaqRepository;
 use App\Repositories\BeAPartnerRepository;
 use App\Repositories\ComponentRepository;
-use App\Repositories\FourGCampaignRepository;
-use App\Repositories\FourGLandingPageRepository;
-use App\Repositories\MediaLandingPageRepository;
-use App\Repositories\MediaPressNewsEventRepository;
-use App\Repositories\MediaTvcVideoRepository;
 use App\Traits\CrudTrait;
-use App\Traits\FileTrait;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+
 
 class BeAPartnerService extends ApiBaseService
 {
@@ -61,7 +52,6 @@ class BeAPartnerService extends ApiBaseService
     {
         $beAPartnerData = $this->beAPartnerRepository->getOneData();
         $components = $this->componentRepository->getComponentByPageType(self::PAGE_TYPE);
-
         $keyData = config('filesystems.moduleType.BeAPartner');
         $fileViewer = $this->fileViewerService->prepareImageData($beAPartnerData, $keyData);
 
