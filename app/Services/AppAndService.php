@@ -3,8 +3,6 @@
 
 namespace App\Services;
 
-
-use App\Http\Resources\AppServiceResource;
 use App\Repositories\AppServiceBookmarkRepository;
 use App\Repositories\AppServiceCategoryRepository;
 use App\Repositories\AppServiceProductRepository;

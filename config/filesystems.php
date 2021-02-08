@@ -392,6 +392,17 @@ return [
             'model' => 'BannerImgRelatedProduct',
         ],
 
+        'AppAndServiceComponent' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => null,
+            'model-key' => 'app-service-component',
+            'component_page_type' => 'app_services',
+            'model' => 'Component',
+            'image_type' => 'body-image'
+        ],
+
 
         'Priyojon' => [
             'image_name_en' => 'banner_name',
@@ -629,6 +640,8 @@ return [
 
         'offer-other-component' => 'OfferOtherMultiComponent',
         'offer-other-details-banner' => 'OfferOtherDetailsBanner',
+
+        'app-service-component' => 'AppAndServiceComponent',
 
         'priyojon' => 'Priyojon',
         'partner-offer-details' => 'PartnerOfferDetail',
