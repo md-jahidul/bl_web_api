@@ -51,7 +51,6 @@ class EcareerController extends Controller
      */
     public function topBannerContact()
     {
-
         try {
             $data = [];
             // Top banner menu
@@ -65,9 +64,9 @@ class EcareerController extends Controller
                     $sub_data_banner['url_slug'] = $value->route_slug;
                     $sub_data_banner['url_slug_bn'] = $value->route_slug_bn;
 
-
-                    $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
+                    $sub_data_banner = array_merge($sub_data_banner, $this->ecarrerService->getPortalImageData($value));
                     $sub_data_banner['alt_text'] = $value->alt_text;
+                    $sub_data_banner['alt_text_bn'] = $value->alt_text;
 
                     $data['top_menu_banner'][] = $sub_data_banner;
                 }
@@ -135,9 +134,6 @@ class EcareerController extends Controller
         //seo data
         $category = "life_at_banglalink";
         $seoData = $this->ecarrerService->getSeoData($category);
-        $keyData = config('filesystems.moduleType.EcareerPortal');
-
-        $portalImgData = $this->imageFileViewerService->prepareImageData($seoData, $keyData);
 
         $data['seo_data'] = array(
             'alt_text' => $seoData->alt_text,
@@ -147,7 +143,6 @@ class EcareerController extends Controller
             'schema_markup' => $seoData->schema_markup,
         );
 
-        $data['seo_data'] = array_merge($data['seo_data'], $portalImgData);
 
         // Life at banglalink 3 general section
         $life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
@@ -381,8 +376,6 @@ class EcareerController extends Controller
                 'schema_markup' => $seoData->schema_markup
             );
 
-            $data['seo_data'] = array_merge($data['seo_data'], $this->ecarrerService->getPortalImageData($seoData));
-
             $data['we_hire'] = $this->ecarrerService->getVacancyHire();
             $data['news_media'] = $this->ecarrerService->getVacancyNewsMedia();
             $data['box_icon'] = $this->ecarrerService->getVacancyBoxIcon();
@@ -415,8 +408,6 @@ class EcareerController extends Controller
                 'page_header' => $seoData->page_header,
                 'schema_markup' => $seoData->schema_markup
             );
-
-            $data['seo_data'] = array_merge($data['seo_data'], $this->ecarrerService->getPortalImageData($seoData));
 
             $ecarrer_sap = $this->ecarrerService->getProgramsSap();
             $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
