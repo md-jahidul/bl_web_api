@@ -161,6 +161,7 @@ class RoamingService {
         $data['short_text_en'] = $offer->short_text_en;
         $data['short_text_bn'] = $offer->short_text_bn;
         $data['alt_text'] = $offer->alt_text;
+        $data['alt_text_bn'] = $offer->alt_text_bn;
         $data['url_slug'] = $offer->url_slug;
         $data['url_slug_bn'] = $offer->url_slug_bn;
         $data['page_header'] = $offer->page_header;
@@ -251,6 +252,7 @@ class RoamingService {
         $data['url_slug'] = $info->url_slug;
         $data['url_slug_bn'] = $info->url_slug_bn;
         $data['alt_text'] = $info->alt_text;
+        $data['alt_text_bn'] = $info->alt_text_bn;
         $data['page_header'] = $info->page_header;
         $data['page_header_bn'] = $info->page_header_bn;
         $data['schema_markup'] = $info->schema_markup;
