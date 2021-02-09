@@ -108,9 +108,6 @@ class CorpCrStrategyComponentService extends ApiBaseService
         $components = $this->corpCrStrategyComponentRepo->componentWithDetails($urlSlug);
         $collection = collect($components['components'])->map(function ($name, $key) {
 
-            $keyData = config('filesystems.moduleType.CorpCrStrategyDetailsComponent');
-            $fileViewer = $this->fileViewerService->prepareImageData($name, $keyData);
-
             // This is for multi image
             $multiImage = collect($name->componentMultiData)->map(function ($data){
                 $keyData = config('filesystems.moduleType.CorpCrStrategyDetailsComponentMultiImg');
@@ -124,6 +121,11 @@ class CorpCrStrategyComponentService extends ApiBaseService
                 ];
             });
 
+            $keyData = config('filesystems.moduleType.CorpCrStrategyDetailsComponent');
+            $fileViewer = $this->fileViewerService->prepareImageData($name, $keyData);
+
+//            dd($fileViewer);
+
             return [
                 "id" => $name->id,
                 "section_details_id" => $name->section_details_id,
@@ -136,8 +138,8 @@ class CorpCrStrategyComponentService extends ApiBaseService
                 "extra_title_bn" => $name->extra_title_bn,
                 "extra_title_en" => $name->extra_title_en,
                 "video" => $name->video,
-                "image_url_en" => $fileViewer["image_url_en"],
-                "image_url_bn" => $fileViewer['image_url_bn'],
+                "image_url_en" => isset($fileViewer["image_url_en"]) ? $fileViewer["image_url_en"] : '',
+                "image_url_bn" => isset($fileViewer['image_url_bn']) ? $fileViewer['image_url_bn'] : '',
                 "alt_text" => $name->alt_text,
                 "alt_text_bn" => $name->alt_text_bn,
                 "other_attributes" => $name->other_attributes,
