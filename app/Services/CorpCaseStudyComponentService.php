@@ -100,10 +100,11 @@ class CorpCaseStudyComponentService extends ApiBaseService
             });
 
             if ($section->section_type == "left_image_right_text"){
+//                dd($componentData);
                 $components[] = [
                     'id' => $section->id,
                     'section_type' => $section->section_type,
-                    'components' => !empty($componentData) ? $componentData : json_decode("{}")
+                    'components' => !empty($componentData) ? $componentData[0] : json_decode("{}")
                 ];
             } else {
                 $components[] = [
