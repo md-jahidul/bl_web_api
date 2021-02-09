@@ -147,6 +147,28 @@ return [
             'model' => 'AppServiceProductDetail',
         ],
 
+        'AppAndServiceComponent' => [
+            'image_name_en' => 'image_name_en',
+            'image_name_bn' => 'image_name_bn',
+            'exact_path_web' => 'image',
+            'exact_path_mobile' => null,
+            'model-key' => 'app-service-component',
+            'component_page_type' => 'app_services',
+            'model' => 'Component',
+            'image_type' => 'body-image'
+        ],
+
+        'AppAndServiceMultiComponent' => [
+            'image_name_en' => 'img_name_en',
+            'image_name_bn' => 'img_name_bn',
+            'exact_path_web' => 'base_image',
+            'exact_path_mobile' => null,
+            'model-key' => 'app-service-multi-component',
+            'component_page_type' => 'app_services',
+            'model' => 'ComponentMultiData',
+            'image_type' => 'body-image'
+        ],
+
         /* Business Module */
         'BusinessCategory' => [
             'image_name_en' => 'banner_name',
@@ -392,18 +414,6 @@ return [
             'model' => 'BannerImgRelatedProduct',
         ],
 
-        'AppAndServiceComponent' => [
-            'image_name_en' => 'image_name_en',
-            'image_name_bn' => 'image_name_bn',
-            'exact_path_web' => 'image',
-            'exact_path_mobile' => null,
-            'model-key' => 'app-service-component',
-            'component_page_type' => 'app_services',
-            'model' => 'Component',
-            'image_type' => 'body-image'
-        ],
-
-
         'Priyojon' => [
             'image_name_en' => 'banner_name',
             'image_name_bn' => 'banner_name_bn',
@@ -640,8 +650,8 @@ return [
 
         'offer-other-component' => 'OfferOtherMultiComponent',
         'offer-other-details-banner' => 'OfferOtherDetailsBanner',
-
         'app-service-component' => 'AppAndServiceComponent',
+        'app-service-multi-component' => 'AppAndServiceMultiComponent',
 
         'priyojon' => 'Priyojon',
         'partner-offer-details' => 'PartnerOfferDetail',

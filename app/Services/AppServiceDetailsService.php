@@ -124,7 +124,7 @@ class AppServiceDetailsService extends ApiBaseService
         $data = null;
 
         $results = $this->appServiceProductDetailsRepository->getSectionsComponents($product_id);
-
+//        dd($results);
 
         if (!empty($results) && count($results) > 0) {
 
@@ -138,9 +138,7 @@ class AppServiceDetailsService extends ApiBaseService
 
                 if (!empty($value->detailsComponent) && count($value->detailsComponent) > 0) {
 
-
                     foreach ($value->detailsComponent as $item) {
-
                         $keyData = config('filesystems.moduleType.AppAndServiceComponent');
                         $fileViewer = $this->imageFileViewerService->prepareImageData($item, $keyData);
 
@@ -177,11 +175,27 @@ class AppServiceDetailsService extends ApiBaseService
                                 $sub_item['video'] = config('filesystems.image_host_url');
                             }
                         }
-
                         $sub_item['alt_links'] = $item->alt_links;
 
                         // Multiple attributed formated
-                        if ($item->multiple_attributes != null && !empty($item->multiple_attributes)) {
+                        if ($item->component_type != "slider_text_with_image_right" ||
+                            $item->component_type != "multiple_image_banner")
+                        {
+                            $multiData = collect($item->componentMultiData)->map(function ($data){
+                                $keyData = config('filesystems.moduleType.AppAndServiceMultiComponent');
+                                $fileViewer = $this->imageFileViewerService->prepareImageData($data, $keyData);
+                                return [
+                                    'details_en' => $data->details_en,
+                                    'details_bn' => $data->details_bn,
+                                    'image_url_en' => isset($fileViewer["image_url_en"]) ? $fileViewer["image_url_en"] : null,
+                                    'image_url_bn' => isset($fileViewer['image_url_bn']) ? $fileViewer['image_url_bn'] : null,
+                                    'alt_text_en' => $data->alt_text_en,
+                                    'alt_text_bn' => $data->alt_text_bn,
+                                ];
+                            });
+                            $sub_item['multiple_attributes'] = $multiData;
+
+                        } elseif ($item->multiple_attributes != null && !empty($item->multiple_attributes)) {
                             $res = json_decode($item->multiple_attributes, true);
 
                             if (!empty($res) && count($res) > 0) {
@@ -210,15 +224,11 @@ class AppServiceDetailsService extends ApiBaseService
                             } else {
                                 $sub_item['multiple_attributes'] = null;
                             }
-
-
                         } else {
                             $sub_item['multiple_attributes'] = null;
                         }
 
-
                         $sub_data['component'][] = $sub_item;
-
                     }
                 } else {
                     $sub_data['component'] = null;

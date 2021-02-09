@@ -54,7 +54,11 @@ class AppServiceProductDetailsRepository extends BaseRepository
     public function getSectionsComponents($product_id, $component_type = [])
     {
         if( empty($component_type) ){
-            return $this->model->with('detailsComponent')->where('product_id', $product_id)
+            return $this->model
+                ->with(['detailsComponent' => function($q){
+                    $q->with('componentMultiData');
+                }])
+                ->where('product_id', $product_id)
                 ->where('category', 'component_sections')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
