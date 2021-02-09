@@ -12,7 +12,7 @@ class DynamicPageRepository extends BaseRepository {
     {
         return $this->model
             ->where('url_slug', $slug)
-//            ->orWhere('url_slug_bn', $slug)
+            ->orWhere('url_slug_bn', $slug)
             ->select(
                 'id', 'page_header', 'schema_markup', 'banner_name',
                 'banner_name_bn', 'banner_image_url', 'banner_mobile_view',
