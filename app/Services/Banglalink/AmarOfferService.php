@@ -112,9 +112,9 @@ class AmarOfferService extends BaseService
                     break;
                 case "DATA":
                     if (strtolower($data[2]) == 'gb') {
-                        $mb = (int)$data[1] * 1024 ;
+                        $mb = (float)$data[1] * 1024 ;
                     } else {
-                        $mb = (int)$data[1];
+                        $mb = (float)$data[1];
                     }
                     $offer_details ['internet_volume_mb'] = $mb;
                     break;
