@@ -39,7 +39,7 @@ class AuthenticationController extends Controller
      */
     public function numberValidation($mobile)
     {
-        return $this->numberValidationService->validateNumberWithResponse($mobile);
+        return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
 
 
