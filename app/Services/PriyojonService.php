@@ -52,7 +52,6 @@ class PriyojonService extends ApiBaseService
             unset($val['banner_image_url'], $val['banner_mobile_view']);
             $data[$key] = $val;
         }
-
         return $this->sendSuccessResponse($data, 'Priyojon Landing Page Header Menu');
     }
 }

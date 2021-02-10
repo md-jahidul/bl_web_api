@@ -23,6 +23,7 @@ class QuickLaunchResource extends JsonResource
             "alt_text" => $this->alt_text ?? null,
             "alt_text_bn" => $this->alt_text_bn ?? null,
             "link" => $this->link ?? null,
+            "link_bn" => $this->link_bn ?? null,
             "is_external_link" => $this->is_external_link ?? null,
             "slug" => $this->slug ?? null,
             "status"  => $this->status ?? null ,

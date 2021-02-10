@@ -15,16 +15,12 @@ class EthicsRepository extends BaseRepository {
     public $modelName = EthicsInfo::class;
 
     public function getPageInfo() {
-        $info = $this->model->first();
-
-        return $info;
+        return $this->model->first();
     }
 
     public function getFiles() {
-        $files = EthicsFiles::where('status', 1)->where('file_path', '!=', NULL)
+        return EthicsFiles::where('status', 1)->where('file_path', '!=', NULL)
                         ->orderBy('sort')->get();
-
-        return $files;
     }
 
 }

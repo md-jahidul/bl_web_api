@@ -106,7 +106,6 @@ class OfferCategoryService extends ApiBaseService
         $offer = $this->offerCategoryRepository->categories();
 
 
-
         if (!empty($offer)) {
             $keyData = config('filesystems.moduleType.OfferCategory');
             $keyDataPostpaid = config('filesystems.moduleType.OfferCategoryPostpaid');

@@ -67,13 +67,14 @@ class PartnerOfferController extends Controller
      * @param $products
      * @return array
      */
-    public function offerDetails($id) {
+    public function offerDetails($slug) {
         try {
-
             $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn')
                     ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
                     ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
-                    ->where('partner_offers.id', $id)
+                    ->where('partner_offers.url_slug', $slug)
+                    ->orWhere('partner_offers.url_slug_bn', $slug)
+                    ->orWhere('partner_offers.id', $slug)
                     ->with(['partner_offer_details', 'partner' => function ($query) {
                             $query->select([
                                 'id',
@@ -85,6 +86,7 @@ class PartnerOfferController extends Controller
                         }])
                     ->first();
             $data = [];
+//            dd($productDetail);
             if (isset($productDetail)) {
                 $data['id'] = $productDetail->id;
                 $data['company_name_en'] = $productDetail->company_name_en;
@@ -124,6 +126,12 @@ class PartnerOfferController extends Controller
 
                 $keyData = config('filesystems.moduleType.PartnerOfferDetail');
                 $data = array_merge($data, $this->imageFileViewerService->prepareImageData($productDetail->partner_offer_details, $keyData));
+                $data['page_header'] = $productDetail->page_header;
+                $data['page_header_bn'] = $productDetail->page_header_bn;
+                $data['schema_markup'] = $productDetail->schema_markup;
+                $data['url_slug'] = $productDetail->url_slug;
+                $data['url_slug_bn'] = $productDetail->url_slug_bn;
+
                 $data['banner_alt_text'] = $productDetail->partner_offer_details->banner_alt_text;
                 $data['banner_alt_text_bn'] = $productDetail->partner_offer_details->banner_alt_text_bn;
 

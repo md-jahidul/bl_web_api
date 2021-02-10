@@ -63,17 +63,12 @@ class BusinessInternetRepository extends BaseRepository {
     public function getInternetPackageDetails($internetSlug) {
 
         $internet = $this->model->where('url_slug', $internetSlug)->orWhere('url_slug_bn', $internetSlug)->first();
-
-
-
         $relatedProduct = $this->model->whereIn("id", array($internet->related_product))->get();
 
-        $product = [
+        return [
             'internet' => $internet,
             'relatedProduct' => $relatedProduct
         ];
-
-        return $product;
     }
 
     public function internetLike($internetId) {

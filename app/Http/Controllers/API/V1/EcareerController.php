@@ -63,6 +63,9 @@ class EcareerController extends Controller
                     $sub_data_banner['slug'] = $value->slug;
                     $sub_data_banner['url_slug'] = $value->route_slug;
                     $sub_data_banner['url_slug_bn'] = $value->route_slug_bn;
+                    $sub_data_banner['page_header'] = $value->page_header;
+                    $sub_data_banner['page_header_bn'] = $value->page_header_bn;
+                    $sub_data_banner['schema_markup'] = $value->schema_markup;
 
                     $sub_data_banner = array_merge($sub_data_banner, $this->ecarrerService->getPortalImageData($value));
                     $sub_data_banner['alt_text'] = $value->alt_text;
@@ -373,6 +376,7 @@ class EcareerController extends Controller
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -406,6 +410,7 @@ class EcareerController extends Controller
                 'alt_text' => $seoData->alt_text,
                 'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 

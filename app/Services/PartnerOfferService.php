@@ -73,21 +73,9 @@ class PartnerOfferService extends ApiBaseService {
 
             if ($partnerOffers) {
                 $partnerOffers = PartnerOfferResource::collection($partnerOffers);
-            }
-
-            $priyojonMenu = $this->priyojonRepository->getMenuForSlug('partner');
-
-            $data = [
-                'alias' => $priyojonMenu->alias,
-                'url_slug_en' => $priyojonMenu->url_slug_en,
-                'url_slug_bn' => $priyojonMenu->url_slug_bn,
-                'partnerOffers' => $partnerOffers
-            ];
-
-            if ($partnerOffers) {
-                return response()->success($data, 'Data Found!');
+                return response()->success($partnerOffers, 'Data Found!');
             } else {
-                return response()->success($data, "Data Not Found!");
+                return response()->error("Data Not Found!");
             }
         } catch (QueryException $exception) {
             return response()->error("Something wrong", $exception);

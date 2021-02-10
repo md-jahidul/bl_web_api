@@ -57,6 +57,9 @@ class MediaLandingPageService extends ApiBaseService
         $data['title_en'] = $componentsData->title_en;
         $data['title_bn'] = $componentsData->title_bn;
         $data['component_type'] = $componentsData->component_type;
+        $data['page_header'] = $componentsData->page_header;
+        $data['page_header_bn'] = $componentsData->page_header_bn;
+        $data['schema_markup'] = $componentsData->schema_markup;
         if ($type == 'press_release' || $type == 'news_events'){
             foreach ($componentsData->items as $id){
                 $data['sliding_speed'] = $componentsData->sliding_speed;
@@ -129,9 +132,15 @@ class MediaLandingPageService extends ApiBaseService
         $bannerImage = array_merge($bannerImage->toArray(), $imgData);
         unset($bannerImage['banner_image_url'], $bannerImage['banner_mobile_view']);
 
+        $bannerData = $this->mediaBannerImageRepository->bannerImage('landing_page');
         $data = [
             'components' => isset($allComponents) ? $allComponents : [],
-            'banner_image' => (object) $bannerImage
+            'banner_image' => (object) $bannerImage,
+            'seo_data' => [
+                'page_header' => $bannerData->page_header,
+                'page_header_bn' => $bannerData->page_header_bn,
+                'schema_markup' => $bannerData->schema_markup
+            ]
         ];
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
     }

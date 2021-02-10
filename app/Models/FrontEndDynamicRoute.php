@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FrontEndDynamicRoute extends Model
 {
-//    protected $guarded = ['id'];
+    use SoftDeletes;
 
     protected $casts = [
         'children' => 'array'

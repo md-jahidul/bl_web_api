@@ -64,7 +64,7 @@ class LoyaltyService extends ApiBaseService
         $offers = explode(';', $offer_description);
 
         $offer_details ['offer_id'] = $offer['offerID'];
-        $offer_details['offer_category_name'] = "Telco Offers";
+        $offer_details['offer_category_name'] = $offer['offerCategoryName'];
 
         foreach ($offers as $segment) {
             $data = explode('|', $segment);
@@ -129,7 +129,7 @@ class LoyaltyService extends ApiBaseService
         $redeemCats = [
             'internet_offers',
             'talk_time_offers',
-            'physical_gift'
+//            'physical_gift'
         ];
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($mobile);
         $offer_details = [];
@@ -157,7 +157,7 @@ class LoyaltyService extends ApiBaseService
             'alias' => $priyojonMenu->alias,
             'url_slug_en' => $priyojonMenu->url_slug_en,
             'url_slug_bn' => $priyojonMenu->url_slug_bn,
-            'offer-details' => $offer_details
+            'offer_details' => $offer_details
         ];
 
         return $this->sendSuccessResponse($data, 'Loyalty data');
@@ -183,6 +183,7 @@ class LoyaltyService extends ApiBaseService
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
 
         $catWithOffers = [];
+
         foreach ($redeemOptions['data'] as $segment) {
             $catName = str_replace([' ', '-'], '_', strtolower($segment['offerCategoryName']));
             if (in_array($catName, $partnerCats)) {
@@ -191,7 +192,7 @@ class LoyaltyService extends ApiBaseService
                 $catWithOffers[] = [
                     'offer_id' => $offerId,
                     'offer_category_name' => $segment['offerCategoryName'],
-                    'discount_rate' => $segment['offerDescription'],
+                    'discount_rate' => $segment['offerShortDescription'],
                     'partner_logo' => $segment['imageURL'],
                     'partner_name' => $segment['partnerName'],
                     'pop_up_details' => $segment['offerLongDescription'],
@@ -199,7 +200,17 @@ class LoyaltyService extends ApiBaseService
                 ];
             }
         }
-        return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
+
+        $priyojonMenu = $this->priyojonRepository->getMenuForSlug('partner');
+
+        $data = [
+            'alias' => $priyojonMenu->alias,
+            'url_slug_en' => $priyojonMenu->url_slug_en,
+            'url_slug_bn' => $priyojonMenu->url_slug_bn,
+            'partnerOffers' => $catWithOffers
+        ];
+
+        return $this->sendSuccessResponse($data, 'Partner categories with offers');
     }
 
     /**
@@ -225,6 +236,7 @@ class LoyaltyService extends ApiBaseService
     public function purchaseRedeemOffer($customer, $offerId)
     {
         $msisdn = substr($customer->phone, 1);
+//        $msisdn = 1962424630;
         $response = $this->blLoyaltyService->redeemOfferPurchase($msisdn, $offerId);
         return $this->sendSuccessResponse($response, "Purchase request successfully send");
     }

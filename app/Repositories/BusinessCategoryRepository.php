@@ -67,10 +67,8 @@ class BusinessCategoryRepository extends BaseRepository {
     }
 
     public function getCategoryList() {
-        $categories = $this->model->where('home_show', 1)
+        return $this->model->where('home_show', 1)
                         ->orderBy('id')->get();
-
-        return $categories;
     }
 
 }

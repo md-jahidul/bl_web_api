@@ -25,6 +25,7 @@ class AboutUsResource extends JsonResource
             'details_bn'              => $this->details_bn ?? null,
             'schema_markup'           => $this->schema_markup ?? null,
             'page_header'             => $this->page_header ?? null,
+            'page_header_bn'             => $this->page_header_bn ?? null,
             'url_slug'                => $this->url_slug ?? null,
             'url_slug_bn'             => $this->url_slug_bn ?? null,
             'banner_image_web_en'     => $this->banner_image_web_en ?? null,

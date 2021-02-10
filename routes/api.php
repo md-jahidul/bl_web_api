@@ -102,14 +102,14 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Loyalty or Priyojon section
         // Bl API Hub part
-    Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
 //    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
-    Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
+    Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
     Route::get('loyalty/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
     Route::get('loyalty/redeem-offer-purchase/{offerId}', 'API\V1\LoyaltyController@redeemOfferPurchase');
+    Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
+    Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
 
-        // CMS part
-    Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
+    // CMS part
     Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
     Route::get('priyojon-header', 'API\V1\PriyojonController@priyojonHeader');
     Route::get('priyojon-offers', 'API\V1\PriyojonController@priyojonOffers');
@@ -290,6 +290,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
     Route::get('banner-image/mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
     Route::get('content-image/{model}/{fileName}', 'API\V1\ImageFileViewerController@contentIamge');
+
+    Route::get('fixed-page/meta-tag/{key}', 'API\V1\FixedPageMateTagController@getFixedMateTag');
 
 });
 
