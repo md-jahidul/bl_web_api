@@ -105,14 +105,30 @@ class OfferCategoryService extends ApiBaseService
         $sim = SimCategory::all();
         $offer = $this->offerCategoryRepository->categories();
 
+
+
         if (!empty($offer)) {
             $keyData = config('filesystems.moduleType.OfferCategory');
-            $offer_final = array_map(function($value) use ($keyData) {
+            $keyDataPostpaid = config('filesystems.moduleType.OfferCategoryPostpaid');
+            $offer_final = array_map(function($value) use ($keyData, $keyDataPostpaid) {
 
                 $imgData = $this->fileViewerService->prepareImageData($value, $keyData);
-                $value = array_merge($value, $imgData);
+                $imgDataPostpaid = $this->fileViewerService->prepareImageData($value, $keyDataPostpaid);
+                $postpaidBanner = [
+                    "postpaid_banner_image_web_en" => $imgDataPostpaid['banner_image_web_en'] ?? null,
+                    "postpaid_banner_image_web_bn" => $imgDataPostpaid['banner_image_web_bn'] ?? null,
+                    "postpaid_banner_image_mobile_en" => $imgDataPostpaid['banner_image_mobile_en'] ?? null,
+                    "postpaid_banner_image_mobile_bn" => $imgDataPostpaid['banner_image_mobile_bn'] ?? null,
+                ];
 
-                unset($value['banner_image_url'], $value['banner_image_mobile']);
+                $allTypesBanner = array_merge($imgData, $postpaidBanner);
+                $value = array_merge($value, $allTypesBanner);
+                unset(
+                    $value['banner_image_url'], $value['banner_image_mobile'],
+                    $value['banner_name'], $value['banner_name_bn'],
+                    $value['postpaid_banner_image_url'], $value['postpaid_banner_image_mobile'],
+                    $value['postpaid_banner_name'], $value['postpaid_banner_name_bn']
+                );
                 return $value;
             }, $offer->toArray());
         } else {
