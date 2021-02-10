@@ -89,8 +89,8 @@ class NumberValidationService extends ApiBaseService
 
         if ($customer->getData()->data->status == "active") {
             return $this->sendSuccessResponse(
-//                [],
-                $customer->getData()->data,
+                [],
+//                $customer->getData()->data,
                 "Number is Valid",
                 [],
                 HttpStatusCode::SUCCESS
