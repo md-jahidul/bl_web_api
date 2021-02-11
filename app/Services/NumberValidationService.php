@@ -70,14 +70,14 @@ class NumberValidationService extends ApiBaseService
      * Validate number
      *
      * @param $number
+     * @param bool $validateReq
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateNumberWithResponse($number)
+    public function validateNumberWithResponse($number, $validateReq = false)
     {
         $missdn = "88" . $number;
 
         $customer = $this->blCustomerService->getCustomerInfoByNumber($missdn);
-
 
         if ($customer->getData()->status == "FAIL") {
             return $this->sendErrorResponse(
@@ -88,13 +88,18 @@ class NumberValidationService extends ApiBaseService
         }
 
         if ($customer->getData()->data->status == "active") {
-            return $this->sendSuccessResponse(
-//                [],
-                $customer->getData()->data,
-                "Number is Valid",
-                [],
-                HttpStatusCode::SUCCESS
-            );
+            if ($validateReq) {
+                return $this->sendSuccessResponse(
+                    [
+                        'connectionType' => $customer->getData()->data->connectionType
+                    ],
+                    "Number is Valid",
+                    [],
+                    HttpStatusCode::SUCCESS
+                );
+            } else {
+                return $this->sendSuccessResponse($customer->getData()->data, "Number is Valid", [],HttpStatusCode::SUCCESS);
+            }
         } else {
             return $this->sendErrorResponse(
                 "Number is Not Valid. Status: ". $customer->getData()->data->status == "active",
