@@ -279,4 +279,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Referral Get Code
     Route::get('referral-code/{mobileNo}/{app_id}', 'API\V1\AppServiceDetailsController@getReferralCode');
     Route::post('referral-code/share', 'API\V1\AppServiceDetailsController@shareReferralCode');
+
+    // Token generator
+    Route::get('token', 'API\V1\CSRFTokenController@getToken');
+
 });

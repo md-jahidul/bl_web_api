@@ -40,6 +40,10 @@ class Kernel extends HttpKernel
         'api' => [
            // 'throttle:60,1',
             'bindings',
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class
         ],
     ];
 
