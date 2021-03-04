@@ -667,13 +667,13 @@ class EcareerService {
      * Ecarrer vacancy job offers with lever api
      * @return [type] [description]
      */
-    public function getVacancyLeverJobOffers() {
+    public function getVacancyLeverJobOffers()
+    {
+
 
         $results = null;
 
         $categoryJson = $this->loadJSON();
-
-
 
         # get job offer titles
         $vacancy_job_offer_title = $this->getProgramsByCateogryType('vacancy_pioneer', 'job_offers_title');
