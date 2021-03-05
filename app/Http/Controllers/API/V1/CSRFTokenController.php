@@ -28,8 +28,8 @@ class CSRFTokenController extends Controller
     /**
      *
      */
-    public function getToken()
+    public function getToken(Request $request)
     {
-        return $this->CSRFTokenService->getCSRFToken();
+        return $this->CSRFTokenService->getCSRFToken($request);
     }
 }

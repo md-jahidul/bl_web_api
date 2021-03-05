@@ -34,6 +34,7 @@ class LeadManagementController extends Controller
      */
     public function leadRequestData(Request $request)
     {
+        dd($request->session()->token());
         return $this->leadRequestService->saveRequest($request->all());
     }
 
