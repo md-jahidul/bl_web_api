@@ -90,7 +90,7 @@ class UserService extends ApiBaseService
     {
         $mobile = $request->mobile;
         $validationResponse = $this->numberValidationService->validateNumberWithResponse($mobile);
-        dd($validationResponse);
+
 
         if ($validationResponse->getData()->status == 'FAIL') {
             return $validationResponse;
