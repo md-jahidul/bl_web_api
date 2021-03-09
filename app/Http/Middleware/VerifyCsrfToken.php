@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\AlCsrfToken;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 use Closure;
 use Illuminate\Session\TokenMismatchException;
@@ -20,7 +22,7 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array
      */
-    protected $except =[
+    protected $except = [
         '/api/v1/success',
         '/api/v1/cancel',
         '/api/v1/failure'
@@ -30,8 +32,8 @@ class VerifyCsrfToken extends Middleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      *
      * @throws \Illuminate\Session\TokenMismatchException
@@ -40,9 +42,10 @@ class VerifyCsrfToken extends Middleware
     {
         if (
             $this->isReading($request) ||
-            $this->runningUnitTests() ||
-            $this->inExceptArray($request) ||
-            $this->tokensMatch($request)
+//            $this->runningUnitTests() ||
+//            $this->inExceptArray($request) ||
+            $this->tokensMatch($request) &&
+            $this->tokenExpireCheck($request)
         ) {
             return tap($next($request), function ($response) use ($request) {
                 if ($this->shouldAddXsrfTokenCookie()) {
@@ -50,22 +53,40 @@ class VerifyCsrfToken extends Middleware
                 }
             });
         }
-
         throw new TokenMismatchException('CSRF token mismatch.');
     }
 
     /**
      * Determine if the session and input CSRF tokens match.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return bool
      */
     protected function tokensMatch($request)
     {
         $token = $this->getTokenFromRequest($request);
-        $session_token = $request->session()->get($token);
-        return is_string($session_token) &&
+        $dbToken = AlCsrfToken::where('token', $token)->first();
+
+        return is_string($dbToken->token) &&
             is_string($token) &&
-            hash_equals($session_token, $token);
+            hash_equals($dbToken->token, $token);
+    }
+
+    protected function tokenExpireCheck($request)
+    {
+        $bdTimeZone = Carbon::now('Asia/Dhaka');
+        $dateTime = $bdTimeZone->toDateTimeString();
+
+        $token = $this->getTokenFromRequest($request);
+        $existToken = AlCsrfToken::where('token', $token)
+            ->where(function ($query) use ($dateTime) {
+                $query->where('expires_at', '>=', $dateTime)
+                    ->orWhereNull('expires_at');
+            })->first();
+
+        if ($existToken) {
+            return true;
+        }
+        return false;
     }
 }
