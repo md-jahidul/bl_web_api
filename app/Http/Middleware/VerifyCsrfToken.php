@@ -41,11 +41,11 @@ class VerifyCsrfToken extends Middleware
     public function handle($request, Closure $next)
     {
         if (
-            $this->isReading($request) ||
 //            $this->runningUnitTests() ||
 //            $this->inExceptArray($request) ||
-            $this->tokensMatch($request) &&
-            $this->tokenExpireCheck($request)
+            $this->isReading($request) ||
+            $this->tokenExpireCheck($request) &&
+        $this->tokensMatch($request)
         ) {
             return tap($next($request), function ($response) use ($request) {
                 if ($this->shouldAddXsrfTokenCookie()) {
@@ -67,9 +67,12 @@ class VerifyCsrfToken extends Middleware
         $token = $this->getTokenFromRequest($request);
         $dbToken = AlCsrfToken::where('token', $token)->first();
 
-        return is_string($dbToken->token) &&
-            is_string($token) &&
-            hash_equals($dbToken->token, $token);
+        if ($dbToken) {
+            return is_string($dbToken->token) &&
+                is_string($token) &&
+                hash_equals($dbToken->token, $token);
+        }
+        return false;
     }
 
     protected function tokenExpireCheck($request)
