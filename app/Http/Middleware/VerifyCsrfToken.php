@@ -68,10 +68,12 @@ class VerifyCsrfToken extends Middleware
         $dbToken = AlCsrfToken::where('token', $token)->first();
 
         if ($dbToken) {
-            return
-                is_string($dbToken->token) &&
+            if (is_string($dbToken->token) &&
                 is_string($token) &&
-                hash_equals($dbToken->secret_key, $request->secret_key);
+                hash_equals($dbToken->secret_key, $request->secret_key)) {
+                $dbToken->delete();
+                return true;
+            }
         }
         return false;
     }

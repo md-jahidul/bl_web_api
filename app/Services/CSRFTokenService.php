@@ -37,10 +37,11 @@ class CSRFTokenService extends ApiBaseService
 
         $this->alCsrfTokenRepository->deleteExpiredToken($currentTime, $expires_time);
 
-        $token = csrf_token();
+        $token = bin2hex(random_bytes(32));
+
         $existToken = $this->alCsrfTokenRepository->findOneBy(['token' => $token]);
 
-        $strLn = str_split($token, 20);
+        $strLn = str_split($token, strlen($token)/2);
         $partOneRev = array_reverse(str_split($strLn[0]));
         $partOne = implode($partOneRev);
         $partTwoRev = array_reverse(str_split($strLn[1]));
@@ -48,7 +49,6 @@ class CSRFTokenService extends ApiBaseService
         $arrayReverse = $partTwo.$partOne;
 
         $convBase64 = str_replace('=', '', base64_encode($arrayReverse));
-
 
         if (!$existToken) {
             $data['token'] = $token;
