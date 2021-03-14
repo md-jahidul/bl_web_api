@@ -40,10 +40,20 @@ class CSRFTokenService extends ApiBaseService
         $token = csrf_token();
         $existToken = $this->alCsrfTokenRepository->findOneBy(['token' => $token]);
 
+        $strLn = str_split($token, 20);
+        $partOneRev = array_reverse(str_split($strLn[0]));
+        $partOne = implode($partOneRev);
+        $partTwoRev = array_reverse(str_split($strLn[1]));
+        $partTwo = implode($partTwoRev);
+        $arrayReverse = $partTwo.$partOne;
+
+        $convBase64 = str_replace('=', '', base64_encode($arrayReverse));
+
+
         if (!$existToken) {
             $data['token'] = $token;
+            $data['secret_key'] = $convBase64;
             $data['expires_at'] = $expires_time;
-
             $this->save($data);
         }
         $data = [
