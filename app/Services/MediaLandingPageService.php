@@ -65,6 +65,7 @@ class MediaLandingPageService extends ApiBaseService
                 }
             }
         }
+        $data['data'] = array_values(collect($data['data'])->sortByDesc('created_at')->toArray());
         return $data;
     }
 

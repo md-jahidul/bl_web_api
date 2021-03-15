@@ -24,7 +24,8 @@ class MediaPressNewsEventRepository extends BaseRepository
                 'short_details_en', 'short_details_en',
                 'long_details_en', 'long_details_bn',
                 'details_image', 'details_alt_text_en',
-                'thumbnail_image', 'alt_text_en','date'
+                'thumbnail_image', 'alt_text_en','date',
+                'created_at'
             )
             ->where('status', 1);
 
