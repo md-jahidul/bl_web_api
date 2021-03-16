@@ -18,12 +18,14 @@ class MediaPressNewsEventRepository extends BaseRepository
     public function getPressNewsEvent($type, $id = null)
     {
         $data = $this->model
+            ->latest()
             ->where('type', $type)
             ->select('id', 'type','title_en', 'title_bn',
                 'short_details_en', 'short_details_en',
                 'long_details_en', 'long_details_bn',
                 'details_image', 'details_alt_text_en',
-                'thumbnail_image', 'alt_text_en','date'
+                'thumbnail_image', 'alt_text_en','date',
+                'created_at'
             )
             ->where('status', 1);
 
