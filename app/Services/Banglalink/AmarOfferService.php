@@ -112,9 +112,9 @@ class AmarOfferService extends BaseService
                     break;
                 case "DATA":
                     if (strtolower($data[2]) == 'gb') {
-                        $mb = (int)$data[1] * 1024 ;
+                        $mb = (float)$data[1] * 1024 ;
                     } else {
-                        $mb = (int)$data[1];
+                        $mb = (float)$data[1];
                     }
                     $offer_details ['internet_volume_mb'] = $mb;
                     break;
@@ -191,12 +191,11 @@ class AmarOfferService extends BaseService
      */
     private function prepareBuyOfferResponse($response)
     {
-        if (isset($response->Status) && $response->Status == 'success') {
+        if (isset($response->ID)) {
             return [
               'purchase_id' => $response->ID
             ];
         }
-
         throw new AmarOfferBuyException();
     }
 
@@ -209,10 +208,17 @@ class AmarOfferService extends BaseService
     public function buyAmarOffer(Request $request)
     {
         $customer = $this->customerService->getCustomerDetails($request);
+
+
         $response_data = $this->post($this->getBuyAmarOfferUrl(), [
+            'channel' => 'Website',
+            'channelId' => 7,
             'msisdn'  => substr($customer->msisdn, 3),
             'offerID' => $request->offer_id
         ]);
+
+
+//        dd($response_data);
         $offer_data = json_decode($response_data['response']);
         $formatted_data = $this->prepareBuyOfferResponse($offer_data);
 

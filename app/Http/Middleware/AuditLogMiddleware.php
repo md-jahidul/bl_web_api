@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\AuditLog;
 use Closure;
+use Illuminate\Support\Facades\Log;
 
 class AuditLogMiddleware
 {
