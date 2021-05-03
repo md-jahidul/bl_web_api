@@ -217,17 +217,22 @@ class AppServiceDetailsService extends ApiBaseService
 		return $data;
 	}
 
-	public function getDetails($product_id)
+	public function getDetails($slug)
     {
         $data = null;
 
         # get app and service product info
-        $product_info = $this->getProductInformationByID($product_id);
+		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
+		
+        $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
-
-        $additional_details = $this->getProductDetailsOthersInfo($product_id);
-
-        $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
+		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
+		
+		$data['page_header'] = $product_info->page_header;
+		$data['page_header_bn'] = $product_info->page_header_bn;
+		$data['schema_markup'] = $product_info->schema_markup;
+		$data['url_slug'] = $product_info->url_slug;
+		$data['url_slug_bn'] = $product_info->url_slug_bn;
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
@@ -236,7 +241,7 @@ class AppServiceDetailsService extends ApiBaseService
         # Get App tab details component
         if( $product_info->appServiceTab->alias == 'app' ){
             # Get component "text with image right", "text with image bottom"
-            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+            $data['section_component'] = $this->getDetailsSectionComponents($product_info->id);
 
             // $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
 
@@ -246,15 +251,15 @@ class AppServiceDetailsService extends ApiBaseService
         }
         elseif( $product_info->appServiceTab->alias == 'vas' ){
 
-            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+            $data['section_component'] = $this->getDetailsSectionComponents($product_info->id);
         }
         elseif( $product_info->appServiceTab->alias == 'financial' ){
 
-            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+            $data['section_component'] = $this->getDetailsSectionComponents($product_info->id);
         }
         elseif( $product_info->appServiceTab->alias == 'others' ){
 
-            $data['section_component'] = $this->getDetailsSectionComponents($product_id);
+            $data['section_component'] = $this->getDetailsSectionComponents($product_info->id);
         }
         else{
             $data['section_component'] = null;
@@ -262,7 +267,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
 
-        $referralInfo = $this->alReferralInfoRepository->findOneByProperties(['app_id' => $product_id, 'status' => 1]);
+        $referralInfo = $this->alReferralInfoRepository->findOneByProperties(['app_id' => $product_info->id, 'status' => 1]);
 
         $data['referral_info'] = isset($referralInfo) ? $referralInfo : null;
 

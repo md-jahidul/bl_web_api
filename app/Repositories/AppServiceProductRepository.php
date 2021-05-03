@@ -28,4 +28,9 @@ class AppServiceProductRepository extends BaseRepository
     {
         return $this->hasMany(AppServiceCategory::class, 'id', 'app_service_cat_id');
     }
+
+    public function getProductInformationBySlug($slug)
+    {
+        return $this->model->where('url_slug', $slug)->orWhere('url_slug_bn', $slug)->first();
+    }
 }

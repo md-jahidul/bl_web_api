@@ -13,6 +13,7 @@ use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
 use App\Models\LmsPartnerOfferLike;
 use App\Repositories\LmsPartnerOfferLikeRepository;
+use App\Repositories\PriyojonRepository;
 use App\Services\Banglalink\BanglalinkLoyaltyService;
 use Illuminate\Http\JsonResponse;
 
@@ -29,17 +30,25 @@ class LoyaltyService extends ApiBaseService
     private $likeRepository;
 
     /**
+     * @var $priyojonRepository
+     */
+    protected $priyojonRepository;
+
+    /**
      * LoyaltyService constructor.
      * @param BanglalinkLoyaltyService $blLoyaltyService
      * @param LmsPartnerOfferLikeRepository $likeRepository
+     * @param PriyojonRepository $priyojonRepository
      */
     public function __construct(
         BanglalinkLoyaltyService $blLoyaltyService,
-        LmsPartnerOfferLikeRepository $likeRepository
+        LmsPartnerOfferLikeRepository $likeRepository,
+        PriyojonRepository $priyojonRepository
     )
     {
         $this->blLoyaltyService = $blLoyaltyService;
         $this->likeRepository = $likeRepository;
+        $this->priyojonRepository = $priyojonRepository;
     }
 
     public function getPriyojonStatus($mobile)
@@ -55,7 +64,7 @@ class LoyaltyService extends ApiBaseService
         $offers = explode(';', $offer_description);
 
         $offer_details ['offer_id'] = $offer['offerID'];
-        $offer_details['offer_category_name'] = "Telco Offers";
+        $offer_details['offer_category_name'] = $offer['offerCategoryName'];
 
         foreach ($offers as $segment) {
             $data = explode('|', $segment);
@@ -141,7 +150,17 @@ class LoyaltyService extends ApiBaseService
                 }
             }
         }
-        return $this->sendSuccessResponse($offer_details, 'Loyalty data');
+
+        $priyojonMenu = $this->priyojonRepository->getMenuForSlug('redeem-point');
+
+        $data = [
+            'alias' => $priyojonMenu->alias,
+            'url_slug_en' => $priyojonMenu->url_slug_en,
+            'url_slug_bn' => $priyojonMenu->url_slug_bn,
+            'offer_details' => $offer_details
+        ];
+
+        return $this->sendSuccessResponse($data, 'Loyalty data');
     }
 
     /**
@@ -164,6 +183,7 @@ class LoyaltyService extends ApiBaseService
         $redeemOptions = $this->blLoyaltyService->getRedeemOptions($msisdn);
 
         $catWithOffers = [];
+
         foreach ($redeemOptions['data'] as $segment) {
             $catName = str_replace([' ', '-'], '_', strtolower($segment['offerCategoryName']));
             if (in_array($catName, $partnerCats)) {
@@ -180,7 +200,17 @@ class LoyaltyService extends ApiBaseService
                 ];
             }
         }
-        return $this->sendSuccessResponse($catWithOffers, 'Partner categories with offers');
+
+        $priyojonMenu = $this->priyojonRepository->getMenuForSlug('partner');
+
+        $data = [
+            'alias' => $priyojonMenu->alias,
+            'url_slug_en' => $priyojonMenu->url_slug_en,
+            'url_slug_bn' => $priyojonMenu->url_slug_bn,
+            'partnerOffers' => $catWithOffers
+        ];
+
+        return $this->sendSuccessResponse($data, 'Partner categories with offers');
     }
 
     /**

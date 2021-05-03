@@ -21,6 +21,7 @@ class QuickLaunchResource extends JsonResource
             "image_url" => (!empty($this->image_url)) ? config('filesystems.image_host_url') . $this->image_url : null,
             "alt_text" => $this->alt_text ?? null,
             "link" => $this->link ?? null,
+            "link_bn" => $this->link_bn ?? null,
             "is_external_link" => $this->is_external_link ?? null,
             "slug" => $this->slug ?? null,
             "status"  => $this->status ?? null ,
