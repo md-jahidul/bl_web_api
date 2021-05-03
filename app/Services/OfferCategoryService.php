@@ -104,22 +104,23 @@ class OfferCategoryService extends ApiBaseService
         $tags = TagCategory::all();
         $sim = SimCategory::all();
         $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
-
+//        dd($offer);
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
                 if (!empty($value['banner_image_url'])) {
 
-                    $encrypted = base64_encode($value['banner_image_url']);
+//                    $encrypted = base64_encode($value['banner_image_url']);
+//
+//                    $extension = explode('.', $value['banner_image_url']);
+//                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
+//                    $fileName = $value['banner_alt_text'] . $extension;
+//
+//                    $model = "OfferCategory";
 
-                    $extension = explode('.', $value['banner_image_url']);
-                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
-                    $fileName = $value['banner_alt_text'] . $extension;
 
-                    $model = "OfferCategory";
-
-                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
+//                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
 //                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
-//                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
+                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
                 }
                 if (!empty($value['banner_image_mobile'])) {
                     $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
