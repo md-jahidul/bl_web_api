@@ -16,7 +16,8 @@ class CorpCaseStudySectionRepository extends BaseRepository
                     'section_id', 'title_en',
                     'title_bn', 'details_en',
                     'details_en',
-                    'other_attributes', 'url_slug_en',
+                    'other_attributes',
+                    'url_slug_en', 'url_slug_bn',
                     'page_header', 'schema_markup');
             }])
             ->orderBy('display_order', 'ASC')

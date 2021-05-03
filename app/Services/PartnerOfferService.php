@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\PartnerOfferResource;
 use App\Repositories\PartnerOfferRepository;
+use App\Repositories\PriyojonRepository;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
 
@@ -17,11 +18,21 @@ class PartnerOfferService extends ApiBaseService {
     protected $partnerOfferRepository;
 
     /**
+     * @var $priyojonRepository
+     */
+    protected $priyojonRepository;
+
+    /**
      * PartnerOfferService constructor.
      * @param PartnerOfferRepository $partnerOfferRepository
+     * @param PriyojonRepository $priyojonRepository
      */
-    public function __construct(PartnerOfferRepository $partnerOfferRepository) {
+    public function __construct(
+        PartnerOfferRepository $partnerOfferRepository,
+        PriyojonRepository $priyojonRepository
+    ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
+        $this->priyojonRepository = $priyojonRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
 
@@ -60,13 +71,12 @@ class PartnerOfferService extends ApiBaseService {
         try {
             $partnerOffers = $this->partnerOfferRepository->offers();
 
-
-
             if ($partnerOffers) {
                 $partnerOffers = PartnerOfferResource::collection($partnerOffers);
                 return response()->success($partnerOffers, 'Data Found!');
+            } else {
+                return response()->error("Data Not Found!");
             }
-            return response()->error("Data Not Found!");
         } catch (QueryException $exception) {
             return response()->error("Something wrong", $exception);
         }

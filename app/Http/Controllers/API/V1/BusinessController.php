@@ -81,9 +81,9 @@ class BusinessController extends Controller
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
-    public function packageById($packageId)
+    public function packageBySlug($packageSlug)
     {
-        return $this->packageService->getPackageById($packageId);
+        return $this->packageService->getPackageBySlug($packageSlug);
     }
 
     /**
@@ -97,7 +97,7 @@ class BusinessController extends Controller
     {
         return $this->internetService->getInternetPackage();
     }
-    
+
     /**
      * Get Internet package details
      * 
@@ -105,9 +105,9 @@ class BusinessController extends Controller
      * @return Json Response
      * @Bulbul Mahmud Nito || 15/03/2020
      */
-    public function internetDetails($internetId)
+    public function internetDetails($internetSlug)
     {
-        return $this->internetService->getInternetDetails($internetId);
+        return $this->internetService->getInternetDetails($internetSlug);
     }
     /**
      * Give like and get total likes
@@ -140,9 +140,9 @@ class BusinessController extends Controller
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
-    public function enterpriseProductDetails($serviceId)
+    public function enterpriseProductDetails($serviceSlug)
     {
-        return $this->enterpriseService->getServiceById($serviceId);
+        return $this->enterpriseService->getServiceBySlug($serviceSlug);
     }
 
 }

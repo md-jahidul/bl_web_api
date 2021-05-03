@@ -32,8 +32,8 @@ class ProductDetailsController extends Controller
         $this->componentService = $componentService;
     }
 
-    public function productDetails($productId)
+    public function productDetails($slug)
     {
-       return $this->productDetailsSectionService->productDetails($productId);
+       return $this->productDetailsSectionService->productDetails($slug);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Resources\BannerResource;
+use App\Models\FrontEndDynamicRoute;
 use App\Repositories\BannerRepository;
 use App\Repositories\ConfigRepository;
 use App\Repositories\FooterMenuRepository;
@@ -53,16 +54,27 @@ class HeaderFooterMenuService extends ApiBaseService
 
     public function pagesInfo()
     {
-        $pages = $this->footerMenuRepository
-            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
-        foreach ($pages as $pageData){
+//        $pages = $this->footerMenuRepository
+//            ->findByProperties(['is_dynamic_page' => 1], ['id', 'en_label_text', 'url', 'dynamic_page_slug']);
+//        foreach ($pages as $pageData){
+//            $data[] = [
+//                'id' => $pageData->id,
+//                'title' => $pageData->en_label_text,
+//                'code' => 'DynamicPages',
+//                'url' => $pageData->url,
+//                'exact' => true,
+//                'slug' => $pageData->dynamic_page_slug,
+//            ];
+//        }
+        $routes = FrontEndDynamicRoute::all('id', 'code', 'url', 'key', 'exact', 'children');
+        foreach ($routes as $pageData){
             $data[] = [
                 'id' => $pageData->id,
-                'title' => $pageData->en_label_text,
-                'code' => 'DynamicPages',
+                'code' => $pageData->code,
                 'url' => $pageData->url,
-                'exact' => true,
-                'slug' => $pageData->dynamic_page_slug,
+                'key' => $pageData->key,
+                'exact' => ($pageData->exact) ? true : false,
+                'children' => $pageData->children,
             ];
         }
         return isset($data) ? $data : [];

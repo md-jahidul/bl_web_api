@@ -15,10 +15,11 @@ class CorpCrStrategyComponentRepository extends BaseRepository
     public function componentWithDetails($urlSlug)
     {
         return $this->model->where('url_slug_en', $urlSlug)
+            ->orWhere('url_slug_bn', $urlSlug)
             ->where('status', 1)
             ->select(
                 'id', 'title_en', 'title_bn', 'details_en', 'details_bn',
-                'url_slug_en', 'banner'
+                'url_slug_en', 'url_slug_bn', 'page_header', 'page_header_bn', 'schema_markup', 'banner'
             )
             ->with(['components' => function ($q) {
                 $q->orderBy('component_order', 'ASC')
