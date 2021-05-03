@@ -84,16 +84,16 @@ class BusinessOthersService {
      * Get business package by id
      * @return Response
      */
-    public function getServiceById($serviceId) {
-        $service = $this->otherRepo->getServiceById($serviceId);
+    public function getServiceBySlug($serviceSlug) {
+        $service = $this->otherRepo->getServiceBySlug($serviceSlug);
 
         $data['packageDetails'] = $service;
-        $data['components'] = $this->_getComponents($serviceId);
+        $data['components'] = $this->_getComponents($service['id']);
 
-        $data['feature'] = $this->_getFeaturesByService($service['slug'], $serviceId);
+        $data['feature'] = $this->_getFeaturesByService($service['slug'], $service['id']);
 
         $parentType = 2;
-        $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($serviceId, $parentType);
+        $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($service['id'], $parentType);
 
         return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
     }
@@ -268,7 +268,7 @@ class BusinessOthersService {
      */
     private function _getFeaturesByService($serviceType, $serviceId) {
         $types = array("business-solution" => 2, "iot" => 3, "others" => 4);
-        
+
         $response = [];
         if(isset($types[$serviceType])){
         $parentType = $types[$serviceType];

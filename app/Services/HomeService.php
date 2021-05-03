@@ -99,6 +99,7 @@ class HomeService extends ApiBaseService
                 $bnsModel = BusinessOthers::where('type', $request->id)->first();
                 $data['details_id'] = $bnsModel->id;
                 $data['url_slug'] = $bnsModel->url_slug;
+                $data['url_slug_bn'] = $bnsModel->url_slug_bn;
             }
 
 

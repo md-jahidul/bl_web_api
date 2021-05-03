@@ -42,8 +42,8 @@ class BusinessInternetService {
      * Get Internet package details
      * @return Response
      */
-    public function getInternetDetails($internetId) {
-        $response = $this->internetRepo->getInternetPackageDetails($internetId);
+    public function getInternetDetails($internetSlug) {
+        $response = $this->internetRepo->getInternetPackageDetails($internetSlug);
         return $this->responseFormatter->sendSuccessResponse($response, 'Business Internet Package Details');
     }
     /**

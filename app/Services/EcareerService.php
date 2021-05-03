@@ -16,7 +16,8 @@ use App\Models\EcareerPortalForm;
 use Illuminate\Database\QueryException;
 use File;
 
-class EcareerService {
+class EcareerService
+{
 
     use CrudTrait;
     use FileTrait;
@@ -40,7 +41,8 @@ class EcareerService {
      * PrizeService constructor.
      * @param PrizeRepository $prizeRepository
      */
-    public function __construct(EcareerPortalRepository $ecarrerPortalRepository, EcareerPortalItemRepository $ecarrerPortalItemRepository) {
+    public function __construct(EcareerPortalRepository $ecarrerPortalRepository, EcareerPortalItemRepository $ecarrerPortalItemRepository)
+    {
         $this->ecarrerPortalRepository = $ecarrerPortalRepository;
         $this->ecarrerPortalItemRepository = $ecarrerPortalItemRepository;
         $this->setActionRepository($ecarrerPortalRepository);
@@ -68,7 +70,8 @@ class EcareerService {
      * Get all general section for life of banglalink
      * @return [type] [description]
      */
-    public function generalSections() {
+    public function generalSections()
+    {
 
         return $this->ecarrerPortalRepository->getSectionsByCategory('life_at_bl_general');
     }
@@ -77,7 +80,8 @@ class EcareerService {
      * General section by ID
      * @return [type] [description]
      */
-    public function generalSectionById($id) {
+    public function generalSectionById($id)
+    {
 
         return $this->findOne($id);
     }
@@ -104,7 +108,8 @@ class EcareerService {
      * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws \Exception
      */
-    public function sectionDelete($id) {
+    public function sectionDelete($id)
+    {
         $section = $this->findOne($id);
         $data['deleted_at'] = Carbon::now();
         $section->update($data);
@@ -114,7 +119,8 @@ class EcareerService {
         return Response('Section deleted successfully !');
     }
 
-    public function getSeoData($category) {
+    public function getSeoData($category)
+    {
         return $this->ecarrerPortalRepository->getSeoData($category);
     }
 
@@ -122,7 +128,8 @@ class EcareerService {
      * Life at bl teams sections
      * @return [type] [description]
      */
-    public function ecarrerSectionsList($category, $categoryTypes = null) {
+    public function ecarrerSectionsList($category, $categoryTypes = null)
+    {
 
         return $this->ecarrerPortalRepository->getSectionsByCategory($category, $categoryTypes);
     }
@@ -132,7 +139,8 @@ class EcareerService {
      * @param  [type] $request [description]
      * @return [type]          [description]
      */
-    public function storeEcarrerSection($data, $data_types = null) {
+    public function storeEcarrerSection($data, $data_types = null)
+    {
 
         # Life at Banglalink General section
         $data['category'] = !empty($data_types['category']) ? $data_types['category'] : null;
@@ -159,7 +167,8 @@ class EcareerService {
      * @param  [type] $id   [description]
      * @return [type]       [description]
      */
-    public function updateEcarrerSection($data, $id, $data_types = null) {
+    public function updateEcarrerSection($data, $id, $data_types = null)
+    {
         $general_section = $this->findOne($id);
 
         if (!empty($data['slug'])) {
@@ -187,7 +196,8 @@ class EcareerService {
      * @param  [type] $request [description]
      * @return [type]          [description]
      */
-    public function getRouteSlug($path) {
+    public function getRouteSlug($path)
+    {
         if (!empty($path)) {
             $match = explode('/', $path);
             if (!empty($match[0]) && !empty($match[1])) {
@@ -198,6 +208,16 @@ class EcareerService {
         } else {
             return null;
         }
+    }
+
+    public function programsTapSeoData($catType)
+    {
+        return $this->ecarrerPortalRepository->findOneByProperties(
+            [
+                'category' => 'programs_top_tab_title',
+                'category_type' => $catType
+            ]
+        );
     }
 
     /**
@@ -214,7 +234,8 @@ class EcareerService {
      * => programs_news_section
      * @return [type] [mixed]
      */
-    public function getProgramsSap() {
+    public function getProgramsSap()
+    {
 
 
         $results = null;
@@ -222,13 +243,17 @@ class EcareerService {
         try {
 
             $category = "sap";
-            $seoData = $this->getSeoData($category);
+            $seoData = $this->programsTapSeoData($category);
+
+
+//            dd($seoData);
 
             $results['seo_data'] = array(
                 'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -265,7 +290,8 @@ class EcareerService {
      * => programs_events
      * @return [type] [mixed]
      */
-    public function getProgramsEnnovators() {
+    public function getProgramsEnnovators()
+    {
 
 
         $results = null;
@@ -273,13 +299,14 @@ class EcareerService {
         try {
 
             $category = "ennovators";
-            $seoData = $this->getSeoData($category);
+            $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
                 'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -316,21 +343,21 @@ class EcareerService {
      * => programs_news_section
      * @return [type] [mixed]
      */
-    public function getProgramsAip() {
-
-
+    public function getProgramsAip()
+    {
         $results = null;
 
         try {
 
             $category = "aip";
-            $seoData = $this->getSeoData($category);
+            $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
                 'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
                 'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
 
@@ -366,7 +393,8 @@ class EcareerService {
      * => programs_news_section, programs_steps, programs_events, programs_testimonial
      * @return [type]                [description]
      */
-    private function getProgramsByCateogryType($category, $category_type, $additional_category = null) {
+    private function getProgramsByCateogryType($category, $category_type, $additional_category = null)
+    {
 
         $programs_general = $this->ecarrerSectionsList($category, $category_type);
 
@@ -392,7 +420,8 @@ class EcareerService {
      * Programs SAP news sections
      * @return [type] [description]
      */
-    private function getProgramsNewsSections($category, $category_type, $additional_category) {
+    private function getProgramsNewsSections($category, $category_type, $additional_category)
+    {
 
         $sub_data = null;
 
@@ -432,7 +461,8 @@ class EcareerService {
      * [getProgramsSapStepsSections description]
      * @return [type] [description]
      */
-    public function getProgramsStepsSections($category, $category_type, $additional_category) {
+    public function getProgramsStepsSections($category, $category_type, $additional_category)
+    {
 
         $results = null;
         $get_pro_steps = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
@@ -440,7 +470,6 @@ class EcareerService {
         if (empty($category) || empty($category_type) || empty($additional_category)) {
             return $results;
         }
-
 
 
         if (!empty($get_pro_steps) && count($get_pro_steps) > 0) {
@@ -477,7 +506,8 @@ class EcareerService {
      * [getProgramsSapStepsSections description]
      * @return [type] [description]
      */
-    public function getProgramsPhotoGallerySections($category, $category_type) {
+    public function getProgramsPhotoGallerySections($category, $category_type)
+    {
 
         $results = null;
 
@@ -486,8 +516,6 @@ class EcareerService {
         }
 
         $programs_photo_gal = $this->getProgramsByCateogryType($category, $category_type);
-
-
 
 
         if (!empty($programs_photo_gal) && count($programs_photo_gal) > 0) {
@@ -526,7 +554,8 @@ class EcareerService {
      * Programs box icon sections
      * @return [type] [description]
      */
-    public function getProgramsBoxIconSections($category, $category_type) {
+    public function getProgramsBoxIconSections($category, $category_type)
+    {
 
         $results = null;
         $programs_proiconbox = $this->ecarrerSectionsList($category, $category_type);
@@ -574,7 +603,8 @@ class EcareerService {
      * Get Vacancy Hire section
      * @return [type] [description]
      */
-    public function getVacancyHire() {
+    public function getVacancyHire()
+    {
 
         $vacancy_hire = $this->getProgramsByCateogryType('vacancy_pioneer', 'how_we_hire');
         $results = [];
@@ -589,18 +619,6 @@ class EcareerService {
                 $sub_data['description_bn'] = $parent_value->description_bn;
                 $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
-
-
-                // if( !empty($events_value->portalItems) ){
-                //    foreach ($events_value->portalItems as $portal_items) {
-                //       $sub_items = [];
-                //       $sub_items['title_en'] = $portal_items->title_en;
-                //       $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
-                //       $sub_items['alt_text'] = $portal_items->alt_text;
-                //       $sub_data['item_list'][] = $sub_items;
-                //    }
-                // }
-
                 $results = $sub_data;
             } // Foreach end
         }
@@ -612,7 +630,8 @@ class EcareerService {
      * Get vacancy bottom news media section
      * @return [type] [description]
      */
-    public function getVacancyNewsMedia() {
+    public function getVacancyNewsMedia()
+    {
 
         $vacancy_news_media = $this->getProgramsByCateogryType('vacancy_pioneer', 'bottom_news_media');
         $results = [];
@@ -625,7 +644,6 @@ class EcareerService {
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['video'] = $parent_value->video;
 
                 $results = $sub_data;
@@ -639,7 +657,8 @@ class EcareerService {
      * Get ecarrer vacancy box icons
      * @return [type] [description]
      */
-    public function getVacancyBoxIcon() {
+    public function getVacancyBoxIcon()
+    {
 
         $vacancy_news_media = $this->ecarrerSectionsList('vacancy_viconbox');
 
@@ -667,12 +686,12 @@ class EcareerService {
      * Ecarrer vacancy job offers with lever api
      * @return [type] [description]
      */
-    public function getVacancyLeverJobOffers() {
+    public function getVacancyLeverJobOffers()
+    {
 
         $results = null;
 
         $categoryJson = $this->loadJSON();
-
 
 
         # get job offer titles
@@ -708,33 +727,12 @@ class EcareerService {
         $client = new Client();
         try {
             $response = $client->get(
-                    config('apiurl.lever_api_host') . '/postings/' . config('apiurl.lever_api_client') . '/?skip=0&mode=json'
+                config('apiurl.lever_api_host') . '/postings/' . config('apiurl.lever_api_client') . '/?skip=0&mode=json'
             );
 
             if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
 
                 $response = json_decode($response->getBody()->getContents(), true);
-
-
-//                $mod_response = array_map(function($ar) {
-//
-//                    if (isset($ar['description'])) {
-//                        unset($ar['description']);
-//                    }
-//
-//                    if (isset($ar['descriptionPlain'])) {
-//                        unset($ar['descriptionPlain']);
-//                    }
-//
-//                    if (isset($ar['additional'])) {
-//                        unset($ar['additional']);
-//                    }
-//
-//                    return $ar;
-//                }, $response);
-//
-//                $lever_content = $mod_response;
-
                 $jobData = [];
                 foreach ($categoryJson as $k => $cats) {
 
@@ -742,8 +740,7 @@ class EcareerService {
                     foreach ($response as $val) {
 
                         if (isset($val['categories']['department']) && $val['categories']['department'] == "BANGLALINK") {
-
-                            $depArray = (array) $cats->departments;
+                            $depArray = (array)$cats->departments;
                             if (isset($val['categories']['team']) && in_array($val['categories']['team'], $depArray)) {
                                 unset($val['additional']);
                                 unset($val['description']);
@@ -771,7 +768,8 @@ class EcareerService {
         return $results;
     }
 
-    public function loadJSON() {
+    public function loadJSON()
+    {
 
         try {
             $path = public_path() . "/config-json/job-categories.json"; // ie: /var/www/laravel/app/storage/json/filename.json
@@ -791,31 +789,24 @@ class EcareerService {
      * Get batch title
      * @return [type] [description]
      */
-    private function getProgramsPreviousBatchSections($category) {
-
-
+    private function getProgramsPreviousBatchSections($category)
+    {
         $results = null;
-
         if (empty($category)) {
             return $results;
         }
-
         # Get Batch main title
         $batch_title = $this->getProgramsByCateogryType($category, 'batch_title');
 
         if (!empty($batch_title) && count($batch_title) > 0) {
-
             $sub_data['title_en'] = $batch_title->first()->title_en;
             $sub_data['title_bn'] = $batch_title->first()->title_bn;
             $sub_data['slug'] = $batch_title->first()->slug;
-
             $results['batch_main_title'] = $sub_data;
         }
         # batch main title end
         # batch tab content
         $programs_batch_content = $this->ecarrerSectionsList($category, 'batch_content');
-
-        // dd($programs_batch_content);
 
         if (!empty($programs_batch_content) && count($programs_batch_content) > 0) {
             foreach ($programs_batch_content as $parent_value) {
@@ -824,15 +815,10 @@ class EcareerService {
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
-                // $sub_data['description_en'] = $parent_value->description_en;
-                // $sub_data['description_bn'] = $parent_value->description_bn;
-                // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
-                // $sub_data['alt_text'] = $parent_value->alt_text;
                 if (!empty($parent_value->portalItems) && count($parent_value->portalItems) > 0) {
 
                     foreach ($parent_value->portalItems as $portal_items) {
                         $sub_items = [];
-
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
@@ -864,7 +850,8 @@ class EcareerService {
      * Programs tab tile
      * @return [type] [description]
      */
-    private function getProgramsTabTitle($category, $category_type) {
+    private function getProgramsTabTitle($category, $category_type)
+    {
 
         $results = null;
 
@@ -879,6 +866,8 @@ class EcareerService {
             $sub_data['title_en'] = $tab_title->first()->title_en;
             $sub_data['title_bn'] = $tab_title->first()->title_bn;
             $sub_data['slug'] = $tab_title->first()->slug;
+            $sub_data['url_slug'] = $tab_title->first()->route_slug;
+            $sub_data['url_slug_bn'] = $tab_title->first()->route_slug_bn;
 
             $results = $sub_data;
         }
@@ -890,7 +879,8 @@ class EcareerService {
      * Programs SAP news sections
      * @return [type] [description]
      */
-    private function getProgramsEventsSections($category, $category_type, $additional_category) {
+    private function getProgramsEventsSections($category, $category_type, $additional_category)
+    {
 
         $results = null;
 
@@ -921,10 +911,8 @@ class EcareerService {
                         $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
                         $sub_items['alt_text'] = $items_value->alt_text;
                         $sub_items['video'] = $items_value->video;
-                        // $sub_items['alt_links'] = $items_value->alt_links;
-                        #teams tab content buttons
-                        //$sub_items['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
 
+                        #teams tab content buttons
                         $sub_data['item_list'][] = $sub_items;
                     }
                 }
@@ -940,7 +928,8 @@ class EcareerService {
      * Programs AIP Testimonial Sections
      * @return [type] [description]
      */
-    private function getProgramsTestimonialSections($category, $category_type, $additional_category) {
+    private function getProgramsTestimonialSections($category, $category_type, $additional_category)
+    {
 
         $results = null;
 
@@ -995,7 +984,8 @@ class EcareerService {
      * Get university list
      * @return [type] [description]
      */
-    public function getUniversityList() {
+    public function getUniversityList()
+    {
 
         return University::get();
     }
@@ -1005,7 +995,8 @@ class EcareerService {
      * @param  [type] $request [description]
      * @return [type]          [description]
      */
-    public function updateApplicationForm($request) {
+    public function updateApplicationForm($request)
+    {
 
 
         try {
@@ -1041,7 +1032,8 @@ class EcareerService {
      * Programs tab tile
      * @return [type] [description]
      */
-    public function getProgramsAllTabTitle($category, $category_type = null, $single = false) {
+    public function getProgramsAllTabTitle($category, $category_type = null, $single = false)
+    {
 
         $results = null;
 
@@ -1063,7 +1055,6 @@ class EcareerService {
         } else {
             $results = isset($tab_titles->first()->route_slug) ? $tab_titles->first()->route_slug : null;
         }
-
 
 
         return $results;

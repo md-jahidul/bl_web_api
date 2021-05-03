@@ -99,8 +99,8 @@ class RoamingService {
      * Get roaming other offer details
      * @return Response
      */
-    public function otherOfferDetalis($offerId) {
-        $response = $this->offerRepo->getOtherOffersDetails($offerId);
+    public function otherOfferDetalis($offerSlug) {
+        $response = $this->offerRepo->getOtherOffersDetails($offerSlug);
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Other Offer Details');
     }
 
@@ -155,8 +155,8 @@ class RoamingService {
      * Get roaming other offer details
      * @return Response
      */
-    public function infoTipsDetails($infoId) {
-        $response = $this->infoRepo->getInfoDetails($infoId);
+    public function infoTipsDetails($infoSlug) {
+        $response = $this->infoRepo->getInfoDetails($infoSlug);
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips Details');
     }
 

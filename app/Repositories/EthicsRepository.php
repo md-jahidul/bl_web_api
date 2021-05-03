@@ -23,8 +23,9 @@ class EthicsRepository extends BaseRepository {
         $data['banner_mobile'] = $info->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $info->banner_mobile;
         $data['alt_text'] = $info->alt_text;
         $data['page_header'] = $info->page_header;
+        $data['page_header_bn'] = $info->page_header_bn;
         $data['schema_markup'] = $info->schema_markup;
-     
+
         return $data;
     }
 

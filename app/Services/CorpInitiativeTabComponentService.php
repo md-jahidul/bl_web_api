@@ -44,7 +44,7 @@ class CorpInitiativeTabComponentService extends ApiBaseService
      */
     public function getTabComponents($slug)
     {
-        $tabId = $this->initiativeTabRepository->findOneByProperties(['url_slug_en' => $slug], ['id', 'url_slug_en']);
+        $tabId = $this->initiativeTabRepository->getTabInfo($slug);
         $tabId = isset($tabId) ? $tabId->id : null;
         $data = $this->tabComponentRepository->list($tabId);
 
