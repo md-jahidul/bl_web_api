@@ -81,6 +81,7 @@ class PurchaseService extends BaseService
         $product_code = $request->input('product_code');
 
         $param = [
+            "channel" => env('PURCHASE_CHANNEL_NAME', 'website'),
             'id' => $product_code,
             'msisdn' => $mobile
         ];
