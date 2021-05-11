@@ -293,6 +293,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('fixed-page/meta-tag/{key}', 'API\V1\FixedPageMateTagController@getFixedMateTag');
 
+
+    // Token generator
+    Route::get('token', 'API\V1\CSRFTokenController@getToken');
+
 });
 
 

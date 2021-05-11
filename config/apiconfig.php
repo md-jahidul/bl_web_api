@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'opt_token_expiry' => 300, // In secconds
+    'opt_token_expiry' => 300, // In seconds
+    'csrf_token_expiry' => 300 // In seconds
 ];
 
 ?>

@@ -40,6 +40,10 @@ class Kernel extends HttpKernel
         'api' => [
            // 'throttle:60,1',
             'bindings',
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class
         ],
     ];
 
@@ -62,7 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkIp' => \App\Http\Middleware\CheckIpMiddleware::class,
         'audit.log' => \App\Http\Middleware\AuditLogMiddleware::class,
-
     ];
 
     /**
