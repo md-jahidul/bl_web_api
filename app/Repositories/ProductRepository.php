@@ -86,6 +86,7 @@ class ProductRepository extends BaseRepository
                'id',
                'product_code',
                'url_slug',
+               'url_slug_bn',
                'schema_markup',
                'page_header',
                'rate_cutter_unit',
