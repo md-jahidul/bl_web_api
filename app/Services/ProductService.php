@@ -141,7 +141,9 @@ class ProductService extends ApiBaseService
         $data = [];
         foreach ($products as $product) {
             $findProduct = $this->productRepository->relatedProducts($product->related_product_id);
-            array_push($data, $findProduct);
+            if ($findProduct) {
+                array_push($data, $findProduct);
+            }
         }
 
         foreach ($data as $product) {
