@@ -192,6 +192,7 @@ class ProductRepository extends BaseRepository
     public function relatedProducts($id)
     {
         return $this->model->where('id', $id)
+            ->where('status', 1)
             ->select(
                 'id',
                 'product_code',
@@ -208,7 +209,8 @@ class ProductRepository extends BaseRepository
                 'tag_category_id',
                 'sim_category_id',
                 'offer_category_id',
-                'like')
+                'like'
+            )
             ->productCore()
             ->first();
     }
