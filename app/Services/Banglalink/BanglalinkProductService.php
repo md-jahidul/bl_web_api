@@ -30,8 +30,8 @@ class BanglalinkProductService extends BaseService
 
     public function getCustomerProducts($customerId)
     {
-        $url = str_replace("{customerId}", $customerId, $this->endpoint);
-
+        $endpoint = $this->endpoint . "?channel=" . env("PURCHASE_CHANNEL_NAME", 'website');
+        $url = str_replace("{customerId}", $customerId, $endpoint);
         $result = $this->get($url);
 
         if ($result['status_code'] == 200) {
