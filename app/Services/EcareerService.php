@@ -716,24 +716,24 @@ class EcareerService {
                 $response = json_decode($response->getBody()->getContents(), true);
 
 
-//                $mod_response = array_map(function($ar) {
-//
-//                    if (isset($ar['description'])) {
-//                        unset($ar['description']);
-//                    }
-//
-//                    if (isset($ar['descriptionPlain'])) {
-//                        unset($ar['descriptionPlain']);
-//                    }
-//
-//                    if (isset($ar['additional'])) {
-//                        unset($ar['additional']);
-//                    }
-//
-//                    return $ar;
-//                }, $response);
-//
-//                $lever_content = $mod_response;
+                $mod_response = array_map(function($ar) {
+
+                    if (isset($ar['description'])) {
+                        unset($ar['description']);
+                    }
+
+                    if (isset($ar['descriptionPlain'])) {
+                        unset($ar['descriptionPlain']);
+                    }
+
+                    if (isset($ar['additional'])) {
+                        unset($ar['additional']);
+                    }
+
+                    return $ar;
+                }, $response);
+
+                $lever_content = $mod_response;
 
                 $jobData = [];
                 foreach ($categoryJson as $k => $cats) {

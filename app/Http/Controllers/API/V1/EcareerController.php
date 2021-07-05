@@ -345,25 +345,25 @@ class EcareerController extends Controller
      */
     public function getEcarrerVacancy()
     {
-        $service_url = "https://api.lever.co/v1/postings";
-        $curl = curl_init($service_url);
-        $apiKey = "RZR5Kvm09lMlCGPYAq9IAWlA8G6KlddNqv4jNbmSjHoyLKtV";
-
-//        curl_setopt($curl, CURLOPT_HEADER, $apiKey);
-
-//        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-//            'Authorization:' . 'Bearer' . $apiKey
-//        ));
-
-        curl_setopt($curl, CURLOPT_USERPWD, $apiKey);
-
-        $curl_response = curl_exec($curl);
-        curl_close($curl);
-
-        $decoded = json_decode($curl_response, true);
-
-        dd(gettype($curl_response));
-        return $decoded;
+//        $service_url = "https://api.lever.co/v1/postings";
+//        $curl = curl_init($service_url);
+//        $apiKey = "RZR5Kvm09lMlCGPYAq9IAWlA8G6KlddNqv4jNbmSjHoyLKtV";
+//
+////        curl_setopt($curl, CURLOPT_HEADER, $apiKey);
+//
+////        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+////            'Authorization:' . 'Bearer' . $apiKey
+////        ));
+//
+//        curl_setopt($curl, CURLOPT_USERPWD, $apiKey);
+//
+//        $curl_response = curl_exec($curl);
+//        curl_close($curl);
+//
+//        $decoded = json_decode($curl_response, true);
+//
+//        dd(gettype($curl_response));
+//        return $decoded;
 
 
         try {

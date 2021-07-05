@@ -9,6 +9,10 @@ class PartnerOffer extends Model
 {
     protected $hidden = ['created_at','updated_at'];
 
+    protected $casts = [
+        'other_attributes' => 'array'
+    ];
+
     public function partner()
     {
         return $this->belongsTo(Partner::class);
