@@ -133,6 +133,10 @@ class PartnerOfferService extends ApiBaseService {
     public function campaign()
     {
         $campaignOffers = $this->partnerOfferRepository->campaignOffers();
+        $campaignOffers = array_map(function ($value) {
+            $value->other_attributes = json_decode($value->other_attributes);
+            return $value;
+        }, $campaignOffers->toArray());
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
     }
 
