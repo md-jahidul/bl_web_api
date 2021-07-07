@@ -18,4 +18,8 @@ class PartnerOffer extends Model
     {
         return $this->hasOne(PartnerOfferDetail::class);
     }
+
+    protected $casts = [
+        'other_attributes' => 'array'
+    ];
 }
