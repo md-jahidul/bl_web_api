@@ -46,7 +46,6 @@ class PartnerOfferRepository extends BaseRepository {
     public function offers() {
         $priyojonOffers = DB::table('partner_offers as po')
                 ->where('po.is_active', 1)
-                ->where('po.show_in_home', 1)
                 ->join('partners as p', 'po.partner_id', '=', 'p.id')
                 ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
                 ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
@@ -135,6 +134,7 @@ class PartnerOfferRepository extends BaseRepository {
 
                 'po.url_slug',
                 'po.url_slug_bn',
+                'po.other_attributes',
 
                 'p.company_name_en',
                 'p.company_name_bn',

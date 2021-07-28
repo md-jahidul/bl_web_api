@@ -82,8 +82,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')
+        ->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')
+        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
 
     // Refresh token
@@ -293,6 +295,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('fixed-page/meta-tag/{key}', 'API\V1\FixedPageMateTagController@getFixedMateTag');
 
+    // Token generator
+    Route::get('secret-token', 'API\V1\SecreteTokenController@getToken');
 });
 
 
