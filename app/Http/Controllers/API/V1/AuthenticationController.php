@@ -52,7 +52,6 @@ class AuthenticationController extends Controller
      */
     public function numberValidation(Request $request, $mobile): JsonResponse
     {
-        $this->secreteTokenService->validateToken($request);
         return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
 
