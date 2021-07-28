@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\RequestUnauthorizedException;
+use App\Exceptions\SecreteTokenExpireException;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,11 +17,6 @@ class SecreteTokenService extends ApiBaseService
      */
     public function generateToken()
     {
-//        $token_expiry = config('session.lifetime');
-//        $bdTimeZone = Carbon::now('Asia/Dhaka');
-//        $currentTime = $bdTimeZone->toDateTimeString();
-
-
         $token = bin2hex(random_bytes(32));
         $strLn = str_split($token, strlen($token)/2);
         $partOneRev = array_reverse(str_split($strLn[0]));
@@ -28,7 +24,6 @@ class SecreteTokenService extends ApiBaseService
         $partTwoRev = array_reverse(str_split($strLn[1]));
         $partTwo = implode($partTwoRev);
         $arrayReverse = $partTwo.$partOne;
-
         $convBase64 = str_replace('=', '', base64_encode($arrayReverse));
 
         $millisecondsKey = (int) str_replace('.', '', microtime(true) * 1000);
@@ -39,7 +34,7 @@ class SecreteTokenService extends ApiBaseService
         ];
 
         // Set Token in Redis Cache
-        Redis::setex("al_api_security_key:$millisecondsKey", 500, json_encode($cashData));
+        Redis::setex("al_api_security_key:$millisecondsKey", 60, json_encode($cashData));
         $data['secret_code'] = $millisecondsKey;
 
         $data = [
@@ -52,20 +47,25 @@ class SecreteTokenService extends ApiBaseService
 
     /**
      * @throws RequestUnauthorizedException
+     * @throws SecreteTokenExpireException
      */
     public function validateToken(Request $request)
     {
-       $token = $request->header('client-security-token');
-       $secret_key = $request->header('server-security-token');
-       $redis_key = $request->header('secret-code');
+        $token = $request->header('server-security-token');
+        $secret_key = $request->header('client-security-token');
+        $redis_key = $request->header('secret-code');
 
-       $cacheData = Redis::get("al_api_security_key:$redis_key");
-       $cacheData = json_decode($cacheData, true);
-        if ($cacheData) {
-            if (hash_equals($cacheData['_token'], $token) &&
-                hash_equals($cacheData['secret_key'], $secret_key)) {
-                return true;
-            }
+        $cacheData = Redis::get("al_api_security_key:$redis_key");
+        $cacheData = json_decode($cacheData, true);
+
+        if (!$cacheData) {
+            throw new SecreteTokenExpireException();
+        }
+
+        if (hash_equals($cacheData['_token'], $token) &&
+            hash_equals($cacheData['secret_key'], $secret_key)) {
+            Redis::del("al_api_security_key:$redis_key");
+            return true;
         }
 
         throw new RequestUnauthorizedException();
