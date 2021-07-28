@@ -297,6 +297,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Token generator
     Route::get('token', 'API\V1\CSRFTokenController@getToken');
 
+    // Token generator
+    Route::get('secrete-token', 'API\V1\SecreteTokenController@getToken');
 });
 
 

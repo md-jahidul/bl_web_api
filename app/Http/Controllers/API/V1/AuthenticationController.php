@@ -3,10 +3,13 @@ namespace App\Http\Controllers\API\V1;
 
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OtpLoginRequest;
 use App\Services\NumberValidationService;
+use App\Services\SecreteTokenService;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,31 +24,42 @@ class AuthenticationController extends Controller
      * @var NumberValidationService
      */
     protected $numberValidationService;
+    /**
+     * @var SecreteTokenService
+     */
+    private $secreteTokenService;
 
     /**
      * AuthenticationController constructor.
      * @param UserService $userService
      * @param NumberValidationService $numberValidationService
      */
-    public function __construct(UserService $userService, NumberValidationService $numberValidationService)
-    {
+    public function __construct(
+        UserService $userService,
+        NumberValidationService $numberValidationService,
+        SecreteTokenService $secreteTokenService
+    ) {
         $this->userService = $userService;
         $this->numberValidationService = $numberValidationService;
+        $this->secreteTokenService = $secreteTokenService;
     }
 
     /**
+     * @param Request $request
      * @param $mobile
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws RequestUnauthorizedException
      */
-    public function numberValidation($mobile)
+    public function numberValidation(Request $request, $mobile): JsonResponse
     {
+        $this->secreteTokenService->validateToken($request);
         return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
 
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|string
+     * @return JsonResponse|string
      */
     public function requestOtpLogin(Request $request)
     {
@@ -55,7 +69,7 @@ class AuthenticationController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return JsonResponse|mixed
      */
     public function otpLogin(OtpLoginRequest $request)
     {
