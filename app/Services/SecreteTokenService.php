@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Redis;
 
 class SecreteTokenService extends ApiBaseService
 {
+
     /**
-     * @return JsonResponse|mixed
+     * @return array
      * @throws Exception
      */
-    public function generateToken()
+    public function encryptToken(): array
     {
         $token = bin2hex(random_bytes(32));
         $strLn = str_split($token, strlen($token)/2);
@@ -26,48 +27,35 @@ class SecreteTokenService extends ApiBaseService
         $arrayReverse = $partTwo.$partOne;
         $convBase64 = str_replace('=', '', base64_encode($arrayReverse));
 
+        return [
+            'token' => $token,
+            'secret_key' => $convBase64
+        ];
+    }
+
+    /**
+     * @return JsonResponse|mixed
+     * @throws Exception
+     */
+    public function generateToken()
+    {
+        $encryptedToken = $this->encryptToken();
         $millisecondsKey = (int) str_replace('.', '', microtime(true) * 1000);
+        $secretCode = $millisecondsKey.uniqid();
 
         $cashData = [
-            '_token' => $token,
-            'secret_key' => $convBase64
+            'secret_key' => $encryptedToken['secret_key']
         ];
 
         // Set Token in Redis Cache
-        Redis::setex("al_api_security_key:$millisecondsKey", 60, json_encode($cashData));
+        Redis::setex("al_api_security_key:$secretCode", 120, json_encode($cashData));
         $data['secret_code'] = $millisecondsKey;
 
         $data = [
-            '_token' => $token,
-            'secret_key' => $convBase64,
-            'secret_code' => $millisecondsKey
+            '_token' => $encryptedToken['token'],
+            'secret_code' => $secretCode
         ];
         return $this->sendSuccessResponse($data, 'Token successfully generated');
     }
 
-    /**
-     * @throws RequestUnauthorizedException
-     * @throws SecreteTokenExpireException
-     */
-    public function validateToken(Request $request)
-    {
-        $token = $request->header('server-security-token');
-        $secret_key = $request->header('client-security-token');
-        $redis_key = $request->header('secret-code');
-
-        $cacheData = Redis::get("al_api_security_key:$redis_key");
-        $cacheData = json_decode($cacheData, true);
-
-        if (!$cacheData) {
-            throw new SecreteTokenExpireException();
-        }
-
-        if (hash_equals($cacheData['_token'], $token) &&
-            hash_equals($cacheData['secret_key'], $secret_key)) {
-            Redis::del("al_api_security_key:$redis_key");
-            return true;
-        }
-
-        throw new RequestUnauthorizedException();
-    }
 }
