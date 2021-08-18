@@ -13,6 +13,7 @@ use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
 use App\Models\ShortCode;
 use App\Models\MetaTag;
+use App\Repositories\DynamicUrlRedirectionRepository;
 use App\Services\HomeService;
 use App\Services\ProductService;
 use App\Services\QuickLaunchService;
@@ -24,7 +25,8 @@ use Validator;
 use App\Services\EcareerService;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
-class HomePageController extends Controller {
+class HomePageController extends Controller
+{
 
     /**
      * @var ProductService
@@ -34,6 +36,10 @@ class HomePageController extends Controller {
     private $quickLaunchService;
     private $ecarrerService;
     private $salesAndServicesService;
+    /**
+     * @var DynamicUrlRedirectionRepository
+     */
+    private $dynamicUrlRedirectionRepository;
 
     /**
      * HomePageController constructor.
@@ -42,33 +48,36 @@ class HomePageController extends Controller {
      * @param QuickLaunchService $quickLaunchService
      * @param EcareerService $ecarrerService
      * @param SalesAndServicesService $salesAndServicesService
+     * @param DynamicUrlRedirectionRepository $dynamicUrlRedirectionRepository
      */
     public function __construct(
         HomeService $homeService,
         ProductService $productService,
         QuickLaunchService $quickLaunchService,
         EcareerService $ecarrerService,
-        SalesAndServicesService $salesAndServicesService
+        SalesAndServicesService $salesAndServicesService,
+        DynamicUrlRedirectionRepository $dynamicUrlRedirectionRepository
     ) {
         $this->homeService = $homeService;
         $this->productService = $productService;
         $this->quickLaunchService = $quickLaunchService;
         $this->ecarrerService = $ecarrerService;
         $this->salesAndServicesService = $salesAndServicesService;
+        $this->dynamicUrlRedirectionRepository = $dynamicUrlRedirectionRepository;
     }
 
-    public function getHomePageData() {
+    public function getHomePageData()
+    {
 
-       return $this->homeService->getComponents();
+        return $this->homeService->getComponents();
     }
 
     /**
      * Frontend dynamic route for seo tab
      * @return [type] [description]
      */
-    public function frontendDynamicRoute() {
-
-
+    public function frontendDynamicRoute()
+    {
         $data = [];
 
         try {
@@ -86,7 +95,8 @@ class HomePageController extends Controller {
 
             $programs_child_data = $this->ecarrerService->getProgramsAllTabTitle('programs_top_tab_title');
 
-            $programs_child_data_results = $this->formatDynamicRoute($programs_child_data, $parent_code, $parent_url, $extra_slug_data);
+            $programs_child_data_results = $this->formatDynamicRoute($programs_child_data, $parent_code, $parent_url,
+                $extra_slug_data);
 
             # life at banglalink all top banner slug
             $top_banner_slug = $this->ecarrerService->getProgramsAllTabTitle('life_at_bl_topbanner');
@@ -104,12 +114,14 @@ class HomePageController extends Controller {
                 $child_data = null;
             }
 
-
-
             $ecarrer_data['children'] = $child_data;
-
-
             $data[] = $ecarrer_data;
+
+            /**
+             * Fetching dynamic url redirection data
+             */
+            $dynamicUrlRedirections = $this->dynamicUrlRedirectionRepository->getRedirections();
+            $data['dynamic_redirections'] = $dynamicUrlRedirections->toArray();
 
             return response()->success($data, "Data Success");
         } catch (\Exception $e) {
@@ -127,7 +139,8 @@ class HomePageController extends Controller {
      * @param null $extra_slug_data
      * @return array|null [type]                  [description]
      */
-    private function formatDynamicRoute($data, $parent_code, $parent_url, $extra_slug_data = null) {
+    private function formatDynamicRoute($data, $parent_code, $parent_url, $extra_slug_data = null)
+    {
 
         try {
             $results = null;
