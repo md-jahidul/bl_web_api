@@ -101,7 +101,7 @@ class ProductController extends Controller
      */
     public function productDetails($slug)
     {
-        return $productDetail = $this->productService->details($slug);
+        return $this->productService->details($slug);
     }
 
     public function eligibleCheck($mobile, $productCode)
