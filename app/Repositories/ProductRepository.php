@@ -140,6 +140,7 @@ class ProductRepository extends BaseRepository
                 'name_en',
                 'name_bn',
                 'ussd_bn',
+                'balance_check_ussd_bn',
                 'call_rate_unit_bn',
                 'offer_info',
                 'status',
