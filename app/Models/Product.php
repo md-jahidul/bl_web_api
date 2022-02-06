@@ -46,7 +46,9 @@ class Product extends Model
                 'call_rate_unit',
                 'sms_rate as sms_rate_offer',
                 'renew_product_code',
-                'recharge_product_code'
+                'recharge_product_code',
+                'sd_vat_tax_en',
+                'sd_vat_tax_bn'
             );
         }]);
     }
