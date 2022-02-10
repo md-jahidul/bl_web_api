@@ -6,7 +6,7 @@ use App\Models\SmsLanguage;
 
 class SmsLanguageHelper
 {
-    private const CUSTOMER_LANG_URL = '/customer-information/customer-information/get-language/';
+    private const CUSTOMER_LANG_URL = '/customer-information/customer-information/customer-information/get-language/';
 
     /**
      * @param $feature
@@ -70,7 +70,7 @@ class SmsLanguageHelper
     {
 //        $host = "http://172.16.254.122:8080";
         $host = env('BL_API_HOST') ?? 'http://apigateway.banglalink.net:7171';
-        $url = $host . self::CUSTOMER_LANG_URL . "channel/Website/msisdn/" . $msisdn;
+        $url = $host . self::CUSTOMER_LANG_URL . "channel/Website/msisdn/88" . $msisdn . "/";
         $lang = "bn";
         /**
          * Sending request to the api gateway
