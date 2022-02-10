@@ -43,7 +43,7 @@ class BanglalinkOtpService extends BaseService
         $expire = number_format(($validity / 60));
 
         $lang = SmsLanguageHelper::getCustomerPreferredLanguage($msisdn);
-        $vars = [$tokenChar, $expire, env('OTP_AUTO_READ_KEY')];
+        $vars = [$tokenChar, $expire];
         $message = SmsLanguageHelper::getSmsText(config('constants.sms.features')[0], $vars, $lang);
 //        $message =  "Your OTP is " . $tokenChar . ". This OTP will be expired within " . $expire . " minutes.";
 

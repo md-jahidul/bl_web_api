@@ -70,7 +70,7 @@ class SmsLanguageHelper
     {
 //        $host = "http://172.16.254.122:8080";
         $host = env('BL_API_HOST') ?? 'http://apigateway.banglalink.net:7171';
-        $url = $host . self::CUSTOMER_LANG_URL . "channel/MobileApp/msisdn/" . $msisdn;
+        $url = $host . self::CUSTOMER_LANG_URL . "channel/Website/msisdn/" . $msisdn;
         $lang = "bn";
         /**
          * Sending request to the api gateway
