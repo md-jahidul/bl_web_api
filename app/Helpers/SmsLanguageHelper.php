@@ -83,7 +83,7 @@ class SmsLanguageHelper
 
         $result = json_decode(curl_exec($curl));
 
-        if (isset($result->status) && $result->status === 'success') {
+        if (isset($result->status_code) && $result->status_code == "101") {
             $lang = $result->lang ? 'en' : 'bn';
         }
 
