@@ -68,8 +68,8 @@ class SmsLanguageHelper
      */
     public static function getCustomerPreferredLanguage($msisdn): string
     {
-        // $host = env('BL_API_HOST') ?? 'http://apigateway.banglalink.net:7171';
-        $host = "http://172.16.254.122:8080";
+//        $host = "http://172.16.254.122:8080";
+        $host = env('BL_API_HOST') ?? 'http://apigateway.banglalink.net:7171';
         $url = $host . self::CUSTOMER_LANG_URL . "channel/MobileApp/msisdn/" . $msisdn;
         $lang = "bn";
         /**
