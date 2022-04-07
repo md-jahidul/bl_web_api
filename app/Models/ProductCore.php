@@ -58,4 +58,21 @@ class ProductCore extends Model
         });
     }
 
+    public function blProduct()
+    {
+        return $this->hasOne(MyBlProduct::class, 'product_code', 'product_code');
+    }
+
+    public function detialTabs()
+    {
+        return $this->hasManyThrough(
+            MyBlInternetOffersCategory::class,
+            MyBlProductTab::class,
+            'product_code',
+            'id',
+            'product_code',
+            'my_bl_internet_offers_category_id'
+        );
+    }
+
 }

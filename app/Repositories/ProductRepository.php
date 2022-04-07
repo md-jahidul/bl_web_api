@@ -76,6 +76,8 @@ class ProductRepository extends BaseRepository
             ->where('special_product', 0)
             ->startEndDate()
             ->productCore()
+            ->with('blProduct', 'detailTabs')
+            // ->where('content_type', 'data')
             ->category($type)
             ->get();
     }
