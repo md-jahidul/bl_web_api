@@ -229,137 +229,56 @@ class ProductService extends ApiBaseService
     public function simTypeOffersTypeWise($type, $offerType)
     {
         try {
-            $products = ProductCore::whereHas('blProduct', function ($q) {
-                $q->where('status', 1);
-                $q->where('is_visible', 1);
-                $q->where('offer_section_slug', '<>', 'gift');
-                $q->where('offer_section_slug', '<>', 'transfer');
-                $q->where('is_rate_cutter_offer', '<>', 1);
-            })
-            ->with('blProduct', 'detialTabs')->where('content_type', 'data')
-            ->get()
-            ->reject(function ($item) {
-                return in_array($item->blProduct->scheduleStatus(), [3, 4]);
-            });
-
-            $item = [];
-            $available_products = [];
-            $pinnedProducts = [];
-
-            // if (isset($request) && $request->bearerToken()) {
-            //     $customer = $this->getCustomerInfo($request);
-            //     $customer_id = $customer->customer_account_id;
-            //     $available_products = $this->customerAvailableProductsService->getAvailableProductsByCustomer($customer_id, $request->header('platform'));
-
-            //     $products = $this->checkMsisdnWiseProduct($products, $customer->phone);
-
-            // } else {
-            //     /**
-            //      * Removing free (0 tk) product for guest users
-            //      */
-            //     $products = $products->reject(function ($item) {
-            //         return !$item->mrp_price;
-            //     });
-            // }
-
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
+            
+            if ($products) {
+                foreach ($products as $product) {
+                    $data = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $data);
+                    unset($product->productCore);
+                }
+                unset($data);
+            }
 
             $products = $products->sortBy('mrp_price');
-            $allPacks = [];
             $pinnedProducts['all'] = [];
-
+            $item = [];
+            $allPacks = [];
+            
             foreach ($products as $offer) {
-                // filter if login user
 
-                // if ($request->bearerToken() && (!in_array($offer->product_code, $available_products))) {
-                //     continue;
-                // }
-
-                // if (is_null($offer->blProduct)) {
-                //     continue;
-                // }
-
-                $pack = [
-                    'product_code' => $offer->product_code,
-                    'name' => $offer->commercial_name_en,
-                    'commercial_name_en' =>  $offer->commercial_name_en ?? null,
-                    'commercial_name_bn' =>  $offer->commercial_name_bn ?? null,
-                    'tag' => $offer->blProduct->tag,
-                    'tags' => optional($offer->blProduct->tags)->pluck('title'),
-                    'tags_priority' => optional($offer->blProduct->tags)->min('priority') ?? 1000,
-                    'price' => $offer->mrp_price,
-                    'volume' => $offer->internet_volume_mb,
-                    'validity' => $offer->validity,
-                    'validity_unit' => ucfirst($offer->validity_unit),
-                    'ussd_code' => $offer->activation_ussd,
-                    'has_autorenew' => ($offer->renew_product_code) ? true : false,
-                    'bonus' => [],
-                    'points'                => (int)$offer->points,
-                    'offer_breakdown_en'    => $offer->display_title_en,
-                    'offer_breakdown_bn'    => $offer->display_title_bn,
-                    'display_sd_vat_tax'    => $offer->display_sd_vat_tax,
-                    'is_recharge' => ($offer->recharge_product_code) ? true : false,
-                    'image' => ($offer->blProduct->media) ?
-                        env('IMAGE_HOST') . '/storage/' . $offer->blProduct->media : null,
-                    'data_main' => $offer->internet_volume_mb,
-                    'data_bonus' => null,
-                    'purchase_count' => (int) $offer->purchase_count,
-                    'pin_to_top' => $offer->blProduct->pin_to_top
-                ];
-
-                $pattern = "/((^\d+(?:\.\d+)?)(GB|MB))[\s]*\(((\d+(?:\.\d+)?)(GB|MB))[\s]*\+[\s]?((\d+(?:\.\d+)?)(GB|MB)).*\)/";
-                $name = $offer->commercial_name_en;
-                
-                if (preg_match($pattern, $name, $matches, PREG_OFFSET_CAPTURE)) {
-                    $main_data = $matches[5][0];
-                    $main_data_unit = strtolower($matches[6][0]);
-                    if ($main_data_unit == 'gb') {
-                        $main_data = $main_data * 1024;
-                    }
-                    $bonus_data = $matches[8][0];
-                    $bonus_data_unit = mb_strtolower($matches[9][0]);
-
-                    if ($bonus_data_unit == 'gb') {
-                        $bonus_data = $bonus_data * 1024;
-                    }
-
-                    $pack ['data_main'] = $main_data;
-                    $pack ['data_bonus'] = $bonus_data;
-                }
-
-                if ($pack['pin_to_top']) {
-                    $pinnedProducts['all'][] = $pack;
-                } else {
-                    $allPacks[] = $pack;
-                }
-                $productTabs = $offer->detialTabs ?? [];
+                $pack = $offer->getAttributes();
+                $productTabs = $offer->productCore->detialTabs ?? [];
 
                 foreach ($productTabs as $productTab) {
-                    $item[$productTab->slug]['title'] = $productTab->name;
+                    $item[$productTab->slug]['title_en'] = $productTab->name;
+                    $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
                     $item[$productTab->slug]['display_order'] = $productTab->sort;
-                    if ($pack['pin_to_top']) {
-                        $item[$productTab->slug]['pinned_products'][] = $pack;
-                    } else {
-                        $item [$productTab->slug]['packs'][] = $pack;
-                    }
+                    $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
 
-            // dd('item',$item);
             $sorted_data = collect($item)->sortBy('display_order');
-
-            $data[] = [
-                'type' => 'all',
-                'title' => 'All',
-                'packs' => array_values($pinnedProducts['all'] + $allPacks)
-            ];
-
+            
             foreach ($sorted_data as $category => $pack) {
-                $data [] = [
+                $data[] = [
                     'type' => $category,
-                    'title' => $pack['title'],
-                    'packs' => array_values(collect($pack['pinned_products'] ?? [])->merge($pack['packs'] ?? [])->toArray())
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'packs' => $pack['packs'] ?? []
                 ];
+                
+                foreach($pack['packs'] as $pack) {
+                    $allPacks[] = $pack;
+                }
             }
+
+            array_unshift($data, [
+                'type' => 'all',
+                'title_en' => 'All',
+                'title_bn' => Null,
+                'packs' => $allPacks
+            ]);
 
             return $this->sendSuccessResponse($data, 'Internet packs list');
 
