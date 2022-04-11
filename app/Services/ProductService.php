@@ -229,21 +229,17 @@ class ProductService extends ApiBaseService
     public function simTypeOffersTypeWise($type, $offerType)
     {
         try {
+            $item = [];
+            $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
             
             if ($products) {
                 foreach ($products as $product) {
-                    $data = $product->productCore;
-                    $this->bindDynamicValues($product, 'offer_info', $data);
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
                     unset($product->productCore);
                 }
-                unset($data);
             }
-
-            $products = $products->sortBy('mrp_price');
-            $pinnedProducts['all'] = [];
-            $item = [];
-            $allPacks = [];
             
             foreach ($products as $offer) {
 
@@ -258,9 +254,9 @@ class ProductService extends ApiBaseService
                 }
             }
 
-            $sorted_data = collect($item)->sortBy('display_order');
+            $sortedData = collect($item)->sortBy('display_order');
             
-            foreach ($sorted_data as $category => $pack) {
+            foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
                     'title_en' => $pack['title_en'],
