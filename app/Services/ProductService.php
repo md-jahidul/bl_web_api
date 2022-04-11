@@ -244,8 +244,9 @@ class ProductService extends ApiBaseService
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
+                // $productTabs = $offer->productCore->detialTabs()->where('platform', 'ASSETLITE') ?? [];
                 $productTabs = $offer->productCore->detialTabs ?? [];
-
+                
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
