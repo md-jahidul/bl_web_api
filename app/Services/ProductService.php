@@ -8,6 +8,7 @@ use App\Exceptions\IdpAuthException;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
+use App\Models\MyBlProductTab;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -230,6 +231,7 @@ class ProductService extends ApiBaseService
     {
         try {
             $item = [];
+            $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
             
@@ -243,9 +245,9 @@ class ProductService extends ApiBaseService
             
             foreach ($products as $offer) {
 
-                $pack = $offer->getAttributes();
-                // $productTabs = $offer->productCore->detialTabs()->where('platform', 'ASSETLITE') ?? [];
-                $productTabs = $offer->productCore->detialTabs ?? [];
+                $pack = $offer->getOriginal();
+                $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
+                /*()->where('platform', MyBlProductTab::PLATFORM)*/
                 
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
@@ -270,12 +272,15 @@ class ProductService extends ApiBaseService
                 }
             }
 
-            array_unshift($data, [
-                'type' => 'all',
-                'title_en' => 'All',
-                'title_bn' => Null,
-                'packs' => $allPacks
-            ]);
+            if(!empty($data)) {
+                array_unshift($data, [
+                    'type' => 'all',
+                    'title_en' => 'All',
+                    'title_bn' => Null,
+                    'packs' => $allPacks
+                ]);
+            }
+            
 
             return $this->sendSuccessResponse($data, 'Internet packs list');
 
