@@ -68,12 +68,14 @@ class ProductRepository extends BaseRepository
                 'products.like',
                 'products.validity_postpaid',
                 'products.offer_info'
-//                'd.url_slug'
+            // 'd.url_slug'
             )
-//            ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+            // ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
+            // ->where('content_type', 'data')
             ->where('offer_category_id', $offerTypeById)
             ->where('status', 1)
             ->where('special_product', 0)
+            ->with('productCore.detialTabs')
             ->startEndDate()
             ->productCore()
             ->category($type)
