@@ -245,7 +245,7 @@ class ProductService extends ApiBaseService
             
             foreach ($products as $offer) {
 
-                $pack = $offer->getOriginal();
+                $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
                 /*()->where('platform', MyBlProductTab::PLATFORM)*/
                 
