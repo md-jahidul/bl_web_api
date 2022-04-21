@@ -297,6 +297,14 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Token generator
     Route::get('secret-token', 'API\V1\SecreteTokenController@getToken');
+
+    // Upsell FB
+    
+    // Phase 1
+    Route::post('upsell-phase1', 'API\V1\Upsell\UpsellController@phaseOne');
+    // Phase 2
+    Route::post('upsell-phase2', 'API\V1\Upsell\UpsellController@phaseTwo');
+    
 });
 
 
