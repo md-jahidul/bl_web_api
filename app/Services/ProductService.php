@@ -525,4 +525,9 @@ class ProductService extends ApiBaseService
             return $this->sendSuccessResponse($data, '4G Internet Offers');
         }
     }
+
+    public function getProductByCode($productId){
+        
+        return $this->productRepository->findOneByProperties(['product_code' => $productId]);
+    }
 }
