@@ -301,9 +301,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Upsell FB
     
     // Phase 1
-    Route::post('upsell-phase1', 'API\V1\UpsellFacebook\UpsellController@phaseOne');
+    Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase');
     // Phase 2
-    Route::post('upsell-phase2', 'API\V1\Upsell\UpsellController@phaseTwo');
+    Route::post('upsell/purchase-product', 'API\V1\Upsell\UpsellController@purchaseProduct');
     
 });
 

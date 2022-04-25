@@ -31,6 +31,7 @@ class UpsellController extends Controller
     ) {
         $this->upsellService = $upsellService;
         $this->productService = $productService;
+        $this->apiBaseService = $apiBaseService;
         $this->balanceService = $balanceService;
         $this->customerService = $customerService;        
     }
@@ -41,7 +42,7 @@ class UpsellController extends Controller
      * product_code: string
      * pay_with_balance: boolean|string
      */
-    public function phaseOne(Request $request)
+    public function requestPurchase(Request $request)
     {
         /**
          * OTP JOURNEY
@@ -81,6 +82,9 @@ class UpsellController extends Controller
             $otpSent = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $productPrice, $customerType, $this->balanceService);
 
             if(!$otpSent) {
+                /**
+                 * ERROR CALLBACK TO FACEBOOK
+                 */
                 $msg = "Purchase request is not successful";
                 return $this->apiBaseService->sendErrorResponse(
                     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
@@ -93,6 +97,11 @@ class UpsellController extends Controller
         
     }
 
+    /**
+     * POST Request BODY
+     * msisdn: string,
+     * product_code: string
+     */
     public function purchaseProduct(Request $request)
     {
         $msisdn      = "88" . $request->input('msisdn');
@@ -101,10 +110,16 @@ class UpsellController extends Controller
         $result = $this->upsellService->purchaseProduct($msisdn, $productCode);
     
         if ($result['status_code'] == 200) {
+            /**
+             * SUCCESS CALLBACK TO FACEBOOK
+             */
             $msg = "Purchase request successfully received and under process";
             return $this->apiBaseService->sendSuccessResponse(
                 json_decode($result['response'], true), $msg, [], HttpStatusCode::SUCCESS);
         } else {
+            /**
+             * ERROR CALLBACK TO FACEBOOK
+             */
             $msg = "Purchase Failed";
             return $this->apiBaseService->sendSuccessResponse(
                 json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
