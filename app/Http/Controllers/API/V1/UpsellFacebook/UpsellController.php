@@ -2,28 +2,37 @@
 
 namespace App\Http\Controllers\API\V1\UpsellFacebook;
 
+use App\Enums\HttpStatusCode;
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
 use App\Services\AboutUsService;
+use App\Services\ApiBaseService;
 use App\Services\Banglalink\BalanceService;
 use App\Services\CustomerService;
 use App\Services\ProductService;
+use App\Services\UpsellFacebook\UpsellService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
 class UpsellController extends Controller
 {
-    private $customerService, $productService, $balanceService;
+    protected const PURCHASE_ENDPOINT = "/provisioning/provisioning/purchase";
+    protected const SEND_OTP_ENDPOINT = "/send-otp";
+    private $customerService, $productService, $balanceService, $upsellService;
     
     public function __construct(
-        CustomerService $customerService, 
+        UpsellService $upsellService, 
         ProductService $productService, 
-        BalanceService $balanceService
+        BalanceService $balanceService,
+        ApiBaseService $apiBaseService,
+        CustomerService $customerService
+        
     ) {
-        $this->customerService = $customerService;
+        $this->upsellService = $upsellService;
         $this->productService = $productService;
         $this->balanceService = $balanceService;
+        $this->customerService = $customerService;        
     }
 
     /**
@@ -54,36 +63,28 @@ class UpsellController extends Controller
          * 4. Return Payment Page
          */
 
-        $customer = $this->customerService->getCustomerInfoByPhone($request->msisdn);
-        $product = $this->productService->getProductByCode( $request->product_code);
-        $result = $this->productService->eligible($request->msisdn, $request->product_code);
+        $customer = $this->customerService->getCustomerInfoByPhone($request->input('msisdn'));
+        $product = $this->productService->getProductByCode( $request->input('product_code'));
+        $result = $this->productService->eligible($request->msisdn, $request->input('product_code'));
         $customerStatus =  $result->getData();
         $customerType = $customer->number_type;
 
         if($customerStatus->status_code != 200){
-            dd("error");
+            $msg = "Purchase request is not successful";
+            return $this->apiBaseService->sendErrorResponse(
+                json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
         }
 
         $productPrice = $product->productCore->price;
 
         if($request->pay_with_balance) {
-            if($customerType == 'prepaid'){
-                $customerBalance = $this->balanceService->getPrepaidBalance($customer->id);
-    
-                if ($productPrice > $customerBalance) {
-                    dd("You don't have enough balance to purchase this package.");
-                }
-            }
-            
-            if($customerType == 'postpaid'){
-                $customerBalance = $this->balanceService->getPostpaidBalance($customer->id);
-    
-                if ($productPrice > $customerBalance) {
-                    dd("You don't have enough balance to purchase this package.");
-                }
-            }
+            $otpSent = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $productPrice, $customerType, $this->balanceService);
 
-            // SEND OTP TO MSISDN
+            if(!$otpSent) {
+                $msg = "Purchase request is not successful";
+                return $this->apiBaseService->sendErrorResponse(
+                    json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+            }
 
             return 'OTP VERIFICATION PAGE VIEW with [customer no, product_code & detail, Cost]';
         }
@@ -92,8 +93,20 @@ class UpsellController extends Controller
         
     }
 
-    public function phaseTwo()
+    public function purchaseProduct(Request $request)
     {
-        
+        $msisdn      = "88" . $request->input('msisdn');
+        $productCode = $request->input('product_code');
+    
+        $result = $this->upsellService->purchaseProduct($msisdn, $productCode);
+    
+        if ($result['status_code'] == 200) {
+            return $this->apiBaseService->sendSuccessResponse(
+                json_decode($result['response'], true),
+                "Purchase request successfully received and under process",
+                [],
+                HttpStatusCode::SUCCESS
+            );
+        }     
     }
 }
