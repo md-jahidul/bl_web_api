@@ -72,8 +72,10 @@ class UpsellController extends Controller
 
         if($customerStatus->status_code != 200){
             $msg = "Purchase request is not successful";
-            return $this->apiBaseService->sendErrorResponse(
-                json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+            // return $this->apiBaseService->sendErrorResponse(
+            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+
+            //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
         }
 
         $productPrice = $product->productCore->price;
@@ -86,14 +88,16 @@ class UpsellController extends Controller
                  * ERROR CALLBACK TO FACEBOOK
                  */
                 $msg = "Purchase request is not successful";
-                return $this->apiBaseService->sendErrorResponse(
-                    json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+                // return $this->apiBaseService->sendErrorResponse(
+                //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+
+                //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
             }
 
-            return 'OTP VERIFICATION PAGE VIEW with [customer no, product_code & detail, Cost]';
+            // Redirect to OTP VERIFICATION PAGE VIEW with [customer no, product_code & detail, Cost]
         }
 
-        return 'BANK / MOBILE PAYMENT VIEW with [customer no, product_code & detail, Cost]';
+        // Redirect to BANK / MOBILE PAYMENT VIEW with [customer no, product_code & detail, Cost]
         
     }
 
@@ -114,15 +118,19 @@ class UpsellController extends Controller
              * SUCCESS CALLBACK TO FACEBOOK
              */
             $msg = "Purchase request successfully received and under process";
-            return $this->apiBaseService->sendSuccessResponse(
-                json_decode($result['response'], true), $msg, [], HttpStatusCode::SUCCESS);
+            // return $this->apiBaseService->sendSuccessResponse(
+            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::SUCCESS);
+
+            //Redirect to SUCCESS PAGE with [success = TRUE, success_msg = $msg]
         } else {
             /**
              * ERROR CALLBACK TO FACEBOOK
              */
             $msg = "Purchase Failed";
-            return $this->apiBaseService->sendSuccessResponse(
-                json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+            // return $this->apiBaseService->sendSuccessResponse(
+            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+
+            //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
         }     
     }
 }

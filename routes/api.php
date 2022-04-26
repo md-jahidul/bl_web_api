@@ -299,12 +299,12 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('secret-token', 'API\V1\SecreteTokenController@getToken');
 
     // Upsell FB
-    
-    // Phase 1
-    Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase');
-    // Phase 2
-    Route::post('upsell/purchase-product', 'API\V1\Upsell\UpsellController@purchaseProduct');
-    
+    Route::group(['middleware' => ['verifyFacebookUpsellKey']], function () {
+        // Phase 1
+        Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase');
+        // Phase 2
+        Route::post('upsell/purchase-product', 'API\V1\Upsell\UpsellController@purchaseProduct');
+    });
 });
 
 
