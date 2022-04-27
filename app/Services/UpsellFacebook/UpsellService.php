@@ -33,9 +33,9 @@ class UpsellService extends BaseService {
             }
         }
 
-        $this->post(self::SEND_OTP_ENDPOINT, ['phone' => $msisdn]);
+        $res = $this->post(self::SEND_OTP_ENDPOINT, ['phone' => $msisdn]);
 
-        return true;
+        return $res;
     }
 
     public function buyWithMoney() 

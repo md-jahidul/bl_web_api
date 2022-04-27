@@ -44,7 +44,8 @@ class UpsellController extends Controller
      * product_code: string
      * pay_with_balance: boolean|string
      */
-    public function requestPurchase(UpsellRequestProductRequest $request)
+    /*UpsellRequestProductRequest*/
+    public function requestPurchase(Request $request)
     {
         /**
          * OTP JOURNEY
@@ -73,34 +74,55 @@ class UpsellController extends Controller
         $customerType = $customer->number_type;
 
         if($customerStatus->status_code != 200){
-            $msg = "Purchase request is not successful";
-            // return $this->apiBaseService->sendErrorResponse(
-            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+            $msg = "Customer is not eligible";
 
             //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
+            $link = config('facebookupsell.redirect_link') 
+            . "/upsell-error" 
+            . "?msg={$msg}";    
+            
+            return redirect()->to($link);
         }
 
         $productPrice = $product->productCore->price;
 
         if($request->pay_with_balance) {
-            $otpSent = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $productPrice, $customerType, $this->balanceService);
+            $res = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $productPrice, $customerType, $this->balanceService);
+            
+            if($res['status_code'] != 200) {
+                $msg = "Could not send OTP";
 
-            if(!$otpSent) {
-                /**
-                 * ERROR CALLBACK TO FACEBOOK
-                 */
-                $msg = "Purchase request is not successful";
-                // return $this->apiBaseService->sendErrorResponse(
-                //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
+                // Fallback OTP sending operation to ClientEnd
+                // $link = config('facebookupsell.redirect_link') 
+                // . "/upsell-otp"
+                // . "?mobile={$request->input('msisdn')}"
+                // . "&otp_token=NULL"
+                // . "&validation_time=NULL"
+                // . "&product_code={$product->product_code}";
 
                 //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
+                $link = config('facebookupsell.redirect_link') 
+                . "/upsell-error" 
+                . "?msg={$msg}";    
+                
+                return redirect()->to($link);
             }
 
-            // Redirect to OTP VERIFICATION PAGE VIEW with [customer no, product_code & detail, Cost]
+            $validationTime = $res['data']['validation_time'];
+            $otpToken = $res['data']['otp_token'];
+
+            // Redirect to OTP VERIFICATION PAGE VIEW with
+            $link = config('facebookupsell.redirect_link') 
+            . "/upsell-otp"
+            . "?mobile={$request->input('msisdn')}"
+            . "&otp_token={$otpToken}"
+            . "&validation_time={$validationTime}"
+            . "&product_code={$product->product_code}";    
+            
+            return redirect()->to($link);
         }
 
         // Redirect to BANK / MOBILE PAYMENT VIEW with [customer no, product_code & detail, Cost]
-        
     }
 
     /**
@@ -116,23 +138,16 @@ class UpsellController extends Controller
         $result = $this->upsellService->purchaseProduct($msisdn, $productCode);
     
         if ($result['status_code'] == 200) {
-            /**
-             * SUCCESS CALLBACK TO FACEBOOK
-             */
             $msg = "Purchase request successfully received and under process";
-            // return $this->apiBaseService->sendSuccessResponse(
-            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::SUCCESS);
-
-            //Redirect to SUCCESS PAGE with [success = TRUE, success_msg = $msg]
+            return $this->apiBaseService->sendSuccessResponse(
+                json_decode($result['response'], true), $msg, [], HttpStatusCode::SUCCESS);
         } else {
-            /**
-             * ERROR CALLBACK TO FACEBOOK
-             */
             $msg = "Purchase Failed";
-            // return $this->apiBaseService->sendSuccessResponse(
-            //     json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
-
-            //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
+            return $this->apiBaseService->sendSuccessResponse(
+                json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
         }     
     }
 }
+
+// return $this->apiBaseService->sendErrorResponse(
+// json_decode($result['response'], true), $msg, [], HttpStatusCode::BAD_REQUEST);
