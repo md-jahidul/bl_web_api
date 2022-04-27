@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1\UpsellFacebook;
 use App\Enums\HttpStatusCode;
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpsellPurchaseProductRequest;
+use App\Http\Requests\UpsellRequestProductRequest;
 use App\Services\AboutUsService;
 use App\Services\ApiBaseService;
 use App\Services\Banglalink\BalanceService;
@@ -42,7 +44,7 @@ class UpsellController extends Controller
      * product_code: string
      * pay_with_balance: boolean|string
      */
-    public function requestPurchase(Request $request)
+    public function requestPurchase(UpsellRequestProductRequest $request)
     {
         /**
          * OTP JOURNEY
@@ -106,7 +108,7 @@ class UpsellController extends Controller
      * msisdn: string,
      * product_code: string
      */
-    public function purchaseProduct(Request $request)
+    public function purchaseProduct(UpsellPurchaseProductRequest $request)
     {
         $msisdn      = "88" . $request->input('msisdn');
         $productCode = $request->input('product_code');
