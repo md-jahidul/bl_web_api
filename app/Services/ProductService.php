@@ -272,6 +272,8 @@ class ProductService extends ApiBaseService
                 }
             }
 
+            $allPacks = array_map("unserialize", array_unique(array_map("serialize", $allPacks)));
+
             if(!empty($data)) {
                 array_unshift($data, [
                     'type' => 'all',
@@ -282,7 +284,7 @@ class ProductService extends ApiBaseService
             }
             
 
-            return $this->sendSuccessResponse($data, 'Internet packs list');
+            return $this->sendSuccessResponse($data, "{ucfirst($offerType)} packs list");
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
