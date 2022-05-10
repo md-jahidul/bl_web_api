@@ -282,9 +282,10 @@ class ProductService extends ApiBaseService
                     'packs' => $allPacks
                 ]);
             }
-            
 
-            return $this->sendSuccessResponse($data, "{ucfirst($offerType)} packs list");
+            $offerType = ucfirst($offerType);
+
+            return $this->sendSuccessResponse($data, "{$offerType} packs list");
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
