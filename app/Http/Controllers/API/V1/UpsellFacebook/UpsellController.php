@@ -117,7 +117,8 @@ class UpsellController extends Controller
             . "?mobile={$request->input('msisdn')}"
             . "&otp_token={$otpToken}"
             . "&validation_time={$validationTime}"
-            . "&product_code={$product->product_code}";    
+            . "&product_code={$product->product_code}"
+            . "&product_price={$productPrice}";    
             
             return redirect()->to($link);
         }
