@@ -585,6 +585,15 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
+    public function getAuthToken($data) 
+    {
+        $response = IdpIntegrationService::loginRequest($data);
+
+        return [
+            'status_code' => $response['http_code'],
+            'data' => json_decode($response['data'], true)
+        ];
+    }
 
     public function getRefreshToken($request)
     {

@@ -708,4 +708,58 @@ class BalanceService extends BaseService
 
         return $data;
     }
+
+    private function getPrepaidBalanceUrl($customer_id)
+    {
+        return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/prepaid-balances' . '?sortType=SERVICE_TYPE';
+    }
+
+    public function getPrepaidBalance($customer_id)
+    {
+        $response = $this->get($this->getPrepaidBalanceUrl($customer_id));
+        $response = json_decode($response['response']);
+
+        if (isset($response->error)) {
+            return $this->responseFormatter->sendErrorResponse(
+                'Currently Service Unavailable. Please,try again later',
+                [
+                    'message' => 'Currently Service Unavailable. Please,try again later',
+                ],
+                500
+            );
+        }
+
+        $balance_data = collect($response->money);
+
+        $main_balance = $balance_data->first(function ($item) {
+            return $item->type == 'MAIN';
+        });
+
+        return isset($main_balance->amount) ? $main_balance->amount : 0;
+    }
+
+    private function getPostpaidBalanceUrl($customer_id)
+    {
+        return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/postpaid-info';
+    }
+    
+    public function getPostpaidBalance($customer_id)
+    {
+        $response = $this->get($this->getPostpaidBalanceUrl($customer_id));
+        $response = json_decode($response['response']);
+
+        if (isset($response->error)) {
+            return $this->responseFormatter->sendErrorResponse(
+                'Currently Service Unavailable. Please,try again later',
+                [
+                    'message' => 'Currently Service Unavailable. Please,try again later',
+                ],
+                500
+            );
+        }
+
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+
+        return ($local_balance->creditLimit - $local_balance->totalOutstanding);
+    }
 }
