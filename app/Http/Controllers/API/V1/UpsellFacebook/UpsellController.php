@@ -73,7 +73,7 @@ class UpsellController extends Controller
          */
 
         $customer = $this->customerService->getCustomerInfoByPhone($request->input('msisdn'));
-        $product = $this->productService->getProductByCode( $request->input('product_code')); 
+        $product = $this->productService->getProductByCode($request->input('product_code')); 
         $eligibleCustomer = $this->productService->eligible($request->msisdn, $request->input('product_code'))->getData()->data->is_eligible;
 
         if(!$product || !$customer || !$eligibleCustomer) {
@@ -92,6 +92,7 @@ class UpsellController extends Controller
             $link = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$request->input('msisdn')}"
+                . "&product_slug={$product->url_slug}"
                 . "&product_code={$product->product_code}"
                 . "&product_price={$product->productCore->price}";    
             
@@ -116,6 +117,7 @@ class UpsellController extends Controller
             . "?mobile={$request->input('msisdn')}"
             . "&otp_token={$otpToken}"
             . "&validation_time={$validationTime}"
+            . "&product_slug={$product->url_slug}"
             . "&product_code={$product->product_code}"
             . "&product_price={$product->productCore->price}";    
         
