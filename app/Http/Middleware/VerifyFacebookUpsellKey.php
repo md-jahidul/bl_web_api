@@ -11,8 +11,8 @@ class VerifyFacebookUpsellKey {
     {
 
         $upsellKey = $request->header('authorization');
-
-        if (! $upsellKey == config('facebookupsell.api_key')) {
+        
+        if (strcmp($upsellKey, config('facebookupsell.api_key'))) {
             throw new RequestUnauthorizedException();
         }
 
