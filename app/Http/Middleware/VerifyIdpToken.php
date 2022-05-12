@@ -11,7 +11,7 @@ class VerifyIdpToken {
     public function handle($request, Closure $next)
     {
 
-        $idpToken = $request->header('authorization');
+        $idpToken = $request->header('Authorization');
         $response = IdpIntegrationService::tokenValidationRequest(['token' => $idpToken]);
         $responseData = json_decode($response['data'], true);
 
