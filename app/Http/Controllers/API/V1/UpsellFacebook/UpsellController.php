@@ -16,6 +16,7 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\CustomerService;
 use App\Services\IdpIntegrationService;
 use App\Services\ProductService;
+use App\Services\SslCommerzService;
 use App\Services\UpsellFacebook\UpsellService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -88,13 +89,16 @@ class UpsellController extends Controller
         }
 
         if(!$request->pay_with_balance) {
+            $transactionId = uniqid('BLWN');
+
             // Redirect to PAYMENT PAGE VIEW with
             $link = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$request->input('msisdn')}"
+                . "&transaction_id={$transactionId}"
                 . "&product_slug={$product->url_slug}"
                 . "&product_code={$product->product_code}"
-                . "&product_price={$product->productCore->price}";    
+                . "&product_price={$product->productCore->price}";
             
             return redirect()->to($link);
         }
