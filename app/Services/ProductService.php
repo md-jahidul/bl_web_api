@@ -247,7 +247,6 @@ class ProductService extends ApiBaseService
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                /*()->where('platform', MyBlProductTab::PLATFORM)*/
                 
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
@@ -266,20 +265,16 @@ class ProductService extends ApiBaseService
                     'title_bn' => $pack['title_bn'],
                     'packs' => array_values($pack['packs']) ?? []
                 ];
-                
-                foreach($pack['packs'] as $pack) {
-                    $allPacks[] = $pack;
-                }
             }
-
-            $allPacks = array_map("unserialize", array_unique(array_map("serialize", $allPacks)));
+            
+            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
                 array_unshift($data, [
                     'type' => 'all',
                     'title_en' => 'All',
                     'title_bn' => Null,
-                    'packs' => array_values($allPacks)
+                    'packs' => $allPacks->toArray() ?? []
                 ]);
             }
 
