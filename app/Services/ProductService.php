@@ -264,7 +264,7 @@ class ProductService extends ApiBaseService
                     'type' => $category,
                     'title_en' => $pack['title_en'],
                     'title_bn' => $pack['title_bn'],
-                    'packs' => $pack['packs'] ?? []
+                    'packs' => array_values($pack['packs']) ?? []
                 ];
                 
                 foreach($pack['packs'] as $pack) {
@@ -279,7 +279,7 @@ class ProductService extends ApiBaseService
                     'type' => 'all',
                     'title_en' => 'All',
                     'title_bn' => Null,
-                    'packs' => $allPacks
+                    'packs' => array_values($allPacks)
                 ]);
             }
 
