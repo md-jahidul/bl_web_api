@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
+// use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 
 class MyBlInternetOffersCategory extends Model
 {
-    use Sluggable;
+    // use Sluggable;
 
     protected $guarded = ['id'];
 
@@ -16,14 +16,14 @@ class MyBlInternetOffersCategory extends Model
      *
      * @return array
      */
-    public function sluggable()
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
+    // public function sluggable()
+    // {
+    //     return [
+    //         'slug' => [
+    //             'source' => 'name'
+    //         ]
+    //     ];
+    // }
 
     public function productCodes()
     {
