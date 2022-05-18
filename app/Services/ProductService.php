@@ -8,6 +8,7 @@ use App\Exceptions\IdpAuthException;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
+use App\Models\MyBlProductTab;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -224,6 +225,66 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
+    }
+
+    public function simTypeOffersTypeWise($type, $offerType)
+    {
+        try {
+            $item = [];
+            $data = [];
+            $allPacks = [];
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
+            
+            if ($products) {
+                foreach ($products as $product) {
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
+                    unset($product->productCore);
+                }
+            }
+            
+            foreach ($products as $offer) {
+
+                $pack = $offer->getAttributes();
+                $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
+                
+                foreach ($productTabs as $productTab) {
+                    $item[$productTab->slug]['title_en'] = $productTab->name;
+                    $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
+                    $item[$productTab->slug]['display_order'] = $productTab->sort;
+                    $item[$productTab->slug]['packs'][] = $pack;
+                }
+            }
+
+            $sortedData = collect($item)->sortBy('display_order');
+            
+            foreach ($sortedData as $category => $pack) {
+                $data[] = [
+                    'type' => $category,
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'packs' => array_values($pack['packs']) ?? []
+                ];
+            }
+            
+            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
+
+            if(!empty($data)) {
+                array_unshift($data, [
+                    'type' => 'all',
+                    'title_en' => 'All',
+                    'title_bn' => Null,
+                    'packs' => $allPacks->toArray() ?? []
+                ]);
+            }
+
+            $offerType = ucfirst($offerType);
+
+            return $this->sendSuccessResponse($data, "{$offerType} packs list");
+
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }        
     }
 
     /**
