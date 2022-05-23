@@ -72,7 +72,7 @@ class UpsellController extends Controller
          * 3. get product cost
          * 4. Redirect Payment Page
          */
-
+        $data = [];
         $customer = $this->customerService->getCustomerInfoByPhone($request->input('msisdn'));
         $product = $this->productService->getProductByCode($request->input('product_code')); 
         $eligibleCustomer = $this->productService->eligible($request->msisdn, $request->input('product_code'))->getData()->data->is_eligible;
@@ -80,29 +80,30 @@ class UpsellController extends Controller
         if(!$product || !$customer || !$eligibleCustomer) {
             $msg = "Customer is not eligible Or Invalid product";
 
-            //Redirect to ERROR PAGE with [error = TRUE, error_msg = $msg]
-            $link = config('facebookupsell.redirect_link') 
+            $data['link'] = config('facebookupsell.redirect_link') 
                 . "/upsell-error" 
-                . "?msg={$msg}";    
-            
-            return redirect()->to($link);
+                . "?msg={$msg}"; 
+               
+            return $this->apiBaseService->sendErrorResponse($msg, $data, HttpStatusCode::BAD_REQUEST);      
         }
 
         if(!$request->pay_with_balance) {
+            $msg = "Customer buying using payment";
             $transactionId = uniqid('BLWN');
 
-            // Redirect to PAYMENT PAGE VIEW with
-            $link = config('facebookupsell.redirect_link') 
+            $data['transactionId'] = $transactionId;
+            $data['link'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$request->input('msisdn')}"
-                . "&transaction_id={$transactionId}"
+                . "&transaction_id={$transactionId}";
                 . "&product_slug={$product->url_slug}"
                 . "&product_code={$product->product_code}"
                 . "&product_price={$product->productCore->price}";
             
-            return redirect()->to($link);
+            return $this->apiBaseService->sendSuccessResponse($data, $msg, [], HttpStatusCode::SUCCESS);
         }
 
+        $msg = "Customer buying using balance";
         $otpToken = null;
         $validationTime = null;
         $res = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $product->productCore->price, $customer->number_type, $this->balanceService);
@@ -115,8 +116,7 @@ class UpsellController extends Controller
             $validationTime = $res['data']['validation_time'];
         }
 
-        // Redirect to OTP VERIFICATION PAGE with
-        $link = config('facebookupsell.redirect_link') 
+        $data['link'] = config('facebookupsell.redirect_link') 
             . "/upsell-otp"
             . "?mobile={$request->input('msisdn')}"
             . "&otp_token={$otpToken}"
@@ -125,7 +125,7 @@ class UpsellController extends Controller
             . "&product_code={$product->product_code}"
             . "&product_price={$product->productCore->price}";    
         
-        return redirect()->to($link);
+        return $this->apiBaseService->sendSuccessResponse($data, $msg, [], HttpStatusCode::SUCCESS);
     } 
     
 
@@ -135,7 +135,7 @@ class UpsellController extends Controller
      * product_code: string
      */
     public function purchaseProduct(UpsellPurchaseFinalizationRequest $request)
-    {
+    {   dd('hello');
         $msisdn      = "88" . $request->input('msisdn');
         $productCode = $request->input('product_code');
     
