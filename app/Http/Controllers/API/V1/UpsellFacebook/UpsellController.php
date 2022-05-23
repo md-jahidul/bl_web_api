@@ -135,22 +135,22 @@ class UpsellController extends Controller
      * product_code: string
      */
     public function purchaseProduct(UpsellPurchaseFinalizationRequest $request)
-    {   dd('hello');
+    {  
         $msisdn      = "88" . $request->input('msisdn');
         $productCode = $request->input('product_code');
     
         $response = $this->upsellService->purchaseProduct($msisdn, $productCode);
         $responseData = json_decode($response['response'], true);
 
-        if ($response['status_code'] == 200) {
-            $msg = "Purchase request successfully received and under process";
-            return $this->apiBaseService->sendSuccessResponse(
-                json_decode($response['response'], true), $msg, [], HttpStatusCode::SUCCESS);
-        } else {
+        if ($response['status_code'] != 200) {
             $msg = "Purchase Failed";
-            return $this->apiBaseService->sendErrorResponse(
-                $msg, $responseData['data']['errors'][0]['detail'], HttpStatusCode::BAD_REQUEST);
-        }     
+            return $this->apiBaseService->sendErrorResponse($msg, 
+            $responseData['data']['errors'][0]['detail'], HttpStatusCode::BAD_REQUEST);
+        }    
+        
+        $msg = "Purchase request successfully received and under process";
+        return $this->apiBaseService->sendSuccessResponse(json_decode($response['response'], true), 
+        $msg, [], HttpStatusCode::SUCCESS);  
     }
 }
 
