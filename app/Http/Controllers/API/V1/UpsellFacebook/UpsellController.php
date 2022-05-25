@@ -78,13 +78,6 @@ class UpsellController extends Controller
         $msisdn = $request->input('msisdn');
         $productCode = $request->input('product_code');
 
-        $productDetails = $this->upsellService->productDetails($productCode)->first();
-        if(!$productDetails) {
-            $msg = "Product Error";
-            $error = "Product not found";
-            return $this->apiBaseService->sendErrorResponse($msg, $error, HttpStatusCode::NOT_FOUND);  
-        }
-
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
         // if(!$customerIsEligibleForProduct) {
         //     $msg = "Customer is not eligible Or Invalid product";
