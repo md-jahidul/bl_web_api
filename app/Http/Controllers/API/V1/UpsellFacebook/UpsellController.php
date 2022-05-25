@@ -3,24 +3,15 @@
 namespace App\Http\Controllers\API\V1\UpsellFacebook;
 
 use App\Enums\HttpStatusCode;
-use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuthTokenRefreshRequest;
-use App\Http\Requests\AuthTokenRequest;
 use App\Http\Requests\UpsellPurchaseFinalizationRequest;
 use App\Http\Requests\UpsellPurchaseInvocationRequest;
-use App\Http\Requests\UpsellTokenRefreshRequest;
-use App\Http\Requests\UpsellTokenRequest;
+use App\Models\ProductDetail;
 use App\Services\ApiBaseService;
 use App\Services\Banglalink\BalanceService;
 use App\Services\CustomerService;
-use App\Services\IdpIntegrationService;
 use App\Services\ProductService;
-use App\Services\SslCommerzService;
 use App\Services\UpsellFacebook\UpsellService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-
 
 class UpsellController extends Controller
 {
@@ -41,6 +32,17 @@ class UpsellController extends Controller
         $this->apiBaseService = $apiBaseService;
         $this->balanceService = $balanceService;
         $this->customerService = $customerService;        
+    }
+
+    public function getProductDetails($productCode) 
+    {
+        $productDetails = $this->upsellService->productDetails($productCode)->first();
+        if(!$productDetails) {
+            $msg = "Product not found";
+            return $this->apiBaseService->sendErrorResponse($msg, $productDetails, HttpStatusCode::NOT_FOUND);  
+        }
+        $msg = "Product found successfully";
+        return $this->apiBaseService->sendSuccessResponse($productDetails, $msg, [], [], HttpStatusCode::SUCCESS, 200);
     }
 
     /**
@@ -73,59 +75,60 @@ class UpsellController extends Controller
          * 4. Redirect Payment Page
          */
         $data = [];
-        $customer = $this->customerService->getCustomerInfoByPhone($request->input('msisdn'));
-        $product = $this->productService->getProductByCode($request->input('product_code')); 
-        $eligibleCustomer = $this->productService->eligible($request->msisdn, $request->input('product_code'))->getData()->data->is_eligible;
+        $msisdn = $request->input('msisdn');
+        $productCode = $request->input('product_code');
 
-        if(!$product || !$customer || !$eligibleCustomer) {
-            $msg = "Customer is not eligible Or Invalid product";
-
-            $data['link'] = config('facebookupsell.redirect_link') 
-                . "/upsell-error" 
-                . "?msg={$msg}"; 
-               
-            return $this->apiBaseService->sendErrorResponse($msg, $data, HttpStatusCode::BAD_REQUEST);      
+        $productDetails = $this->upsellService->productDetails($productCode)->first();
+        if(!$productDetails) {
+            $msg = "Product Error";
+            $error = "Product not found";
+            return $this->apiBaseService->sendErrorResponse($msg, $error, HttpStatusCode::NOT_FOUND);  
         }
+
+        // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
+        // if(!$customerIsEligibleForProduct) {
+        //     $msg = "Customer is not eligible Or Invalid product";
+
+        //     $data['link'] = config('facebookupsell.redirect_link') 
+        //         . "/upsell-error" 
+        //         . "?msg={$msg}"; 
+        //     return $this->apiBaseService->sendErrorResponse($msg, $data, HttpStatusCode::BAD_REQUEST);
+        // }
 
         if(!$request->pay_with_balance) {
             $msg = "Customer buying using payment";
             $transactionId = uniqid('BLWN');
-
-            $data['transactionId'] = $transactionId;
-            $data['link'] = config('facebookupsell.redirect_link') 
+            $data['transaction_id'] = $transactionId;
+            $data['app_url'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
-                . "?mobile={$request->input('msisdn')}"
-                . "&transaction_id={$transactionId}";
-                . "&product_slug={$product->url_slug}"
-                . "&product_code={$product->product_code}"
-                . "&product_price={$product->productCore->price}";
+                . "?mobile={$msisdn}"
+                . "&transaction_id={$transactionId}"
+                . "&product_code={$productCode}";
             
-            return $this->apiBaseService->sendSuccessResponse($data, $msg, [], HttpStatusCode::SUCCESS);
+            return $this->apiBaseService->sendSuccessResponse($data, $msg, [], [], HttpStatusCode::SUCCESS);
         }
 
-        $msg = "Customer buying using balance";
-        $otpToken = null;
-        $validationTime = null;
-        $res = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $product->productCore->price, $customer->number_type, $this->balanceService);
+        // $msg = "Customer buying using balance";
+        // $otpToken = null;
+        // $validationTime = null;
+        // $res = $this->upsellService->buyWithBalance($request->input('msisdn'), $customer, $product->productCore->price, $customer->number_type, $this->balanceService);
 
-        if(isset($res['data']['otp_token'])) {
-            $otpToken = $res['data']['otp_token'];
-        }
+        // if(isset($res['data']['otp_token'])) {
+        //     $otpToken = $res['data']['otp_token'];
+        // }
 
-        if(isset($res['data']['validation_time'])) {
-            $validationTime = $res['data']['validation_time'];
-        }
+        // if(isset($res['data']['validation_time'])) {
+        //     $validationTime = $res['data']['validation_time'];
+        // }
 
-        $data['link'] = config('facebookupsell.redirect_link') 
-            . "/upsell-otp"
-            . "?mobile={$request->input('msisdn')}"
-            . "&otp_token={$otpToken}"
-            . "&validation_time={$validationTime}"
-            . "&product_slug={$product->url_slug}"
-            . "&product_code={$product->product_code}"
-            . "&product_price={$product->productCore->price}";    
+        // $data['link'] = config('facebookupsell.redirect_link') 
+        //     . "/upsell-otp"
+        //     . "?mobile={$request->input('msisdn')}"
+        //     . "&otp_token={$otpToken}"
+        //     . "&validation_time={$validationTime}"
+        //     . "&product_code={$productCode}";    
         
-        return $this->apiBaseService->sendSuccessResponse($data, $msg, [], HttpStatusCode::SUCCESS);
+        // return $this->apiBaseService->sendSuccessResponse($data, $msg, [], HttpStatusCode::SUCCESS);
     } 
     
 
@@ -134,23 +137,23 @@ class UpsellController extends Controller
      * msisdn: string,
      * product_code: string
      */
-    public function purchaseProduct(UpsellPurchaseFinalizationRequest $request)
-    {  
-        $msisdn      = "88" . $request->input('msisdn');
-        $productCode = $request->input('product_code');
+    // public function purchaseProduct(UpsellPurchaseFinalizationRequest $request)
+    // {  
+    //     $msisdn      = "88" . $request->input('msisdn');
+    //     $productCode = $request->input('product_code');
     
-        $response = $this->upsellService->purchaseProduct($msisdn, $productCode);
-        $responseData = json_decode($response['response'], true);
+    //     $response = $this->upsellService->purchaseProduct($msisdn, $productCode);
+    //     $responseData = json_decode($response['response'], true);
 
-        if ($response['status_code'] != 200) {
-            $msg = "Purchase Failed";
-            return $this->apiBaseService->sendErrorResponse($msg, 
-            $responseData['data']['errors'][0]['detail'], HttpStatusCode::BAD_REQUEST);
-        }    
+    //     if ($response['status_code'] != 200) {
+    //         $msg = "Purchase Failed";
+    //         return $this->apiBaseService->sendErrorResponse($msg, 
+    //         $responseData['data']['errors'][0]['detail'], HttpStatusCode::BAD_REQUEST);
+    //     }    
         
-        $msg = "Purchase request successfully received and under process";
-        return $this->apiBaseService->sendSuccessResponse(json_decode($response['response'], true), 
-        $msg, [], HttpStatusCode::SUCCESS);  
-    }
+    //     $msg = "Purchase request successfully received and under process";
+    //     return $this->apiBaseService->sendSuccessResponse(json_decode($response['response'], true), 
+    //     $msg, [], HttpStatusCode::SUCCESS);  
+    // }
 }
 
