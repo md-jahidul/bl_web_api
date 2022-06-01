@@ -90,7 +90,8 @@ class UpsellController extends Controller
 
         if(!$request->pay_with_balance) {
             $msg = "Customer buying using payment";
-            $transactionId = uniqid('BLWN');
+            $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
+            $transactionId = uniqid($sslChannel);
             $data['transaction_id'] = $transactionId;
             $data['app_url'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
