@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API\V1;
 use App\Enums\HttpStatusCode;
 use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthTokenRequest;
 use App\Http\Requests\OtpLoginRequest;
+use App\Services\ApiBaseService;
 use App\Services\NumberValidationService;
 use App\Services\SecreteTokenService;
 use App\Services\UserService;
@@ -37,11 +39,13 @@ class AuthenticationController extends Controller
     public function __construct(
         UserService $userService,
         NumberValidationService $numberValidationService,
-        SecreteTokenService $secreteTokenService
+        SecreteTokenService $secreteTokenService,
+        ApiBaseService $apiBaseService
     ) {
         $this->userService = $userService;
         $this->numberValidationService = $numberValidationService;
         $this->secreteTokenService = $secreteTokenService;
+        $this->apiBaseService = $apiBaseService;
     }
 
     /**
@@ -55,7 +59,6 @@ class AuthenticationController extends Controller
         return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
 
-
     /**
      * @param Request $request
      * @return JsonResponse|string
@@ -65,7 +68,6 @@ class AuthenticationController extends Controller
         return $this->userService->otpLoginRequest($request);
     }
 
-
     /**
      * @param Request $request
      * @return JsonResponse|mixed
@@ -73,6 +75,20 @@ class AuthenticationController extends Controller
     public function otpLogin(OtpLoginRequest $request)
     {
         return $this->userService->otpLogin($request);
+    }
+
+    public function passwordLogin(AuthTokenRequest $request) 
+    {
+        $data = $request->input();
+        $response = $this->userService->getAuthToken($data);
+        $statusCode = $response['status_code'];
+        $responseData = $response['data']; 
+        
+        if (isset($responseData['error'])) {
+            return $this->apiBaseService->sendErrorResponse($responseData['message'], "Incorrect Password", HttpStatusCode::UNAUTHORIZED);
+        }
+        
+        return $this->apiBaseService->sendSuccessResponse($responseData, 'Successful Attempt');
     }
 
     private function getLoginValidationRules()

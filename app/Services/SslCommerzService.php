@@ -53,7 +53,7 @@ class SslCommerzService extends ApiBaseService
         return $this->sendSuccessResponse(['mobiles' => $mobiles, 'connectionType' => $type], '');
     }
 
-    public function getRequestDetails($data)
+    public function getRequestDetails($data = null)
     {
         $url = config('apiurl.ssl_api_host').'/initiate-recharge';
         $transactionId = $this->generateTransactionId();
