@@ -584,16 +584,26 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
+    public function getAuthToken($data) 
+    {
+        $response = IdpIntegrationService::loginRequest($data);
+
+        return [
+            'status_code' => $response['http_code'],
+            'data' => json_decode($response['data'], true)
+        ];
+    }
 
     public function getRefreshToken($request)
     {
         $bearerToken = $request->bearerToken();
-        $request = $request->all();
+        // $request = $request->all();
 
         $data['grant_type'] = "refresh_token";
-        $data['client_id'] = config('apiurl.idp_otp_client_id');
-        $data['client_secret'] = config('apiurl.idp_otp_client_secret');
-        $data['refresh_token'] = $bearerToken;
+        $data['client_id'] = $request->input('client_id') ?? config('apiurl.idp_otp_client_id');
+        $data['client_secret'] = $request->input('client_secret') ?? config('apiurl.idp_otp_client_secret');
+        $data['refresh_token'] = $request->input('refresh_token');
+        $data['bearere_token'] = $bearerToken;
 
         $tokenResponse = IdpIntegrationService::otpRefreshTokenRequest($data);
 
@@ -607,12 +617,12 @@ class UserService extends ApiBaseService
 
            // $customerInfo = $this->getCustomerInfo($request['mobile'], (object)$idpCus);
 
-           $profileData = [
-               'token' => $tokenResponseData,
-               // 'customerInfo' => $customerInfo,
-           ];
+        //    $profileData = [
+        //        'token' => $tokenResponseData,
+        //        // 'customerInfo' => $customerInfo,
+        //    ];
 
-           return $this->sendSuccessResponse($profileData, "Data found");
+           return $this->sendSuccessResponse($tokenResponseData, "Successful Attempt");
         }
 
 

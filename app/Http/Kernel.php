@@ -63,7 +63,8 @@ class Kernel extends HttpKernel
         'checkIp' => \App\Http\Middleware\CheckIpMiddleware::class,
         'audit.log' => \App\Http\Middleware\AuditLogMiddleware::class,
         'client.secret.token' => \App\Http\Middleware\ClientSecretToken::class,
-
+        'verifyFacebookUpsellKey' => \App\Http\Middleware\VerifyFacebookUpsellKey::class,
+        'verifyIdpToken' => \App\Http\Middleware\VerifyIdpToken::class,
     ];
 
     /**
