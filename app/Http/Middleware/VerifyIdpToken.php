@@ -15,7 +15,7 @@ class VerifyIdpToken {
         $response = IdpIntegrationService::tokenValidationRequest(['token' => $idpToken]);
         $responseData = json_decode($response['data'], true);
 
-        if ($responseData['token_status'] === 'Invalid') {
+        if (!isset($responseData['token_status']) || $responseData['token_status'] === 'Invalid') {
             throw new RequestUnauthorizedException();
         }
 
