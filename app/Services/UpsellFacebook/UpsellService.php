@@ -6,11 +6,13 @@ use App\Enums\HttpStatusCode;
 use App\Repositories\CustomerRepository;
 use App\Repositories\MyblProductRepository;
 use App\Services\Banglalink\BaseService;
+use Carbon\Carbon;
 
 class UpsellService extends BaseService {
 
     protected const PURCHASE_ENDPOINT = "/provisioning/provisioning/purchase";
     protected const SEND_OTP_ENDPOINT = "/send-otp";
+    protected const FACEBOOK_REPORT_ENDPOINT = "/carrier_external_sales";
     
     public function buyWithBalance(
         $msisdn,
@@ -78,5 +80,24 @@ class UpsellService extends BaseService {
         ];
     
         return $this->post(self::PURCHASE_ENDPOINT, $param);        
+    }
+
+    public function reportFacebook($data) 
+    {
+        $timestamp = Carbon::now()->timestamp;
+        $secret = env('FACEBOOK_SECRET_KEY', '1234');
+        $carrier_id = env('FACEBOOK_CARRIER_ID', '1234');
+        $access_token = env('FACEBOOK_ACCESS_TOKEN', '1234');
+        $hmac = hash_hmac('sha256', $timestamp, $carrier_id, $secret);
+        
+        $urlWithQueryParams = self::FACEBOOK_REPORT_ENDPOINT
+            . "?{$carrier_id}"
+            . "&{$timestamp}"
+            . "&{$hmac}"
+            . "&action=buy"
+            . "&{$access_token}";
+
+        $this->setHost("https://graph.facebook.com");
+        return $this->post($urlWithQueryParams, $data);
     }
 }
