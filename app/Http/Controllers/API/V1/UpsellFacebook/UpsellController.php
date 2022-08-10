@@ -12,6 +12,8 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\CustomerService;
 use App\Services\ProductService;
 use App\Services\UpsellFacebook\UpsellService;
+use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class UpsellController extends Controller
 {
@@ -46,6 +48,33 @@ class UpsellController extends Controller
     }
 
     /**
+     * {
+     *  "tid": "ATjxtPq3GZiJQaq_aopM7u544_MhK_V-WtHwYF6yPnwuCEScbRzem-vDspAqmxxr4bA",
+     *  "result_code": "0",
+     *  "result_message": "success",
+     *      "product": {
+     *      "product_name": "Unlimited Facebook For 1 day",
+     *      "product_code": "62",
+     *      "product_is_loan:" true,
+     *      "product_price": "6",
+     *      "product_currency": "USD",
+     *      "product_description": "Unlimited Facebook For 1 day for 6 USD"
+     *  }
+     * }
+     */
+    public function reportFacebook(Request $request) 
+    {
+        $data = $this->upsellService->reportPurchase($request->all());
+        $response =  json_decode($data['response'], true);
+
+        if(isset($response['error'])) {
+            return $this->apiBaseService->sendErrorResponse('Failed', $response['error'], HttpStatusCode::BAD_REQUEST);
+        }  
+
+        return $this->apiBaseService->sendSuccessResponse($response, 'Success', [], [], HttpStatusCode::SUCCESS);
+    }
+
+    /**
      * POST Request BODY
      * msisdn: string,
      * product_code: string
@@ -77,6 +106,12 @@ class UpsellController extends Controller
         $data = [];
         $msisdn = $request->input('msisdn');
         $productCode = $request->input('product_code');
+        $fbTransactionId = $request->input('fb_transaction_id');
+        $productDetails = $this->upsellService->productDetails($productCode)->first()->toArray();
+        $productMrpPrice = $productDetails['details']['mrp_price'];
+        $productValidity = $productDetails['details']['validity'];
+        $productDisplayTitleEn = $productDetails['details']['display_title_en'];
+        
 
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
         // if(!$customerIsEligibleForProduct) {
@@ -88,15 +123,22 @@ class UpsellController extends Controller
         //     return $this->apiBaseService->sendErrorResponse($msg, $data, HttpStatusCode::BAD_REQUEST);
         // }
 
-        if(!$request->pay_with_balance) {
+        if($request->pay_with_balance == false) {
             $msg = "Customer buying using payment";
-            $transactionId = uniqid('BLWN');
-            $data['transaction_id'] = $transactionId;
+            $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
+            $fbTrxId = $fbTransactionId;
+            $sslTrxId = uniqid($sslChannel);
+            $data['fb_trx_id'] = $fbTrxId;
+            $data['ssl_trx_id'] = $sslTrxId;
             $data['app_url'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$msisdn}"
-                . "&transaction_id={$transactionId}"
-                . "&product_code={$productCode}";
+                . "&ssl_trx_id={$sslTrxId}"
+                . "&fb_trx_id={$fbTrxId}"
+                . "&product_code={$productCode}"
+                . "&product_price={$productMrpPrice}"
+                . "&product_validity={$productValidity}"
+                . "&product_display_title_en={$productDisplayTitleEn}";
             
             return $this->apiBaseService->sendSuccessResponse($data, $msg, [], [], HttpStatusCode::SUCCESS);
         }
