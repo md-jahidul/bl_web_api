@@ -13,6 +13,7 @@ use App\Services\CustomerService;
 use App\Services\ProductService;
 use App\Services\UpsellFacebook\UpsellService;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class UpsellController extends Controller
 {
@@ -63,9 +64,14 @@ class UpsellController extends Controller
      */
     public function reportFacebook(Request $request) 
     {
-        if ($request->input('result_code') == 0) {
-            $this->upsellService->reportSuccess($request->input());
-        }
+        $data = $this->upsellService->reportPurchase($request->all());
+        $response =  json_decode($data['response'], true);
+
+        if(isset($response['error'])) {
+            return $this->apiBaseService->sendErrorResponse('Failed', $response['error'], HttpStatusCode::BAD_REQUEST);
+        }  
+
+        return $this->apiBaseService->sendSuccessResponse($response, 'Success', [], [], HttpStatusCode::SUCCESS);
     }
 
     /**
@@ -101,6 +107,11 @@ class UpsellController extends Controller
         $msisdn = $request->input('msisdn');
         $productCode = $request->input('product_code');
         $fbTransactionId = $request->input('fb_transaction_id');
+        $productDetails = $this->upsellService->productDetails($productCode)->first()->toArray();
+        $productMrpPrice = $productDetails['details']['mrp_price'];
+        $productValidity = $productDetails['details']['validity'];
+        $productDisplayTitleEn = $productDetails['details']['display_title_en'];
+        
 
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
         // if(!$customerIsEligibleForProduct) {
@@ -124,7 +135,10 @@ class UpsellController extends Controller
                 . "?mobile={$msisdn}"
                 . "&ssl_trx_id={$sslTrxId}"
                 . "&fb_trx_id={$fbTrxId}"
-                . "&product_code={$productCode}";
+                . "&product_code={$productCode}"
+                . "&product_price={$productMrpPrice}"
+                . "&product_validity={$productValidity}"
+                . "&product_display_title_en={$productDisplayTitleEn}";
             
             return $this->apiBaseService->sendSuccessResponse($data, $msg, [], [], HttpStatusCode::SUCCESS);
         }

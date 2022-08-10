@@ -312,7 +312,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 
     // Performance API
-    Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook')->middleware('verifyFacebookUpsellKey');
+    Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook');//->middleware('verifyFacebookUpsellKey');
+    // Route::get('detail-test22', function() {
+    //     // dd('hello');
+    //     $us = resolve(App\Services\UpsellFacebook\UpsellService::class);
+        
+    //     return $us->customerIsEligibleForProduct('01968991390', 'abc');
+    // });
 });
 
 
