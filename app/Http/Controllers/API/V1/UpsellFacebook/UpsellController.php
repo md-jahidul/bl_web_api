@@ -12,6 +12,7 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\CustomerService;
 use App\Services\ProductService;
 use App\Services\UpsellFacebook\UpsellService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\Types\Boolean;
 
@@ -110,7 +111,11 @@ class UpsellController extends Controller
         $productDetails = $this->upsellService->productDetails($productCode)->first()->toArray();
         $productMrpPrice = $productDetails['details']['mrp_price'];
         $productValidity = $productDetails['details']['validity'];
-        $productDisplayTitleEn = $productDetails['details']['display_title_en'];
+        $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
+        // str_replace(' ', '%20', $productDetails['details']['display_title_en']);
+        $timestamp = Carbon::now()->timestamp;
+        $signature = str_replace('==', $timestamp, strrev(base64_encode($timestamp * $timestamp)));
+
         
 
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
@@ -122,6 +127,8 @@ class UpsellController extends Controller
         //         . "?msg={$msg}"; 
         //     return $this->apiBaseService->sendErrorResponse($msg, $data, HttpStatusCode::BAD_REQUEST);
         // }
+
+        // $decode = base64_decode(strrev(str_replace('1660463468', '==', '1660463468ANyAzN4UjM2UDOykDOzEzN1cjM')))/1660463468;
 
         if($request->pay_with_balance == false) {
             $msg = "Customer buying using payment";
@@ -138,7 +145,9 @@ class UpsellController extends Controller
                 . "&product_code={$productCode}"
                 . "&product_price={$productMrpPrice}"
                 . "&product_validity={$productValidity}"
-                . "&product_display_title_en={$productDisplayTitleEn}";
+                . "&product_display_title_en={$productDisplayTitleEn}"
+                . "&signature={$signature}"
+                . "&timestamp={$timestamp}";
             
             return $this->apiBaseService->sendSuccessResponse($data, $msg, [], [], HttpStatusCode::SUCCESS);
         }
