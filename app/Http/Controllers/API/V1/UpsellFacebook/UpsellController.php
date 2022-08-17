@@ -114,7 +114,7 @@ class UpsellController extends Controller
         $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
         // str_replace(' ', '%20', $productDetails['details']['display_title_en']);
         $timestamp = Carbon::now()->timestamp;
-        $signature = str_replace('==', $timestamp, strrev(base64_encode($timestamp * $timestamp)));
+        $signature = strrev(base64_encode($timestamp * $timestamp));
 
         
 
