@@ -116,9 +116,8 @@ class UpsellController extends Controller
         
         $secret = env("UPSELL_SECRET");
         $timestamp = Carbon::now()->timestamp;
-        $signature = strrev(base64_encode($timestamp * $timestamp));
-        $hash = hash_hmac('sha256', $signature, $secret, true);
-        $signature = $signature . $timestamp . $hash;
+        $hash = hash_hmac('sha256', $timestamp, $secret);
+        $signature = rawurlencode(base64_encode($hash));
         
 
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
