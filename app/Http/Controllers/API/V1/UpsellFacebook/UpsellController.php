@@ -113,9 +113,11 @@ class UpsellController extends Controller
         $productValidity = $productDetails['details']['validity'];
         $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
         // str_replace(' ', '%20', $productDetails['details']['display_title_en']);
+        
+        $secret = env("UPSELL_SECRET");
         $timestamp = Carbon::now()->timestamp;
-        $signature = strrev(base64_encode($timestamp * $timestamp));
-
+        $hash = hash_hmac('sha256', $timestamp, $secret);
+        $signature = rawurlencode(base64_encode($hash));
         
 
         // $customerIsEligibleForProduct = $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode);
