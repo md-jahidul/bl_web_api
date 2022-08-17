@@ -305,8 +305,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // MyBl Product Detail
     Route::get('mybl-product/{productCode}/details', 'API\V1\UpsellFacebook\UpsellController@getProductDetails')->middleware('verifyFacebookUpsellKey');
 
+    // Performance API
+    Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook')->middleware('verifyFacebookUpsellKey');
+
     // Phase 1
-    Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
+    // Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
 
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
