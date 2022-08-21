@@ -7,19 +7,6 @@ class BaseService
 {
 
     const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
-    
-    protected $host;
-
-    public function __construct()
-    {
-        $defaultHost = config('apiurl.bl_api_host');
-        $this->setHost($defaultHost);
-    }
-
-    protected function setHost($host = "")
-    {
-        return $this->host = $host;
-    }
 
     /**
      * Return BL API Host
@@ -28,7 +15,7 @@ class BaseService
      */
     protected function getHost()
     {
-        return $this->host;
+        return config('apiurl.bl_api_host');
     }
 
     /**
