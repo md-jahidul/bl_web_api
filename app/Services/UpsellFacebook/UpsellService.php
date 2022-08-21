@@ -62,18 +62,18 @@ class UpsellService extends BaseService {
 
     public function customerIsEligibleForProduct($msisdn, $productCode) 
     {
-        $channelName = 'website';
-        $customerId = $this->customerDetails($msisdn)->id;
-        $url = self::CUSTOMER_INFO_API_ENDPOINT . '/' . $customerId . '/available-products?channel=' . $channelName;
-        $response = $this->get($url);
+        // $channelName = 'website';
+        // $customerId = $this->customerDetails($msisdn)->id;
+        // $url = self::CUSTOMER_INFO_API_ENDPOINT . '/' . $customerId . '/available-products?channel=' . $channelName;
+        // $response = $this->get($url);
 
-        /**
-         * TODO:
-         * Look into Purchase Service of Mybl Api, 
-         * Method purchaseProduct 
-         * Line 134, 165
-         */
-        dd(json_decode($response['response']));
+        // /**
+        //  * TODO:
+        //  * Look into Purchase Service of Mybl Api, 
+        //  * Method purchaseProduct 
+        //  * Line 134, 165
+        //  */
+        // dd(json_decode($response['response']));
 
     }
 
@@ -86,6 +86,11 @@ class UpsellService extends BaseService {
         ];
     
         return $this->post(self::PURCHASE_ENDPOINT, $param);        
+    }
+
+    protected function getHost()
+    {
+        return "https://graph.facebook.com";
     }
 
     public function reportPurchase($data) 
@@ -103,8 +108,6 @@ class UpsellService extends BaseService {
             . "&action=buy"
             . "&access_token={$access_token}";
 
-        $this->setHost("https://graph.facebook.com");
-        // dd($this->getHost().$urlWithQueryParams);
         return $this->post($urlWithQueryParams, $data);
     }
 }
