@@ -10,8 +10,18 @@ class VerifyFacebookUpsellKey {
     public function handle($request, Closure $next)
     {
         $upsellKey = $request->header('api-key');
+        $timestamp = $request->header('timestamp');
         
-        if (!isset($upsellKey) || strcmp($upsellKey, config('facebookupsell.api_key'))) {
+        if (!isset($upsellKey) || $timestamp ) {
+            throw new RequestUnauthorizedException();
+        }
+
+        $blUpsellSecret = config('facebookupsell.bl_upsell_secret');
+
+        $hash = hash_hmac('sha256', $timestamp, $blUpsellSecret);
+        $signature = rawurlencode(base64_encode($hash));
+
+        if (strcmp($upsellKey, $signature)) {
             throw new RequestUnauthorizedException();
         }
 
