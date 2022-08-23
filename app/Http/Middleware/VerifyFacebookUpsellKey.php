@@ -12,16 +12,15 @@ class VerifyFacebookUpsellKey {
         $upsellKey = $request->header('api-key');
         $timestamp = $request->header('timestamp');
         
-        if (!isset($upsellKey) || $timestamp ) {
+        if (!isset($upsellKey) || !isset($timestamp) ) {
             throw new RequestUnauthorizedException();
         }
 
         $blUpsellSecret = config('facebookupsell.bl_upsell_secret');
-
         $hash = hash_hmac('sha256', $timestamp, $blUpsellSecret);
-        $signature = rawurlencode(base64_encode($hash));
+        $hashBase64Encoded = base64_encode($hash);
 
-        if (strcmp($upsellKey, $signature)) {
+        if (! hash_equals($hashBase64Encoded, $upsellKey)) {
             throw new RequestUnauthorizedException();
         }
 

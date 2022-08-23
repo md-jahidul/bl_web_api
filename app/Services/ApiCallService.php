@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Services;
+use Illuminate\Support\Facades\Redis;
+
+class ApiCallService
+{
+
+    const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
+
+    /**
+     * Return BL API Host
+     *
+     * @return mixed
+     */
+
+    private $host;
+
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    public function setHost($host)
+    {
+        $this->host = $host;
+    }
+
+    /**
+     * Make the header array with authentication.
+     *
+     * @return array
+     */
+    public function makeHeader()
+    {
+        $client_token = Redis::get(self::IDP_TOKEN_REDIS_KEY);
+        $customer_token = app('request')->bearerToken();
+
+        $header = [
+            'Accept: application/vnd.banglalink.apihub-v1.0+json',
+            'Content-Type: application/vnd.banglalink.apihub-v1.0+json',
+            'accept: application/json',
+            'client_authorization:' . $client_token,
+            'customer_authorization:' . $customer_token
+        ];
+
+        return $header;
+    }
+
+
+    /**
+     * Make CURL request for GET request.
+     *
+     * @param string $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function get($url, $body = [], $headers = null)
+    {
+        return $this->makeMethod('get', $url, $body, $headers);
+    }
+
+    /**
+     * Make CURL request for POST request.
+     *
+     * @param string $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function post($url, $body = [], $headers = null)
+    {
+        return $this->makeMethod('post', $url, $body, $headers);
+    }
+
+    /**
+     * Make CURL request for PUT request.
+     *
+     * @param string $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function put($url, $body = [], $headers = [])
+    {
+        return $this->makeMethod('put', $url, $body, $headers);
+    }
+
+    /**
+     * @param $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function delete($url, $body = [], $headers = [])
+    {
+        return $this->makeMethod('delete', $url, $body, $headers);
+    }
+
+    /**
+     * Make CURL request for a HTTP request.
+     *
+     * @param string $method
+     * @param string $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function makeMethod($method, $url, $body = [], $headers = null)
+    {
+        $ch = curl_init();
+        $headers = $headers ?: $this->makeHeader();
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        static::makeRequest($ch, $url, $body, $headers);
+        $result = curl_exec($ch);
+        //dd($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        return ['response' => $result, 'status_code' => $httpCode];
+    }
+
+
+    /**
+     * Make CURL object for HTTP request verbs.
+     *
+     * @param curl_init() $ch
+     * @param string $url
+     * @param array $body
+     * @param array $headers
+     * @return string
+     */
+    public function makeRequest($ch, $url, $body, $headers)
+    {
+        $url = $this->getHost() . $url;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+    }
+}
