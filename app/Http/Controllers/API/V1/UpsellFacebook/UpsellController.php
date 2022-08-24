@@ -90,8 +90,17 @@ class UpsellController extends Controller
         //     return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
         // }
         
+        $productDetails = null;
         $fbTransactionId = $request->input('fb_transaction_id');
-        $productDetails = $this->upsellService->productDetails($productCode)->first()->toArray();
+        $product = $this->upsellService->productDetails($productCode)->first();//->toArray();
+        
+        if (! is_null($product)) {
+            $productDetails = $product->toArray();
+        } else {
+            $msg = "Product Not Found";
+            return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
+        }
+
         $productMrpPrice = $productDetails['details']['mrp_price'];
         $productValidity = $productDetails['details']['validity'];
         $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
