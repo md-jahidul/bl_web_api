@@ -18,6 +18,7 @@ use App\Repositories\BusinessComPriceTableRepository;
 use App\Repositories\BusinessComVideoRepository;
 use App\Repositories\BusinessComPhotoRepository;
 use App\Repositories\BusinessRelatedProductRepository;
+use App\Services\ImageFileViewerService;
 use Illuminate\Http\Response;
 
 class BusinessOthersService {
@@ -36,6 +37,7 @@ class BusinessOthersService {
     protected $photoRepo;
     protected $asgnFeatureRepo;
     protected $relatedProductRepo;
+    protected $imageFileViewerService;
     public $responseFormatter;
 
     /**
@@ -50,12 +52,14 @@ class BusinessOthersService {
      * @param BusinessComPhotoRepository $photoRepo
      * @param BusinessAssignedFeaturesRepository $asgnFeatureRepo
      * @param BusinessRelatedProductRepository $relatedProductRepo
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
-    ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo,
+            ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo,
             BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo,
             BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo,
-            BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo, BusinessRelatedProductRepository $relatedProductRepo
+            BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo, BusinessRelatedProductRepository $relatedProductRepo,
+            ImageFileViewerService $imageFileViewerService
     ) {
         $this->otherRepo = $otherRepo;
         $this->photoTextRepo = $photoTextRepo;
@@ -67,6 +71,7 @@ class BusinessOthersService {
         $this->photoRepo = $photoRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
         $this->relatedProductRepo = $relatedProductRepo;
+        $this->imageFileViewerService = $imageFileViewerService;
 
         $this->responseFormatter = $responseFormatter;
     }
@@ -75,22 +80,54 @@ class BusinessOthersService {
      * get other service list
      * @return Response
      */
-    public function getOtherService($type) {
-        $servces = $this->otherRepo->getOtherService($type);
-        return $this->responseFormatter->sendSuccessResponse($servces, 'Enterprise Solutions');
+    public function getOtherService($type)
+    {
+        $services = $this->otherRepo->getOtherService($type);
+
+        $data = [];
+        $count = 0;
+        foreach ($services as $service) {
+            $imgData = $this->getOthersImageData($service);
+            unset($service->banner_photo, $service->banner_image_mobile, $service->banner_name, $service->banner_name_bn);
+            $data[$count]['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
+            $data[$count] = array_merge($service->toArray(), $imgData);
+
+            $count++;
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions');
+    }
+
+    public function getOthersImageData($value)
+    {
+        $keyData = config('filesystems.moduleType.BusinessOthers');
+        return $imgData = $this->imageFileViewerService->prepareImageData($value, $keyData);
     }
 
     /**
      * Get business package by id
      * @return Response
      */
-    public function getServiceBySlug($serviceSlug) {
+    public function getServiceBySlug($serviceSlug)
+    {
         $service = $this->otherRepo->getServiceBySlug($serviceSlug);
+
+        $service['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
+        $serviceKeyData = config('filesystems.moduleType.BusinessOtherDetails');
+        $imgData = $this->imageFileViewerService->prepareImageData($service, $serviceKeyData);
+
+        $service = array_merge($service->toArray(), $imgData);
+        $service['banner_alt_text'] = $service['details_alt_text'];
+        $service['banner_alt_text_bn'] = $service['details_alt_text_bn'];
+
+        unset($service['details_banner_web'], $service['details_banner_name'],
+        $service['details_banner_name_bn'], $service['details_banner_mobile'],
+        $service['details_alt_text'], $service['details_alt_text_bn']);
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($service['id']);
 
-        $data['feature'] = $this->_getFeaturesByService($service['slug'], $service['id']);
+        $data['feature'] = $this->_getFeaturesByService($service['type'], $service['id']);
 
         $parentType = 2;
         $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($service['id'], $parentType);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Services\ImageFileViewerService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\EcareerService;
@@ -34,10 +35,14 @@ class EcareerController extends Controller
      * @var [type]
      */
     private $ecarrerService;
+    private $imageFileViewerService;
 
-    public function __construct(EcareerService $ecarrerService)
-    {
+    public function __construct(
+        EcareerService $ecarrerService,
+        ImageFileViewerService  $imageFileViewerService
+    ) {
         $this->ecarrerService = $ecarrerService;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
     /**
@@ -46,7 +51,6 @@ class EcareerController extends Controller
      */
     public function topBannerContact()
     {
-
         try {
             $data = [];
             // Top banner menu
@@ -63,9 +67,9 @@ class EcareerController extends Controller
                     $sub_data_banner['page_header_bn'] = $value->page_header_bn;
                     $sub_data_banner['schema_markup'] = $value->schema_markup;
 
-
-                    $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
+                    $sub_data_banner = array_merge($sub_data_banner, $this->ecarrerService->getPortalImageData($value));
                     $sub_data_banner['alt_text'] = $value->alt_text;
+                    $sub_data_banner['alt_text_bn'] = $value->alt_text;
 
                     $data['top_menu_banner'][] = $sub_data_banner;
                 }
@@ -128,7 +132,6 @@ class EcareerController extends Controller
      */
     public function lifeAtBanglalink()
     {
-
         $data = [];
 
         //seo data
@@ -136,30 +139,31 @@ class EcareerController extends Controller
         $seoData = $this->ecarrerService->getSeoData($category);
 
         $data['seo_data'] = array(
-            'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-            'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
             'alt_text' => $seoData->alt_text,
+            'alt_text_bn' => $seoData->alt_text_bn,
             'page_header' => $seoData->page_header,
             'page_header_bn' => $seoData->page_header_bn,
-            'schema_markup' => $seoData->schema_markup
+            'schema_markup' => $seoData->schema_markup,
         );
 
 
         // Life at banglalink 3 general section
         $life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
 
-//        print_r($life_at_bl_general);die();
-
         if (!empty($life_at_bl_general) && count($life_at_bl_general) > 0) {
-            foreach ($life_at_bl_general as $general_value) {
 
+            foreach ($life_at_bl_general as $general_value) {
 
                 if ($general_value->category_type == 'news_on_top') {
 
                     $data['news_on_top'] = $this->lifeAtBanglalinkData($general_value);
+
                 } elseif ($general_value->category_type == 'values_section') {
+
                     $data['values_section'] = $this->lifeAtBanglalinkData($general_value);
+
                 } elseif ($general_value->category_type == 'campus_section') {
+
                     $data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
                 }
             }
@@ -167,6 +171,7 @@ class EcareerController extends Controller
             if (!isset($data['news_on_top'])) {
                 $data['news_on_top'] = null;
             }
+
             if (!isset($data['values_section'])) {
                 $data['values_section'] = null;
             }
@@ -193,18 +198,21 @@ class EcareerController extends Controller
                 $sub_data['slug'] = $diversity_value->slug;
                 $sub_data['description_en'] = $diversity_value->description_en;
                 $sub_data['description_bn'] = $diversity_value->description_bn;
+                $keyData = config('filesystems.moduleType.EcareerPortalItem');
 
                 if (!empty($diversity_value->portalItems)) {
 
                     foreach ($diversity_value->portalItems as $portal_items) {
                         $sub_items = [];
+                        $imgData = $this->imageFileViewerService->prepareImageData($portal_items, $keyData);
+                        $sub_items = array_merge($sub_items, $imgData);
 
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                         $sub_data['item_list'][] = $sub_items;
                     }
@@ -215,11 +223,9 @@ class EcareerController extends Controller
         } else {
             $data['diversity'] = null;
         }
-        // endif
+
         # Life at banglalink Events and Activites section
         $life_at_bl_events = $this->ecarrerService->ecarrerSectionsList('life_at_bl_events');
-
-        // dd($life_at_bl_events);
 
         if (!empty($life_at_bl_events) && count($life_at_bl_events) > 0) {
 
@@ -232,15 +238,18 @@ class EcareerController extends Controller
                 if (!empty($events_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
                 }
+                $keyData = config('filesystems.moduleType.EcareerPortalItem');
 
                 if (!empty($events_value->portalItems)) {
 
                     foreach ($events_value->portalItems as $portal_items) {
                         $sub_items = [];
+                        $imgData = $this->imageFileViewerService->prepareImageData($portal_items, $keyData);
+                        $sub_items = array_merge($sub_items, $imgData);
 
                         $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                         $sub_data['item_list'][] = $sub_items;
                     }
@@ -252,9 +261,7 @@ class EcareerController extends Controller
             $data['events_activites'] = null;
         }
 
-
         # ecarrer Teams section
-        #
         $life_at_bl_teams = $this->ecarrerService->ecarrerSectionsList('life_at_bl_teams');
 
         if (!empty($life_at_bl_teams) && count($life_at_bl_teams) > 0) {
@@ -278,17 +285,20 @@ class EcareerController extends Controller
                     if (!empty($teams_value->additional_info)) {
                         $sub_data['sider_info'] = json_decode($teams_value->additional_info)->sider_info;
                     }
+                    $keyData = config('filesystems.moduleType.EcareerPortalItem');
 
                     if (!empty($teams_value->portalItems) && count($teams_value->portalItems) > 0) {
 
                         foreach ($teams_value->portalItems as $portal_items) {
                             $sub_items = [];
+                            $imgData = $this->imageFileViewerService->prepareImageData($portal_items, $keyData);
+                            $sub_items = array_merge($sub_items, $imgData);
 
                             $sub_items['title_en'] = $portal_items->title_en;
                             $sub_items['description_en'] = $portal_items->description_en;
                             $sub_items['description_bn'] = $portal_items->description_bn;
-                            $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                             $sub_items['alt_text'] = $portal_items->alt_text;
+                            $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                             #teams tab content buttons
                             $sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
@@ -312,6 +322,7 @@ class EcareerController extends Controller
         return response()->success($data, 'Data Found!');
     }
 
+
     /**
      * private function for life at banglalink data manupulation
      * @return [type] [description]
@@ -322,20 +333,22 @@ class EcareerController extends Controller
         $sub_data_news = [];
         $sub_data_news['title_en'] = $general_value->title_en;
         $sub_data_news['title_bn'] = $general_value->title_bn;
-
+        $keyData = config('filesystems.moduleType.EcareerPortalItem');
 
         if (!empty($general_value->portalItems)) {
 
             foreach ($general_value->portalItems as $portal_items) {
+                $imgData = $this->imageFileViewerService->prepareImageData($portal_items, $keyData);
                 $sub_data_news_item = [];
+                $sub_data_news_item = array_merge($sub_data_news_item, $imgData);
 
                 $sub_data_news_item['title_en'] = $portal_items->title_en;
                 $sub_data_news_item['title_bn'] = $portal_items->title_bn;
                 $sub_data_news_item['description_en'] = $portal_items->description_en;
                 $sub_data_news_item['description_bn'] = $portal_items->description_bn;
 
-                $sub_data_news_item['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
+                $sub_data_news_item['alt_text_bn'] = $portal_items->alt_text_bn;
                 $sub_data_news_item['alt_links'] = $portal_items->alt_links;
                 $sub_data_news_item['video'] = $portal_items->video;
 
@@ -352,9 +365,7 @@ class EcareerController extends Controller
      */
     public function getEcarrerVacancy()
     {
-
         try {
-
             $data = [];
 
             //seo data
@@ -362,9 +373,8 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
@@ -388,7 +398,6 @@ class EcareerController extends Controller
      */
     public function getEcarrerPrograms()
     {
-
         try {
 
             $data = [];
@@ -398,9 +407,8 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup

@@ -28,8 +28,8 @@ class CorpCaseStudyComponentRepository extends BaseRepository
                         'id', 'section_details_id', 'page_type',
                         'component_type', 'title_en', 'title_bn',
                         'editor_en', 'editor_bn', 'extra_title_bn',
-                        'extra_title_en', 'multiple_attributes',
-                        'video', 'image', 'alt_text', 'other_attributes'
+                        'extra_title_en', 'multiple_attributes', 'image_name_en', 'image_name_bn',
+                        'video', 'image', 'alt_text', 'alt_text_bn', 'other_attributes'
                     )
                     ->where('status', 1);
             }])

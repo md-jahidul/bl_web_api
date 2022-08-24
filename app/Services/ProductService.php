@@ -67,6 +67,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var $imageFileViewerService
+     */
+    private $imageFileViewerService;
 
     /**
      * ProductService constructor.
@@ -78,6 +82,7 @@ class ProductService extends ApiBaseService
      * @param BanglalinkLoanService $blLoanProductService
      * @param BalanceService $balanceService
      * @param FourGLandingPageRepository $fourGLandingPageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct
     (
@@ -88,7 +93,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        ImageFileViewerService $imageFileViewerService
     )
     {
         $this->productRepository = $productRepository;
@@ -100,6 +106,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -350,6 +357,17 @@ class ProductService extends ApiBaseService
     {
         try {
             $productDetail = $this->productRepository->detailProducts($slug);
+
+            /** image name for bn & en language */
+            $keyData = config('filesystems.moduleType.ProductDetails');
+            $imgData = $this->imageFileViewerService->prepareImageData($productDetail->product_details, $keyData);
+
+            $productDetail->product_details->banner_image_web_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;;
+            $productDetail->product_details->banner_image_web_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;;
+            $productDetail->product_details->banner_image_mobile_en = isset($imgData['banner_image_mobile_en']) ? $imgData['banner_image_mobile_en'] : null;;
+            $productDetail->product_details->banner_image_mobile_bn = isset($imgData['banner_image_mobile_bn']) ? $imgData['banner_image_mobile_bn'] : null;;
+
+            unset($productDetail->product_details->banner_image_url, $productDetail->product_details->banner_image_mobile);
 
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
