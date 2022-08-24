@@ -8,6 +8,7 @@ use App\Exceptions\IdpAuthException;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
+use App\Models\MyBlProductTab;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -66,6 +67,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var $imageFileViewerService
+     */
+    private $imageFileViewerService;
 
     /**
      * ProductService constructor.
@@ -77,6 +82,7 @@ class ProductService extends ApiBaseService
      * @param BanglalinkLoanService $blLoanProductService
      * @param BalanceService $balanceService
      * @param FourGLandingPageRepository $fourGLandingPageRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct
     (
@@ -87,7 +93,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        ImageFileViewerService $imageFileViewerService
     )
     {
         $this->productRepository = $productRepository;
@@ -99,6 +106,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -226,6 +234,66 @@ class ProductService extends ApiBaseService
         }
     }
 
+    public function simTypeOffersTypeWise($type, $offerType)
+    {
+        try {
+            $item = [];
+            $data = [];
+            $allPacks = [];
+            $products = $this->productRepository->simTypeProduct($type, $offerType);
+            
+            if ($products) {
+                foreach ($products as $product) {
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
+                    unset($product->productCore);
+                }
+            }
+            
+            foreach ($products as $offer) {
+
+                $pack = $offer->getAttributes();
+                $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
+                
+                foreach ($productTabs as $productTab) {
+                    $item[$productTab->slug]['title_en'] = $productTab->name;
+                    $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
+                    $item[$productTab->slug]['display_order'] = $productTab->sort;
+                    $item[$productTab->slug]['packs'][] = $pack;
+                }
+            }
+
+            $sortedData = collect($item)->sortBy('display_order');
+            
+            foreach ($sortedData as $category => $pack) {
+                $data[] = [
+                    'type' => $category,
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'packs' => array_values($pack['packs']) ?? []
+                ];
+            }
+            
+            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
+
+            if(!empty($data)) {
+                array_unshift($data, [
+                    'type' => 'all',
+                    'title_en' => 'All',
+                    'title_bn' => Null,
+                    'packs' => $allPacks->toArray() ?? []
+                ]);
+            }
+
+            $offerType = ucfirst($offerType);
+
+            return $this->sendSuccessResponse($data, "{$offerType} packs list");
+
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }        
+    }
+
     /**
      * @param $mobile
      * @param $productCode
@@ -289,6 +357,17 @@ class ProductService extends ApiBaseService
     {
         try {
             $productDetail = $this->productRepository->detailProducts($slug);
+
+            /** image name for bn & en language */
+            $keyData = config('filesystems.moduleType.ProductDetails');
+            $imgData = $this->imageFileViewerService->prepareImageData($productDetail->product_details, $keyData);
+
+            $productDetail->product_details->banner_image_web_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;;
+            $productDetail->product_details->banner_image_web_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;;
+            $productDetail->product_details->banner_image_mobile_en = isset($imgData['banner_image_mobile_en']) ? $imgData['banner_image_mobile_en'] : null;;
+            $productDetail->product_details->banner_image_mobile_bn = isset($imgData['banner_image_mobile_bn']) ? $imgData['banner_image_mobile_bn'] : null;;
+
+            unset($productDetail->product_details->banner_image_url, $productDetail->product_details->banner_image_mobile);
 
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
@@ -524,5 +603,10 @@ class ProductService extends ApiBaseService
             $data = json_decode(json_encode($collection), true);
             return $this->sendSuccessResponse($data, '4G Internet Offers');
         }
+    }
+
+    public function getProductByCode($productId){
+        
+        return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }

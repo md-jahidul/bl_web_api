@@ -47,14 +47,18 @@ class AppServiceProductDetailsRepository extends BaseRepository
             ->where('category', 'app_banner_fixed_section')
             ->where('status', 1)
             ->whereNull('deleted_at')
-            ->first(['title_en', 'title_bn', 'image', 'banner_image_mobile', 'alt_text', 'other_attributes', 'multiple_component']);
+            ->first(['title_en', 'title_bn', 'image', 'banner_image_mobile', 'banner_name', 'banner_name_bn', 'alt_text', 'alt_text_bn', 'other_attributes', 'multiple_component']);
     }
 
 
     public function getSectionsComponents($product_id, $component_type = [])
     {
         if( empty($component_type) ){
-            return $this->model->with('detailsComponent')->where('product_id', $product_id)
+            return $this->model
+                ->with(['detailsComponent' => function($q){
+                    $q->with('componentMultiData');
+                }])
+                ->where('product_id', $product_id)
                 ->where('category', 'component_sections')
                 ->where('status', 1)
                 ->whereNull('deleted_at')

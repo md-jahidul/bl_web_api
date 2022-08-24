@@ -38,13 +38,24 @@ class EcareerService
     protected $ecarrerPortalItemRepository;
 
     /**
+     * @var $imageFileViewerService
+     */
+    protected $imageFileViewerService;
+
+    /**
      * PrizeService constructor.
      * @param PrizeRepository $prizeRepository
+     * @param ImageFileViewerService $imageFileViewerService
      */
-    public function __construct(EcareerPortalRepository $ecarrerPortalRepository, EcareerPortalItemRepository $ecarrerPortalItemRepository)
-    {
+
+    public function __construct(
+        EcareerPortalRepository $ecarrerPortalRepository,
+        EcareerPortalItemRepository $ecarrerPortalItemRepository,
+        ImageFileViewerService $imageFileViewerService
+    ) {
         $this->ecarrerPortalRepository = $ecarrerPortalRepository;
         $this->ecarrerPortalItemRepository = $ecarrerPortalItemRepository;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->setActionRepository($ecarrerPortalRepository);
     }
 
@@ -236,12 +247,9 @@ class EcareerService
      */
     public function getProgramsSap()
     {
-
-
         $results = null;
 
         try {
-
             $category = "sap";
             $seoData = $this->programsTapSeoData($category);
 
@@ -249,13 +257,14 @@ class EcareerService
 //            dd($seoData);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $results['seo_data'] = array_merge($results['seo_data'], $this->getPortalImageData($seoData));
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
@@ -302,13 +311,14 @@ class EcareerService
             $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $results['seo_data'] = array_merge($results['seo_data'], $this->getPortalImageData($seoData));
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
@@ -353,13 +363,14 @@ class EcareerService
             $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
+                'alt_text_bn' => $seoData->alt_text_bn,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+
+            $results['seo_data'] = array_merge($results['seo_data'], $this->getPortalImageData($seoData));
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
@@ -442,12 +453,11 @@ class EcareerService
                         $sub_data['description_en'] = $items_value->description_en;
                         $sub_data['description_bn'] = $items_value->description_bn;
 
-                        $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
                         $sub_data['video'] = $items_value->video;
                         $sub_data['alt_text'] = $items_value->alt_text;
-                        // $sub_data['alt_links'] = $items_value->alt_links;
-                        #teams tab content buttons
-//                        $sub_data['call_to_action_buttons'] = null;
+                        $sub_data['alt_text_bn'] = $items_value->alt_text_bn;
+                        $imgData = $this->getPortalItemImageData($items_value);
+                        $sub_data = array_merge($sub_data, $imgData);
                         $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
                     }
                 }
@@ -485,10 +495,10 @@ class EcareerService
 
                     foreach ($parents_value->portalItems as $portal_items) {
                         $sub_items = [];
-
-                        // $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $imgData = $this->getPortalItemImageData($portal_items);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                         $sub_data['item_list'][] = $sub_items;
                     }
@@ -533,10 +543,10 @@ class EcareerService
 
                     foreach ($parents_value->portalItems as $portal_items) {
                         $sub_items = [];
-
-                        // $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $imgData = $this->getPortalItemImageData($portal_items);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
                         $sub_items['video'] = $portal_items->video;
                         $sub_data['item_list'][] = $sub_items;
                     }
@@ -569,24 +579,19 @@ class EcareerService
             foreach ($programs_proiconbox as $parent_value) {
 
                 $sub_data = [];
-                // $sub_data['title_en'] = $parent_value->title_en;
-                // $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
-                // $sub_data['description_en'] = $parent_value->description_en;
-                // $sub_data['description_bn'] = $parent_value->description_bn;
-                // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
-                // $sub_data['alt_text'] = $parent_value->alt_text;
                 if (!empty($parent_value->portalItems)) {
 
                     foreach ($parent_value->portalItems as $portal_items) {
                         $sub_items = [];
-
+                        $imgData = $this->getPortalItemImageData($portal_items);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                         $sub_data['item_list'][] = $sub_items;
                     }
@@ -612,13 +617,15 @@ class EcareerService
             foreach ($vacancy_hire as $parent_value) {
 
                 $sub_data = [];
+                $sub_data = array_merge($sub_data, $this->getPortalItemImageData($parent_value));
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
+                $sub_data['alt_text_bn'] = $parent_value->alt_text_bn;
+
                 $results = $sub_data;
             } // Foreach end
         }
@@ -667,13 +674,14 @@ class EcareerService
             foreach ($vacancy_news_media as $parent_value) {
 
                 $sub_data = [];
+                $sub_data = array_merge($sub_data, $this->getPortalItemImageData($parent_value));
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
+                $sub_data['alt_text_bn'] = $parent_value->alt_text_bn;
 
                 $results[] = $sub_data;
             } // Foreach end
@@ -819,12 +827,14 @@ class EcareerService
 
                     foreach ($parent_value->portalItems as $portal_items) {
                         $sub_items = [];
+                        $imgData = $this->getPortalItemImageData($portal_items);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
+                        $sub_items['alt_text_bn'] = $portal_items->alt_text_bn;
 
                         if (isset($portal_items->additional_info) && !empty($portal_items->additional_info)) {
                             $additional_data = json_decode($portal_items->additional_info);
@@ -903,13 +913,15 @@ class EcareerService
                     foreach ($parent_value->portalItems as $items_value) {
 
                         $sub_items = [];
+                        $imgData = $this->getPortalItemImageData($items_value);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['title_en'] = $items_value->title_en;
                         $sub_items['title_bn'] = $items_value->title_bn;
                         $sub_items['description_en'] = $items_value->description_en;
                         $sub_items['description_bn'] = $items_value->description_bn;
 
-                        $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
                         $sub_items['alt_text'] = $items_value->alt_text;
+                        $sub_items['alt_text_bn'] = $items_value->alt_text_bn;
                         $sub_items['video'] = $items_value->video;
 
                         #teams tab content buttons
@@ -952,6 +964,8 @@ class EcareerService
                     foreach ($parent_value->portalItems as $portal_items) {
 
                         $sub_items = [];
+                        $imgData = $this->getPortalItemImageData($portal_items);
+                        $sub_items = array_merge($sub_items, $imgData);
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
@@ -1058,6 +1072,29 @@ class EcareerService
 
 
         return $results;
+    }
+
+
+    /**
+     * @param $value
+     * @return array
+     */
+    public function getPortalImageData($value)
+    {
+        $keyData = config('filesystems.moduleType.EcareerPortal');
+
+        return $this->imageFileViewerService->prepareImageData($value, $keyData);
+    }
+
+    /**
+     * @param $value
+     * @return array
+     */
+    public function getPortalItemImageData($value)
+    {
+        $keyData = config('filesystems.moduleType.EcareerPortalItem');
+
+        return $this->imageFileViewerService->prepareImageData($value, $keyData);
     }
 
 }

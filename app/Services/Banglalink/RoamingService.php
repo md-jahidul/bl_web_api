@@ -7,13 +7,17 @@
 
 namespace App\Services\Banglalink;
 
+use App\Models\RoamingInfoComponents;
+use App\Models\RoamingOtherOfferComponents;
 use App\Services\ApiBaseService;
 use App\Repositories\RoamingCategoryRepository;
 use App\Repositories\RoamingOperatorRepository;
 use App\Repositories\RoamingGeneralPageRepository;
 use App\Repositories\RoamingOfferRepository;
 use App\Repositories\RoamingInfoRepository;
+use App\Services\ImageFileViewerService;
 use Illuminate\Http\Response;
+
 
 class RoamingService {
 
@@ -32,21 +36,35 @@ class RoamingService {
     public $responseFormatter;
 
     /**
+     * @var $imageFileViewerService
+     */
+
+    private $imageFileViewerService;
+
+    /**
      * RoamingService constructor.
      * @param RoamingCategoryRepository $catRepo
      * @param RoamingGeneralPageRepository $gnPageRepo
      * @param RoamingOperatorRepository $operatorRepo
      * @param RoamingOfferRepository $offerRepo
      * @param RoamingInfoRepository $infoRepo
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
-    ApiBaseService $responseFormatter, RoamingCategoryRepository $catRepo, RoamingGeneralPageRepository $gnPageRepo, RoamingOperatorRepository $operatorRepo, RoamingOfferRepository $offerRepo, RoamingInfoRepository $infoRepo
+        ApiBaseService $responseFormatter,
+        RoamingCategoryRepository $catRepo,
+        RoamingGeneralPageRepository $gnPageRepo,
+        RoamingOperatorRepository $operatorRepo,
+        RoamingOfferRepository $offerRepo,
+        RoamingInfoRepository $infoRepo,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->catRepo = $catRepo;
         $this->gnPageRepo = $gnPageRepo;
         $this->operatorRepo = $operatorRepo;
         $this->offerRepo = $offerRepo;
         $this->infoRepo = $infoRepo;
+        $this->imageFileViewerService = $imageFileViewerService;
         $this->responseFormatter = $responseFormatter;
     }
 
@@ -54,9 +72,42 @@ class RoamingService {
      * Get roaming categories
      * @return Response
      */
-    public function getCategories() {
-        $response = $this->catRepo->getCategoryList();
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Category List');
+    public function getCategories()
+    {
+        $categories = $this->catRepo->getCategoryList();
+        $data = [];
+        $count = 0;
+
+        $slugs = array(
+            1 => 'offer',
+            2 => 'about-roaming',
+            3 => 'roaming-rates',
+            4 => 'bill-payment',
+            5 => 'info-tips',
+        );
+
+        $keyData = config('filesystems.moduleType.RoamingCategory');
+
+
+        foreach ($categories as $v) {
+            $data[$count]['id'] = $v->id;
+            $data[$count]['category_slug'] = $slugs[$v->id];
+            $data[$count]['url_slug'] = $v->url_slug;
+            $data[$count]['url_slug_bn'] = $v->url_slug_bn;
+            $data[$count]['page_header'] = $v->page_header;
+            $data[$count]['page_header_bn'] = $v->page_header_bn;
+            $data[$count]['schema_markup'] = $v->schema_markup;
+            $data[$count]['name_en'] = $v->name_en;
+            $data[$count]['name_bn'] = $v->name_bn;
+            $data[$count]['alt_text'] = $v->alt_text;
+            $data[$count]['alt_text_bn'] = $v->alt_text_bn;
+            $imgData = $this->imageFileViewerService->prepareImageData($v, $keyData);
+            $data[$count] = array_merge($data[$count], $imgData);
+
+            $count++;
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Category List');
     }
 
     /**
@@ -100,8 +151,42 @@ class RoamingService {
      * @return Response
      */
     public function otherOfferDetalis($offerSlug) {
-        $response = $this->offerRepo->getOtherOffersDetails($offerSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Other Offer Details');
+        $offer = $this->offerRepo->getOtherOffersDetails($offerSlug);
+
+        $data = [];
+        $keyData = config('filesystems.moduleType.RoamingOtherOffer');
+
+        $data['name_en'] = $offer->name_en;
+        $data['name_bn'] = $offer->name_bn;
+        $data['short_text_en'] = $offer->short_text_en;
+        $data['short_text_bn'] = $offer->short_text_bn;
+        $data['alt_text'] = $offer->alt_text;
+        $data['alt_text_bn'] = $offer->alt_text_bn;
+        $data['url_slug'] = $offer->url_slug;
+        $data['url_slug_bn'] = $offer->url_slug_bn;
+        $data['page_header'] = $offer->page_header;
+        $data['page_header_bn'] = $offer->page_header_bn;
+        $data['schema_markup'] = $offer->schema_markup;
+        $data['likes'] = $offer->likes;
+        $imgData = $this->imageFileViewerService->prepareImageData($offer, $keyData);
+        $data = array_merge($data, $imgData);
+
+        $components = RoamingOtherOfferComponents::where('parent_id', $offer->id)->orderBy('position')->get();
+        $data['components'] = [];
+        foreach ($components as $k => $val) {
+
+            $textEn = json_decode($val->body_text_en);
+            $textBn = json_decode($val->body_text_bn);
+
+            $data['components'][$k]['component_type'] = $val->component_type;
+            $data['components'][$k]['data_en'] = $textEn;
+            $data['components'][$k]['data_bn'] = $textBn;
+        }
+
+        $data['details_en'] = $offer->details_en;
+        $data['details_bn'] = $offer->details_en;
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Other Offer Details');
     }
 
     /**
@@ -149,15 +234,46 @@ class RoamingService {
         $response = $this->infoRepo->getInfoTips();
         return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips');
     }
-    
-    
+
     /**
      * Get roaming other offer details
      * @return Response
      */
     public function infoTipsDetails($infoSlug) {
-        $response = $this->infoRepo->getInfoDetails($infoSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Roaming Info & Tips Details');
+        $info = $this->infoRepo->getInfoDetails($infoSlug);
+
+        $data = [];
+        $keyData = config('filesystems.moduleType.RoamingInfo');
+
+        $data['name_en'] = $info->name_en;
+        $data['name_bn'] = $info->name_bn;
+        $data['short_text_en'] = $info->short_text_en;
+        $data['short_text_bn'] = $info->short_text_bn;
+        $data['url_slug'] = $info->url_slug;
+        $data['url_slug_bn'] = $info->url_slug_bn;
+        $data['alt_text'] = $info->alt_text;
+        $data['alt_text_bn'] = $info->alt_text_bn;
+        $data['page_header'] = $info->page_header;
+        $data['page_header_bn'] = $info->page_header_bn;
+        $data['schema_markup'] = $info->schema_markup;
+        $data['likes'] = $info->likes;
+        $imgData = $this->imageFileViewerService->prepareImageData($info, $keyData);
+        $data = array_merge($data, $imgData);
+
+        $components = RoamingInfoComponents::where('parent_id', $info->id)->orderBy('position')->get();
+        $data['components'] = [];
+        foreach ($components as $k => $val) {
+
+            $textEn = json_decode($val->body_text_en);
+            $textBn = json_decode($val->body_text_bn);
+
+            $data['components'][$k]['component_type'] = $val->component_type;
+            $data['components'][$k]['data_en'] = $textEn;
+            $data['components'][$k]['data_bn'] = $textBn;
+
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Roaming Info & Tips Details');
     }
 
 }

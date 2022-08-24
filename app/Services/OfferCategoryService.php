@@ -103,34 +103,36 @@ class OfferCategoryService extends ApiBaseService
     {
         $tags = TagCategory::all();
         $sim = SimCategory::all();
-        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        $offer = $this->offerCategoryRepository->categories();
+
 //        dd($offer);
         if (!empty($offer)) {
-            $offer_final = array_map(function($value) {
-                if (!empty($value['banner_image_url'])) {
+            $keyData = config('filesystems.moduleType.OfferCategory');
+            $keyDataPostpaid = config('filesystems.moduleType.OfferCategoryPostpaid');
+            $offer_final = array_map(function($value) use ($keyData, $keyDataPostpaid) {
 
-//                    $encrypted = base64_encode($value['banner_image_url']);
-//
-//                    $extension = explode('.', $value['banner_image_url']);
-//                    $extension = isset($extension[1]) ? ".".$extension[1] : null;
-//                    $fileName = $value['banner_alt_text'] . $extension;
-//
-//                    $model = "OfferCategory";
+                $imgData = $this->fileViewerService->prepareImageData($value, $keyData);
+                $imgDataPostpaid = $this->fileViewerService->prepareImageData($value, $keyDataPostpaid);
+                $postpaidBanner = [
+                    "postpaid_banner_image_web_en" => $imgDataPostpaid['banner_image_web_en'] ?? null,
+                    "postpaid_banner_image_web_bn" => $imgDataPostpaid['banner_image_web_bn'] ?? null,
+                    "postpaid_banner_image_mobile_en" => $imgDataPostpaid['banner_image_mobile_en'] ?? null,
+                    "postpaid_banner_image_mobile_bn" => $imgDataPostpaid['banner_image_mobile_bn'] ?? null,
+                ];
 
-
-//                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
-//                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
-                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
-                }
-                if (!empty($value['banner_image_mobile'])) {
-                    $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
-                }
+                $allTypesBanner = array_merge($imgData, $postpaidBanner);
+                $value = array_merge($value, $allTypesBanner);
+                unset(
+                    $value['banner_image_url'], $value['banner_image_mobile'],
+                    $value['banner_name'], $value['banner_name_bn'],
+                    $value['postpaid_banner_image_url'], $value['postpaid_banner_image_mobile'],
+                    $value['postpaid_banner_name'], $value['postpaid_banner_name_bn']
+                );
                 return $value;
             }, $offer->toArray());
         } else {
             $offer_final = [];
         }
-
         $duration = DurationCategory::all();
 
         $data[] = [
@@ -139,21 +141,6 @@ class OfferCategoryService extends ApiBaseService
                 'offer' => $offer_final,
                 'duration' => $duration
             ];
-
-//        return response()->json(
-//            [
-//                'status' => 200,
-//                'success' => true,
-//                'message' => 'Data Found!',
-//                'data' => [
-//                    'tag' => $tags,
-//                    'sim' => $sim,
-//                    'offer' => $offer_final,
-//                    'duration' => $duration
-//                ]
-//            ]
-//        );
-
         return $this->sendSuccessResponse($data, 'Offer Categories');
     }
 }

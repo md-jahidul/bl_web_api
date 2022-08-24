@@ -82,15 +82,15 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')
-        ->middleware('client.secret.token');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')
-        ->middleware('client.secret.token');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
 
-    // Refresh token
-    Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
+    // Get JWT token with credential
+    Route::post('password-login', 'API\V1\AuthenticationController@passwordLogin');
 
+    // Get JWT token with Refresh token
+    Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
 
     // Balance
     Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
@@ -301,6 +301,22 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Token generator
     Route::get('secret-token', 'API\V1\SecreteTokenController@getToken');
+
+    /**
+     * Upsell FB
+     */
+
+    // MyBl Product Detail
+    Route::get('mybl-product/{productCode}/details', 'API\V1\UpsellFacebook\UpsellController@getProductDetails')->middleware('verifyFacebookUpsellKey');
+
+    // Performance API
+    Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook')->middleware('verifyFacebookUpsellKey');
+
+    // Phase 1
+    Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
+
+    // Phase 2
+    // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 });
 
 

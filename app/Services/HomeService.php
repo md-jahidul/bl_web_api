@@ -30,7 +30,13 @@ class HomeService extends ApiBaseService
     private $ecarrerService;
     private $salesAndServicesService;
 
+    /**
+     * @var ImageFileViewerService
+     */
+    private $imageFileViewerService;
+
     protected $redis_ttl = 60 * 60 * 24;
+
 
     /**
      * HomeService constructor.
@@ -39,19 +45,22 @@ class HomeService extends ApiBaseService
      * @param QuickLaunchService $quickLaunchService
      * @param EcareerService $ecarrerService
      * @param SalesAndServicesService $salesAndServicesService
+     * @param ImageFileViewerService $imageFileViewerService
      */
     public function __construct(
         SliderRepository $sliderRepository,
         ProductService $productService,
         QuickLaunchService $quickLaunchService,
         EcareerService $ecarrerService,
-        SalesAndServicesService $salesAndServicesService
+        SalesAndServicesService $salesAndServicesService,
+        ImageFileViewerService $imageFileViewerService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
         $this->quickLaunchService = $quickLaunchService;
         $this->ecarrerService = $ecarrerService;
         $this->salesAndServicesService = $salesAndServicesService;
+        $this->imageFileViewerService = $imageFileViewerService;
     }
 
 
@@ -68,8 +77,6 @@ class HomeService extends ApiBaseService
     public function getSliderData($id) {
 
         $slider = $this->sliderRepository->findOne($id);
-
-//        dd($slider);
 
         $component = AlSliderComponentType::find($slider->component_id)->slug;
 
@@ -92,6 +99,7 @@ class HomeService extends ApiBaseService
 
     public function makeResource($requests, $component) { {
         $result = [];
+        $keyData = config('filesystems.moduleType.AlSliderImage');
         foreach ($requests as $request) {
             $data = [];
 
@@ -102,6 +110,7 @@ class HomeService extends ApiBaseService
                 $data['url_slug_bn'] = $bnsModel->url_slug_bn;
             }
 
+            $imgData = $this->imageFileViewerService->prepareImageData($request, $keyData);
 
             $data["id"] = $request->id ?? null;
             $data["slider_id"] = $request->slider_id ?? null;
@@ -109,13 +118,11 @@ class HomeService extends ApiBaseService
             $data["title_bn"] = $request->title_bn ?? null;
             $data["start_date"] = $request->start_date ?? null;
             $data["end_date"] = $request->end_date ?? null;
-            $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
-            $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
+            $data = array_merge($data, $imgData);
             $data["alt_text"] = $request->alt_text ?? null;
+            $data["alt_text_bn"] = $request->alt_text_bn ?? null;
             $data["display_order"] = $request->display_order ?? null;
             $data["is_active"] = $request->is_active ?? null;
-
-
 
             if ($request->other_attributes) {
                 foreach ($request->other_attributes as $key => $value) {
@@ -132,7 +139,7 @@ class HomeService extends ApiBaseService
     public function getQuickLaunchData() {
         return [
             "component" => "QuickLaunch",
-            "data" => $quickLaunchItems = $this->quickLaunchService->itemList('panel')
+            "data" => $this->quickLaunchService->itemList('panel')
         ];
     }
 
@@ -152,8 +159,8 @@ class HomeService extends ApiBaseService
         ];
     }
 
-    public function getMultipleSliderData($id) {
-//        $slider = AlSlider::find($id);
+    public function getMultipleSliderData($id)
+    {
         $slider = $this->sliderRepository->findOne($id);
         $this->bindDynamicValues($slider);
 
@@ -178,7 +185,8 @@ class HomeService extends ApiBaseService
         return $slider;
     }
 
-    public function factoryComponent($type, $id) {
+    public function factoryComponent($type, $id)
+    {
         $data = null;
         switch ($type) {
             case "slider_single":
@@ -214,16 +222,16 @@ class HomeService extends ApiBaseService
         $metainfo = MetaTag::where('page_id', 1)
             ->first()->toArray();
 
-        if (!$value = Redis::get('al_home_components')){
-            $homePageData = [];
+      if (!$value = Redis::get('al_home_components')){
+           $homePageData = [];
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
             }
             Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            $value = Redis::get('al_home_components');
-        } else {
-            $value = Redis::get('al_home_components');
-        }
+           $value = Redis::get('al_home_components');
+       } else {
+            $value = Redis::get('al_home_components');;
+       }
 
         $data = [
             'metatags' => $metainfo,

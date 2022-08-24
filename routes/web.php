@@ -22,5 +22,7 @@ Route::get('/', function () {
 
 
 
-Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
+Route::get('{bannerType}/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImage');
+//Route::get('banner-mobile/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageMobile');
+//Route::get('other/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
 
