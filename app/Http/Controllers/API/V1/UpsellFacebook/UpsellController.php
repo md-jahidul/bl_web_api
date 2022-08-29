@@ -84,26 +84,25 @@ class UpsellController extends Controller
         $data = [];
         $msisdn = $request->input('msisdn');
         $productCode = $request->input('product_code');
+        $fbTransactionId = $request->input('fb_transaction_id');
+        $productDetails = (object) $request->input('product_details');
+        
+        $productPrice = rawurlencode("{$productDetails->price} {$productDetails->currency}");
+        $productValidity = rawurlencode("{$productDetails->time_amount} {$productDetails->time_unit}");
+        $productDisplayTitle = rawurlencode("{$productDetails->name}");
 
         // if(! $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode)) {
         //     $msg = "Customer is not Eligible";
         //     return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
         // }
         
-        $productDetails = null;
-        $fbTransactionId = $request->input('fb_transaction_id');
-        $product = $this->upsellService->productDetails($productCode)->first();//->toArray();
-        
-        if (! is_null($product)) {
-            $productDetails = $product->toArray();
-        } else {
-            $msg = "Product Not Found";
-            return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
-        }
+        // if (! is_null($product)) {
+        //     $productDetails = $product->toArray();
+        // } else {
+        //     $msg = "Product Not Found";
+        //     return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
+        // }
 
-        $productMrpPrice = $productDetails['details']['mrp_price'];
-        $productValidity = $productDetails['details']['validity'];
-        $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
         $secret = config('facebookupsell.bl_upsell_secret');
         $timestamp = Carbon::now()->timestamp;
         $hash = hash_hmac('sha256', $timestamp, $secret);
@@ -122,9 +121,9 @@ class UpsellController extends Controller
                 . "&ssl_trx_id={$sslTrxId}"
                 . "&fb_trx_id={$fbTrxId}"
                 . "&product_code={$productCode}"
-                . "&product_price={$productMrpPrice}"
+                . "&product_price={$productPrice}"
                 . "&product_validity={$productValidity}"
-                . "&product_display_title_en={$productDisplayTitleEn}"
+                . "&product_display_title_en={$productDisplayTitle}"
                 . "&signature={$signature}"
                 . "&timestamp={$timestamp}";
             
