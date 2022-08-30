@@ -87,8 +87,11 @@ class UpsellController extends Controller
         $fbTransactionId = $request->input('fb_transaction_id');
         $productDetails = (object) $request->input('product_details');
         
-        $productPrice = rawurlencode("{$productDetails->price} {$productDetails->currency}");
-        $productValidity = rawurlencode("{$productDetails->time_amount} {$productDetails->time_unit}");
+        $productPriceWithUnitStr = "{$productDetails->price} {$productDetails->currency}";
+        $productValidityWithStr = "{$productDetails->time_amount} {$productDetails->time_unit}";
+
+        $productPrice = rawurlencode($productPriceWithUnitStr);
+        $productValidity = rawurlencode($productValidityWithStr);
         $productDisplayTitle = rawurlencode("{$productDetails->name}");
 
         // if(! $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode)) {
@@ -105,8 +108,9 @@ class UpsellController extends Controller
 
         $secret = config('facebookupsell.bl_upsell_secret');
         $timestamp = Carbon::now()->timestamp;
-        $hash = hash_hmac('sha256', $timestamp, $secret);
-        $signature = rawurlencode(base64_encode($hash));
+        $strToHash = $timestamp . $productCode . $productPriceWithUnitStr . $productValidityWithStr;
+        $hash = hash_hmac('sha256', $strToHash, $secret);
+        $signature = rawurlencode($hash);
 
         if($request->pay_with_balance == false) {
             $msg = "Customer buying using payment";
