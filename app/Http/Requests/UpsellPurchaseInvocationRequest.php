@@ -36,6 +36,13 @@ class UpsellPurchaseInvocationRequest extends FormRequest
             'msisdn'            => 'required',
             'product_code'      => 'required',
             'pay_with_balance'  => 'required',   
+            'product_details.name' => 'required',
+            'product_details.price' => 'required',
+            'product_details.currency' => 'required',
+            'product_details.data_amount' => 'required',
+            'product_details.data_unit' => 'required',
+            'product_details.time_amount' => 'required',
+            'product_details.time_unit' => 'required',
         ];
     }
 }
