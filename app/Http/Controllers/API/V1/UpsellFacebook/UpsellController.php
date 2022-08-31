@@ -109,7 +109,8 @@ class UpsellController extends Controller
         $secret = config('facebookupsell.bl_upsell_secret');
         $timestamp = Carbon::now()->timestamp;
         $strToHash = $timestamp . $productCode . $productPriceWithUnitStr . $productValidityWithStr;
-        $hash = hash_hmac('sha256', $strToHash, $secret);
+        $base64StrToHash = base64_encode($strToHash);
+        $hash = hash_hmac('sha256', $base64StrToHash, $secret);
         $signature = rawurlencode($hash);
 
         if($request->pay_with_balance == false) {
