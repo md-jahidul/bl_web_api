@@ -88,11 +88,14 @@ class UpsellController extends Controller
         $productDetails = (object) $request->input('product_details');
         
         $productPriceWithUnitStr = "{$productDetails->price} {$productDetails->currency}";
-        $productValidityWithStr = "{$productDetails->time_amount} {$productDetails->time_unit}";
+        $productValidityWithUnitStr = "{$productDetails->time_amount} {$productDetails->time_unit}";
 
         $productPrice = rawurlencode($productPriceWithUnitStr);
-        $productValidity = rawurlencode($productValidityWithStr);
+        $productValidity = rawurlencode($productValidityWithUnitStr);
         $productDisplayTitle = rawurlencode("{$productDetails->name}");
+
+        $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
+        $sslTrxId = uniqid($sslChannel);
 
         // if(! $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode)) {
         //     $msg = "Customer is not Eligible";
@@ -108,23 +111,25 @@ class UpsellController extends Controller
 
         $secret = config('facebookupsell.bl_upsell_secret');
         $timestamp = Carbon::now()->timestamp;
-        $strToHash = $timestamp . $productCode . $productPriceWithUnitStr . $productValidityWithStr;
+        $strToHash = $timestamp 
+                   . $productCode 
+                   . $productPriceWithUnitStr 
+                   . $productValidityWithUnitStr 
+                   . $sslTrxId 
+                   . $fbTransactionId;
         $base64StrToHash = base64_encode($strToHash);
         $hash = hash_hmac('sha256', $base64StrToHash, $secret);
         $signature = rawurlencode($hash);
 
         if($request->pay_with_balance == false) {
             $msg = "Customer buying using payment";
-            $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
-            $fbTrxId = $fbTransactionId;
-            $sslTrxId = uniqid($sslChannel);
-            $data['fb_trx_id'] = $fbTrxId;
+            $data['fb_trx_id'] = $fbTransactionId;
             $data['ssl_trx_id'] = $sslTrxId;
             $data['app_url'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$msisdn}"
                 . "&ssl_trx_id={$sslTrxId}"
-                . "&fb_trx_id={$fbTrxId}"
+                . "&fb_trx_id={$fbTransactionId}"
                 . "&product_code={$productCode}"
                 . "&product_price={$productPrice}"
                 . "&product_validity={$productValidity}"
