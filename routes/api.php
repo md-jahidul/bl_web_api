@@ -303,7 +303,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
      */
 
     // MyBl Product Detail
-    Route::get('mybl-product/{productCode}/details', 'API\V1\UpsellFacebook\UpsellController@getProductDetails')->middleware('verifyFacebookUpsellKey');
+    // Route::get('mybl-product/{productCode}/details', 'API\V1\UpsellFacebook\UpsellController@getProductDetails')->middleware('verifyFacebookUpsellKey');
 
     // Performance API
     Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook')->middleware('verifyFacebookUpsellKey');
