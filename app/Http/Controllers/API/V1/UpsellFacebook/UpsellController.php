@@ -116,7 +116,8 @@ class UpsellController extends Controller
                    . $productPriceWithUnitStr 
                    . $productValidityWithUnitStr 
                    . $sslTrxId 
-                   . $fbTransactionId;
+                   . $fbTransactionId
+                   . $msisdn;
         $base64StrToHash = base64_encode($strToHash);
         $hash = hash_hmac('sha256', $base64StrToHash, $secret);
         $signature = rawurlencode($hash);
