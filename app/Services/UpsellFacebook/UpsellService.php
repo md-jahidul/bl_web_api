@@ -9,6 +9,8 @@ use App\Services\ApiCallService;
 use App\Services\Banglalink\BaseService;
 use Carbon\Carbon;
 
+use function PHPSTORM_META\type;
+
 class UpsellService extends BaseService {
 
     protected const SEND_OTP_ENDPOINT = "/send-otp";
@@ -99,10 +101,10 @@ class UpsellService extends BaseService {
 
     public function reportPurchase($data) 
     {
-        $timestamp = Carbon::now()->timestamp;
+        $timestamp = (string) Carbon::now()->timestamp;
         $secret = config('facebookupsell.fb_upsell_secret');
-        $carrier_id = config('facebookupsell.bl_carrier_token');
-        $access_token = config('facebookupsell.bl_access_token');
+        $carrier_id = config('facebookupsell.fb_carrier_id');
+        $access_token = config('facebookupsell.fb_access_token');
         $hmac = hash_hmac('sha256', $timestamp . $carrier_id, $secret);
         
         $urlWithQueryParams = self::FACEBOOK_REPORT_ENDPOINT
@@ -111,6 +113,17 @@ class UpsellService extends BaseService {
             . "&hmac={$hmac}"
             . "&action=buy"
             . "&access_token={$access_token}";
+
+        // dump($data);
+        // dump($urlWithQueryParams);
+        // die;
+
+        // https://graph.facebook.com/carrier_external_sales
+        // ?carrier_id=1160
+        // &timestamp=1662545690
+        // &hmac=b96e4b00f064146acac4b551a727f941f46b8050a2958227e0a016b233f1394f
+        // &action=buy
+        // &access_token=334240057380646|oAjaUFtk-8rBesGj1mzcpEqXhfA
 
         $this->apiCallService->setHost("https://graph.facebook.com");
         return $this->apiCallService->post($urlWithQueryParams, $data);
