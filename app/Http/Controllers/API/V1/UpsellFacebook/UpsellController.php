@@ -88,9 +88,11 @@ class UpsellController extends Controller
         $productDetails = (object) $request->input('product_details');
         
         $productPriceWithUnitStr = "{$productDetails->price} {$productDetails->currency}";
+        $productVolumeWithUnitStr = "{$productDetails->data_amount} {$productDetails->data_unit}";
         $productValidityWithUnitStr = "{$productDetails->time_amount} {$productDetails->time_unit}";
 
         $productPrice = rawurlencode($productPriceWithUnitStr);
+        $productVolume = rawurlencode($productVolumeWithUnitStr);
         $productValidity = rawurlencode($productValidityWithUnitStr);
         $productDisplayTitle = rawurlencode("{$productDetails->name}");
 
@@ -133,6 +135,7 @@ class UpsellController extends Controller
                 . "&fb_trx_id={$fbTransactionId}"
                 . "&product_code={$productCode}"
                 . "&product_price={$productPrice}"
+                . "&product_volume={$productVolume}"
                 . "&product_validity={$productValidity}"
                 . "&product_display_title_en={$productDisplayTitle}"
                 . "&signature={$signature}"
