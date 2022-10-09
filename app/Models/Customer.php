@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Banglalink\CustomerConnectionTypeService;
 use App\Services\Banglalink\CustomerPackageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,5 +37,12 @@ class Customer extends Model
 
         return $package_service->getPackageInfo($customer->customer_account_id);
     }
+
+    public static function connectionType(Customer $customer)
+    {
+        $customer_service = new CustomerConnectionTypeService();
+        return $customer_service->getConnectionTypeInfo($customer->msisdn);
+    }
+
 
 }

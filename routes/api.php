@@ -96,6 +96,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
     Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
 
+    Route::get('balance/details/{type}', 'API\V1\CurrentBalanceController@getBalanceDetails');
+
     // Product Purchase
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
