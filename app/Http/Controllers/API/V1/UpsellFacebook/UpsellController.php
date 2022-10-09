@@ -84,38 +84,60 @@ class UpsellController extends Controller
         $data = [];
         $msisdn = $request->input('msisdn');
         $productCode = $request->input('product_code');
+        $fbTransactionId = $request->input('fb_transaction_id');
+        $productDetails = (object) $request->input('product_details');
+        
+        $productPriceWithUnitStr = "{$productDetails->price} {$productDetails->currency}";
+        $productVolumeWithUnitStr = "{$productDetails->data_amount} {$productDetails->data_unit}";
+        $productValidityWithUnitStr = "{$productDetails->time_amount} {$productDetails->time_unit}";
+
+        $productPrice = rawurlencode($productPriceWithUnitStr);
+        $productVolume = rawurlencode($productVolumeWithUnitStr);
+        $productValidity = rawurlencode($productValidityWithUnitStr);
+        $productDisplayTitle = rawurlencode("{$productDetails->name}");
+
+        $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
+        $sslTrxId = uniqid($sslChannel);
 
         // if(! $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode)) {
         //     $msg = "Customer is not Eligible";
         //     return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
         // }
         
-        $fbTransactionId = $request->input('fb_transaction_id');
-        $productDetails = $this->upsellService->productDetails($productCode)->first()->toArray();
-        $productMrpPrice = $productDetails['details']['mrp_price'];
-        $productValidity = $productDetails['details']['validity'];
-        $productDisplayTitleEn = $productDetails['details']['display_title_en']; 
+        // if (! is_null($product)) {
+        //     $productDetails = $product->toArray();
+        // } else {
+        //     $msg = "Product Not Found";
+        //     return $this->apiBaseService->sendErrorResponse($msg, [], HttpStatusCode::VALIDATION_ERROR);
+        // }
+
         $secret = config('facebookupsell.bl_upsell_secret');
         $timestamp = Carbon::now()->timestamp;
-        $hash = hash_hmac('sha256', $timestamp, $secret);
-        $signature = rawurlencode(base64_encode($hash));
+        $strToHash = $timestamp 
+                   . $productCode 
+                   . $productPriceWithUnitStr 
+                   . $productValidityWithUnitStr 
+                   . $sslTrxId 
+                   . $fbTransactionId
+                   . $msisdn;
+        $base64StrToHash = base64_encode($strToHash);
+        $hash = hash_hmac('sha256', $base64StrToHash, $secret);
+        $signature = rawurlencode($hash);
 
         if($request->pay_with_balance == false) {
             $msg = "Customer buying using payment";
-            $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
-            $fbTrxId = $fbTransactionId;
-            $sslTrxId = uniqid($sslChannel);
-            $data['fb_trx_id'] = $fbTrxId;
+            $data['fb_trx_id'] = $fbTransactionId;
             $data['ssl_trx_id'] = $sslTrxId;
             $data['app_url'] = config('facebookupsell.redirect_link') 
                 . "/upsell-payment"
                 . "?mobile={$msisdn}"
                 . "&ssl_trx_id={$sslTrxId}"
-                . "&fb_trx_id={$fbTrxId}"
+                . "&fb_trx_id={$fbTransactionId}"
                 . "&product_code={$productCode}"
-                . "&product_price={$productMrpPrice}"
+                . "&product_price={$productPrice}"
+                . "&product_volume={$productVolume}"
                 . "&product_validity={$productValidity}"
-                . "&product_display_title_en={$productDisplayTitleEn}"
+                . "&product_display_title_en={$productDisplayTitle}"
                 . "&signature={$signature}"
                 . "&timestamp={$timestamp}";
             

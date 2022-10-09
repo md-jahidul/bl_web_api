@@ -732,6 +732,7 @@ class EcareerService
         # https://api.lever.co/v0/postings/leverdemo?skip=1&limit=3&mode=json
 
         $lever_content = [];
+        $jobData = [];
         $client = new Client();
         try {
             $response = $client->get(
@@ -741,7 +742,6 @@ class EcareerService
             if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
 
                 $response = json_decode($response->getBody()->getContents(), true);
-                $jobData = [];
                 foreach ($categoryJson as $k => $cats) {
 
                     $jobData[$k]['tabName'] = $cats->catName;

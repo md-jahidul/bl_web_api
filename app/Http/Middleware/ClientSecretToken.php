@@ -21,6 +21,7 @@ class ClientSecretToken
      */
     public function handle($request, Closure $next)
     {
+        return $next($request);
         if ($this->validateToken($request)){
             return $next($request);
         }

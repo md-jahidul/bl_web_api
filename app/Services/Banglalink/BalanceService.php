@@ -3,6 +3,7 @@
 namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
+use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\ApiBaseService;
 use App\Services\CustomerService;
@@ -34,18 +35,35 @@ class BalanceService extends BaseService
      * @var CustomerService
      */
     protected $customerService;
+    /**
+     * @var CustomerAvailableProductsService
+     */
+    private $availableProductsService;
 
     /**
      * BalanceService constructor.
      * @param CustomerService $customerService
      * @param NumberValidationService $numberValidationService
      */
-    public function __construct(CustomerService $customerService, NumberValidationService $numberValidationService)
-    {
+    public function __construct(
+        CustomerService $customerService,
+        NumberValidationService $numberValidationService,
+        CustomerAvailableProductsService $availableProductsService
+    ) {
         $this->responseFormatter = new ApiBaseService();
         $this->customerRepository = new CustomerRepository();
         $this->customerService = $customerService;
         $this->numberValidationService = $numberValidationService;
+        $this->availableProductsService = $availableProductsService;
+    }
+
+    /**
+     * @param $customerId
+     * @return string
+     */
+    private function getSubscriptionUrl($customerId): string
+    {
+        return self::BALANCE_API_ENDPOINT . '/' . $customerId . '/subscription-products';
     }
 
     private function getBalanceUrl($customer_id)
@@ -65,10 +83,9 @@ class BalanceService extends BaseService
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-        $data = json_decode($response, true);
+        $data = json_decode($response['data'], true);
 
-
-        if ($data['token_status'] != 'Valid') {
+        if ($response['http_code'] != 200) {
             return $this->responseFormatter->sendErrorResponse("Token is Invalid", [], HttpStatusCode::UNAUTHORIZED);
         }
 
@@ -295,7 +312,6 @@ class BalanceService extends BaseService
             ]
         ];
 
-
         return $this->responseFormatter->sendSuccessResponse($data, 'Main Balance Details');
     }
 
@@ -305,18 +321,100 @@ class BalanceService extends BaseService
      * @param Request $request
      * @return JsonResponse|mixed
      */
-    public function getBalanceDetails($type, Request $request)
+//    public function getBalanceDetails($type, Request $request)
+//    {
+//        $user = $this->getAuthenticateUser($request);
+//
+//        if (!$user) {
+//            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+//        }
+//
+//        $customer_id = ($user->customer_account_id) ? $user->customer_account_id : 8494;
+//        $response = $this->get($this->getBalanceUrl($customer_id));
+//        $response = json_decode($response['response']);
+//
+//        if (isset($response->error)) {
+//            return $this->responseFormatter->sendErrorResponse(
+//                $response->message,
+//                [],
+//                $response->status
+//            );
+//        }
+//
+//        if ($type == 'internet') {
+//            return $this->getInternetBalance($response);
+//        } elseif ($type == 'sms') {
+//            return $this->getSmsBalance($response);
+//        } elseif ($type == 'minutes') {
+//            return $this->getTalkTimeBalance($response);
+//        } elseif ($type == 'balance') {
+//            return $this->getMainBalance($response);
+//        } else {
+//            return $this->responseFormatter->sendErrorResponse(
+//                "Type Not Supported",
+//                [],
+//                404
+//            );
+//        }
+//    }
+    public function fetchTimerProducts($response, $customerId)
     {
-        $user = $this->getAuthenticateUser($request);
-
-        if (!$user) {
-            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        $timerItems = [];
+        foreach ($response as $key => $value) {
+            if (in_array($key, ['data', 'sms', 'voice'])) {
+                $timerItems[$key] = collect($value)->map(function ($item) {
+                    if (explode('|', $item->balanceName)[0] === 'TIMER' && isset($item->product)) {
+                        return $item->product->code;
+                    }
+                });
+            }
         }
 
-        $customer_id = ($user->customer_account_id) ? $user->customer_account_id : 8494;
-        $response = $this->get($this->getBalanceUrl($customer_id));
-        $response = json_decode($response['response']);
+        if (count($timerItems)) {
+            $subscriptionResponse = $this->get($this->getSubscriptionUrl($customerId));
+            $subscriptionResponse = json_decode($subscriptionResponse['response'], true);
+            $filteredData = [];
+            foreach ($subscriptionResponse as $data) {
+                foreach ($timerItems as $key => $item) {
+                    if (in_array($data['code'], json_decode($item)) && !is_null($data['deactivatedDateTime'])) {
+                        $filteredData[$key][$data['code']] = $data['deactivatedDateTime'];
+                    }
+                }
+            }
+            return $filteredData;
+        }
 
+        return [];
+    }
+
+    /**
+     * @param $response
+     * @param $customer
+     * @param $timerProducts
+     * @param $customerAvailableProducts
+     * @return mixed
+     */
+    private function getPrepaidAllBalance($response, $customer, $timerProducts, $customerAvailableProducts = [])
+    {
+        $data = $timerProducts['data'] ?? [];
+        $voice = $timerProducts['voice'] ?? [];
+        $sms = $timerProducts['sms'] ?? [];
+
+        $allBalance['balance'] = $this->getMainBalance($response, $customer);
+        $allBalance['internet'] = $this->getInternetBalance($response, $data, $customerAvailableProducts);
+        $allBalance['sms'] = $this->getSmsBalance($response, $sms, $customerAvailableProducts);
+        $allBalance['minute'] = $this->getTalkTimeBalance($response, $voice, $customerAvailableProducts);
+        return $allBalance;
+    }
+
+    /**
+     * @param $type
+     * @param $response
+     * @param $customer
+     * @return JsonResponse
+     */
+    private function getPrepaidDetails($type, $response, $customer)
+    {
         if (isset($response->error)) {
             return $this->responseFormatter->sendErrorResponse(
                 $response->message,
@@ -325,21 +423,213 @@ class BalanceService extends BaseService
             );
         }
 
-        if ($type == 'internet') {
-            return $this->getInternetBalance($response);
-        } elseif ($type == 'sms') {
-            return $this->getSmsBalance($response);
-        } elseif ($type == 'minutes') {
-            return $this->getTalkTimeBalance($response);
-        } elseif ($type == 'balance') {
-            return $this->getMainBalance($response);
-        } else {
-            return $this->responseFormatter->sendErrorResponse(
-                "Type Not Supported",
-                [],
-                404
+        $timerProducts = $this->fetchTimerProducts($response, $customer->customer_account_id);
+        $customerAvailableProducts = $this->availableProductsService->getAvailableProductsByCustomer(
+            $customer->customer_account_id
+        );
+
+        if ($type == 'all') {
+            return $this->responseFormatter->sendSuccessResponse(
+                $this->getPrepaidAllBalance($response, $customer, $timerProducts, $customerAvailableProducts),
+                'All Balance Details'
             );
+        } elseif ($type == 'internet') {
+            return $this->responseFormatter->sendSuccessResponse(
+                $this->getInternetBalance($response, optional($timerProducts['data']) ?? [], $customerAvailableProducts),
+                'Internet Balance Details'
+            );
+        } elseif ($type == 'sms') {
+            return $this->responseFormatter->sendSuccessResponse(
+                $this->getSmsBalance($response, optional($timerProducts['sms']) ?? [], $customerAvailableProducts),
+                'SMS Balance Details'
+            );
+        } elseif ($type == 'minutes') {
+            return $this->responseFormatter->sendSuccessResponse(
+                $this->getTalkTimeBalance($response, optional($timerProducts['voice']) ?? [], $customerAvailableProducts),
+                'Talk Time Balance Details'
+            );
+        } elseif ($type == 'balance') {
+            return $this->responseFormatter->sendSuccessResponse(
+                $this->getMainBalance($response, $customer),
+                'Main Balance Details'
+            );
+        } else {
+            return $this->responseFormatter->sendErrorResponse("Type Not Supported", [], 404);
         }
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    private function getPostpaidMainBalance($response)
+    {
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+        $local = [
+            'total_outstanding' => $local_balance->totalOutstanding,
+            'credit_limit' => $local_balance->creditLimit
+        ];
+
+        $roaming_balance = collect($response)->where('billingAccountType', '=', 'ROAMING')->first();
+        $roaming = [
+            'total_outstanding' => $roaming_balance->totalOutstanding,
+            'credit_limit' => $roaming_balance->creditLimit
+        ];
+
+        $data = [
+            'connection_type' => 'POSTPAID',
+            'local_balance' => $local,
+            'roaming_balance' => $roaming
+        ];
+
+        return $data;
+    }
+
+    private function checkPostPaidProductCode($daItem): bool
+    {
+        return strpos(strtolower($daItem->name), 'bonus') ? false : true;
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    private function getPostpaidInternetBalance($response)
+    {
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+        $usage = collect($local_balance->productUsage)->where('code', '<>', '');
+        $data = [];
+
+        foreach ($usage as $product) {
+            $productCode = $product->code;
+            foreach ($product->usages as $item) {
+                $type = $item->serviceType;
+                if ($type == 'DATA') {
+
+                    $sms = [
+                        'package_name' => isset($product->name) ? $product->name : null,
+                        'total' => $item->total,
+                        'remaining' => $item->left,
+                        'unit' => $item->unit,
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'auto_renew' => false,
+                        'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
+                    ];
+                    $data [] = $sms;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    private function getPostpaidSmsBalance($response)
+    {
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+        $usage = collect($local_balance->productUsage)->where('code', '<>', '');
+        $data = [];
+        foreach ($usage as $product) {
+            $productCode = $product->code;
+            foreach ($product->usages as $item) {
+                $type = $item->serviceType;
+                if ($type == 'SMS') {
+                    $sms = [
+                        'package_name' => isset($product->name) ? $product->name : null,
+                        'total' => $item->total,
+                        'remaining' => $item->left,
+                        'unit' => $item->unit,
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'auto_renew' => false,
+                        'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
+                    ];
+                    $data [] = $sms;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    private function getPostpaidTalkTimeBalance($response)
+    {
+        $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
+        $usage = collect($local_balance->productUsage)->where('code', '<>', '');
+        $data = [];
+        foreach ($usage as $product) {
+            $productCode = $product->code;
+            foreach ($product->usages as $item) {
+                $type = $item->serviceType;
+                if ($type == 'VOICE') {
+                    $minutes = [
+                        'package_name' => isset($product->name) ? $product->name : null,
+                        'total' => $item->total,
+                        'remaining' => $item->left,
+                        'unit' => $item->unit,
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'auto_renew' => false,
+                        'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
+                    ];
+                    $data [] = $minutes;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+
+
+    /**
+     * @param $response
+     * @param $customer
+     * @return mixed
+     */
+    private function getPostpaidAllBalance($response)
+    {
+        $allBalance['balance'] = $this->getPostpaidMainBalance($response);
+        $allBalance['internet'] = $this->getPostpaidInternetBalance($response);
+        $allBalance['sms'] = $this->getPostpaidSmsBalance($response);
+        $allBalance['minute'] = $this->getPostpaidTalkTimeBalance($response);
+        return $allBalance;
+    }
+
+    public function getBalanceDetails($type, Request $request)
+    {
+        $user = $this->customerService->getAuthenticateCustomer($request);
+
+        if (!$user) {
+            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $customer_id = $user->customer_account_id;
+
+        $customer_type = Customer::connectionType(Customer::find($user->id));
+
+        if ($customer_type == 'PREPAID') {
+
+            $response = $this->get($this->getPrepaidBalanceUrl($customer_id));
+
+            //$response = $this->get($this->getPrepaidNewBalanceUrl($user->msisdn));
+
+            $response = json_decode($response['response']);
+            return $this->getPrepaidDetails($type, $response, $user);
+        }
+
+        if ($customer_type == 'POSTPAID') {
+            $response = $this->get($this->getPostpaidBalanceUrl($customer_id));
+            $response = json_decode($response['response']);
+            return $this->getPostpaidDetails($type, $response);
+        }
+
+        return $this->responseFormatter->sendSuccessResponse([], 'User Balance Details');
     }
 
 
@@ -406,6 +696,44 @@ class BalanceService extends BaseService
         //return $this->responseFormatter->sendSuccessResponse($data, 'User Balance Summary');
     }
 
+    /**
+     * @param $type
+     * @param $response
+     * @return JsonResponse
+     */
+    private function getPostpaidDetails($type, $response)
+    {
+        if (isset($response->error)) {
+            return $this->responseFormatter->sendErrorResponse(
+                $response->message,
+                [],
+                $response->status
+            );
+        }
+
+        if ($type == 'all') {
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidAllBalance($response),
+                'All Balance for Postpaid');
+        } elseif ($type == 'internet') {
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidInternetBalance($response),
+                'DATA  Balance Details');
+        } elseif ($type == 'sms') {
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidSmsBalance($response),
+                'SMS  Balance Details');
+        } elseif ($type == 'minutes') {
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidTalkTimeBalance($response),
+                'Talk Time  Balance Details');
+        } elseif ($type == 'balance') {
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidMainBalance($response),
+                'Main Balance Details');
+        } else {
+            return $this->responseFormatter->sendErrorResponse(
+                "Type Not Supported",
+                [],
+                404
+            );
+        }
+    }
 
     /**
      * @param $response
@@ -742,7 +1070,7 @@ class BalanceService extends BaseService
     {
         return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/postpaid-info';
     }
-    
+
     public function getPostpaidBalance($customer_id)
     {
         $response = $this->get($this->getPostpaidBalanceUrl($customer_id));
