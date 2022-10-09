@@ -82,12 +82,17 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')->middleware('client.secret.token');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')->middleware('client.secret.token');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
+//        ->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
+//        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
 
     // Get JWT token with credential
     Route::post('password-login', 'API\V1\AuthenticationController@passwordLogin');
+
+    // Password
+    Route::post('set-password', 'API\V1\AuthenticationController@setPassword');
 
     // Get JWT token with Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');

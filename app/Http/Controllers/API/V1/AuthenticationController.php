@@ -7,6 +7,7 @@ use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthTokenRequest;
 use App\Http\Requests\OtpLoginRequest;
+use App\Http\Requests\SetPasswordRequest;
 use App\Services\ApiBaseService;
 use App\Services\NumberValidationService;
 use App\Services\SecreteTokenService;
@@ -77,17 +78,17 @@ class AuthenticationController extends Controller
         return $this->userService->otpLogin($request);
     }
 
-    public function passwordLogin(AuthTokenRequest $request) 
+    public function passwordLogin(AuthTokenRequest $request)
     {
         $data = $request->input();
         $response = $this->userService->getAuthToken($data);
         $statusCode = $response['status_code'];
-        $responseData = $response['data']; 
-        
+        $responseData = $response['data'];
+
         if (isset($responseData['error'])) {
             return $this->apiBaseService->sendErrorResponse($responseData['message'], "Incorrect Password", HttpStatusCode::UNAUTHORIZED);
         }
-        
+
         return $this->apiBaseService->sendSuccessResponse($responseData, 'Successful Attempt');
     }
 
@@ -108,4 +109,14 @@ class AuthenticationController extends Controller
 
     }
 
+    /**
+     * @param SetPasswordRequest $request
+     * @return JsonResponse
+     * @throws \App\Exceptions\TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     */
+    public function setPassword(SetPasswordRequest $request)
+    {
+        return $this->userService->setPassword($request);
+    }
 }

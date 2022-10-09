@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
+use App\Exceptions\TokenInvalidException;
+use App\Exceptions\TokenNotFoundException;
+use App\Models\Customer;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
@@ -11,6 +14,7 @@ use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -584,7 +588,7 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
-    public function getAuthToken($data) 
+    public function getAuthToken($data)
     {
         $response = IdpIntegrationService::loginRequest($data);
 
@@ -646,4 +650,84 @@ class UserService extends ApiBaseService
         // );
     }
 
+    public function setPassword(Request $request)
+    {
+        if (!$request->bearerToken()) {
+            throw new TokenNotFoundException();
+        }
+
+        // validate the token and get details info
+        $bearerToken = ['token' => $request->header('authorization')];
+
+        $result = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $data = json_decode($result['data'], true);
+
+        if ($data['token_status'] != 'Valid') {
+            throw new TokenInvalidException();
+        }
+
+        $msisdn_key = 'mobile';
+
+        $customer = Customer::where('phone', $data['user'][$msisdn_key])->first();
+
+        if (!$customer) {
+            throw new TokenInvalidException();
+        }
+
+        // validate otp token first
+        /* $token_exist = Otp::where('phone', $customer->phone)->first();
+
+         if (!($token_exist && $request->otp_token == $token_exist->token)) {
+             return $this->sendErrorResponse("OTP token is invalid", [
+                 'message' => "OTP token is invalid",
+                 'hint' => 'OTP token is invalid',
+                 'target' => 'query'
+             ], 400);
+         }
+
+         $token_exist->delete();*/
+
+        $idp_customer_info = $data['user'];
+
+        if ($idp_customer_info['is_password_set']) {
+            return $this->sendErrorResponse("Password is already set", [
+                'message' => "Password is already set",
+                'hint' => 'Password is already set',
+                'target' => 'query'
+            ], 400);
+        }
+
+        $client = new Client();
+
+        $data['otp'] = $request->otp;
+        $data['password'] = $request->password;
+
+        try {
+            $response = $client->post(
+                env('IDP_HOST') . '/api/v1/customers/set/password',
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $request->bearerToken(),
+                    ],
+
+                    'form_params' => $data
+                ]
+            );
+        } catch (ClientException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            $error = json_decode($responseBodyAsString);
+
+            return $this->sendErrorResponse($error->message, [
+                'message' => $error->message,
+                'hint' => $response,
+                'target' => 'query',
+                'details' => $error
+            ], 500);
+        }
+
+        return $this->sendSuccessResponse([], 'Password set Successfully');
+    }
 }
