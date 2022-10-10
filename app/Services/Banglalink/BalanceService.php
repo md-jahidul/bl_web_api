@@ -161,11 +161,8 @@ class BalanceService extends BaseService
                 'unit' => 'MB'
             ];
         }
-
         return $data;
     }
-
-
 
     /**
      * Get Balance Summary
@@ -217,16 +214,12 @@ class BalanceService extends BaseService
      * @param $response
      * @return JsonResponse|mixed
      */
-    private function getInternetBalance($response)
+    private function getBalance($response, $type)
     {
-        $internet_data = collect($response->data);
-
-        $internet = $internet_data->filter(function ($item) {
-            return $item->serviceType == 'DATA';
-        });
+        $internet_data = collect($response->{$type});
 
         $data = [];
-        foreach ($internet as $item) {
+        foreach ($internet_data as $item) {
             $data [] = [
                 'package_name' => isset($item->product->name) ? $item->product->name : null,
                 'total' => $item->totalAmount,
@@ -236,54 +229,7 @@ class BalanceService extends BaseService
                 'auto_renew' => false
             ];
         }
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'Internet  Balance Details');
-    }
-
-    /**
-     * @param $response
-     * @return JsonResponse|mixed
-     */
-    private function getSmsBalance($response)
-    {
-        $sms = collect($response->sms);
-        $data = [];
-        foreach ($sms as $item) {
-            $data [] = [
-                'package_name' => isset($item->product->name) ? $item->product->name : null,
-                'total' => $item->totalAmount,
-                'remaining' => $item->amount,
-                'unit' => $item->unit,
-                'expires_in' => Carbon::parse($item->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
-                'auto_renew' => false
-            ];
-        }
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'SMS  Balance Details');
-    }
-
-
-    /**
-     * @param $response
-     * @return JsonResponse|mixed
-     */
-    private function getTalkTimeBalance($response)
-    {
-        $talk_time = collect($response->voice);
-
-        $data = [];
-        foreach ($talk_time as $item) {
-            $data [] = [
-                'package_name' => isset($item->product->name) ? $item->product->name : null,
-                'total' => $item->totalAmount,
-                'remaining' => $item->amount,
-                'unit' => $item->unit,
-                'expires_in' => Carbon::parse($item->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
-                'auto_renew' => false
-            ];
-        }
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
+        return $data;
     }
 
     /**
@@ -298,7 +244,7 @@ class BalanceService extends BaseService
             return $item->type == 'MAIN';
         });
 
-        $data = [
+        return [
             'remaining_balance' => [
                 'amount' => isset($main_balance->amount) ? $main_balance->amount : 0,
                 'currency' => 'Tk.',
@@ -311,8 +257,6 @@ class BalanceService extends BaseService
                 'expires_in' => null
             ]
         ];
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'Main Balance Details');
     }
 
 
@@ -394,16 +338,12 @@ class BalanceService extends BaseService
      * @param $customerAvailableProducts
      * @return mixed
      */
-    private function getPrepaidAllBalance($response, $customer, $timerProducts, $customerAvailableProducts = [])
+    private function getPrepaidAllBalance($response)
     {
-        $data = $timerProducts['data'] ?? [];
-        $voice = $timerProducts['voice'] ?? [];
-        $sms = $timerProducts['sms'] ?? [];
-
-        $allBalance['balance'] = $this->getMainBalance($response, $customer);
-        $allBalance['internet'] = $this->getInternetBalance($response, $data, $customerAvailableProducts);
-        $allBalance['sms'] = $this->getSmsBalance($response, $sms, $customerAvailableProducts);
-        $allBalance['minute'] = $this->getTalkTimeBalance($response, $voice, $customerAvailableProducts);
+        $allBalance['balance'] = $this->getMainBalance($response);
+        $allBalance['internet'] = $this->getBalance($response, "data");
+        $allBalance['sms'] = $this->getBalance($response, "sms");
+        $allBalance['minute'] = $this->getBalance($response, "voice");
         return $allBalance;
     }
 
@@ -423,34 +363,29 @@ class BalanceService extends BaseService
             );
         }
 
-        $timerProducts = $this->fetchTimerProducts($response, $customer->customer_account_id);
-        $customerAvailableProducts = $this->availableProductsService->getAvailableProductsByCustomer(
-            $customer->customer_account_id
-        );
-
         if ($type == 'all') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getPrepaidAllBalance($response, $customer, $timerProducts, $customerAvailableProducts),
+                $this->getPrepaidAllBalance($response),
                 'All Balance Details'
             );
         } elseif ($type == 'internet') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getInternetBalance($response, optional($timerProducts['data']) ?? [], $customerAvailableProducts),
+                $this->getBalance($response, "data"),
                 'Internet Balance Details'
             );
         } elseif ($type == 'sms') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getSmsBalance($response, optional($timerProducts['sms']) ?? [], $customerAvailableProducts),
+                $this->getBalance($response, "sms"),
                 'SMS Balance Details'
             );
         } elseif ($type == 'minutes') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getTalkTimeBalance($response, optional($timerProducts['voice']) ?? [], $customerAvailableProducts),
+                $this->getBalance($response, "voice"),
                 'Talk Time Balance Details'
             );
         } elseif ($type == 'balance') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getMainBalance($response, $customer),
+                $this->getMainBalance($response),
                 'Main Balance Details'
             );
         } else {
