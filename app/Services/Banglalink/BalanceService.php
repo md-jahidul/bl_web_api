@@ -452,7 +452,7 @@ class BalanceService extends BaseService
      */
     private function getPrepaidAllBalance($response, $customer)
     {
-        $allBalance['balance'] = $this->getMainBalance($response);
+        $allBalance['balance'] = $this->getMainBalance($response, $customer);
         $allBalance['internet'] = $this->getBalance($response, "data");
         $allBalance['sms'] = $this->getBalance($response, "sms");
         $allBalance['minute'] = $this->getBalance($response, "voice");
@@ -498,7 +498,7 @@ class BalanceService extends BaseService
             );
         } elseif ($type == 'balance') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getMainBalance($response),
+                $this->getMainBalance($response, $customer),
                 'Main Balance Details'
             );
         } else {
