@@ -3,6 +3,7 @@
 namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
+use App\Models\AlCoreProduct;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\ApiBaseService;
@@ -39,6 +40,14 @@ class BalanceService extends BaseService
      * @var CustomerAvailableProductsService
      */
     private $availableProductsService;
+    /**
+     * @var SubscriptionProductService
+     */
+    private $subscriptionProductService;
+    /**
+     * @var ProductLoanService
+     */
+    private $loanService;
 
     /**
      * BalanceService constructor.
@@ -48,13 +57,17 @@ class BalanceService extends BaseService
     public function __construct(
         CustomerService $customerService,
         NumberValidationService $numberValidationService,
-        CustomerAvailableProductsService $availableProductsService
+        CustomerAvailableProductsService $availableProductsService,
+        SubscriptionProductService $subscriptionProductService,
+        ProductLoanService $productLoanService
     ) {
         $this->responseFormatter = new ApiBaseService();
         $this->customerRepository = new CustomerRepository();
         $this->customerService = $customerService;
         $this->numberValidationService = $numberValidationService;
         $this->availableProductsService = $availableProductsService;
+        $this->subscriptionProductService = $subscriptionProductService;
+        $this->loanService = $productLoanService;
     }
 
     /**
@@ -236,7 +249,35 @@ class BalanceService extends BaseService
      * @param $response
      * @return JsonResponse|mixed
      */
-    private function getMainBalance($response)
+//    private function getMainBalance($response)
+//    {
+//        $balance_data = collect($response->money);
+//
+//        $main_balance = $balance_data->first(function ($item) {
+//            return $item->type == 'MAIN';
+//        });
+//
+//        return [
+//            'remaining_balance' => [
+//                'amount' => isset($main_balance->amount) ? $main_balance->amount : 0,
+//                'currency' => 'Tk.',
+//                'expires_in' => isset($main_balance->expiryDateTime) ?
+//                    Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
+//            ],
+//            'roaming_balance' => [
+//                'amount' => 0,
+//                'currency' => 'USD',
+//                'expires_in' => null
+//            ]
+//        ];
+//    }
+
+    /**
+     * @param $response
+     * @param $customer
+     * @return array
+     */
+    private function getMainBalance($response, $customer, $timerProducts = null)
     {
         $balance_data = collect($response->money);
 
@@ -244,19 +285,90 @@ class BalanceService extends BaseService
             return $item->type == 'MAIN';
         });
 
-        return [
+        $roaming_balance_info = $balance_data->first(function ($item) {
+            if (isset($item->account)) {
+                return $item->account->id == "115";
+            }
+        });
+
+        $customer_id = $customer->customer_account_id;
+
+        $subscription_products = $this->subscriptionProductService->getSubscriptionProducts($customer_id);
+
+        $rate_cutter_offer = collect($subscription_products)->first(function ($item) {
+            return substr($item['code'], -3) == 'SEC';
+        });
+
+        $rate_cutter_info = null;
+
+        if ($rate_cutter_offer) {
+            $product = AlCoreProduct::where('product_code', $rate_cutter_offer ['code'])->first();
+            if ($product) {
+                $rate_cutter_info = [
+                    'title' => $rate_cutter_offer ['commercialName'],
+                    'code' => $rate_cutter_offer ['code'],
+                    'fee' => $rate_cutter_offer ['fee'],
+                    'rate_cutter_rate' => $product->call_rate,
+                    'rate_cutter_rate_unit' => $product->call_rate_unit,
+                    'expires_in' => isset($rate_cutter_offer['deactivatedDateTime']) ?
+                        Carbon::parse($rate_cutter_offer['deactivatedDateTime'])->setTimezone('UTC')->toDateTimeString() : null
+                ];
+            }
+        }
+
+
+        if (isset($roaming_balance_info->id)) {
+            $roaming_balance = [
+                'amount' => $roaming_balance_info->amount,
+                'currency' => $roaming_balance_info->unit,
+                'expires_in' => isset($roaming_balance_info->expiryDateTime) ?
+                    Carbon::parse($roaming_balance_info->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
+            ];
+        } else {
+            $roaming_balance = [
+                'amount' => 0,
+                'currency' => isset($roaming_balance_info->unit) ? $roaming_balance_info->unit : "TK",
+                'expires_in' => null
+            ];
+
+        }
+
+        $data = [
+            'connection_type' => 'PREPAID',
             'remaining_balance' => [
-                'amount' => isset($main_balance->amount) ? $main_balance->amount : 0,
+                'amount' => $main_balance->amount ?? 0,
                 'currency' => 'Tk.',
                 'expires_in' => isset($main_balance->expiryDateTime) ?
                     Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
             ],
-            'roaming_balance' => [
-                'amount' => 0,
-                'currency' => 'USD',
-                'expires_in' => null
-            ]
+            'roaming_balance' => $roaming_balance,
+            'rate_cutter' => $rate_cutter_info
         ];
+
+        /**
+         * Return customer loan information if available in balance details
+         * */
+//        $eligibility_cap = MyBlAppSettings::where('key', MyBlAppSettingsKey::LOAN_ELIGIBILITY_MIN_AMOUNT)->first();
+//        // initially set minimum balance for all user
+//        $min_amount = 10;
+//        if ($eligibility_cap) {
+//            $min_amount = json_decode($eligibility_cap->value)->value;
+//        }
+
+        $customer_loan_info = $this->loanService->getLoanStatus($customer_id, 'PREPAID');
+        $customer_due_loan_amount = 0;
+
+        if($customer_loan_info) {
+            $customer_due_loan_amount = $customer_loan_info['due_loan'];
+        }
+
+        if($customer_due_loan_amount){
+            $data['remaining_balance']['loan'] = [
+                'due_loan' => $customer_due_loan_amount,
+                'message' => 'Next recharge your loan amount will be deducted'
+            ];
+        }
+        return $data;
     }
 
 
