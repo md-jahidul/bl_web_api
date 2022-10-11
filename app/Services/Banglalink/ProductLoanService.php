@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Enums\MyBlAppSettingsKey;
+use App\Exceptions\BLServiceException;
 use App\Models\AlCoreProduct;
 use App\Models\Config;
 use App\Models\Customer;
@@ -204,5 +205,38 @@ class ProductLoanService extends BaseService
             }
         }
         return $availableLoanProducts;
+    }
+
+    /**
+     * @param $customer_id
+     * @param $connectionType
+     * @return array
+     */
+    public function getLoanStatus($customer_id,$connectionType = '')
+    {
+        $loan_info = [];
+
+        if (strtolower($connectionType) == 'prepaid') {
+            $loan_info = $this->get($this->getPrepaidBalanceUrl($customer_id));
+            $response = json_decode($loan_info['response']);
+        }
+
+        if (!$loan_info){
+            return [];
+        }
+
+        $balance_data = collect($response->money);
+        $prepared_loan_info = [];
+
+        foreach ($balance_data as $item) {
+            if (strtolower($item->type) == 'loan' && (float) $item->amount > 0) {
+                $prepared_loan_info = [
+                    'due_loan' => $item->amount,
+                    'expires_in' => Carbon::parse($item->expiryDateTime)->format('d-m-Y h:i:m'),
+                ];
+            }
+        }
+
+        return $prepared_loan_info;
     }
 }
