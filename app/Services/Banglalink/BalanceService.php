@@ -338,12 +338,13 @@ class BalanceService extends BaseService
      * @param $customerAvailableProducts
      * @return mixed
      */
-    private function getPrepaidAllBalance($response)
+    private function getPrepaidAllBalance($response, $customer)
     {
         $allBalance['balance'] = $this->getMainBalance($response);
         $allBalance['internet'] = $this->getBalance($response, "data");
         $allBalance['sms'] = $this->getBalance($response, "sms");
         $allBalance['minute'] = $this->getBalance($response, "voice");
+        $allBalance['package'] = Customer::package($customer);
         return $allBalance;
     }
 
@@ -365,7 +366,7 @@ class BalanceService extends BaseService
 
         if ($type == 'all') {
             return $this->responseFormatter->sendSuccessResponse(
-                $this->getPrepaidAllBalance($response),
+                $this->getPrepaidAllBalance($response, $customer),
                 'All Balance Details'
             );
         } elseif ($type == 'internet') {
@@ -527,12 +528,13 @@ class BalanceService extends BaseService
      * @param $customer
      * @return mixed
      */
-    private function getPostpaidAllBalance($response)
+    private function getPostpaidAllBalance($response, $customer)
     {
         $allBalance['balance'] = $this->getPostpaidMainBalance($response);
         $allBalance['internet'] = $this->getPostpaidInternetBalance($response);
         $allBalance['sms'] = $this->getPostpaidSmsBalance($response);
         $allBalance['minute'] = $this->getPostpaidTalkTimeBalance($response);
+        $allBalance['package'] = Customer::package($customer);
         return $allBalance;
     }
 
@@ -561,7 +563,7 @@ class BalanceService extends BaseService
         if ($customer_type == 'POSTPAID') {
             $response = $this->get($this->getPostpaidBalanceUrl($customer_id));
             $response = json_decode($response['response']);
-            return $this->getPostpaidDetails($type, $response);
+            return $this->getPostpaidDetails($type, $response, $user);
         }
 
         return $this->responseFormatter->sendSuccessResponse([], 'User Balance Details');
@@ -636,7 +638,7 @@ class BalanceService extends BaseService
      * @param $response
      * @return JsonResponse
      */
-    private function getPostpaidDetails($type, $response)
+    private function getPostpaidDetails($type, $response, $customer)
     {
         if (isset($response->error)) {
             return $this->responseFormatter->sendErrorResponse(
@@ -647,7 +649,7 @@ class BalanceService extends BaseService
         }
 
         if ($type == 'all') {
-            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidAllBalance($response),
+            return $this->responseFormatter->sendSuccessResponse($this->getPostpaidAllBalance($response, $customer),
                 'All Balance for Postpaid');
         } elseif ($type == 'internet') {
             return $this->responseFormatter->sendSuccessResponse($this->getPostpaidInternetBalance($response),
