@@ -311,6 +311,8 @@ class BalanceService extends BaseService
                     'rate_cutter_rate' => $product->call_rate,
                     'rate_cutter_unit_en' => $product->call_rate_unit,
                     'rate_cutter_unit_bn' => $product->product->call_rate_unit_bn ?? null,
+                    'validity' => $product->validity ?? null,
+                    'validity_unit' => $product->validity_unit ?? null,
                     'expires_in' => isset($rate_cutter_offer['deactivatedDateTime']) ?
                         Carbon::parse($rate_cutter_offer['deactivatedDateTime'])->setTimezone('UTC')->toDateTimeString() : null
                 ];
