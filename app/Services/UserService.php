@@ -4,17 +4,24 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
+use App\Exceptions\BLServiceException;
+use App\Exceptions\CurlRequestException;
 use App\Exceptions\TokenInvalidException;
 use App\Exceptions\TokenNotFoundException;
+use App\Jobs\ProcessHibernateCustomerLoginBonus;
 use App\Models\Customer;
+use App\Repositories\CustomerRepository;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
+use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +67,18 @@ class UserService extends ApiBaseService
      * @var CustomerService
      */
     protected $customerService;
+    /**
+     * @var CustomerService
+     */
+    private $blCustomerService;
+    /**
+     * @var LogService
+     */
+    private $logService;
+    /**
+     * @var CustomerRepository
+     */
+    private $customerRepository;
 
 
     /**
@@ -71,10 +90,18 @@ class UserService extends ApiBaseService
      * @param BanglalinkOtpService $blOtpService
      * @param OtpConfigRepository $otpConfigRepository
      */
-    public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository,
-                                BalanceService $balanceService, CustomerService $customerService)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        NumberValidationService $numberValidationService,
+        OtpRepository $otpRepository,
+        BanglalinkOtpService $blOtpService,
+        OtpConfigRepository $otpConfigRepository,
+        BalanceService $balanceService,
+        CustomerService $customerService,
+        BanglalinkCustomerService $banglalinkCustomerService,
+        LogService $logService,
+        CustomerRepository $customerRepository
+    ) {
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
         $this->otpRepository = $otpRepository;
@@ -82,6 +109,9 @@ class UserService extends ApiBaseService
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
         $this->customerService = $customerService;
+        $this->blCustomerService = $banglalinkCustomerService;
+        $this->logService = $logService;
+        $this->customerRepository = $customerRepository;
     }
 
 
@@ -729,5 +759,129 @@ class UserService extends ApiBaseService
         }
 
         return $this->sendSuccessResponse([], 'Password set Successfully');
+    }
+
+    /**
+     * Verify OTP for Login
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws BLServiceException
+     * @throws CurlRequestException
+     */
+    public function verifyOTPForLogin($request)
+    {
+        $number = $request->input('username');
+        // validate the number
+        $validate_response = $this->blCustomerService->getCustomerInfoByNumber("88" . $number);
+        $response_status = $validate_response->getData()->status;
+
+        if ($response_status != 'SUCCESS') {
+            $this->logService->LoginLog("Login with OTP", "Number Not valid", $number, HttpStatusCode::BAD_REQUEST, HttpStatusCode::BAD_REQUEST,
+                "Number Not valid", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                "The number is not valid banglalink number",
+                [
+                    'message' => 'The number is not valid banglalink number',
+                ],
+                HttpStatusCode::BAD_REQUEST
+            );
+        }
+
+        $customer_info = $validate_response->getData()->data;
+
+        if (!$this->isUserExist($number)) {
+            // register user
+            $registerResponse = $this->register($customer_info, $number);
+        }
+
+        //login with otp perform
+
+        $otp_grant_data = [
+            'grant_type' => 'otp_grant',
+            'client_id' => $request->client_id,
+            'client_secret' => $request->client_secret,
+            'otp' => $request->otp,
+            'username' => $request->username,
+            'provider' => $request->provider,
+        ];
+
+        $token = IdpIntegrationService::otpGrantTokenRequest($otp_grant_data);
+
+        if ($token['http_code'] != 200) {
+            $error_response = json_decode($token['data'], true);
+            $message = $error_response['message'];
+            if ($error_response['error'] == 'invalid_otp') {
+                $message = 'Your OTP is invalid';
+            }
+
+            $this->logService->LoginLog("Login with OTP", "Invalid OTP", $number, $token['http_code'], HttpStatusCode::BAD_REQUEST,
+                "invalid_otp", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                $message,
+                [
+                    'message' => $message,
+                    'hint' => 'Getting HTTP error from IDP',
+                    'details' => $error_response,
+                ],
+                400
+            );
+        }
+//        $customerBasic = IdpIntegrationService::getCustomerBasicInfo($number);
+
+//        $customer_info2 = json_decode($customerBasic['data'], true);
+        $user = Customer::where('phone', $number)->first();
+//        $lastLoginAt = isset($user->last_login_at) ? $user->last_login_at : null;
+
+//        $customer = $this->blCustomerService->getCustomerInfoByNumber($customer_info2['data']['msisdn']);
+//        $customerResponseData = $customer->getData();
+
+
+        $response = IdpIntegrationService::getCustomerInfo($number);
+
+        if ($response['http_code'] != 200) {
+
+            $this->logService->LoginLog("Login with OTP", "Problem in IDP", $number, $response['http_code'], HttpStatusCode::BAD_REQUEST,
+                "Getting HTTP error from IDP", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                'IDP Customer info Problem',
+                [
+                    'message' => 'Something went wrong. try again later',
+                    'hint' => 'Getting HTTP error from IDP',
+                    'details' => [],
+                ],
+                400
+            );
+        }
+
+//        $data = json_decode($response['data'], true);
+
+//        $this->updateNumberTypeForOTPLogin($request, $user, $customerResponseData);
+
+        if ($user->customer_account_id != $customer_info->id) {
+            $this->customerRepository->updateCustomerAccountId($customer_info->msisdn, $customer_info->id);
+        }
+
+//        $customer = $this->customerService->prepareCustomerBasicInfo($user, $data['data']);
+
+        $this->logService->LoginLog("Login with OTP", "success", $number, $response['http_code'], HttpStatusCode::SUCCESS,
+            "success", $request->otp, $request->otp_token);
+
+//        if(Carbon::parse($lastLoginAt)->diffInDays(Carbon::now()) > 90) {
+//            dispatch(new ProcessHibernateCustomerLoginBonus('LoginBonus', $user))->onQueue('process-bonus');
+//        }
+
+
+        return $this->sendSuccessResponse(
+            [
+                'token' => json_decode($token['data']),
+//                'customer' => $customer,
+                "is_new_user" => isset($registerResponse) && $registerResponse
+            ],
+            'Customer login with OTP'
+        );
     }
 }

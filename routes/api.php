@@ -87,6 +87,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
 //        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
+    Route::post('user/verify-otp', 'API\V1\AuthenticationController@verifyOTPForLogin');
 
     // Get JWT token with credential
     Route::post('password-login', 'API\V1\AuthenticationController@passwordLogin');

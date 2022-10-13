@@ -3,9 +3,12 @@ namespace App\Http\Controllers\API\V1;
 
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\BLServiceException;
+use App\Exceptions\CurlRequestException;
 use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthTokenRequest;
+use App\Http\Requests\LoginWithOtpRequest;
 use App\Http\Requests\OtpLoginRequest;
 use App\Http\Requests\SetPasswordRequest;
 use App\Services\ApiBaseService;
@@ -118,5 +121,16 @@ class AuthenticationController extends Controller
     public function setPassword(SetPasswordRequest $request)
     {
         return $this->userService->setPassword($request);
+    }
+
+    /**
+     * @param LoginWithOtpRequest $request
+     * @return JsonResponse
+     * @throws BLServiceException
+     * @throws CurlRequestException
+     */
+    public function verifyOTPForLogin(LoginWithOtpRequest $request)
+    {
+        return $this->userService->verifyOTPForLogin($request);
     }
 }
