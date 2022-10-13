@@ -66,7 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkIp' => \App\Http\Middleware\CheckIpMiddleware::class,
         'audit.log' => \App\Http\Middleware\AuditLogMiddleware::class,
-        'client.secret.token' => \App\Http\Middleware\ClientSecretToken::class,
+//        'client.secret.token' => \App\Http\Middleware\ClientSecretToken::class,
         'verifyFacebookUpsellKey' => \App\Http\Middleware\VerifyFacebookUpsellKey::class,
         'verifyIdpToken' => \App\Http\Middleware\VerifyIdpToken::class,
     ];
