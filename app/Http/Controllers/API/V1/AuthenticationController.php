@@ -8,8 +8,10 @@ use App\Exceptions\CurlRequestException;
 use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthTokenRequest;
+use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\LoginWithOtpRequest;
 use App\Http\Requests\OtpLoginRequest;
+use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\SetPasswordRequest;
 use App\Services\ApiBaseService;
 use App\Services\NumberValidationService;
@@ -122,6 +124,35 @@ class AuthenticationController extends Controller
     {
         return $this->userService->setPassword($request);
     }
+
+    /**
+     * Update Password
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \App\Exceptions\TokenInvalidException
+     */
+    public function forgetPassword(ForgetPasswordRequest $request)
+    {
+        return $this->userService->forgetPassword($request);
+    }
+
+    /**
+     * Update Password
+     *
+     * @param PasswordChangeRequest $request
+     * @return JsonResponse
+     * @throws CurlRequestException
+     * @throws \App\Exceptions\OldPasswordMismatchException
+     * @throws \App\Exceptions\TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     * @throws \App\Exceptions\TooManyRequestException
+     */
+    public function changePassword(PasswordChangeRequest $request)
+    {
+        return $this->userService->changePassword($request);
+    }
+
 
     /**
      * @param LoginWithOtpRequest $request

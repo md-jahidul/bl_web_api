@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
 use App\Exceptions\BLServiceException;
 use App\Exceptions\CurlRequestException;
+use App\Exceptions\OldPasswordMismatchException;
 use App\Exceptions\TokenInvalidException;
 use App\Exceptions\TokenNotFoundException;
 use App\Jobs\ProcessHibernateCustomerLoginBonus;
@@ -882,6 +883,104 @@ class UserService extends ApiBaseService
                 "is_new_user" => isset($registerResponse) && $registerResponse
             ],
             'Customer login with OTP'
+        );
+    }
+
+    /**
+     * Forgot password
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws TokenInvalidException
+     */
+    public function forgetPassword($request)
+    {
+        $data = $request->all();
+        $data['provider'] = "users";
+        $data['otp'] = $request->input('otp');
+        $data['mobile'] = $request->input('phone');
+        $data['password'] = $request->input('password');
+        $data['password_confirmation'] = $request->input('password');
+
+        $response = IdpIntegrationService::forgetPasswordRequest($data);
+
+        if ($response['http_code'] == 200) {
+            return $this->sendSuccessResponse(
+                [],
+                "Password updated successfully!"
+            );
+        }
+
+        $errors = json_decode($response['data'], true);
+        $message = "Password reset failed. please try again later";
+
+        if ($errors['error'] == 'invalid_otp') {
+            $message = "Your OTP is invalid";
+        }
+
+        return $this->sendErrorResponse(
+            $message,
+            [
+                'message' => $message,
+                'hint' => $errors['error_description'],
+                'details' => $errors,
+            ],
+            HttpStatusCode::BAD_REQUEST
+        );
+    }
+
+    /**
+     * Change Password
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws CurlRequestException
+     * @throws OldPasswordMismatchException
+     * @throws TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     * @throws \App\Exceptions\TooManyRequestException
+     */
+    public function changePassword($request)
+    {
+        $user = $this->customerService->getAuthenticateCustomer($request);
+
+        if (!$user) {
+            return $this->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $data['oldPassword'] = $request->old_password;
+        $data['newPassword'] = $request->new_password;
+        $data['newPassword_confirmation'] = $request->new_password;
+        $data['mobile'] = $user->phone;
+        $data['customer_token'] = $request->bearerToken();
+
+        $response = IdpIntegrationService::changePasswordRequest($data);
+
+        if ($response['http_code'] != 200) {
+            $errors = json_decode($response['response'], true);
+            if ($errors['error'] == 'Invalid password') {
+                throw new OldPasswordMismatchException();
+            }
+
+            $errorObj = new \stdClass();
+            $errorObj->message = $errors['message'];
+            $errorObj->hint = $errors['message'];
+            $errorObj->code = 500;
+            $errorObj->target = 'query';
+
+            return response()->json(
+                [
+                    'status' => 'FAIL',
+                    'status_code' => 400,
+                    'error' => $errorObj,
+                ],
+                400
+            );
+        }
+
+        return $this->sendSuccessResponse(
+            [],
+            "Password updated successfully!"
         );
     }
 }
