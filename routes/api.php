@@ -94,6 +94,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Password
     Route::post('set-password', 'API\V1\AuthenticationController@setPassword');
+    Route::group(['middleware' => ['verifyIdpToken']], function () {
+        Route::post('change-password', 'API\V1\AuthenticationController@changePassword');
+    });
+    Route::post('forget-password', 'API\V1\AuthenticationController@forgetPassword');
 
     // Get JWT token with Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
@@ -136,7 +140,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
-    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
+    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCarudController@cardList');
     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer
