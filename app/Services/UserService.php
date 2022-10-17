@@ -957,7 +957,7 @@ class UserService extends ApiBaseService
         $response = IdpIntegrationService::changePasswordRequest($data);
 
         if ($response['http_code'] != 200) {
-            $errors = json_decode($response['response'], true);
+            $errors = json_decode($response['data'], true);
             if ($errors['error'] == 'Invalid password') {
                 throw new OldPasswordMismatchException();
             }
