@@ -96,7 +96,7 @@ class UpsellController extends Controller
         $productValidity = rawurlencode($productValidityWithUnitStr);
         $productDisplayTitle = rawurlencode("{$productDetails->name}");
 
-        $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWN');
+        $sslChannel = env("SSL_TRX_ID_FOR_UPSELL", 'BLWL');
         $sslTrxId = uniqid($sslChannel);
 
         // if(! $this->upsellService->customerIsEligibleForProduct($msisdn, $productCode)) {
