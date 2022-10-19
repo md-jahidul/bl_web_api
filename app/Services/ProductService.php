@@ -479,7 +479,7 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
 
-                if (isset($request->content_type) && $request->content_type == "suggested offers"){
+                if (isset($request->content_type) && $request->content_type == "suggested_offers"){
                     $offerAndAmount['recharge_offers'] = $rechargeOffers->take(5);
                     $offerAndAmount['prefill_amount'] = [20,50,100,500,58,149,298,698,];
                     return response()->success($offerAndAmount, 'Data Found!');
