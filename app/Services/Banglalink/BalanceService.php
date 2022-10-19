@@ -229,12 +229,14 @@ class BalanceService extends BaseService
      */
     private function getBalance($response, $type)
     {
-        $internet_data = collect($response->{$type});
+        $purchaseOffers = collect($response->{$type});
 
         $data = [];
-        foreach ($internet_data as $item) {
+        foreach ($purchaseOffers as $item) {
             $data [] = [
-                'package_name' => isset($item->product->name) ? $item->product->name : null,
+                'product_code' => ($item->type != "BONUS" && isset($item->product->code)) ? $item->product->code : "",
+                'package_name_en' => $item->product->name ?? null,
+                'package_name_bn' => $item->product->name ?? null,
                 'total' => $item->totalAmount,
                 'remaining' => $item->amount,
                 'unit' => $item->unit,
