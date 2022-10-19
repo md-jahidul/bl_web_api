@@ -241,7 +241,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -249,12 +249,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -264,7 +264,7 @@ class ProductService extends ApiBaseService
             }
 
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -273,7 +273,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -291,7 +291,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -481,7 +481,10 @@ class ProductService extends ApiBaseService
         try {
             $rechargeOffers = $this->productRepository->rechargeOffers();
 
-            // dd($rechargeOffers);
+            if (isset($request->content_type) && $request->content_type == "suggested offers")
+            {
+                $rechargeOffers = $rechargeOffers->take(5);
+            }
 
             if ($this->isUserLoggedIn($request)) {
                 $rechargeOffers = $this->checkCustomerProduct($request, $rechargeOffers);
@@ -494,10 +497,15 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
 
+                if (isset($request->content_type) && $request->content_type == "suggested offers"){
+                    $offerAndAmount['recharge_offers'] = $rechargeOffers->take(5);
+                    $offerAndAmount['prefill_amount'] = [20,50,100,500,58,149,298,698,];
+                    return response()->success($offerAndAmount, 'Data Found!');
+                }
                 return response()->success($rechargeOffers, 'Data Found!');
             }
-            return response()->error("Data Not Found!");
 
+            return response()->error("Data Not Found!");
         } catch (QueryException $exception) {
             return response()->error("Something is Wrong!", $exception);
         }
@@ -606,7 +614,7 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }
