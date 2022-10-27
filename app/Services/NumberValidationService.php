@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Services\Banglalink\BanglalinkCustomerService;
+use Illuminate\Support\Facades\DB;
 
 class NumberValidationService extends ApiBaseService
 {
@@ -66,6 +67,20 @@ class NumberValidationService extends ApiBaseService
         }
     }
 
+    public function isCustomerRegistered($phone)
+    {
+        $customer = DB::connection('mysql_idp')
+            ->table('users')
+            ->where('mobile', $phone)
+            ->select('is_password_set')
+            ->first();
+
+        if (!isset($customer)) {
+            return false;
+        }
+        return (boolean)$customer->is_password_set;
+    }
+
     /**
      * Validate number
      *
@@ -91,7 +106,8 @@ class NumberValidationService extends ApiBaseService
             if ($validateReq) {
                 return $this->sendSuccessResponse(
                     [
-                        'connectionType' => $customer->getData()->data->connectionType
+                        'connectionType' => $customer->getData()->data->connectionType,
+                        'isRegistered' => $this->isCustomerRegistered($number)
                     ],
                     "Number is Valid",
                     [],

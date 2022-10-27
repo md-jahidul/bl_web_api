@@ -54,7 +54,7 @@ class AuthenticationController extends Controller
      * @return JsonResponse
      * @throws RequestUnauthorizedException
      */
-    public function numberValidation(Request $request, $mobile): JsonResponse
+    public function numberValidation($mobile): JsonResponse
     {
         return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
@@ -77,17 +77,17 @@ class AuthenticationController extends Controller
         return $this->userService->otpLogin($request);
     }
 
-    public function passwordLogin(AuthTokenRequest $request) 
+    public function passwordLogin(AuthTokenRequest $request)
     {
         $data = $request->input();
         $response = $this->userService->getAuthToken($data);
         $statusCode = $response['status_code'];
-        $responseData = $response['data']; 
-        
+        $responseData = $response['data'];
+
         if (isset($responseData['error'])) {
             return $this->apiBaseService->sendErrorResponse($responseData['message'], "Incorrect Password", HttpStatusCode::UNAUTHORIZED);
         }
-        
+
         return $this->apiBaseService->sendSuccessResponse($responseData, 'Successful Attempt');
     }
 
