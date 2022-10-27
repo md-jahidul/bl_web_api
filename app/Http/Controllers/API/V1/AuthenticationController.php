@@ -60,7 +60,7 @@ class AuthenticationController extends Controller
      * @return JsonResponse
      * @throws RequestUnauthorizedException
      */
-    public function numberValidation(Request $request, $mobile): JsonResponse
+    public function numberValidation($mobile): JsonResponse
     {
         return $this->numberValidationService->validateNumberWithResponse($mobile, $validateReq = true);
     }
