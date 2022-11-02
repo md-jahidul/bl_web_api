@@ -17,7 +17,9 @@ class LoginLandingPageRepository extends BaseRepository
 
     public function findLoginPageBanner()
     {
-        return $this->model->where('key', 'login_page_banner')
+        $result = $this->model->where('key', 'login_page_banner')
                 ->orWhere('key', 'login_page_banner_alt_text')->get();
+
+        return [ 'banner' => ($result[0] ?? ''), 'text' => ($result[1] ?? '')];
     }
 }
