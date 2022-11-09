@@ -38,8 +38,8 @@ class FourGUSIMEligibilityService extends BaseService
 
     protected $eligibilityMessage = [
         '4g_usim' => [
-            'message_en' => 'Dear Customer, you already have a 4G SIM. Dial *5000# to get the best internet offers and enjoy Banglalink Full Speed 4G.',
-            'message_bn' => 'প্রিয় গ্রাহক, আপনার সিমটি 4G। সেরা ইন্টারনেট অফার পেতে ডায়াল করুন *5000# এবং বাংলালিংক ফুল স্পিড 4G উপভোগ করুন।',
+            'message_en' => 'Dear customer, this is already a 4G USIM. Dial *121*3# to get the best internet offers and enjoy Banglalink’s FASTEST 4G anytime, anywhere!',
+            'message_bn' => 'প্রিয় গ্রাহক, আপনার সিমটি 4G। সেরা ইন্টারনেট অফার পেতে ডায়াল করুন *121*3# এবং বাংলালিংক ফুল স্পিড 4G উপভোগ করুন।',
             'button_en' => 'Check Offer',
             'button_bn' => 'ইন্টারনেট কিনুন এখনই',
             'redirect_url' => '/banglalink-4g'
