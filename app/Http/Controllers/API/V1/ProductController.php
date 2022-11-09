@@ -183,4 +183,9 @@ class ProductController extends Controller
     {
         return $this->productService->findCustomerProducts($request);
     }
+
+    public function rechargeCashBack(Request $request)
+    {
+        return $this->productService->cashBackAndIris($request->mobile);
+    }
 }

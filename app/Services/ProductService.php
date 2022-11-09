@@ -16,6 +16,7 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
+use App\Services\Banglalink\BaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
@@ -63,10 +64,20 @@ class ProductService extends ApiBaseService
     private $responseFormatter;
 
     protected const BALANCE_API_ENDPOINT = "/customer-information/customer-information";
+    protected const RECHARGE_IRIS_OFFER_ENDPOINT = "/product-offer/iris-offers/v1/get-digital-offer";
+
+    protected const HEADER = [
+        "accept: application/json"
+    ];
+
     /**
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var BaseService
+     */
+    private $baseService;
 
     /**
      * ProductService constructor.
@@ -88,7 +99,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        BaseService $baseService
     )
     {
         $this->productRepository = $productRepository;
@@ -100,6 +112,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->baseService = $baseService;
         $this->setActionRepository($productRepository);
     }
 
@@ -234,7 +247,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -242,12 +255,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -257,7 +270,7 @@ class ProductService extends ApiBaseService
             }
 
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,7 +279,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -284,7 +297,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -588,7 +601,108 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
+    }
+
+    public function prepareCallRateData($callRateValue)
+    {
+        $rateCutVol = 0;
+        $rateCutUnitEn = null;
+        $rateCutUnitBn = null;
+
+        if (strstr($callRateValue,'p/sec')) {
+            $valUnit = explode(' ', str_replace("p/sec", ' p/sec',$callRateValue));
+            $rateCutVol = $valUnit[0];
+            $rateCutUnitEn = "Paisa/Sec";
+            $rateCutUnitBn = "পয়সা/সেকেন্ড";
+        } elseif (strstr($callRateValue,'tk/min')) {
+            $valUnit = explode(' ', str_replace("tk/min", ' tk/min',$callRateValue));
+            $rateCutVol = $valUnit[0];
+            $rateCutUnitEn = "Tk/Min";
+            $rateCutUnitBn = "টাকা/মিনিট";
+        } elseif (strstr($callRateValue,'p/min')) {
+            $valUnit = explode(' ', str_replace("p/min", ' p/min',$callRateValue));
+            $rateCutVol = $valUnit[0];
+            $rateCutUnitEn = "Paisa/Min";
+            $rateCutUnitBn = "পয়সা/মিনিট";
+        }
+        return [
+            $rateCutVol,
+            $rateCutUnitEn,
+            $rateCutUnitBn
+        ];
+    }
+
+    public function prepareIrisOffers($mobile)
+    {
+        //        $channel = "MobileApp";
+        $channel = env("IRIS_OFFER_CHANNEL_NAME", "APIHUB");
+        $amount = 29;
+        $irisEndPoint = self::RECHARGE_IRIS_OFFER_ENDPOINT . '?amount=' . $amount . '&channel=' . $channel . '&msisdn=88' . $mobile;
+
+        $response = $this->baseService->get($irisEndPoint, [], self::HEADER);
+
+        $irisOffers = json_decode($response['response'], true);
+
+        if (isset($response['status_code']) && $response['status_code'] != 200){
+            return $this->responseFormatter->sendErrorResponse('API hub internal server error',
+                [
+                    'message' => 'Currently Service Unavailable. Please,try again later',
+                ], $response['status_code']
+            );
+        }
+
+        $data = [];
+        foreach ($irisOffers as $offer) {
+            if (isset($offer['dataProduct']) || isset($offer['voiceMin']) || isset($offer['voiceRate'])) {
+                $rateCutVol = 0;
+                $rateCutUnitEn = null;
+                $rateCutUnitBn = null;
+                if (isset($offer['voiceRate'])){
+                    list($rateCutVol, $rateCutUnitEn, $rateCutUnitBn) = $this->prepareCallRateData($offer['voiceRate']);
+                }
+
+                $bonusVolume = 0;
+                $bonusVolumeType = null;
+                if(isset($offer['extra'][0])){
+                    $bonusInfo = $offer['extra'][0];
+                    $bonusVolume = $bonusInfo['productVolume'];
+                    $bonusVolumeType = $bonusInfo['productType'];
+                }
+
+                $dataVolume = isset($offer['dataProduct']) && is_numeric($offer['dataProduct']) ? $offer['dataProduct'] : 0;
+
+                $data[] = [
+                    'offer_id' => $offer['id'] ?? null,
+                    'transaction_id' => $offer['transactionId'] ?? null,
+                    'name' => $offer['name'] ?? null,
+                    'price' => $offer['rechargeAmount'] ?? null,
+                    'data_volume' => isset($offer['dataVolumeType']) ? (($offer['dataVolumeType'] == "GB") ? $dataVolume * 1024 : $offer['dataProduct']) : 0,
+                    'bonus_volume' => isset($bonusVolumeType) ? (($bonusVolumeType == "GB") ? $bonusVolume * 1024 : $bonusVolume) : 0,
+                    'minutes' => $offer['voiceMin'] ?? 0,
+                    'sms' => $offer['sms'] ?? 0,
+                    'call_rate' => $rateCutVol ?? null,
+                    'call_rate_unit' => $rateCutUnitEn ?? null,
+                    'call_rate_unit_bn' => $rateCutUnitBn ?? null,
+                    'validity' => $offer['validity'] ?? null,
+                    'validity_unit' => ($offer['validity'] > 1) ? "Days" : "Day",
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    public function cashBackAndIris($mobile)
+    {
+        $irisOffers = $this->prepareIrisOffers($mobile);
+
+        $data = [
+            'cash_back' => '',
+            'irish_offer' => $irisOffers,
+            'balance_loan' => 0
+        ];
+        return $this->sendSuccessResponse($data, 'Recharge cash back and iris offers');
     }
 }

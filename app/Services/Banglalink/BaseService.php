@@ -48,7 +48,7 @@ class BaseService
      * @param array $headers
      * @return string
      */
-    protected function get($url, $body = [], $headers = null)
+    public function get($url, $body = [], $headers = null)
     {
         return $this->makeMethod('get', $url, $body, $headers);
     }
