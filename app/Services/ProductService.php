@@ -276,11 +276,11 @@ class ProductService extends ApiBaseService
 
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
-            if(!empty($data)) {
+            if(!empty($allPacks)) {
                 array_unshift($data, [
                     'type' => 'all',
                     'title_en' => 'All',
-                    'title_bn' => Null,
+                    'title_bn' => "সকল",
                     'packs' => $allPacks->toArray() ?? []
                 ]);
             }
