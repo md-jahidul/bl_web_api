@@ -234,7 +234,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -242,12 +242,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -257,7 +257,7 @@ class ProductService extends ApiBaseService
             }
 
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,14 +266,14 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
-            if(!empty($data)) {
+            if(!empty($allPacks)) {
                 array_unshift($data, [
                     'type' => 'all',
                     'title_en' => 'All',
-                    'title_bn' => Null,
+                    'title_bn' => "সকল",
                     'packs' => $allPacks->toArray() ?? []
                 ]);
             }
@@ -284,7 +284,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -588,7 +588,7 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }
