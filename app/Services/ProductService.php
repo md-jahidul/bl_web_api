@@ -245,16 +245,17 @@ class ProductService extends ApiBaseService
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
+                    $tag = $product->tag;
                     $this->bindDynamicValues($product, 'offer_info', $productData);
+                    $this->bindDynamicValues($product, 'offer_info', $tag);
                     unset($product->productCore);
                 }
             }
 
-            foreach ($products as $offer) {
 
+            foreach ($products as $offer) {
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;

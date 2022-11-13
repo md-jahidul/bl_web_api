@@ -76,7 +76,7 @@ class ProductRepository extends BaseRepository
                 'products.special_product',
                 'products.like',
                 'products.validity_postpaid',
-                'products.offer_info'
+                'products.offer_info',
             );
 
         if ($offerTypeById == 22){
@@ -88,7 +88,7 @@ class ProductRepository extends BaseRepository
 
         return $data->where('status', 1)
                 ->where('special_product', 0)
-                ->with('productCore.detialTabs')
+                ->with('tag', 'productCore.detialTabs')
                 ->startEndDate()
                 ->productCore()
                 ->category($type)
