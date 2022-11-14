@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Http\Resources\BannerResource;
 use App\Models\FrontEndDynamicRoute;
+use App\Repositories\AdTechRepository;
 use App\Repositories\BannerRepository;
 use App\Repositories\ConfigRepository;
 use App\Repositories\FooterMenuRepository;
@@ -30,6 +31,10 @@ class HeaderFooterMenuService extends ApiBaseService
     protected $menuRepository;
     protected $footerMenuRepository;
     protected $configRepository;
+    /**
+     * @var AdTechRepository
+     */
+    private $adTechRepository;
 
 
     /**
@@ -43,12 +48,14 @@ class HeaderFooterMenuService extends ApiBaseService
         MenuRepository $menuRepository,
         FooterMenuRepository $footerMenuRepository,
         ConfigRepository $configRepository,
-        ApiBaseService $apiBaseService
+        ApiBaseService $apiBaseService,
+        AdTechRepository $adTechRepository
     )
     {
         $this->menuRepository = $menuRepository;
         $this->footerMenuRepository = $footerMenuRepository;
         $this->configRepository = $configRepository;
+        $this->adTechRepository = $adTechRepository;
         $this->apiBaseService = $apiBaseService;
     }
 
@@ -85,10 +92,12 @@ class HeaderFooterMenuService extends ApiBaseService
      */
     public function headerFooterMenus()
     {
-
         $headerMenus = $this->menuRepository->headerMenus();
         $headerItems = $this->configRepository->headerSettings();
         $footerMenu = $this->footerMenuRepository->footerMenu();
+        $adTech = $this->adTechRepository->findOneByProperties(
+            ['reference_type' => 'header-menu'], ['img_url', 'redirect_url_en', 'redirect_url_bn']
+        );
 
         $headerSettings = [];
         foreach ($headerItems as $settings) {
@@ -106,7 +115,8 @@ class HeaderFooterMenuService extends ApiBaseService
             $result = [
                 'header' => [
                     'menu' => $headerMenus,
-                    'settings' => $this->configRepository->resourceData($headerSettings)
+                    'settings' => $this->configRepository->resourceData($headerSettings),
+                    'ad_tech' => $adTech
                 ],
                 'footer' => [
                     'menu' => $footerMenu,
