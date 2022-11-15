@@ -96,7 +96,7 @@ class HeaderFooterMenuService extends ApiBaseService
         $headerItems = $this->configRepository->headerSettings();
         $footerMenu = $this->footerMenuRepository->footerMenu();
         $adTech = $this->adTechRepository->findOneByProperties(
-            ['reference_type' => 'header-menu'], ['img_url', 'redirect_url_en', 'redirect_url_bn']
+            ['reference_type' => 'header-menu', 'status' => 1], ['img_url', 'is_external_url', 'redirect_url_en', 'external_url']
         );
 
         $headerSettings = [];
