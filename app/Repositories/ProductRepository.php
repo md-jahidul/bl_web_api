@@ -32,6 +32,15 @@ class ProductRepository extends BaseRepository
             case "others":
                 return 9;
                 break;
+            case "bondho_sim":
+                return 22;
+                break;
+            case "new_sim_offer":
+                return 23;
+                break;
+            case "call_rate":
+                return 19;
+                break;
             default:
                 return false; /*Offer type not found*/
         }
@@ -45,7 +54,7 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
-        return $this->model->select(
+        $data = $this->model->select(
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
@@ -67,19 +76,23 @@ class ProductRepository extends BaseRepository
                 'products.special_product',
                 'products.like',
                 'products.validity_postpaid',
-                'products.offer_info'
-            // 'd.url_slug'
-            )
-            // ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
-            // ->where('content_type', 'data')
-            ->where('offer_category_id', $offerTypeById)
-            ->where('status', 1)
-            ->where('special_product', 0)
-            ->with('productCore.detialTabs')
-            ->startEndDate()
-            ->productCore()
-            ->category($type)
-            ->get();
+                'products.offer_info',
+            );
+
+        if ($offerTypeById == 22){
+//            $data = $data->whereRaw('JSON_CONTAINS(`offer_info`, \'{"other_offer_type_id": 13}\')');
+            $data = $data->where('offer_info->other_offer_type_id', 13);
+        } else {
+            $data = $data->where('offer_category_id', $offerTypeById);
+        }
+
+        return $data->where('status', 1)
+                ->where('special_product', 0)
+                ->with('tag', 'productCore.detialTabs')
+                ->startEndDate()
+                ->productCore()
+                ->category($type)
+                ->get();
     }
 
     public function showTrendingProduct()
