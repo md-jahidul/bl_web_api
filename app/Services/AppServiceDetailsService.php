@@ -223,11 +223,11 @@ class AppServiceDetailsService extends ApiBaseService
 
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
-		
+
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
 		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
-		
+
 		$data['page_header'] = $product_info->page_header;
 		$data['page_header_bn'] = $product_info->page_header_bn;
 		$data['schema_markup'] = $product_info->schema_markup;
@@ -236,7 +236,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
-        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
+        $data['app_info'] = !empty($product_info) ? $product_info->getAttributes() : null;
 
         # Get App tab details component
         if( $product_info->appServiceTab->alias == 'app' ){
