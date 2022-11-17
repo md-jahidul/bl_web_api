@@ -241,7 +241,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
-        $data['app_info'] = !empty($product_info) ? $product_info->getAttributes() : null;
+        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info->getAttributes() : null;
 
         # Get App tab details component
         if( $product_info->appServiceTab->alias == 'app' ){
