@@ -83,7 +83,12 @@ class AppServiceDetailsService extends ApiBaseService
             $imgData = $this->imageFileViewerService->prepareImageData($get_product_details_banner, $detailKeyData);
             $results['banner']['alt_text'] = $get_product_details_banner->alt_text;
             $results['banner']['alt_text_bn'] = $get_product_details_banner->alt_text_bn;
-            $results['banner'] = array_merge($results['banner'], $imgData);
+            $results['banner']['banner_title_en'] = $get_product_details_banner->banner_title_en;
+			$results['banner']['banner_title_bn'] = $get_product_details_banner->banner_title_bn;
+			$results['banner']['banner_desc_en'] = $get_product_details_banner->banner_desc_en;
+			$results['banner']['banner_desc_bn'] = $get_product_details_banner->banner_desc_bn;
+
+			$results['banner'] = array_merge($results['banner'], $imgData);
 
             $all_releated_products_ids = $get_product_details_banner->other_attributes;
             $all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;
@@ -255,7 +260,6 @@ class AppServiceDetailsService extends ApiBaseService
         $imgData = $this->imageFileViewerService->prepareImageData($product_info, $keyData);
         $product_info->image_url_en = isset($imgData['banner_image_web_en']) ? $imgData['banner_image_web_en'] : null;
         $product_info->image_url_bn = isset($imgData['banner_image_web_bn']) ? $imgData['banner_image_web_bn'] : null;
-
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
         $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
@@ -268,7 +272,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
-        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
+        $data['app_info'] = !empty($product_info) ? $product_info->getAttributes() : null;
 
         # Get App tab details component
         if ($product_info->appServiceTab->alias == 'app') {
