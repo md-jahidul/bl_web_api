@@ -77,6 +77,11 @@ class AppServiceDetailsService extends ApiBaseService
 			$results['banner']['image'] = !empty($get_product_details_banner->image) ? config('filesystems.image_host_url') . $get_product_details_banner->image : null;
 			$results['banner']['alt_text'] = $get_product_details_banner->alt_text;
 
+			$results['banner']['banner_title_en'] = $get_product_details_banner->banner_title_en;
+			$results['banner']['banner_title_bn'] = $get_product_details_banner->banner_title_bn;
+			$results['banner']['banner_desc_en'] = $get_product_details_banner->banner_desc_en;
+			$results['banner']['banner_desc_bn'] = $get_product_details_banner->banner_desc_bn;
+
 			$results['banner']['image_mobile'] = !empty($get_product_details_banner->banner_image_mobile) ? config('filesystems.image_host_url') . $get_product_details_banner->banner_image_mobile : null;
 
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
