@@ -77,6 +77,7 @@ class ProductRepository extends BaseRepository
                 'products.like',
                 'products.validity_postpaid',
                 'products.offer_info',
+                'products.product_image'
             );
 
         if ($offerTypeById == 22){
