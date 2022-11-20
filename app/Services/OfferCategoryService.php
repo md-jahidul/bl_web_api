@@ -101,9 +101,10 @@ class OfferCategoryService extends ApiBaseService
 
     public function offerCatList()
     {
-        $tags = TagCategory::all();
-        $sim = SimCategory::all();
+        $tags = TagCategory::all(['id', 'name_en', 'name_bn', 'alias', 'tag_color']);
+        $sim = SimCategory::all(['id', 'name', 'alias']);
         $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        $offer->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
 //        dd($offer);
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
