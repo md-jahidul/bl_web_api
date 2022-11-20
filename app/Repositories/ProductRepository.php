@@ -67,7 +67,8 @@ class ProductRepository extends BaseRepository
                 'products.special_product',
                 'products.like',
                 'products.validity_postpaid',
-                'products.offer_info'
+                'products.offer_info',
+                'products.product_image'
             // 'd.url_slug'
             )
             // ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
