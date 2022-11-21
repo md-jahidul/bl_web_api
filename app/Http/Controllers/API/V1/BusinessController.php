@@ -9,6 +9,7 @@ use App\Services\Banglalink\BusinessInternetService;
 use App\Services\Banglalink\BusinessOthersService;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\Response;
 
 class BusinessController extends Controller
 {
@@ -40,7 +41,7 @@ class BusinessController extends Controller
 
     /**
      * Get json data for home page
-     * 
+     *
      * @param No
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
@@ -52,7 +53,7 @@ class BusinessController extends Controller
 
     /**
      * Get category list
-     * 
+     *
      * @param No
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
@@ -64,7 +65,7 @@ class BusinessController extends Controller
 
     /**
      * Get package category page data
-     * 
+     *
      * @param No
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
@@ -76,9 +77,9 @@ class BusinessController extends Controller
 
     /**
      * Get package details
-     * 
+     *
      * @param No
-     * @return Json Response
+     * @return Response Response
      * @Bulbul Mahmud Nito || 24/02/2020
      */
     public function packageBySlug($packageSlug)
@@ -88,7 +89,7 @@ class BusinessController extends Controller
 
     /**
      * Get Internet package
-     * 
+     *
      * @param No
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
@@ -100,7 +101,7 @@ class BusinessController extends Controller
 
     /**
      * Get Internet package details
-     * 
+     *
      * @param $internetId
      * @return Json Response
      * @Bulbul Mahmud Nito || 15/03/2020
@@ -111,7 +112,7 @@ class BusinessController extends Controller
     }
     /**
      * Give like and get total likes
-     * 
+     *
      * @param No
      * @return Json Response
      * @Bulbul Mahmud Nito || 15/03/2020
@@ -123,7 +124,7 @@ class BusinessController extends Controller
 
     /**
      * Get Enterprise Solution
-     * 
+     *
      * @param $type (business-solusion,iot,others)
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020
@@ -132,10 +133,10 @@ class BusinessController extends Controller
     {
         return $this->enterpriseService->getOtherService($type);
     }
-    
+
     /**
      * Get Enterprise Solution
-     * 
+     *
      * @param $serviceId
      * @return Json Response
      * @Bulbul Mahmud Nito || 24/02/2020

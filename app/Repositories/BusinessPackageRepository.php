@@ -29,8 +29,8 @@ class BusinessPackageRepository extends BaseRepository {
             $data[$count]['slug'] = 'packages';
             $data[$count]['name_en'] = $p->name;
             $data[$count]['name_bn'] = $p->name_bn;
-            $data[$count]['banner_photo'] = $p->card_banner_web == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_web;
-            $data[$count]['banner_photo_mobile'] = $p->card_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $p->card_banner_mobile;
+            $data[$count]['banner_photo'] = $p->card_banner_web == "" ? "" : $p->card_banner_web;
+            $data[$count]['banner_photo_mobile'] = $p->card_banner_mobile == "" ? "" : $p->card_banner_mobile;
             $data[$count]['alt_text'] = $p->card_banner_alt_text;
             $data[$count]['short_details_en'] = $p->short_details;
             $data[$count]['short_details_bn'] = $p->short_details_bn;
@@ -53,9 +53,15 @@ class BusinessPackageRepository extends BaseRepository {
             $data['slug'] = 'packages';
             $data['name_en'] = $package->name;
             $data['name_bn'] = $package->name_bn;
-            $data['banner_photo'] = $package->banner_photo == "" ? "" : config('filesystems.image_host_url') . $package->banner_photo;
-            $data['banner_photo_mobile'] = $package->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $package->banner_image_mobile;
+            $data['banner_photo'] = $package->banner_photo == "" ? "" : $package->banner_photo;
+            $data['banner_photo_mobile'] = $package->banner_image_mobile == "" ? "" : $package->banner_image_mobile;
             $data['alt_text'] = $package->alt_text;
+
+            $data['banner_title_en'] = $package->banner_title_en;
+            $data['banner_title_bn'] = $package->banner_title_bn;
+            $data['banner_desc_en'] = $package->banner_desc_en;
+            $data['banner_desc_bn'] = $package->banner_desc_bn;
+
             $data['short_details_en'] = $package->short_details;
             $data['short_details_bn'] = $package->short_details_bn;
             $data['main_details_en'] = $package->main_details;
