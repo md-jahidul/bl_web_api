@@ -42,6 +42,7 @@ class RoamingOfferRepository extends BaseRepository {
                 $data[$k]['offers'][$key]['schema_markup'] = $v->schema_markup;
                 $data[$k]['offers'][$key]['card_text_en'] = $v->card_text_en;
                 $data[$k]['offers'][$key]['card_text_bn'] = $v->card_text_bn;
+                $data[$k]['offers'][$key]['card_image'] = $v->card_image;
                 $data[$k]['offers'][$key]['likes'] = $v->likes;
             }
         }
@@ -52,8 +53,8 @@ class RoamingOfferRepository extends BaseRepository {
         return $data;
     }
 
-    public function getOtherOffersDetails($offerSlug) 
-    {   
+    public function getOtherOffersDetails($offerSlug)
+    {
         $offer = $this->model->where('url_slug', $offerSlug)->orWhere('url_slug_bn', $offerSlug)->first();
 
         $data = [];
