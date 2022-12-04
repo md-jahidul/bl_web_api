@@ -91,4 +91,9 @@ class PriyojonController extends Controller
     {
         return $this->aboutPriyojonService->lmsAboutBanner($slug);
     }
+
+    public function orangeClubTierOffers()
+    {
+        return $this->partnerOfferService->tierOffers();
+    }
 }
