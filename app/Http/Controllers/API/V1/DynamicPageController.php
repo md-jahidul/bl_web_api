@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Services\Assetlite\ComponentService;
+use App\Services\ComponentService;
 use App\Services\DynamicPageService;
 use App\Http\Controllers\Controller;
 

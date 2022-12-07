@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\Assetlite\ComponentService;
-use App\Services\Assetlite\ProductDetailsSectionService;
+use App\Services\ComponentService;
+use App\Services\ProductDetailsSectionService;
 use Illuminate\Http\Request;
 
 class ProductDetailsController extends Controller
