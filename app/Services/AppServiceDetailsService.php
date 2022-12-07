@@ -220,14 +220,13 @@ class AppServiceDetailsService extends ApiBaseService
 	public function getDetails($slug)
     {
         $data = null;
-
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
-		
+
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
 		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
-		
+
 		$data['page_header'] = $product_info->page_header;
 		$data['page_header_bn'] = $product_info->page_header_bn;
 		$data['schema_markup'] = $product_info->schema_markup;
