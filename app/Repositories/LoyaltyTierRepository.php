@@ -15,16 +15,29 @@ class LoyaltyTierRepository extends BaseRepository
 {
     public $modelName = LoyaltyTier::class;
 
-    public function offerByTier()
+    public function offerByTier($showInHome)
     {
-        return $this->model->where('status', 1)
-            ->select(
+        $data = $this->model->where('status', 1);
+
+        if ($showInHome) {
+            $data = $data->whereHas('partnerOffers', function ($query) {
+                $query->where('show_in_home', 1);
+            });
+        } else {
+            $data = $data->whereHas('partnerOffers');
+        }
+
+        return $data->select(
                 'id',
                 'title_en',
                 'title_bn',
                 'slug'
             )
-            ->with(['partnerOffers' => function ($q){
+            ->with(['partnerOffers' => function ($q) use($showInHome) {
+                $q->where('is_active', 1);
+                if ($showInHome){
+                    $q->where('show_in_home', 1);
+                }
                 $q->select(
                     'partner_id',
                     'partner_category_id',

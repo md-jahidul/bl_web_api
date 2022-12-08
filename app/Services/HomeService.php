@@ -3,17 +3,21 @@
 namespace App\Services;
 
 use App\Http\Resources\PartnerOfferResource;
+use App\Models\AboutPage;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
+use App\Models\Blog;
 use App\Models\BusinessOthers;
+use App\Models\MediaTvcVideo;
 use App\Models\MetaTag;
 use App\Models\ShortCode;
+use App\Models\Ocla;
+use App\Repositories\AboutUsRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\SliderRepository;
 use App\Services\Banglalink\CustomerPackageService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
-
 
 /**
  * Class BannerService
@@ -29,8 +33,16 @@ class HomeService extends ApiBaseService
     private $quickLaunchService;
     private $ecarrerService;
     private $salesAndServicesService;
+    private $aboutUsRepository;
+
+
+
 
     protected $redis_ttl = 60 * 60 * 24;
+    /**
+     * @var PartnerOfferService
+     */
+    private $partnerOfferService;
 
     /**
      * HomeService constructor.
@@ -39,19 +51,26 @@ class HomeService extends ApiBaseService
      * @param QuickLaunchService $quickLaunchService
      * @param EcareerService $ecarrerService
      * @param SalesAndServicesService $salesAndServicesService
+     * @param AboutUsRepository $aboutUsRepository
      */
     public function __construct(
         SliderRepository $sliderRepository,
         ProductService $productService,
         QuickLaunchService $quickLaunchService,
         EcareerService $ecarrerService,
-        SalesAndServicesService $salesAndServicesService
+        SalesAndServicesService $salesAndServicesService,
+        AboutUsRepository $aboutUsRepository,
+        PartnerOfferService $partnerOfferService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
         $this->quickLaunchService = $quickLaunchService;
         $this->ecarrerService = $ecarrerService;
         $this->salesAndServicesService = $salesAndServicesService;
+        $this->aboutUsRepository = $aboutUsRepository;
+        $this->partnerOfferService = $partnerOfferService;
+
+
     }
 
 
@@ -66,9 +85,7 @@ class HomeService extends ApiBaseService
     }
 
     public function getSliderData($id) {
-
         $slider = $this->sliderRepository->findOne($id);
-
 //        dd($slider);
 
         $component = AlSliderComponentType::find($slider->component_id)->slug;
@@ -107,6 +124,9 @@ class HomeService extends ApiBaseService
             $data["slider_id"] = $request->slider_id ?? null;
             $data["title_en"] = $request->title_en ?? null;
             $data["title_bn"] = $request->title_bn ?? null;
+            $data["description_bn"] = $request->description_bn ?? null;
+            $data["description_en"] = $request->description_en ?? null;
+
             $data["start_date"] = $request->start_date ?? null;
             $data["end_date"] = $request->end_date ?? null;
             $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
@@ -129,9 +149,13 @@ class HomeService extends ApiBaseService
     }
     }
 
-    public function getQuickLaunchData() {
+    public function getQuickLaunchData($component) {
         return [
             "component" => "QuickLaunch",
+            "title_en" => $component->title_en ?? null,
+            "title_bn" => $component->title_bn ?? null,
+            "description_en" => $component->description_en ?? null,
+            "deccription_bn" => $component->deccription_bn ?? null,
             "data" => $quickLaunchItems = $this->quickLaunchService->itemList('panel')
         ];
     }
@@ -160,16 +184,17 @@ class HomeService extends ApiBaseService
         $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
 
         if ($id == 4) {
-            $partnerOffers = DB::table('partner_offers as po')
-                ->where('po.show_in_home', 1)
-                ->where('po.is_active', 1)
-                ->join('partners as p', 'po.partner_id', '=', 'p.id')
-                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
-                ->orderBy('po.display_order')
-                ->get();
-
-            $slider->data = PartnerOfferResource::collection($partnerOffers);
+//            $partnerOffers = DB::table('partner_offers as po')
+//                ->where('po.show_in_home', 1)
+//                ->where('po.is_active', 1)
+//                ->join('partners as p', 'po.partner_id', '=', 'p.id')
+//                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+//                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
+//                ->orderBy('po.display_order')
+//                ->get();
+//            $slider->data = PartnerOfferResource::collection($partnerOffers);
+//            dd($this->partnerOfferService->tierOffers(true));
+            $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
         } else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
@@ -178,7 +203,7 @@ class HomeService extends ApiBaseService
         return $slider;
     }
 
-    public function factoryComponent($type, $id) {
+    public function factoryComponent($type, $id, $component) {
         $data = null;
         switch ($type) {
             case "slider_single":
@@ -188,13 +213,37 @@ class HomeService extends ApiBaseService
                 $data = $this->getRechargeData();
                 break;
             case "quicklaunch":
-                $data = $this->getQuickLaunchData();
+                $data = $this->getQuickLaunchData($component);
                 break;
             case "slider_multiple":
                 $data = $this->getMultipleSliderData($id);
                 break;
             case "sales_service":
                 $data = $this->getSalesServiceData();
+                break;
+            case "ocla":
+                $data = $this->getOclaData($component);
+                break;
+            case "map_view":
+                $data = $this->getMapViewData($component);
+                break;
+            case "memory":
+                $data = $this->getMemoryData($component);
+                break;
+            case "about":
+                $data = $this->getAboutData($component);
+                break;
+            case "super_app":
+                $data = $this->getSuperAppLandingData($component);
+                break;
+            case "blog":
+                $data = $this->getBlogData($component);
+                break;
+            case "career":
+                $data = $this->getCareerData($component);
+                break;
+            case "fast_forward":
+                $data = $this->getFastForwardData($component);
                 break;
             default:
                 $data = "No suitable component found";
@@ -204,27 +253,96 @@ class HomeService extends ApiBaseService
     }
 
 
+    public function getOclaData($component){
+        $data = $this->dummyRes($component,'Ocla');
+        $data['data'] = Ocla::get();
+        return $data;
+    }
+
+    public function getNeedData($component){
+        $data = $this->dummyRes($component,'Need Anything');
+        return $data;
+    }
+
+
+    public function getFastForwardData($component){
+        $data = $this->dummyRes($component,'Fast Forward');
+        $data['data'] = [];
+        return $data;
+    }
+
+    public function getCareerData($component){
+        $data = $this->dummyRes($component,'Ocla');
+        $data['data'] = Ocla::get();
+        return $data;
+    }
+
+    public function getBlogData($component){
+        $data = $this->dummyRes($component,'Blog');
+        $data['data'] = Blog::get();
+        return $data;
+    }
+
+    public function getAboutData($component){
+        $data = $this->dummyRes($component,'About');
+        $data['data'] =  $this->aboutUsRepository->getAboutBanglalink();
+        return $data;
+    }
+
+    public function getMemoryData($component){
+        $data = $this->dummyRes($component,'Memory');
+        $data['data'] = MediaTvcVideo::get();
+        return $data;
+    }
+
+    public function getSuperAppLandingData($component){
+        $data = $this->dummyRes($component,'Super App');
+        $data['data'] = [];
+        return $data;
+    }
+
+    public function getMapViewData($component){
+        $data = $this->dummyRes($component,'Map View');
+        $data['data'] = [];
+        return $data;
+    }
+
+    private function dummyRes($component,$dummyName){
+        return collect([
+            "component" => $dummyName,
+            "title_en" => $component->title_en ?? null,
+            "title_bn" => $component->title_bn ?? null,
+            "description_en" => $component->description_en ?? null,
+            "deccription_bn" => $component->deccription_bn ?? null,
+            "link_en" => $component->link_en ?? null,
+            "link_bn" => $component->link_bn ?? null,
+            "label_bn" => $component->label_bn ?? null,
+            "label_en" => $component->label_bn ?? null,
+            "is_label_active" => $component->is_label_active ?? null,
+            "other_attributes" => $component->other_attributes ?? null ,
+            //"data" => $quickLaunchItems = $this->oclaService->itemList('panel')
+        ]);
+    }
     public function getComponents()
     {
         $componentList = ShortCode::where('page_id', 1)
             ->where('is_active', 1)
             ->orderBy('sequence', 'ASC')
             ->get();
-
         $metainfo = MetaTag::where('page_id', 1)
             ->first()->toArray();
 
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
-                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id);
+                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
             }
-            Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            $value = Redis::get('al_home_components');
+            $value = json_encode($homePageData);
+            //Redis::setex('al_home_components', 3600, json_encode($homePageData));
+            //$value = Redis::get('al_home_components');
         } else {
-            $value = Redis::get('al_home_components');
+            //$value = Redis::get('al_home_components');
         }
-
         $data = [
             'metatags' => $metainfo,
             'components' => json_decode($value)

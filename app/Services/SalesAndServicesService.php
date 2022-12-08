@@ -6,7 +6,7 @@ use App\Http\Resources\SalesAndServicesResource;
 use App\Repositories\SalesAndServicesRepository;
 use App\Repositories\SearchRepository;
 use App\Traits\CrudTrait;
-use App\Services\Assetlite\ComponentService;
+use App\Services\ComponentService;
 use Illuminate\Support\Facades\DB;
 
 class SalesAndServicesService
