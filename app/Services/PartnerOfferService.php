@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Http\Resources\OrangeClubTierOffers;
-use App\Http\Resources\OrangeClubTierOffersResource;
+use App\Http\Resources\LoyaltyOfferCatResource;
 use App\Http\Resources\OrangeClubTierResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Repositories\LoyaltyTierRepository;
+use App\Repositories\PartnerOfferCategoryRepository;
 use App\Repositories\PartnerOfferRepository;
 use App\Repositories\PriyojonRepository;
 use App\Traits\CrudTrait;
@@ -29,6 +29,10 @@ class PartnerOfferService extends ApiBaseService {
      * @var LoyaltyTierRepository
      */
     private $loyaltyTierRepository;
+    /**
+     * @var PartnerOfferCategoryRepository
+     */
+    private $partnerOfferCategoryRepository;
 
     /**
      * PartnerOfferService constructor.
@@ -38,11 +42,13 @@ class PartnerOfferService extends ApiBaseService {
     public function __construct(
         PartnerOfferRepository $partnerOfferRepository,
         PriyojonRepository $priyojonRepository,
-        LoyaltyTierRepository $loyaltyTierRepository
+        LoyaltyTierRepository $loyaltyTierRepository,
+        PartnerOfferCategoryRepository $partnerOfferCategoryRepository
     ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->priyojonRepository = $priyojonRepository;
         $this->loyaltyTierRepository = $loyaltyTierRepository;
+        $this->partnerOfferCategoryRepository = $partnerOfferCategoryRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
 
@@ -148,6 +154,13 @@ class PartnerOfferService extends ApiBaseService {
             return $value;
         }, $campaignOffers->toArray());
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
+    }
+
+    public function categoryOffers()
+    {
+        $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers();
+        $data = LoyaltyOfferCatResource::collection($offers);
+        return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }
 
     public function tierOffers($showInHome = false)

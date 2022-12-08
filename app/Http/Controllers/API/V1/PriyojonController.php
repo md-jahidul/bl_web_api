@@ -92,7 +92,12 @@ class PriyojonController extends Controller
         return $this->aboutPriyojonService->lmsAboutBanner($slug);
     }
 
-    public function orangeClubTierOffers()
+    public function loyaltyCatOffers()
+    {
+        return $this->partnerOfferService->categoryOffers();
+    }
+
+    public function loyaltyTierOffers()
     {
         return $this->partnerOfferService->tierOffers();
     }

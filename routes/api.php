@@ -110,7 +110,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
 
-    Route::get('loyalty-tier-offers', 'API\V1\PriyojonController@orangeClubTierOffers');
+    Route::get('loyalty-category-offers', 'API\V1\PriyojonController@loyaltyCatOffers');
+    Route::get('loyalty-tier-offers', 'API\V1\PriyojonController@loyaltyTierOffers');
 
     // CMS part
     Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
