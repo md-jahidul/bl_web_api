@@ -150,10 +150,14 @@ class PartnerOfferService extends ApiBaseService {
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
     }
 
-    public function tierOffers()
+    public function tierOffers($showInHome = false)
     {
-        $offers = $this->loyaltyTierRepository->offerByTier();
+        $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
         $data = OrangeClubTierResource::collection($offers);
+
+        if ($showInHome) {
+            return $data;
+        }
         return $this->sendSuccessResponse($data, 'Orange club offers');
     }
 
