@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\BlogResource;
+use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\AboutPage;
 use App\Models\AlSliderComponentType;
@@ -255,15 +257,9 @@ class HomeService extends ApiBaseService
 
     public function getOclaData($component){
         $data = $this->dummyRes($component,'Ocla');
-        $data['data'] = Ocla::get();
+        $data['data'] = OclaResource::collection(Ocla::get());
         return $data;
     }
-
-    public function getNeedData($component){
-        $data = $this->dummyRes($component,'Need Anything');
-        return $data;
-    }
-
 
     public function getFastForwardData($component){
         $data = $this->dummyRes($component,'Fast Forward');
@@ -272,14 +268,14 @@ class HomeService extends ApiBaseService
     }
 
     public function getCareerData($component){
-        $data = $this->dummyRes($component,'Ocla');
-        $data['data'] = Ocla::get();
+        $data = $this->dummyRes($component,'Carrer');
+        $data['data'] = [];
         return $data;
     }
 
     public function getBlogData($component){
         $data = $this->dummyRes($component,'Blog');
-        $data['data'] = Blog::get();
+        $data['data'] = BlogResource::collection(Blog::get());
         return $data;
     }
 
