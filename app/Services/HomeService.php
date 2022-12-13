@@ -36,6 +36,8 @@ class HomeService extends ApiBaseService
     private $ecarrerService;
     private $salesAndServicesService;
     private $aboutUsRepository;
+    private $businessTypeService;
+
 
 
 
@@ -54,6 +56,8 @@ class HomeService extends ApiBaseService
      * @param EcareerService $ecarrerService
      * @param SalesAndServicesService $salesAndServicesService
      * @param AboutUsRepository $aboutUsRepository
+     * @param BusinessTypeService $businessTypeService
+     *
      */
     public function __construct(
         SliderRepository $sliderRepository,
@@ -62,7 +66,8 @@ class HomeService extends ApiBaseService
         EcareerService $ecarrerService,
         SalesAndServicesService $salesAndServicesService,
         AboutUsRepository $aboutUsRepository,
-        PartnerOfferService $partnerOfferService
+        PartnerOfferService $partnerOfferService,
+        BusinessTypeService $businessTypeService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -71,8 +76,7 @@ class HomeService extends ApiBaseService
         $this->salesAndServicesService = $salesAndServicesService;
         $this->aboutUsRepository = $aboutUsRepository;
         $this->partnerOfferService = $partnerOfferService;
-
-
+        $this->businessTypeService = $businessTypeService;
     }
 
 
@@ -179,6 +183,7 @@ class HomeService extends ApiBaseService
     }
 
     public function getMultipleSliderData($id) {
+        echo '<br/>'.$id;
 //        $slider = AlSlider::find($id);
         $slider = $this->sliderRepository->findOne($id);
         $this->bindDynamicValues($slider);
@@ -197,7 +202,12 @@ class HomeService extends ApiBaseService
 //            $slider->data = PartnerOfferResource::collection($partnerOffers);
 //            dd($this->partnerOfferService->tierOffers(true));
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
-        } else {
+        }
+        else if($id == 13){
+            $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
+
+        }
+        else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
@@ -206,6 +216,7 @@ class HomeService extends ApiBaseService
     }
 
     public function factoryComponent($type, $id, $component) {
+
         $data = null;
         switch ($type) {
             case "slider_single":
