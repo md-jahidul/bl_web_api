@@ -20,6 +20,10 @@ class LoginLandingPageRepository extends BaseRepository
         $result = $this->model->where('key', 'login_page_banner')
                 ->orWhere('key', 'login_page_banner_alt_text')->get();
 
-        return [ 'banner' => ($result[0] ?? ''), 'text' => ($result[1] ?? '')];
+        $footer_settings = [];
+        foreach ($result as $settings) {
+            $footer_settings[$settings->key] = $settings->value;
+        }
+        return $footer_settings;
     }
 }

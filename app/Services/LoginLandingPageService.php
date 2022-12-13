@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\LoginLandingPageRepository;
+use Exception;
 
 class LoginLandingPageService extends ApiBaseService
 {
@@ -29,12 +30,8 @@ class LoginLandingPageService extends ApiBaseService
      */
     public function getLoginPageBanner()
     {
-        try {
-            $data = $this->loginLandingPageRepository->findLoginPageBanner();
-            return $this->sendSuccessResponse($data, 'Login Page Banner');
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), []);
-        }
+        $data = $this->loginLandingPageRepository->findLoginPageBanner();
+        return $this->sendSuccessResponse($data, 'Login Page Banner');
     }
 
 }

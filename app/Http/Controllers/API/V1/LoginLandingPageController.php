@@ -25,8 +25,7 @@ class LoginLandingPageController extends Controller
 
     public function getBanner(Request $request)
     {
-        $banner = $this->loginLandingPageService->getLoginPageBanner();
-        return $banner;
+        return $this->loginLandingPageService->getLoginPageBanner();
     }
 
 }
