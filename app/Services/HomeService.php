@@ -273,7 +273,6 @@ class HomeService extends ApiBaseService
 
     public function getFastForwardData($component){
         $data = $this->dummyRes($component,'Fast Forward');
-        $data['data'] = [];
         return $data;
     }
 
@@ -297,7 +296,7 @@ class HomeService extends ApiBaseService
 
     public function getMemoryData($component){
         $data = $this->dummyRes($component,'Memory');
-        $data['data'] = MediaTvcVideo::get();
+        $data['data'] = MediaTvcVideo::limit(3)->get();
         return $data;
     }
 
@@ -314,7 +313,7 @@ class HomeService extends ApiBaseService
     }
 
     private function dummyRes($component,$dummyName){
-        return collect([
+        $data = collect([
             "component" => $dummyName,
             "title_en" => $component->title_en ?? null,
             "title_bn" => $component->title_bn ?? null,
@@ -325,9 +324,13 @@ class HomeService extends ApiBaseService
             "label_bn" => $component->label_bn ?? null,
             "label_en" => $component->label_bn ?? null,
             "is_label_active" => $component->is_label_active ?? null,
-            "other_attributes" => $component->other_attributes ?? null ,
-            //"data" => $quickLaunchItems = $this->oclaService->itemList('panel')
         ]);
+        if ($component->other_attributes) {
+            foreach ($component->other_attributes as $key => $value) {
+                $data[$key] = $value;
+            }
+        }
+        return $data;
     }
     public function getComponents()
     {
