@@ -183,7 +183,6 @@ class HomeService extends ApiBaseService
     }
 
     public function getMultipleSliderData($id) {
-        echo '<br/>'.$id;
 //        $slider = AlSlider::find($id);
         $slider = $this->sliderRepository->findOne($id);
         $this->bindDynamicValues($slider);
