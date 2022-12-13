@@ -20,6 +20,7 @@ use App\Services\QuickLaunchService;
 use App\Services\SalesAndServicesService;
 use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
+use App\Repositories\BusinessTypeRepository;
 use DB;
 use Validator;
 use App\Services\EcareerService;

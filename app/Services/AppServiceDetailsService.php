@@ -225,7 +225,6 @@ class AppServiceDetailsService extends ApiBaseService
 	public function getDetails($slug)
     {
         $data = null;
-
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
 

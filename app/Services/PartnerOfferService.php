@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Http\Resources\OrangeClubTierOffers;
+use App\Http\Resources\OrangeClubTierOffersResource;
+use App\Http\Resources\OrangeClubTierResource;
 use App\Http\Resources\PartnerOfferResource;
+use App\Repositories\LoyaltyTierRepository;
 use App\Repositories\PartnerOfferRepository;
 use App\Repositories\PriyojonRepository;
 use App\Traits\CrudTrait;
@@ -21,6 +25,10 @@ class PartnerOfferService extends ApiBaseService {
      * @var $priyojonRepository
      */
     protected $priyojonRepository;
+    /**
+     * @var LoyaltyTierRepository
+     */
+    private $loyaltyTierRepository;
 
     /**
      * PartnerOfferService constructor.
@@ -29,10 +37,12 @@ class PartnerOfferService extends ApiBaseService {
      */
     public function __construct(
         PartnerOfferRepository $partnerOfferRepository,
-        PriyojonRepository $priyojonRepository
+        PriyojonRepository $priyojonRepository,
+        LoyaltyTierRepository $loyaltyTierRepository
     ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->priyojonRepository = $priyojonRepository;
+        $this->loyaltyTierRepository = $loyaltyTierRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
 
@@ -138,6 +148,17 @@ class PartnerOfferService extends ApiBaseService {
             return $value;
         }, $campaignOffers->toArray());
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
+    }
+
+    public function tierOffers($showInHome = false)
+    {
+        $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
+        $data = OrangeClubTierResource::collection($offers);
+
+        if ($showInHome) {
+            return $data;
+        }
+        return $this->sendSuccessResponse($data, 'Orange club offers');
     }
 
 }

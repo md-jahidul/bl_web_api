@@ -12,7 +12,7 @@ namespace App\Services;
 use App\Repositories\ComponentRepository;
 use App\Repositories\DynamicPageRepository;
 use App\Repositories\FooterMenuRepository;
-use App\Services\Assetlite\ComponentService;
+use App\Services\ComponentService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Contracts\Routing\ResponseFactory;
