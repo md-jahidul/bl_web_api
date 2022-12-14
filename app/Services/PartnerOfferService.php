@@ -55,7 +55,7 @@ class PartnerOfferService extends ApiBaseService {
         LoyaltyTierRepository $loyaltyTierRepository,
         PartnerOfferCategoryRepository $partnerOfferCategoryRepository,
         ComponentRepository $componentRepository,
-        LmsAboutBannerRepository $lmsAboutBannerRepository
+        lmsAboutBannerRepository $lmsAboutBannerRepository
     ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->priyojonRepository = $priyojonRepository;
@@ -194,5 +194,4 @@ class PartnerOfferService extends ApiBaseService {
         $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"], ['banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
         return $this->sendSuccessResponse($data, 'About loyalty components');
     }
-
 }
