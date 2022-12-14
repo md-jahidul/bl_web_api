@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
 use App\Services\AboutPageService;
+use App\Services\ComponentService;
 use App\Services\PartnerOfferService;
 use App\Services\PriyojonService;
 use Illuminate\Database\QueryException;
@@ -25,6 +26,10 @@ class PriyojonController extends Controller
      * @var PriyojonService
      */
     private $priyojonService;
+    /**
+     * @var ComponentService
+     */
+    private $componentService;
 
     /**
      * PriyojonController constructor.
@@ -35,11 +40,13 @@ class PriyojonController extends Controller
     public function __construct(
         PriyojonService $priyojonService,
         PartnerOfferService $partnerOfferService,
-        AboutPageService $aboutPriyojonService
+        AboutPageService $aboutPriyojonService,
+        ComponentService $componentService
     ) {
         $this->priyojonService = $priyojonService;
         $this->partnerOfferService = $partnerOfferService;
         $this->aboutPriyojonService = $aboutPriyojonService;
+        $this->componentService = $componentService;
     }
 
     /**
@@ -100,5 +107,10 @@ class PriyojonController extends Controller
     public function loyaltyTierOffers()
     {
         return $this->partnerOfferService->tierOffers();
+    }
+
+    public function aboutLoyalty()
+    {
+        return $this->partnerOfferService->getComponentByPageType('about_loyalty');
     }
 }
