@@ -101,4 +101,9 @@ class PriyojonController extends Controller
     {
         return $this->partnerOfferService->tierOffers();
     }
+
+    public function aboutLoyalty()
+    {
+        return $this->partnerOfferService->getComponentByPageType('about_loyalty');
+    }
 }

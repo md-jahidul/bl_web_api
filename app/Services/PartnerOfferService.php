@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Http\Resources\LoyaltyOfferCatResource;
 use App\Http\Resources\OrangeClubTierResource;
 use App\Http\Resources\PartnerOfferResource;
+use App\Repositories\ComponentRepository;
+use App\Repositories\LmsAboutBannerRepository;
 use App\Repositories\LoyaltyTierRepository;
 use App\Repositories\PartnerOfferCategoryRepository;
 use App\Repositories\PartnerOfferRepository;
@@ -33,6 +35,14 @@ class PartnerOfferService extends ApiBaseService {
      * @var PartnerOfferCategoryRepository
      */
     private $partnerOfferCategoryRepository;
+    /**
+     * @var ComponentRepository
+     */
+    private $componentRepository;
+    /**
+     * @var LmsAboutBannerRepository
+     */
+    private $lmsAboutBannerRepository;
 
     /**
      * PartnerOfferService constructor.
@@ -43,12 +53,16 @@ class PartnerOfferService extends ApiBaseService {
         PartnerOfferRepository $partnerOfferRepository,
         PriyojonRepository $priyojonRepository,
         LoyaltyTierRepository $loyaltyTierRepository,
-        PartnerOfferCategoryRepository $partnerOfferCategoryRepository
+        PartnerOfferCategoryRepository $partnerOfferCategoryRepository,
+        ComponentRepository $componentRepository,
+        lmsAboutBannerRepository $lmsAboutBannerRepository
     ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->priyojonRepository = $priyojonRepository;
         $this->loyaltyTierRepository = $loyaltyTierRepository;
         $this->partnerOfferCategoryRepository = $partnerOfferCategoryRepository;
+        $this->componentRepository = $componentRepository;
+        $this->lmsAboutBannerRepository = $lmsAboutBannerRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
 
@@ -174,4 +188,10 @@ class PartnerOfferService extends ApiBaseService {
         return $this->sendSuccessResponse($data, 'Orange club offers');
     }
 
+    public function getComponentByPageType($pageType)
+    {
+        $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
+        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"], ['banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
+        return $this->sendSuccessResponse($data, 'About loyalty components');
+    }
 }
