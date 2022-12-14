@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\BlogResource;
+use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\AboutPage;
 use App\Models\AlSliderComponentType;
@@ -34,6 +36,8 @@ class HomeService extends ApiBaseService
     private $ecarrerService;
     private $salesAndServicesService;
     private $aboutUsRepository;
+    private $businessTypeService;
+
 
 
 
@@ -52,6 +56,8 @@ class HomeService extends ApiBaseService
      * @param EcareerService $ecarrerService
      * @param SalesAndServicesService $salesAndServicesService
      * @param AboutUsRepository $aboutUsRepository
+     * @param BusinessTypeService $businessTypeService
+     *
      */
     public function __construct(
         SliderRepository $sliderRepository,
@@ -60,7 +66,8 @@ class HomeService extends ApiBaseService
         EcareerService $ecarrerService,
         SalesAndServicesService $salesAndServicesService,
         AboutUsRepository $aboutUsRepository,
-        PartnerOfferService $partnerOfferService
+        PartnerOfferService $partnerOfferService,
+        BusinessTypeService $businessTypeService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -69,8 +76,7 @@ class HomeService extends ApiBaseService
         $this->salesAndServicesService = $salesAndServicesService;
         $this->aboutUsRepository = $aboutUsRepository;
         $this->partnerOfferService = $partnerOfferService;
-
-
+        $this->businessTypeService = $businessTypeService;
     }
 
 
@@ -195,7 +201,12 @@ class HomeService extends ApiBaseService
 //            $slider->data = PartnerOfferResource::collection($partnerOffers);
 //            dd($this->partnerOfferService->tierOffers(true));
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
-        } else {
+        }
+        else if($id == 13){
+            $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
+
+        }
+        else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
         }
@@ -204,6 +215,7 @@ class HomeService extends ApiBaseService
     }
 
     public function factoryComponent($type, $id, $component) {
+
         $data = null;
         switch ($type) {
             case "slider_single":
@@ -255,31 +267,24 @@ class HomeService extends ApiBaseService
 
     public function getOclaData($component){
         $data = $this->dummyRes($component,'Ocla');
-        $data['data'] = Ocla::get();
+        $data['data'] = OclaResource::collection(Ocla::get());
         return $data;
     }
-
-    public function getNeedData($component){
-        $data = $this->dummyRes($component,'Need Anything');
-        return $data;
-    }
-
 
     public function getFastForwardData($component){
         $data = $this->dummyRes($component,'Fast Forward');
-        $data['data'] = [];
         return $data;
     }
 
     public function getCareerData($component){
-        $data = $this->dummyRes($component,'Ocla');
-        $data['data'] = Ocla::get();
+        $data = $this->dummyRes($component,'Carrer');
+        $data['data'] = [];
         return $data;
     }
 
     public function getBlogData($component){
         $data = $this->dummyRes($component,'Blog');
-        $data['data'] = Blog::get();
+        $data['data'] = BlogResource::collection(Blog::get());
         return $data;
     }
 
@@ -291,7 +296,7 @@ class HomeService extends ApiBaseService
 
     public function getMemoryData($component){
         $data = $this->dummyRes($component,'Memory');
-        $data['data'] = MediaTvcVideo::get();
+        $data['data'] = MediaTvcVideo::limit(3)->get();
         return $data;
     }
 
@@ -308,7 +313,7 @@ class HomeService extends ApiBaseService
     }
 
     private function dummyRes($component,$dummyName){
-        return collect([
+        $data = collect([
             "component" => $dummyName,
             "title_en" => $component->title_en ?? null,
             "title_bn" => $component->title_bn ?? null,
@@ -319,9 +324,13 @@ class HomeService extends ApiBaseService
             "label_bn" => $component->label_bn ?? null,
             "label_en" => $component->label_bn ?? null,
             "is_label_active" => $component->is_label_active ?? null,
-            "other_attributes" => $component->other_attributes ?? null ,
-            //"data" => $quickLaunchItems = $this->oclaService->itemList('panel')
         ]);
+        if ($component->other_attributes) {
+            foreach ($component->other_attributes as $key => $value) {
+                $data[$key] = $value;
+            }
+        }
+        return $data;
     }
     public function getComponents()
     {
@@ -337,11 +346,11 @@ class HomeService extends ApiBaseService
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
             }
-            $value = json_encode($homePageData);
-            //Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            //$value = Redis::get('al_home_components');
+            //$value = json_encode($homePageData);
+            Redis::setex('al_home_components', 3600, json_encode($homePageData));
+            $value = Redis::get('al_home_components');
         } else {
-            //$value = Redis::get('al_home_components');
+            $value = Redis::get('al_home_components');
         }
         $data = [
             'metatags' => $metainfo,
