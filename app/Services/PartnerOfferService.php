@@ -8,6 +8,7 @@ use App\Http\Resources\PartnerOfferResource;
 use App\Repositories\ComponentRepository;
 use App\Repositories\LmsAboutBannerRepository;
 use App\Repositories\LoyaltyTierRepository;
+use App\Repositories\PartnerAreaRepository;
 use App\Repositories\PartnerOfferCategoryRepository;
 use App\Repositories\PartnerOfferRepository;
 use App\Repositories\PriyojonRepository;
@@ -43,6 +44,10 @@ class PartnerOfferService extends ApiBaseService {
      * @var LmsAboutBannerRepository
      */
     private $lmsAboutBannerRepository;
+    /**
+     * @var PartnerAreaRepository
+     */
+    private $partnerAreaRepository;
 
     /**
      * PartnerOfferService constructor.
@@ -52,17 +57,19 @@ class PartnerOfferService extends ApiBaseService {
     public function __construct(
         PartnerOfferRepository $partnerOfferRepository,
         PriyojonRepository $priyojonRepository,
+        ComponentRepository $componentRepository,
+        lmsAboutBannerRepository $lmsAboutBannerRepository,
         LoyaltyTierRepository $loyaltyTierRepository,
         PartnerOfferCategoryRepository $partnerOfferCategoryRepository,
-        ComponentRepository $componentRepository,
-        lmsAboutBannerRepository $lmsAboutBannerRepository
+        PartnerAreaRepository $partnerAreaRepository
     ) {
         $this->partnerOfferRepository = $partnerOfferRepository;
         $this->priyojonRepository = $priyojonRepository;
-        $this->loyaltyTierRepository = $loyaltyTierRepository;
-        $this->partnerOfferCategoryRepository = $partnerOfferCategoryRepository;
         $this->componentRepository = $componentRepository;
         $this->lmsAboutBannerRepository = $lmsAboutBannerRepository;
+        $this->loyaltyTierRepository = $loyaltyTierRepository;
+        $this->partnerOfferCategoryRepository = $partnerOfferCategoryRepository;
+        $this->partnerAreaRepository = $partnerAreaRepository;
         $this->setActionRepository($partnerOfferRepository);
     }
 
@@ -193,5 +200,24 @@ class PartnerOfferService extends ApiBaseService {
         $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
         $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"], ['banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
         return $this->sendSuccessResponse($data, 'About loyalty components');
+    }
+
+    public function getFilterOption()
+    {
+        $data = [
+            'status'     => $this->loyaltyTierRepository->findByProperties(['status' => 1], ['title_en', 'title_bn', 'slug']),
+            'categories' => $this->partnerOfferCategoryRepository->findByProperties(['status' => 1],
+                [
+                    'name_en',
+                    'name_bn',
+                    'page_header',
+                    'page_header_bn',
+                    'schema_markup',
+                    'url_slug_en',
+                    'url_slug_bn',
+                ]),
+            'area'       => $this->partnerAreaRepository->findByProperties([], ['area_en', 'area_bn']),
+        ];
+        return $this->sendSuccessResponse($data, 'All loyalty filter options');
     }
 }

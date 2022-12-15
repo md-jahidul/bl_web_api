@@ -113,6 +113,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('loyalty-category-offers', 'API\V1\PriyojonController@loyaltyCatOffers');
     Route::get('loyalty-tier-offers', 'API\V1\PriyojonController@loyaltyTierOffers');
     Route::get('about-loyalty', 'API\V1\PriyojonController@aboutLoyalty');
+    Route::get('loyalty/filter-options', 'API\V1\PriyojonController@filterOptions');
 
     // CMS part
     Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
