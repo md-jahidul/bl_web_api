@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\BlogResource;
 use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
+use App\Http\Resources\ShortcodeResource;
 use App\Models\AboutPage;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
@@ -90,7 +91,7 @@ class HomeService extends ApiBaseService
         unset($obj->{ $json_data });
     }
 
-    public function getSliderData($id) {
+    public function getSliderData($id,$component) {
         $slider = $this->sliderRepository->findOne($id);
 //        dd($slider);
 
@@ -115,6 +116,7 @@ class HomeService extends ApiBaseService
 
     public function makeResource($requests, $component) { {
         $result = [];
+
         foreach ($requests as $request) {
             $data = [];
 
@@ -124,46 +126,51 @@ class HomeService extends ApiBaseService
                 $data['url_slug'] = $bnsModel->url_slug;
                 $data['url_slug_bn'] = $bnsModel->url_slug_bn;
             }
+            // if ($component == "Ocla") {
+            //     echo $component;
+            //     $result =  new ShortcodeResource($component);
+            // }
+            else{
+
+                $data["id"] = $request->id ?? null;
+                $data["slider_id"] = $request->slider_id ?? null;
+                $data["title_en"] = $request->title_en ?? null;
+                $data["title_bn"] = $request->title_bn ?? null;
+                $data["description_bn"] = $request->description_bn ?? null;
+                $data["description_en"] = $request->description_en ?? null;
+
+                $data["start_date"] = $request->start_date ?? null;
+                $data["end_date"] = $request->end_date ?? null;
+                $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
+                $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
+                $data["alt_text"] = $request->alt_text ?? null;
+                $data["display_order"] = $request->display_order ?? null;
+                $data["is_active"] = $request->is_active ?? null;
 
 
-            $data["id"] = $request->id ?? null;
-            $data["slider_id"] = $request->slider_id ?? null;
-            $data["title_en"] = $request->title_en ?? null;
-            $data["title_bn"] = $request->title_bn ?? null;
-            $data["description_bn"] = $request->description_bn ?? null;
-            $data["description_en"] = $request->description_en ?? null;
 
-            $data["start_date"] = $request->start_date ?? null;
-            $data["end_date"] = $request->end_date ?? null;
-            $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
-            $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
-            $data["alt_text"] = $request->alt_text ?? null;
-            $data["display_order"] = $request->display_order ?? null;
-            $data["is_active"] = $request->is_active ?? null;
-
-
-
-            if ($request->other_attributes) {
-                foreach ($request->other_attributes as $key => $value) {
-                    $data[$key] = $value;
+                if ($request->other_attributes) {
+                    foreach ($request->other_attributes as $key => $value) {
+                        $data[$key] = $value;
+                    }
                 }
-            }
 
-            array_push($result, (object) $data);
+                array_push($result, (object) $data);
+            }
         }
         return $result;
     }
     }
 
     public function getQuickLaunchData($component) {
-        return [
-            "component" => "QuickLaunch",
-            "title_en" => $component->title_en ?? null,
-            "title_bn" => $component->title_bn ?? null,
-            "description_en" => $component->description_en ?? null,
-            "deccription_bn" => $component->deccription_bn ?? null,
-            "data" => $quickLaunchItems = $this->quickLaunchService->itemList('panel')
-        ];
+        $component = Shortcode::findOrFail($component->id);
+        if ($component->other_attributes) {
+            foreach ($component->other_attributes as $key => $value) {
+                $component[$key] = $value;
+            }
+        }
+        $component['data'] = $this->quickLaunchService->itemList('panel');
+        return $component;
     }
 
     public function getSalesServiceData() {
@@ -219,7 +226,7 @@ class HomeService extends ApiBaseService
         $data = null;
         switch ($type) {
             case "slider_single":
-                $data = $this->getSliderData($id);
+                $data = $this->getSliderData($id,$component);
                 break;
             case "recharge":
                 $data = $this->getRechargeData();
@@ -233,8 +240,8 @@ class HomeService extends ApiBaseService
             case "sales_service":
                 $data = $this->getSalesServiceData();
                 break;
-            case "ocla":
-                $data = $this->getOclaData($component);
+            // case "ocla":
+            //     $data = $this->getOclaData($component);
                 break;
             case "map_view":
                 $data = $this->getMapViewData($component);
@@ -265,66 +272,55 @@ class HomeService extends ApiBaseService
     }
 
 
-    public function getOclaData($component){
-        $data = $this->dummyRes($component,'Ocla');
-        $data['data'] = OclaResource::collection(Ocla::get());
-        return $data;
-    }
+    // public function getOclaData($component){
+    //     $data = $this->dummyRes($component);
+    //     $data['data'] = OclaResource::collection(Ocla::get());
+    //     return $data;
+    // }
 
     public function getFastForwardData($component){
-        $data = $this->dummyRes($component,'Fast Forward');
+        $data = $this->dummyRes($component);
         return $data;
     }
 
     public function getCareerData($component){
-        $data = $this->dummyRes($component,'Carrer');
+        $data = $this->dummyRes($component);
         $data['data'] = [];
         return $data;
     }
 
     public function getBlogData($component){
-        $data = $this->dummyRes($component,'Blog');
+        $data = $this->dummyRes($component);
         $data['data'] = BlogResource::collection(Blog::get());
         return $data;
     }
 
     public function getAboutData($component){
-        $data = $this->dummyRes($component,'About');
+        $data = $this->dummyRes($component);
         $data['data'] =  $this->aboutUsRepository->getAboutBanglalink();
         return $data;
     }
 
     public function getMemoryData($component){
-        $data = $this->dummyRes($component,'Memory');
+        $data = $this->dummyRes($component);
         $data['data'] = MediaTvcVideo::limit(3)->get();
         return $data;
     }
 
     public function getSuperAppLandingData($component){
-        $data = $this->dummyRes($component,'Super App');
+        $data = $this->dummyRes($component);
         $data['data'] = [];
         return $data;
     }
 
     public function getMapViewData($component){
-        $data = $this->dummyRes($component,'Map View');
+        $data = $this->dummyRes($component);
         $data['data'] = [];
         return $data;
     }
 
-    private function dummyRes($component,$dummyName){
-        $data = collect([
-            "component" => $dummyName,
-            "title_en" => $component->title_en ?? null,
-            "title_bn" => $component->title_bn ?? null,
-            "description_en" => $component->description_en ?? null,
-            "deccription_bn" => $component->deccription_bn ?? null,
-            "link_en" => $component->link_en ?? null,
-            "link_bn" => $component->link_bn ?? null,
-            "label_bn" => $component->label_bn ?? null,
-            "label_en" => $component->label_bn ?? null,
-            "is_label_active" => $component->is_label_active ?? null,
-        ]);
+    private function dummyRes($component){
+        $data = Shortcode::findOrFail($component->id);
         if ($component->other_attributes) {
             foreach ($component->other_attributes as $key => $value) {
                 $data[$key] = $value;
@@ -340,17 +336,16 @@ class HomeService extends ApiBaseService
             ->get();
         $metainfo = MetaTag::where('page_id', 1)
             ->first()->toArray();
-
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
             }
-            //$value = json_encode($homePageData);
-            Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            $value = Redis::get('al_home_components');
+            $value = json_encode($homePageData);
+            //Redis::setex('al_home_components', 3600, json_encode($homePageData));
+            //$value = Redis::get('al_home_components');
         } else {
-            $value = Redis::get('al_home_components');
+            //$value = Redis::get('al_home_components');
         }
         $data = [
             'metatags' => $metainfo,
