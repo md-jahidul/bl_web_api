@@ -183,4 +183,9 @@ class ProductController extends Controller
     {
         return $this->productService->findCustomerProducts($request);
     }
+
+    public function preSetRechargeAmount()
+    {
+        return $this->productService->preSetRechargeAmount();
+    }
 }
