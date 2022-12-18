@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Models\MyBlProductTab;
+use App\Repositories\ConfigRepository;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -67,6 +68,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var ConfigRepository
+     */
+    private $configRepository;
 
     /**
      * ProductService constructor.
@@ -88,9 +93,9 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
-    )
-    {
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        ConfigRepository $configRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
@@ -100,6 +105,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->configRepository = $configRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -234,7 +240,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -242,12 +248,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -257,7 +263,7 @@ class ProductService extends ApiBaseService
             }
 
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,7 +272,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -284,7 +290,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -588,7 +594,20 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
+    }
+
+    public function preSetRechargeAmount()
+    {
+        $defaultAmount = [20, 30, 50, 100, 150, 200];
+        $data = $this->configRepository->findOneByProperties(['key' => 'recharge_pre_set_amount'], ['key', 'value']);
+
+        if (isset($data)) {
+            $data = array_map('intval', explode(',', $data->value));
+        } else {
+            $data = $defaultAmount;
+        }
+        return $this->sendSuccessResponse($data, "Recharge preset amount");
     }
 }

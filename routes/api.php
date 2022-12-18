@@ -64,6 +64,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');
     Route::get('recharge-offers', 'API\V1\ProductController@rechargeOffers');
 
+    Route::get('recharge/pre-set-amount', 'API\V1\ProductController@preSetRechargeAmount');
+
 
     Route::post('ssl', 'API\V1\SslCommerzController@ssl');
     Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
@@ -313,6 +315,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
+
 });
 
 
