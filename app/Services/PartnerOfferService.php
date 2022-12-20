@@ -187,6 +187,7 @@ class PartnerOfferService extends ApiBaseService {
     public function tierOffers($showInHome = false)
     {
         $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
+
         $data = OrangeClubTierResource::collection($offers);
 
         if ($showInHome) {
@@ -198,7 +199,8 @@ class PartnerOfferService extends ApiBaseService {
     public function getComponentByPageType($pageType)
     {
         $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
-        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"], ['banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
+        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"],
+            ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
         return $this->sendSuccessResponse($data, 'About loyalty components');
     }
 

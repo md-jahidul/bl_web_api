@@ -21,8 +21,11 @@ class OrangeClubTierOffersResource extends JsonResource
             'offer_unit' => $this->offer_unit,
             'offer_value' => $this->offer_value,
             'offer_scale' => $this->offer_scale,
+            'partner_logo' => $this->partner->company_logo ?? null,
             'partner_name_en' => $this->partner->company_name_en ?? null,
             'partner_name_bn' => $this->partner->company_name_bn ?? null,
+            'category_tag_en' => $this->offer_category->name_en ?? null,
+            'category_tag_bn' => $this->offer_category->name_bn ?? null,
         ];
     }
 }
