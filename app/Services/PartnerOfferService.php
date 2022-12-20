@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\LoyaltyOfferCatResource;
 use App\Http\Resources\OrangeClubTierResource;
+use App\Http\Resources\PartnerOfferDetailsResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Repositories\ComponentRepository;
 use App\Repositories\LmsAboutBannerRepository;
@@ -187,8 +188,8 @@ class PartnerOfferService extends ApiBaseService {
     public function tierOffers($showInHome = false)
     {
         $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
-        $data = OrangeClubTierResource::collection($offers);
 
+        $data = OrangeClubTierResource::collection($offers);
         if ($showInHome) {
             return $data;
         }
@@ -198,7 +199,8 @@ class PartnerOfferService extends ApiBaseService {
     public function getComponentByPageType($pageType)
     {
         $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
-        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"], ['banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
+        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"],
+            ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
         return $this->sendSuccessResponse($data, 'About loyalty components');
     }
 
@@ -219,5 +221,12 @@ class PartnerOfferService extends ApiBaseService {
             'area'       => $this->partnerAreaRepository->findByProperties([], ['area_en', 'area_bn']),
         ];
         return $this->sendSuccessResponse($data, 'All loyalty filter options');
+    }
+
+    public function partnerOfferDetails($slug)
+    {
+        $offerDetails = $this->partnerOfferRepository->offerDetails($slug);
+        $data = PartnerOfferDetailsResource::make(collect($offerDetails));
+        return $this->sendSuccessResponse($data, 'Orange club offers details');
     }
 }

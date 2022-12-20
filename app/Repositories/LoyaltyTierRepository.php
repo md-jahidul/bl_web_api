@@ -39,6 +39,7 @@ class LoyaltyTierRepository extends BaseRepository
                     $q->where('show_in_home', 1);
                 }
                 $q->select(
+                    'id',
                     'partner_id',
                     'partner_category_id',
                     'loyalty_tier_id',
@@ -49,8 +50,12 @@ class LoyaltyTierRepository extends BaseRepository
                     'offer_value',
                     'offer_scale'
                 )
-                ->with([ 'partner' => function ($q){
-                    $q->select('id', 'company_name_en', 'company_name_bn');
+                ->with([
+                    'offer_category' => function($q){
+                        $q->select('id', 'name_en', 'name_bn');
+                    },
+                    'partner' => function ($q){
+                    $q->select('id', 'company_logo', 'company_name_en', 'company_name_bn');
                 }]);
             }])
             ->get();
