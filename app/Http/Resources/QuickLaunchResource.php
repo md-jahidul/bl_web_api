@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Http\Resources;
-
+use App\Traits\BindAttributeTrait;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuickLaunchResource extends JsonResource
 {
+    use BindAttributeTrait;
     /**
      * Transform the resource into an array.
      *
@@ -14,7 +15,7 @@ class QuickLaunchResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $arr = [
             "id" =>  $this->id ?? null,
             "title_en" => $this->title_en ?? null,
             "title_bn" => $this->title_bn ?? null,
@@ -26,6 +27,10 @@ class QuickLaunchResource extends JsonResource
             "slug" => $this->slug ?? null,
             "status"  => $this->status ?? null ,
             "display_order" => $this->display_order ?? null ,
+           // "other_attributes" => $this->other_attributes ?? null
         ];
+        $data = $this->bindAttribute($this,$arr);
+        //dd($data);
+        return $data;
     }
 }
