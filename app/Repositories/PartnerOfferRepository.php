@@ -131,16 +131,44 @@ class PartnerOfferRepository extends BaseRepository {
                 'po.btn_text_bn',
                 'po.alt_text_en',
                 'po.alt_text_bn',
-
                 'po.url_slug',
                 'po.url_slug_bn',
                 'po.other_attributes',
-
                 'p.company_name_en',
                 'p.company_name_bn',
                 'p.company_logo'
             )
             ->orderBy('po.display_order')
             ->get();
+    }
+
+    public function offerDetails($slug) {
+        return DB::table('partner_offers as po')
+            ->where('po.is_active', 1)
+            ->where('po.url_slug', $slug)
+            ->orWhere('po.url_slug_bn', $slug)
+            ->orWhere('po.id', $slug)
+            ->join('partners as p', 'po.partner_id', '=', 'p.id')
+            ->LeftJoin('partner_offer_details as pod', 'pod.partner_offer_id', '=', 'po.id')
+            ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
+            ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+            ->select('po.*', 'a.area_en', 'a.area_bn', 'p.company_website', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo',
+                'pc.name_en AS offer_type_en',
+                'pc.name_bn AS offer_type_bn',
+                'pc.page_header',
+                'pc.page_header_bn',
+                'pc.schema_markup',
+                'pc.url_slug_en',
+                'pc.url_slug_bn',
+                'offer_details_en',
+                'offer_details_bn',
+                'avail_en',
+                'avail_bn',
+                'banner_image_url',
+                'eligible_customer_en',
+                'eligible_customer_bn'
+            )
+            ->orderBy('po.display_order')
+            ->first();
     }
 }

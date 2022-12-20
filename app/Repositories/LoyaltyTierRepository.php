@@ -51,13 +51,12 @@ class LoyaltyTierRepository extends BaseRepository
                     'offer_scale'
                 )
                 ->with([
-                        'offer_category' => function($q){
-                            $q->select('id', 'name_en', 'name_bn');
-                        },
-                        'partner' => function ($q){
-                        $q->select('id', 'company_logo', 'company_name_en', 'company_name_bn');
-                    }
-                ]);
+                    'offer_category' => function($q){
+                        $q->select('id', 'name_en', 'name_bn');
+                    },
+                    'partner' => function ($q){
+                    $q->select('id', 'company_logo', 'company_name_en', 'company_name_bn');
+                }]);
             }])
             ->get();
     }

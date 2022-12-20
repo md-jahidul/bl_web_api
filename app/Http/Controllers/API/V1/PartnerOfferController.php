@@ -9,6 +9,7 @@ use App\Models\ProductDetail;
 use App\Models\SimCategory;
 use App\Models\Tag;
 use App\Models\TagCategory;
+use App\Services\PartnerOfferService;
 use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -20,18 +21,13 @@ use DB;
 use Carbon\Carbon;
 
 class PartnerOfferController extends Controller {
+    /**
+     * @var PartnerOfferService
+     */
+    private $partnerOfferService;
 
-    use FileTrait;
-
-    protected $response = [];
-
-    public function __construct() {
-        $this->response = [
-            'status' => 200,
-            'success' => true,
-            'message' => 'Data Found!',
-            'data' => []
-        ];
+    public function __construct(PartnerOfferService $partnerOfferService) {
+        $this->partnerOfferService = $partnerOfferService;
     }
 
     public function getPartnerOffersData() {
@@ -55,29 +51,73 @@ class PartnerOfferController extends Controller {
     }
 
     /**
-     * @param $products
+     * @param $slug
      * @return array
      */
-    public function offerDetails($slug) {
-        try {
-            $productDetail = PartnerOffer::select('partner_offers.*', 'a.area_en', 'a.area_bn', 'p.company_name_en', 'p.company_name_bn')
-                    ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
-                    ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
-                    ->where('partner_offers.url_slug', $slug)
-                    ->orWhere('partner_offers.url_slug_bn', $slug)
-                    ->orWhere('partner_offers.id', $slug)
-                    ->with(['partner_offer_details', 'partner' => function ($query) {
-                            $query->select([
-                                'id',
-                                'contact_person_mobile',
-                                'company_address',
-                                'company_website',
-                                'google_play_link',
-                                'apple_app_store_link']);
-                        }])
-                    ->first();
+    public function offerDetails($slug): array
+    {
+        return $this->partnerOfferService->partnerOfferDetails($slug);
+        /*        try {
+            $productDetail = PartnerOffer::
+            select(
+                'id',
+                'partner_id',
+                'partner_category_id',
+                'loyalty_tier_id',
+                'card_img',
+                'validity_en',
+                'validity_bn',
+                'offer_unit',
+                'offer_value',
+                'offer_scale'
+            )
+            ->with([
+                'partner_offer_details' => function($q){
+//                    $q->select('id', 'name_en', 'name_bn');
+                },
+                'offer_category' => function($q){
+                    $q->select('id', 'name_en', 'name_bn');
+                },
+                'partner' => function ($q){
+                    $q->select('id', 'company_logo', 'company_name_en', 'company_name_bn');
+                }
+            ])
+            ->first();
+
+
+            $productDetail = PartnerOffer::
+            select(
+                'partner_offers.*',
+                'a.area_en',
+                'a.area_bn',
+                'p.company_name_en',
+                'p.company_name_bn',
+                'pc.name_en',
+                'pc.name_bn'
+            )
+            ->LeftJoin('partner_area_list as a', 'partner_offers.area_id', '=', 'a.id')
+            ->LeftJoin('partners as p', 'p.id', '=', 'partner_offers.partner_id')
+            ->LeftJoin('partner_categories as pc', 'pc.id', '=', 'partner_offers.partner_category_id')
+            ->where('partner_offers.url_slug', $slug)
+            ->orWhere('partner_offers.url_slug_bn', $slug)
+            ->orWhere('partner_offers.id', $slug)
+            ->with([
+                'partner_offer_details',
+                'offer_category' => function($q){
+                    $q->select('id', 'name_en', 'name_bn');
+                },
+                'partner' => function ($query) {
+                    $query->select([
+                        'id',
+                        'contact_person_mobile',
+                        'company_address',
+                        'company_website',
+                        'google_play_link',
+                        'apple_app_store_link']);
+                }])
+            ->first();
+
             $data = [];
-//            dd($productDetail);
             if (isset($productDetail)) {
                 $data['id'] = $productDetail->id;
                 $data['company_name_en'] = $productDetail->company_name_en;
@@ -126,8 +166,10 @@ class PartnerOfferController extends Controller {
                 $data['apple_app_store_link'] = $productDetail->partner->apple_app_store_link;
                 $data['google_play_link'] = $productDetail->partner->google_play_link;
                 $data['company_website'] = $productDetail->partner->company_website;
-                $data['map_link'] = $productDetail->map_link;
-                $data['like'] = $productDetail->like;
+                $data['category_tag_en'] = $productDetail->partner->name_en;
+                $data['category_tag_bn'] = $productDetail->partner->name_bn;
+//                $data['map_link'] = $productDetail->map_link;
+//                $data['like'] = $productDetail->like;
 
                 return response()->success($data, 'Data Found!');
             }
@@ -135,7 +177,7 @@ class PartnerOfferController extends Controller {
             return response()->error('Data Not Found!');
         } catch (QueryException $e) {
             return response()->error('Data Not Found!', $e);
-        }
+        }*/
     }
 
 }

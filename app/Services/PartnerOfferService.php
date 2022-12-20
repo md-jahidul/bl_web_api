@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\LoyaltyOfferCatResource;
 use App\Http\Resources\OrangeClubTierResource;
+use App\Http\Resources\PartnerOfferDetailsResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Repositories\ComponentRepository;
 use App\Repositories\LmsAboutBannerRepository;
@@ -189,7 +190,6 @@ class PartnerOfferService extends ApiBaseService {
         $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
 
         $data = OrangeClubTierResource::collection($offers);
-
         if ($showInHome) {
             return $data;
         }
@@ -221,5 +221,12 @@ class PartnerOfferService extends ApiBaseService {
             'area'       => $this->partnerAreaRepository->findByProperties([], ['area_en', 'area_bn']),
         ];
         return $this->sendSuccessResponse($data, 'All loyalty filter options');
+    }
+
+    public function partnerOfferDetails($slug)
+    {
+        $offerDetails = $this->partnerOfferRepository->offerDetails($slug);
+        $data = PartnerOfferDetailsResource::make(collect($offerDetails));
+        return $this->sendSuccessResponse($data, 'Orange club offers details');
     }
 }
