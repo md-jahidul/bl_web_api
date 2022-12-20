@@ -54,7 +54,7 @@ class PartnerOfferController extends Controller {
      * @param $slug
      * @return array
      */
-    public function offerDetails($slug): array
+    public function offerDetails($slug)
     {
         return $this->partnerOfferService->partnerOfferDetails($slug);
         /*        try {
