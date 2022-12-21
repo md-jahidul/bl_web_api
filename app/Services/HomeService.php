@@ -92,7 +92,7 @@ class HomeService extends ApiBaseService
     }
 
     public function getSliderData($id,$shortCode) {
-
+        //dd($shortCode);
         $slider = $this->sliderRepository->findOne($id);
 //        dd($slider);
 
@@ -108,8 +108,9 @@ class HomeService extends ApiBaseService
 
         $slider_images = $this->makeResource($slider_images, $component);
 
-        $this->bindDynamicValues($slider);
+        //$this->bindDynamicValues($slider);
 
+        $this->bindDynamicValues($shortCode);
         $slider->component = $component;
         //$slider->data = $slider_images;
         $shortCode->data = $slider_images;
