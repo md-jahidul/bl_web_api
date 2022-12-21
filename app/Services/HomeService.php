@@ -144,8 +144,8 @@ class HomeService extends ApiBaseService
 
                 $data["start_date"] = $request->start_date ?? null;
                 $data["end_date"] = $request->end_date ?? null;
-                $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
-                $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
+                $data["image_url"] = $request->image_url;
+                $data["mobile_view_img"] = ($request->mobile_view_img) ? $request->mobile_view_img : null;
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
