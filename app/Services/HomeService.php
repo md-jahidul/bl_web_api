@@ -193,13 +193,15 @@ class HomeService extends ApiBaseService
         ];
     }
 
-    public function getMultipleSliderData($id) {
+    public function getMultipleSliderData($id,$shortCode) {
 //        $slider = AlSlider::find($id);
-        $slider = $this->sliderRepository->findOne($id);
-        $this->bindDynamicValues($slider);
+        //$slider = $this->sliderRepository->findOne($id);
+        //$this->bindDynamicValues($slider);
+        $slider = $shortCode;
+        $this->bindDynamicValues($shortCode);
 
-        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
-
+        //$slider->component = AlSliderComponentType::find($slider->component_id)->slug;
+        //$slider = $shortCode;
         if ($id == 4) {
 //            $partnerOffers = DB::table('partner_offers as po')
 //                ->where('po.show_in_home', 1)
@@ -214,6 +216,7 @@ class HomeService extends ApiBaseService
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
         }
         else if($id == 13){
+            //$slider = $shortCode;
             $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
 
         }
@@ -239,13 +242,10 @@ class HomeService extends ApiBaseService
                 $data = $this->getQuickLaunchData($component);
                 break;
             case "slider_multiple":
-                $data = $this->getMultipleSliderData($id);
+                $data = $this->getMultipleSliderData($id,$component);
                 break;
             case "sales_service":
                 $data = $this->getSalesServiceData();
-                break;
-            // case "ocla":
-            //     $data = $this->getOclaData($component);
                 break;
             case "map_view":
                 $data = $this->getMapViewData($component);
