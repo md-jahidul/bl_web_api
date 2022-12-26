@@ -26,7 +26,7 @@ class CustomerPackageService extends BaseService
 
     private function getPackageInfoUrl($customer_id)
     {
-        return self::CUSTOMER_PACKAGE_API_ENDPOINT . '/' . $customer_id . '/package';
+        return self::CUSTOMER_PACKAGE_API_ENDPOINT . '/' . $customer_id . '/packages';
     }
 
     public function getPackageInfo($customer_id)
