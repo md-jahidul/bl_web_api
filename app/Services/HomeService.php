@@ -92,7 +92,7 @@ class HomeService extends ApiBaseService
     }
 
     public function getSliderData($id,$shortCode) {
-
+        //dd($shortCode);
         $slider = $this->sliderRepository->findOne($id);
 //        dd($slider);
 
@@ -108,8 +108,9 @@ class HomeService extends ApiBaseService
 
         $slider_images = $this->makeResource($slider_images, $component);
 
-        $this->bindDynamicValues($slider);
+        //$this->bindDynamicValues($slider);
 
+        $this->bindDynamicValues($shortCode);
         $slider->component = $component;
         //$slider->data = $slider_images;
         $shortCode->data = $slider_images;
@@ -144,8 +145,8 @@ class HomeService extends ApiBaseService
 
                 $data["start_date"] = $request->start_date ?? null;
                 $data["end_date"] = $request->end_date ?? null;
-                $data["image_url"] = config('filesystems.image_host_url') . $request->image_url;
-                $data["mobile_view_img"] = ($request->mobile_view_img) ? config('filesystems.image_host_url') . $request->mobile_view_img : null;
+                $data["image_url"] = $request->image_url;
+                $data["mobile_view_img"] = ($request->mobile_view_img) ? $request->mobile_view_img : null;
                 $data["alt_text"] = $request->alt_text ?? null;
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
@@ -192,13 +193,15 @@ class HomeService extends ApiBaseService
         ];
     }
 
-    public function getMultipleSliderData($id) {
+    public function getMultipleSliderData($id,$shortCode) {
 //        $slider = AlSlider::find($id);
-        $slider = $this->sliderRepository->findOne($id);
-        $this->bindDynamicValues($slider);
+        //$slider = $this->sliderRepository->findOne($id);
+        //$this->bindDynamicValues($slider);
+        $slider = $shortCode;
+        $this->bindDynamicValues($shortCode);
 
-        $slider->component = AlSliderComponentType::find($slider->component_id)->slug;
-
+        //$slider->component = AlSliderComponentType::find($slider->component_id)->slug;
+        //$slider = $shortCode;
         if ($id == 4) {
 //            $partnerOffers = DB::table('partner_offers as po')
 //                ->where('po.show_in_home', 1)
@@ -213,6 +216,7 @@ class HomeService extends ApiBaseService
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
         }
         else if($id == 13){
+            //$slider = $shortCode;
             $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
 
         }
@@ -238,13 +242,10 @@ class HomeService extends ApiBaseService
                 $data = $this->getQuickLaunchData($component);
                 break;
             case "slider_multiple":
-                $data = $this->getMultipleSliderData($id);
+                $data = $this->getMultipleSliderData($id,$component);
                 break;
             case "sales_service":
                 $data = $this->getSalesServiceData();
-                break;
-            // case "ocla":
-            //     $data = $this->getOclaData($component);
                 break;
             case "map_view":
                 $data = $this->getMapViewData($component);
