@@ -15,7 +15,7 @@ class AlBannerResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id ?? null,
+            // 'id' => $this->id ?? null,
             'section_id' => $this->section_id ?? null,
             'section_type' => $this->section_type ?? null,
             'title_en' => $this->title_en ?? null,
@@ -24,10 +24,10 @@ class AlBannerResource extends JsonResource
             'desc_bn' => $this->desc_bn ?? null,
             'alt_text_en' => $this->alt_text_en ?? null,
             'alt_text_bn' => $this->alt_text_bn ?? null,
-            'image' => (!empty($this->image)) ? config("filesystems.image_host_url") . $this->image : null,
+            'image' => (!empty($this->image)) ? $this->image : null,
             'image_name_en' => $this->image_name_en ?? null,
             'image_name_bn' => $this->image_name_bn ?? null,
-            'other_attributes' => $this->other_attributes ?? null,
+            'other_attributes' => json_decode($this->other_attributes) ?? null,
         ];
     }
 }
