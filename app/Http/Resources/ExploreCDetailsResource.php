@@ -17,7 +17,7 @@ class ExploreCDetailsResource extends JsonResource
         // return parent::toArray($request);
 
         return [
-            'id' => $this->id ?? null,
+            // 'id' => $this->id ?? null,
             'section_details_id' => $this->section_details_id ?? null,
             'page_type' => $this->page_type ?? null,
             'component_type' => $this->component_type ?? null,
@@ -27,11 +27,11 @@ class ExploreCDetailsResource extends JsonResource
             'editor_bn' => $this->editor_bn ?? null,
             'extra_title_bn' => $this->extra_title_bn ?? null,
             'extra_title_en' => $this->extra_title_en ?? null,
-            'image' => (!empty($this->image)) ? config("filesystems.image_host_url") . $this->image : null,
+            'image' => (!empty($this->image)) ? $this->image : null,
             'alt_text' => $this->img_alt_en ?? null,
             'alt_text' => $this->img_alt_bn ?? null,
             'multiple_attributes' => $this->multiple_attributes ?? null,
-            'other_attributes' => $this->end_date ?? null,
+            // 'other_attributes' => $this->other_attributes ?? null,
             'component_order' => $this->component_order ?? null,
             // 'status' => $this->status ?? null,
             // 'details_url' => route('explore-c-details', ['explore_c_id' => $this->id]),

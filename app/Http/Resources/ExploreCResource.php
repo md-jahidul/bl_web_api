@@ -17,25 +17,27 @@ class ExploreCResource extends JsonResource
         // return parent::toArray($request);
 
         return [
-            'id' => $this->id ?? null,
+            // 'id' => $this->id ?? null,
             'title_en' => $this->title_en ?? null,
             'title_bn' => $this->title_bn ?? null,
             'short_desc_en' => $this->short_desc_en ?? null,
             'short_desc_bn' => $this->short_desc_bn ?? null,
             'button_lable_en' => $this->button_lable_en ?? null,
             'button_lable_bn' => $this->button_lable_bn ?? null,
-            'button_url_en' => route('explore-c-details', ['explore_c_slug' => $this->slug_en]) ?? null,
-            'button_url_bn' => route('explore-c-details', ['explore_c_slug' => $this->slug_bn]) ?? null,
-            'image' => (!empty($this->image)) ? config("filesystems.image_host_url") . $this->image : null,
-            'image_mobile' => (!empty($this->image_mobile)) ? config("filesystems.image_host_url") . $this->image_mobile : null,
+            'button_url_en' => 'explore-c-details/'.$this->slug_en,
+            'button_url_bn' => 'explore-c-details/'.$this->slug_bn,
+            // 'button_url_en' => route('explore-c-details', ['explore_c_slug' => $this->slug_en]) ?? null,
+            // 'button_url_bn' => route('explore-c-details', ['explore_c_slug' => $this->slug_bn]) ?? null,
+            'image' => (!empty($this->image)) ? $this->image : null,
+            'image_mobile' => (!empty($this->image_mobile)) ? $this->image_mobile : null,
             'img_alt_en' => $this->img_alt_en ?? null,
             'img_alt_bn' => $this->img_alt_bn ?? null,
             'img_name_en' => $this->img_name_en ?? null,
             'img_name_bn' => $this->img_name_bn ?? null,
-            'start_date' => $this->start_date ?? null,
-            'end_date' => $this->end_date ?? null,
+            // 'start_date' => $this->start_date ?? null,
+            // 'end_date' => $this->end_date ?? null,
             'display_order' => $this->display_order ?? null,
-            'status' => $this->status ?? null,
+            // 'status' => $this->status ?? null,
         ];
     }
 }
