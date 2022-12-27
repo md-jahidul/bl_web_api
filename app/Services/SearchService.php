@@ -7,6 +7,7 @@
 
 namespace App\Services;
 
+use App\Repositories\AdTechRepository;
 use App\Repositories\PopularSearchRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SearchRepository;
@@ -21,6 +22,7 @@ class SearchService extends BaseService {
     protected $popularRepository;
     protected $searchRepository;
     protected $productRepository;
+    protected $adTechRepository;
 
     /**
      * @var ApiBaseService
@@ -32,11 +34,12 @@ class SearchService extends BaseService {
      * @param PopularSearchRepository $popularRepository
      * @param SearchRepository $searchRepository
      */
-    public function __construct(SearchRepository $searchRepository, PopularSearchRepository $popularRepository, ApiBaseService $apiBaseService, ProductRepository $productRepository) {
+    public function __construct(SearchRepository $searchRepository, PopularSearchRepository $popularRepository, ApiBaseService $apiBaseService, ProductRepository $productRepository, AdTechRepository $adTechRepository) {
         $this->popularRepository = $popularRepository;
         $this->searchRepository = $searchRepository;
         $this->apiBaseService = $apiBaseService;
         $this->productRepository = $productRepository;
+        $this->adTechRepository = $adTechRepository;
     }
 
     private function _getLimits() {
@@ -110,6 +113,8 @@ class SearchService extends BaseService {
     public function searchData($keyword) {
 
         $keywords = $this->searchRepository->searchSuggestion($keyword);
+        // $keywords = $this->adTechRepository->getAdTech('search_modal');
+        $adTech = $this->adTechRepository->getSearchAdTech('search_modal');
         // return $keywords = $this->searchRepository->searchSuggestion($keyword);
 
         $heads = array(
@@ -210,7 +215,7 @@ class SearchService extends BaseService {
         }
 
         #For Add tag
-        $response['keyword_sections']['others'] = [];
+        $response['keyword_sections']['adTech'] = $adTech;
 
 
         
