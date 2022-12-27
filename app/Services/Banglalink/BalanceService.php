@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Models\AlCoreProduct;
+use App\Models\Config;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Services\ApiBaseService;
@@ -227,7 +228,7 @@ class BalanceService extends BaseService
      * @param $response
      * @return JsonResponse|mixed
      */
-    private function getBalance($response, $type)
+    private function getBalance($response, $type, $requestType = null)
     {
         $purchaseOffers = collect($response->{$type});
 
@@ -242,6 +243,23 @@ class BalanceService extends BaseService
                 'unit' => $item->unit,
                 'expires_in' => Carbon::parse($item->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
                 'auto_renew' => false
+            ];
+        }
+
+        if ($requestType != "all" && $type == "data") {
+            $keys = [
+                'purchased_pack_expire_hour',
+                'purchased_pack_expire_volume'
+            ];
+
+            $configKey = Config::whereIn('key', $keys)->get()->pluck('value', 'key');
+
+            $data = [
+                'purchased_packs' => $data,
+                'expire_rules' => [
+                    'hours' => (int) $configKey['purchased_pack_expire_hour'],
+                    'volume' => (int) $configKey['purchased_pack_expire_volume']
+                ]
             ];
         }
         return $data;
@@ -458,7 +476,7 @@ class BalanceService extends BaseService
     private function getPrepaidAllBalance($response, $customer)
     {
         $allBalance['balance'] = $this->getMainBalance($response, $customer);
-        $allBalance['internet'] = $this->getBalance($response, "data");
+        $allBalance['internet'] = $this->getBalance($response, "data", 'all');
         $allBalance['sms'] = $this->getBalance($response, "sms");
         $allBalance['minute'] = $this->getBalance($response, "voice");
         $allBalance['package'] = Customer::package($customer);
@@ -674,6 +692,7 @@ class BalanceService extends BaseService
             //$response = $this->get($this->getPrepaidNewBalanceUrl($user->msisdn));
 
             $response = json_decode($response['response']);
+
             return $this->getPrepaidDetails($type, $response, $user);
         }
 
