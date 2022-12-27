@@ -8,6 +8,7 @@
 namespace App\Services;
 
 use App\Repositories\PopularSearchRepository;
+use App\Repositories\ProductRepository;
 use App\Repositories\SearchRepository;
 use App\Services\Banglalink\BaseService;
 
@@ -19,6 +20,7 @@ class SearchService extends BaseService {
      */
     protected $popularRepository;
     protected $searchRepository;
+    protected $productRepository;
 
     /**
      * @var ApiBaseService
@@ -30,10 +32,11 @@ class SearchService extends BaseService {
      * @param PopularSearchRepository $popularRepository
      * @param SearchRepository $searchRepository
      */
-    public function __construct(SearchRepository $searchRepository, PopularSearchRepository $popularRepository, ApiBaseService $apiBaseService) {
+    public function __construct(SearchRepository $searchRepository, PopularSearchRepository $popularRepository, ApiBaseService $apiBaseService, ProductRepository $productRepository) {
         $this->popularRepository = $popularRepository;
         $this->searchRepository = $searchRepository;
         $this->apiBaseService = $apiBaseService;
+        $this->productRepository = $productRepository;
     }
 
     private function _getLimits() {
@@ -107,6 +110,7 @@ class SearchService extends BaseService {
     public function searchData($keyword) {
 
         $keywords = $this->searchRepository->searchSuggestion($keyword);
+        // return $keywords = $this->searchRepository->searchSuggestion($keyword);
 
         $heads = array(
             'prepaid-internet' => "Prepid Internet",
@@ -116,34 +120,101 @@ class SearchService extends BaseService {
             'others' => "Others"
         );
 
+        #code array for get the product list
+        $product_code_array = [];
 
 
-        $data = [];
+
+        // $data = [];
+        // $response = [];
+        // $count = 0;
+        // foreach ($keywords as $k => $val) {
+        //     if ($val->type != "") {
+        //         $data[$val->type][$count] = $val;
+        //         $count++;
+        //     }
+
+        //    if ($val->product_code) {
+        //     $product_code_array[] = $val->product_code;
+        //    }
+        // }
+
+        // $products = $this->productRepository->getProductInfoByCode($product_code_array);
+
+
+        // $catCount = -1;
+        // $catName = "";
+        // foreach ($data as $k => $kw) {
+
+        //     if ($catName != $k) {
+        //         $catName = $k;
+        //         $catCount++;
+        //     }
+        //     $response['keyword_sections'][$catCount]['category'] = $heads[$k];
+        //     $count = 0;
+        //     foreach ($kw as $val) {
+        //         $response['keyword_sections'][$catCount]['keywords'][$count] = $val;
+        //         $count++;
+        //     }
+        //     $catName = $k;
+        // }
         $response = [];
         $count = 0;
         foreach ($keywords as $k => $val) {
-            if ($val->type != "") {
-                $data[$val->type][$count] = $val;
-                $count++;
+            if ($val->product_code != "") {
+                $data[$val->product_code] = $val;
             }
+
+           if ($val->product_code) {
+            $product_code_array[] = $val->product_code;
+           }
         }
 
-        $catCount = -1;
-        $catName = "";
-        foreach ($data as $k => $kw) {
+        $products = $this->productRepository->getProductInfoByCode($product_code_array);
+        $productArray = [];
+        // return $data;
+        // return $keywords;
+        // print_r($keywords->toArray());
+        // $ke = $keywords->toArray();
 
-            if ($catName != $k) {
-                $catName = $k;
-                $catCount++;
-            }
-            $response['keyword_sections'][$catCount]['category'] = $heads[$k];
-            $count = 0;
-            foreach ($kw as $val) {
-                $response['keyword_sections'][$catCount]['keywords'][$count] = $val;
-                $count++;
-            }
-            $catName = $k;
+
+
+        foreach ($products as $key => $product) {
+
+            // print_r($product->productCore->name);
+            // die;
+            $row = [];
+            $row['id'] = $product->id;
+            $row['product_code'] = $product->product_code;
+            $row['url_slug'] = $product->url_slug;
+            $row['name_en'] = $product->name_en;
+            $row['name_bn'] = $product->name_bn;
+            $row['bonus'] = $product->bonus;
+            $row['point'] = $product->point;
+            $row['price'] = $product->productCore->price;
+            $row['price_tk'] = $product->productCore->price_tk;
+            $row['validity_days'] = $product->productCore->validity_days;
+            $row['validity_unit'] = $product->productCore->validity_unit;
+            $row['internet_volume_mb'] = $product->productCore->internet_volume_mb;
+            $row['sms_volume'] = $product->productCore->sms_volume;
+            $row['minute_volume'] = $product->productCore->minute_volume;
+            $row['callrate_offer'] = $product->productCore->callrate_offer;
+            $row['call_rate_unit'] = $product->productCore->call_rate_unit;
+            $row['sms_rate_offer'] = $product->productCore->sms_rate_offer;
+
+            $row['keyword'] = $data[$product->product_code]['keyword'];
+            $row['product_url'] = $data[$product->product_code]['product_url'];
+            $row['type'] = $data[$product->product_code]['type'];
+
+            $response['keyword_sections']['products'][] = $row;
         }
+
+        #For Add tag
+        $response['keyword_sections']['others'] = [];
+
+
+        
+        
 
         return $this->apiBaseService->sendSuccessResponse($response, 'Search Data');
     }

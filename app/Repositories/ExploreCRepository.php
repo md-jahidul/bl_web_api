@@ -14,7 +14,7 @@ class ExploreCRepository extends BaseRepository
 
     public function getExploreC()
     {
-        return $this->model->where('status', 1)->get();
+        return $this->model->where('status', 1)->orderBy('display_order', 'ASC')->get();
     }
 
     public function findOneBySlug($slug)
