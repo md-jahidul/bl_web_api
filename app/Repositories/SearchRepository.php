@@ -26,7 +26,7 @@ class SearchRepository extends BaseRepository {
 
 
 
-        $response = $this->model->select('keyword', 'url as product_url', 'type')
+        $response = $this->model->select('keyword', 'url as product_url', 'type', 'product_code')
                         ->where('status', 1)
                         ->whereRaw("MATCH(keyword,tag) AGAINST('$keywrods' IN BOOLEAN MODE)")->get();
         return $response;
