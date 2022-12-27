@@ -21,10 +21,21 @@ class MenuRepository extends BaseRepository
     {
         return $this->model->where('parent_id', 0)
             ->where('status', 1)
-            ->select('id', 'en_label_text', 'bn_label_text', 'code as key', 'url', 'url_bn', 'external_site')
+            ->select(
+                'id',
+                'en_label_text',
+                'bn_label_text',
+                'code as key',
+                'url',
+                'url_bn',
+                'external_site'
+            )
             ->with(['children' => function($query){
                 $query->where('status', 1)
-                ->select('id', 'parent_id', 'en_label_text', 'bn_label_text', 'code as key', 'url', 'url_bn', 'external_site');
+                ->select(
+                    'id', 'parent_id', 'en_label_text', 'bn_label_text', 'code as key', 'url', 'url_bn', 'external_site',
+                    'description_en', 'description_bn', 'icon'
+                );
             }])
             ->orderBy('display_order')
             ->get();
