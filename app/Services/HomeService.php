@@ -215,11 +215,11 @@ class HomeService extends ApiBaseService
 //            dd($this->partnerOfferService->tierOffers(true));
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
         }
-        else if($id == 13){
-            //$slider = $shortCode;
-            $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
+        // else if($id == 13){
+        //     //$slider = $shortCode;
+        //     //$slider->data =  $this->businessTypeService->getBusinessTypeInfo();
 
-        }
+        // }
         else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
@@ -265,6 +265,9 @@ class HomeService extends ApiBaseService
             case "career":
                 $data = $this->getCareerData($component);
                 break;
+            case "business":
+                $data = $this->getBusinessData($component);
+                break;
             case "fast_forward":
                 $data = $this->getFastForwardData($component);
                 break;
@@ -284,6 +287,11 @@ class HomeService extends ApiBaseService
 
     public function getFastForwardData($component){
         $data = $this->dummyRes($component);
+        return $data;
+    }
+    public function getBusinessData($component){
+        $data = $this->dummyRes($component);
+        $data['data'] = $this->businessTypeService->getBusinessTypeInfo();
         return $data;
     }
 
