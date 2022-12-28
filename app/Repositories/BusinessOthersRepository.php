@@ -98,36 +98,29 @@ class BusinessOthersRepository extends BaseRepository {
     }
 
     public function getServiceBySlug($serviceSlug) {
-        $service = $this->model->select('id', 'type',
-        'icon', 'details_banner_web', 'details_banner_name', 'details_banner_name_bn',
-        'details_banner_mobile', 'details_alt_text', 'details_alt_text_bn',
-        'name', 'name_bn', 'short_details', 'short_details_bn', 'offer_details_en','details_card_web','',
-        'offer_details_bn', 'url_slug', 'url_slug_bn', 'page_header', 'page_header_bn', 'schema_markup')
-        ->where('url_slug', $serviceSlug)->orWhere('url_slug_bn', $serviceSlug)->first();
+        $service = $this->model->where('url_slug', $serviceSlug)->orWhere('url_slug_bn', $serviceSlug)->first();
 
-        return $service;
+        $data['id'] = $service->id;
+        $data['slug'] = $service->type;
+        $data['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
+        $data['banner_photo'] =  $service->details_banner_web == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_web;
+        $data['banner_photo_mobile'] = $service->details_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_mobile;
+        $data['alt_text'] = $service->details_alt_text;
+        $data['name_en'] = $service->name;
+        $data['name_bn'] = $service->name_bn;
+        $data['short_details_en'] = $service->short_details;
+        $data['short_details_bn'] = $service->short_details_bn;
+        $data['offer_details_en'] = $service->offer_details_en;
+        $data['offer_details_bn'] = $service->offer_details_bn;
+        $data['url_slug'] = $service->url_slug;
+        $data['url_slug_bn'] = $service->url_slug_bn;
+        $data['page_header'] = $service->page_header;
+        $data['page_header_bn'] = $service->page_header_bn;
+        $data['schema_markup'] = $service->schema_markup;
+        $data['details_card_web'] = $service->details_card_web;
+        $data['details_card_mob'] = $service->details_card_mob;
 
-        // $data['id'] = $service->id;
-        // $data['slug'] = $service->type;
-        // $data['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
-        // $data['banner_photo'] =  $service->details_banner_web == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_web;
-        // $data['banner_photo_mobile'] = $service->details_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_mobile;
-        // $data['alt_text'] = $service->details_alt_text;
-        // $data['name_en'] = $service->name;
-        // $data['name_bn'] = $service->name_bn;
-        // $data['short_details_en'] = $service->short_details;
-        // $data['short_details_bn'] = $service->short_details_bn;
-        // $data['offer_details_en'] = $service->offer_details_en;
-        // $data['offer_details_bn'] = $service->offer_details_bn;
-        // $data['url_slug'] = $service->url_slug;
-        // $data['url_slug_bn'] = $service->url_slug_bn;
-        // $data['page_header'] = $service->page_header;
-        // $data['page_header_bn'] = $service->page_header_bn;
-        // $data['schema_markup'] = $service->schema_markup;
-        // $data['details_card_web'] = $service->details_card_web;
-        // $data['details_card_mob'] = $service->details_card_mob;
-
-        // return $data;
+        return $data;
     }
 
 }
