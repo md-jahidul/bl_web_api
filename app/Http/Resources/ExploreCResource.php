@@ -36,7 +36,7 @@ class ExploreCResource extends JsonResource
             'img_name_bn' => $this->img_name_bn ?? null,
             // 'start_date' => $this->start_date ?? null,
             // 'end_date' => $this->end_date ?? null,
-            'display_order' => $this->display_order ?? null,
+            // 'display_order' => $this->display_order ?? null,
             // 'status' => $this->status ?? null,
         ];
     }
