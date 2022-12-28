@@ -160,7 +160,8 @@ class ProductRepository extends BaseRepository
                 'call_rate_unit_bn',
                 'offer_info',
                 'status',
-                'like')
+                'like',
+                'image')
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }
