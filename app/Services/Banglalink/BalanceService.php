@@ -7,10 +7,12 @@ use App\Models\AlCoreProduct;
 use App\Models\Config;
 use App\Models\Customer;
 use App\Repositories\CustomerRepository;
+use App\Repositories\ProductRepository;
 use App\Services\ApiBaseService;
 use App\Services\CustomerService;
 use App\Services\IdpIntegrationService;
 use App\Services\NumberValidationService;
+use App\Services\ProductService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,6 +51,10 @@ class BalanceService extends BaseService
      * @var ProductLoanService
      */
     private $loanService;
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
 
     /**
      * BalanceService constructor.
@@ -60,7 +66,8 @@ class BalanceService extends BaseService
         NumberValidationService $numberValidationService,
         CustomerAvailableProductsService $availableProductsService,
         SubscriptionProductService $subscriptionProductService,
-        ProductLoanService $productLoanService
+        ProductLoanService $productLoanService,
+        ProductRepository $productRepository
     ) {
         $this->responseFormatter = new ApiBaseService();
         $this->customerRepository = new CustomerRepository();
@@ -69,6 +76,7 @@ class BalanceService extends BaseService
         $this->availableProductsService = $availableProductsService;
         $this->subscriptionProductService = $subscriptionProductService;
         $this->loanService = $productLoanService;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -231,9 +239,16 @@ class BalanceService extends BaseService
     private function getBalance($response, $type, $requestType = null)
     {
         $purchaseOffers = collect($response->{$type});
-
         $data = [];
         foreach ($purchaseOffers as $item) {
+            $urlSlugEn = "";
+            $urlSlugBn = "";
+            if ($item->type != "BONUS" && isset($item->product->code)) {
+                $product = $this->productRepository->findOneByProperties(['product_code' => $item->product->code], ['url_slug','url_slug_bn']);
+                $urlSlugEn = (isset($product)) ? $product->url_slug : "";
+                $urlSlugBn = (isset($product)) ? $product->url_slug_bn : "";
+            }
+
             $data [] = [
                 'product_code' => ($item->type != "BONUS" && isset($item->product->code)) ? $item->product->code : "",
                 'package_name_en' => $item->product->name ?? null,
@@ -241,6 +256,8 @@ class BalanceService extends BaseService
                 'total' => $item->totalAmount,
                 'remaining' => $item->amount,
                 'unit' => $item->unit,
+                'url_slug_en' => $urlSlugEn,
+                'url_slug_bn' => $urlSlugBn,
                 'expires_in' => Carbon::parse($item->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
                 'auto_renew' => false
             ];
