@@ -397,8 +397,8 @@ class ProductService extends ApiBaseService
                 unset($productDetail->productCore);
 
                 if( !empty($productDetail->product_details->banner_image_url) ){
-                    $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
-                    $productDetail->product_details->banner_image_mobile = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_mobile;
+                    $productDetail->product_details->banner_image_url = $productDetail->product_details->banner_image_url;
+                    $productDetail->product_details->banner_image_mobile = $productDetail->product_details->banner_image_mobile;
                 }
 
                 return response()->success($productDetail, 'Data Found!');
