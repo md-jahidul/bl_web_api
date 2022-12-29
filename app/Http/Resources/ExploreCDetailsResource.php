@@ -25,6 +25,8 @@ class ExploreCDetailsResource extends JsonResource
             'title_bn' => $this->title_bn ?? null,
             'editor_en' => $this->editor_en ?? null,
             'editor_bn' => $this->editor_bn ?? null,
+            'description_en' => $this->description_en ?? null,
+            'description_bn' => $this->description_bn ?? null,
             'extra_title_bn' => $this->extra_title_bn ?? null,
             'extra_title_en' => $this->extra_title_en ?? null,
             'image' => (!empty($this->image)) ? $this->image : null,

@@ -102,9 +102,9 @@ class BusinessOthersRepository extends BaseRepository {
 
         $data['id'] = $service->id;
         $data['slug'] = $service->type;
-        $data['icon'] = $service->icon == "" ? "" : $service->icon;
-        $data['banner_photo'] =  $service->details_banner_web == "" ? "" : $service->details_banner_web;
-        $data['banner_photo_mobile'] = $service->details_banner_mobile == "" ? "" : $service->details_banner_mobile;
+        $data['icon'] = $service->icon == "" ? "" : config('filesystems.image_host_url') . $service->icon;
+        $data['banner_photo'] =  $service->details_banner_web == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_web;
+        $data['banner_photo_mobile'] = $service->details_banner_mobile == "" ? "" : config('filesystems.image_host_url') . $service->details_banner_mobile;
         $data['alt_text'] = $service->details_alt_text;
         $data['name_en'] = $service->name;
         $data['name_bn'] = $service->name_bn;
@@ -117,6 +117,8 @@ class BusinessOthersRepository extends BaseRepository {
         $data['page_header'] = $service->page_header;
         $data['page_header_bn'] = $service->page_header_bn;
         $data['schema_markup'] = $service->schema_markup;
+        $data['details_card_web'] = $service->details_card_web;
+        $data['details_card_mob'] = $service->details_card_mob;
 
         return $data;
     }

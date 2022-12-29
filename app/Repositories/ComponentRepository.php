@@ -43,7 +43,7 @@ class ComponentRepository extends BaseRepository
              ->where('section_details_id', $section_details_id)
              ->select(
                  'id', 'section_details_id', 'page_type',
-                 'component_type', 'title_en', 'title_bn',
+                 'component_type', 'title_en', 'title_bn', 'description_en', 'description_bn',
                  'editor_en', 'editor_bn', 'extra_title_bn',
                  'extra_title_en', 'multiple_attributes',
                  'video', 'image', 'alt_text', 'other_attributes', 'component_order'
