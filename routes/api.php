@@ -81,7 +81,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('user/profile/view', 'API\V1\UserProfileController@view');
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
-    Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
+    kRoute::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
     Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')->middleware('client.secret.token');
     Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
@@ -313,6 +313,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
+
+    // Blog
+    Route::get('blog/', 'API\V1\UpsellFacebook\UpsellController@requestPurchase');
 });
 
 
