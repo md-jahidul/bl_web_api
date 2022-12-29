@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AboutUsBanglalinkResource;
 use App\Http\Resources\BlogResource;
 use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
@@ -17,6 +18,7 @@ use App\Models\ShortCode;
 use App\Models\Ocla;
 use App\Repositories\AboutUsRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\MediaPressNewsEventRepository;
 use App\Repositories\SliderRepository;
 use App\Services\Banglalink\CustomerPackageService;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +50,10 @@ class HomeService extends ApiBaseService
      * @var PartnerOfferService
      */
     private $partnerOfferService;
+    /**
+     * @var MediaPressNewsEventRepository
+     */
+    private $mediaPressNewsEventRepository;
 
     /**
      * HomeService constructor.
@@ -68,7 +74,8 @@ class HomeService extends ApiBaseService
         SalesAndServicesService $salesAndServicesService,
         AboutUsRepository $aboutUsRepository,
         PartnerOfferService $partnerOfferService,
-        BusinessTypeService $businessTypeService
+        BusinessTypeService $businessTypeService,
+        MediaPressNewsEventRepository $mediaPressNewsEventRepository
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -78,6 +85,7 @@ class HomeService extends ApiBaseService
         $this->aboutUsRepository = $aboutUsRepository;
         $this->partnerOfferService = $partnerOfferService;
         $this->businessTypeService = $businessTypeService;
+        $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
     }
 
 
@@ -215,11 +223,11 @@ class HomeService extends ApiBaseService
 //            dd($this->partnerOfferService->tierOffers(true));
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
         }
-        else if($id == 13){
-            //$slider = $shortCode;
-            $slider->data =  $this->businessTypeService->getBusinessTypeInfo();
+        // else if($id == 13){
+        //     //$slider = $shortCode;
+        //     //$slider->data =  $this->businessTypeService->getBusinessTypeInfo();
 
-        }
+        // }
         else {
             $products = $this->productService->trendingProduct();
             $slider->data = $products;
@@ -265,6 +273,9 @@ class HomeService extends ApiBaseService
             case "career":
                 $data = $this->getCareerData($component);
                 break;
+            case "business":
+                $data = $this->getBusinessData($component);
+                break;
             case "fast_forward":
                 $data = $this->getFastForwardData($component);
                 break;
@@ -286,6 +297,11 @@ class HomeService extends ApiBaseService
         $data = $this->dummyRes($component);
         return $data;
     }
+    public function getBusinessData($component){
+        $data = $this->dummyRes($component);
+        $data['data'] = $this->businessTypeService->getBusinessTypeInfo();
+        return $data;
+    }
 
     public function getCareerData($component){
         $data = $this->dummyRes($component);
@@ -295,19 +311,23 @@ class HomeService extends ApiBaseService
 
     public function getBlogData($component){
         $data = $this->dummyRes($component);
-        $data['data'] = BlogResource::collection(Blog::get());
+
+        $blogPostsForHome = $this->mediaPressNewsEventRepository->findByProperties(['reference_type' => 'blog', 'show_in_home' => 1], [
+            'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date'
+        ]);
+        $data['data'] = BlogResource::collection($blogPostsForHome);
         return $data;
     }
 
     public function getAboutData($component){
         $data = $this->dummyRes($component);
-        $data['data'] =  $this->aboutUsRepository->getAboutBanglalink();
+        $data['data'] =  AboutUsBanglalinkResource::collection($this->aboutUsRepository->getAboutBanglalink());
         return $data;
     }
 
     public function getMemoryData($component){
         $data = $this->dummyRes($component);
-        $data['data'] = MediaTvcVideo::limit(3)->get();
+        $data['data'] = MediaTvcVideo::where('status',1)->get();
         return $data;
     }
 
