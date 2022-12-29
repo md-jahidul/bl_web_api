@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AboutUsBanglalinkResource;
 use App\Http\Resources\BlogResource;
 use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
@@ -309,13 +310,13 @@ class HomeService extends ApiBaseService
 
     public function getAboutData($component){
         $data = $this->dummyRes($component);
-        $data['data'] =  $this->aboutUsRepository->getAboutBanglalink();
+        $data['data'] =  AboutUsBanglalinkResource::collection($this->aboutUsRepository->getAboutBanglalink());
         return $data;
     }
 
     public function getMemoryData($component){
         $data = $this->dummyRes($component);
-        $data['data'] = MediaTvcVideo::limit(3)->get();
+        $data['data'] = MediaTvcVideo::where('status',1)->get();
         return $data;
     }
 
