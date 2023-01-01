@@ -46,9 +46,14 @@ class LoyaltyTierRepository extends BaseRepository
                     'card_img',
                     'validity_en',
                     'validity_bn',
-                    'offer_unit',
-                    'offer_value',
-                    'offer_scale'
+                    'btn_text_en',
+                    'btn_text_bn',
+                    'url_slug',
+                    'url_slug_bn',
+                    'page_header',
+                    'page_header_bn',
+                    'schema_markup',
+                    'other_attributes'
                 )
                 ->with([
                     'offer_category' => function($q){
