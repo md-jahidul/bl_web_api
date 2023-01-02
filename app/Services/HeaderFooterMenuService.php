@@ -10,6 +10,7 @@ use App\Repositories\BannerRepository;
 use App\Repositories\ConfigRepository;
 use App\Repositories\FooterMenuRepository;
 use App\Repositories\MenuRepository;
+use App\Repositories\SubFooterRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -49,7 +50,11 @@ class HeaderFooterMenuService extends ApiBaseService
         FooterMenuRepository $footerMenuRepository,
         ConfigRepository $configRepository,
         ApiBaseService $apiBaseService,
+<<<<<<< HEAD
         AdTechRepository $adTechRepository
+=======
+        SubFooterRepository $subFooterRepository
+>>>>>>> 70c0a482e293c8e08943dc061b911f7a01a9e261
     )
     {
         $this->menuRepository = $menuRepository;
@@ -57,6 +62,7 @@ class HeaderFooterMenuService extends ApiBaseService
         $this->configRepository = $configRepository;
         $this->adTechRepository = $adTechRepository;
         $this->apiBaseService = $apiBaseService;
+        $this->subFooterRepository = $subFooterRepository;
     }
 
     public function pagesInfo()
@@ -98,6 +104,7 @@ class HeaderFooterMenuService extends ApiBaseService
         $adTech = $this->adTechRepository->findOneByProperties(
             ['reference_type' => 'header-menu', 'status' => 1], ['img_url', 'is_external_url', 'redirect_url_en', 'external_url']
         );
+        $subFooter = $this->subFooterRepository->getData();
 
         $headerSettings = [];
         foreach ($headerItems as $settings) {
@@ -121,6 +128,9 @@ class HeaderFooterMenuService extends ApiBaseService
                 'footer' => [
                     'menu' => $footerMenu,
                     'settings' => $footer_settings
+                ],
+                'sub_footer' => [
+                    'data' => $subFooter
                 ],
                 'dynamic_routes' => $this->pagesInfo()
             ];
