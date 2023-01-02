@@ -32,6 +32,23 @@ class MediaPressNewsEventRepository extends BaseRepository
         return ($id) ? $data->where('id', $id)->first() : $data->get();
     }
 
+    public function landingDataByRefType($postRefType, $id = [])
+    {
+        return $this->model
+            ->latest()
+            ->where('reference_type', $postRefType)
+            ->select('title_en', 'title_bn',
+                'short_details_en', 'short_details_bn',
+                'long_details_en', 'long_details_bn',
+                'details_image', 'details_alt_text_en',
+                'thumbnail_image', 'alt_text_en','date',
+                'read_time'
+            )
+            ->where('status', 1)
+            ->whereIn('id', $id)
+            ->get();
+    }
+
     public function filterByDate($moduleType, $from, $to)
     {
         return $this->model

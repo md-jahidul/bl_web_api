@@ -25,6 +25,8 @@ class BlogController extends Controller
 
     private const PRESS_RELEASE = "press_release";
     private const NEWS_EVENT = "news_event";
+    private const REFERENCE_TYPE = "blog_landing_page";
+    private const POST_REFERENCE_TYPE = "blog";
 
     /**
      * RolesController constructor.
@@ -50,9 +52,9 @@ class BlogController extends Controller
     /**
      * @return JsonResponse|mixed
      */
-    public function getPressRelease()
+    public function getLandingPageDataByRefType()
     {
-        return $this->mediaPressNewsEventService->mediaPressEventData(self::PRESS_RELEASE);
+        return $this->mediaLandingPageService->landingDataByReferenceType(self::REFERENCE_TYPE, self::POST_REFERENCE_TYPE);
     }
 
     public function getPressReleaseFilter($from, $to)
