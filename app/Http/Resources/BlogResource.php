@@ -23,6 +23,7 @@ class BlogResource extends JsonResource
             "alt_text_en" => $this->alt_text_en,
             "alt_text_bn" => $this->alt_text_bn,
             "publish_at" => $this->date,
+            "read_time" => $this->read_time,
         ];
     }
 }
