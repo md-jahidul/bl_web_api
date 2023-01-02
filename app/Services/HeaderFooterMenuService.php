@@ -50,11 +50,8 @@ class HeaderFooterMenuService extends ApiBaseService
         FooterMenuRepository $footerMenuRepository,
         ConfigRepository $configRepository,
         ApiBaseService $apiBaseService,
-<<<<<<< HEAD
-        AdTechRepository $adTechRepository
-=======
+        AdTechRepository $adTechRepository,
         SubFooterRepository $subFooterRepository
->>>>>>> 70c0a482e293c8e08943dc061b911f7a01a9e261
     )
     {
         $this->menuRepository = $menuRepository;
