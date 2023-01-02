@@ -18,6 +18,7 @@ use App\Models\ShortCode;
 use App\Models\Ocla;
 use App\Repositories\AboutUsRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\MediaPressNewsEventRepository;
 use App\Repositories\SliderRepository;
 use App\Services\Banglalink\CustomerPackageService;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,10 @@ class HomeService extends ApiBaseService
      * @var PartnerOfferService
      */
     private $partnerOfferService;
+    /**
+     * @var MediaPressNewsEventRepository
+     */
+    private $mediaPressNewsEventRepository;
 
     /**
      * HomeService constructor.
@@ -69,7 +74,8 @@ class HomeService extends ApiBaseService
         SalesAndServicesService $salesAndServicesService,
         AboutUsRepository $aboutUsRepository,
         PartnerOfferService $partnerOfferService,
-        BusinessTypeService $businessTypeService
+        BusinessTypeService $businessTypeService,
+        MediaPressNewsEventRepository $mediaPressNewsEventRepository
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -79,6 +85,7 @@ class HomeService extends ApiBaseService
         $this->aboutUsRepository = $aboutUsRepository;
         $this->partnerOfferService = $partnerOfferService;
         $this->businessTypeService = $businessTypeService;
+        $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
     }
 
 
@@ -304,7 +311,11 @@ class HomeService extends ApiBaseService
 
     public function getBlogData($component){
         $data = $this->dummyRes($component);
-        $data['data'] = BlogResource::collection(Blog::get());
+
+        $blogPostsForHome = $this->mediaPressNewsEventRepository->findByProperties(['status' => 1, 'reference_type' => 'blog', 'show_in_home' => 1], [
+            'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date', 'read_time'
+        ]);
+        $data['data'] = BlogResource::collection($blogPostsForHome);
         return $data;
     }
 
