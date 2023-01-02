@@ -9,6 +9,7 @@ use App\Repositories\BannerRepository;
 use App\Repositories\ConfigRepository;
 use App\Repositories\FooterMenuRepository;
 use App\Repositories\MenuRepository;
+use App\Repositories\SubFooterRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -43,13 +44,15 @@ class HeaderFooterMenuService extends ApiBaseService
         MenuRepository $menuRepository,
         FooterMenuRepository $footerMenuRepository,
         ConfigRepository $configRepository,
-        ApiBaseService $apiBaseService
+        ApiBaseService $apiBaseService,
+        SubFooterRepository $subFooterRepository
     )
     {
         $this->menuRepository = $menuRepository;
         $this->footerMenuRepository = $footerMenuRepository;
         $this->configRepository = $configRepository;
         $this->apiBaseService = $apiBaseService;
+        $this->subFooterRepository = $subFooterRepository;
     }
 
     public function pagesInfo()
@@ -89,6 +92,7 @@ class HeaderFooterMenuService extends ApiBaseService
         $headerMenus = $this->menuRepository->headerMenus();
         $headerItems = $this->configRepository->headerSettings();
         $footerMenu = $this->footerMenuRepository->footerMenu();
+        $subFooter = $this->subFooterRepository->getData();
 
         $headerSettings = [];
         foreach ($headerItems as $settings) {
@@ -111,6 +115,9 @@ class HeaderFooterMenuService extends ApiBaseService
                 'footer' => [
                     'menu' => $footerMenu,
                     'settings' => $footer_settings
+                ],
+                'sub_footer' => [
+                    'data' => $subFooter
                 ],
                 'dynamic_routes' => $this->pagesInfo()
             ];
