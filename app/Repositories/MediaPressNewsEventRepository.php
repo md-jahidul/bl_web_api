@@ -42,7 +42,8 @@ class MediaPressNewsEventRepository extends BaseRepository
                 'long_details_en', 'long_details_bn',
                 'details_image', 'details_alt_text_en',
                 'thumbnail_image', 'alt_text_en','date',
-                'read_time'
+                'read_time', 'details_btn_en', 'details_btn_bn',
+                'tag_en', 'tag_bn'
             )
             ->where('status', 1)
             ->whereIn('id', $id)
