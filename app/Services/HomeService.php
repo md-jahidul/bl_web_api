@@ -363,6 +363,9 @@ class HomeService extends ApiBaseService
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
+                // if($component->id === 19){
+                //     continue;
+                // }
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
             }
             $value = json_encode($homePageData);
