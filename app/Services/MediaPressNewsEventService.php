@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Repositories\MediaBannerImageRepository;
 use App\Repositories\MediaPressNewsEventRepository;
+use App\Services\Assetlite\ComponentService;
 
 class MediaPressNewsEventService extends ApiBaseService
 {
@@ -22,6 +23,10 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var MediaBannerImageRepository
      */
     private $mediaBannerImageRepository;
+    /**
+     * @var ComponentService
+     */
+    private $componentService;
 
     /**
      * DigitalServicesService constructor.
@@ -30,10 +35,12 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     public function __construct(
         MediaPressNewsEventRepository $mediaPNERepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ComponentService $componentService
     ) {
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->componentService = $componentService;
     }
 
     public function mediaPressEventData($moduleType)
@@ -53,5 +60,10 @@ class MediaPressNewsEventService extends ApiBaseService
         $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
         $message = ucfirst(str_replace('_', ' ', $moduleType));
         return $this->sendSuccessResponse($data,"$message Filter Data");
+    }
+
+    public function detailsComponent()
+    {
+        
     }
 }

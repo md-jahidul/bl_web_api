@@ -14,17 +14,12 @@ class BlogController extends Controller
      * @var MediaLandingPageService
      */
     private $mediaLandingPageService;
-    /**
-     * @var MediaTvcVideoService
-     */
-    private $mediaTvcVideoService;
+
     /**
      * @var MediaPressNewsEventService
      */
     private $mediaPressNewsEventService;
 
-    private const PRESS_RELEASE = "press_release";
-    private const NEWS_EVENT = "news_event";
     private const REFERENCE_TYPE = "blog_landing_page";
     private const POST_REFERENCE_TYPE = "blog";
 
@@ -32,22 +27,19 @@ class BlogController extends Controller
      * RolesController constructor.
      * @param MediaLandingPageService $mediaLandingPageService
      * @param MediaPressNewsEventService $mediaPressNewsEventService
-     * @param MediaTvcVideoService $mediaTvcVideoService
      */
     public function __construct(
         MediaLandingPageService $mediaLandingPageService,
-        MediaPressNewsEventService $mediaPressNewsEventService,
-        MediaTvcVideoService $mediaTvcVideoService
+        MediaPressNewsEventService $mediaPressNewsEventService
     ) {
         $this->mediaLandingPageService = $mediaLandingPageService;
         $this->mediaPressNewsEventService = $mediaPressNewsEventService;
-        $this->mediaTvcVideoService = $mediaTvcVideoService;
     }
 
-    public function getComponents()
-    {
-        return $this->mediaLandingPageService->landingData();
-    }
+//    public function getComponents()
+//    {
+//        return $this->mediaLandingPageService->landingData();
+//    }
 
     /**
      * @return JsonResponse|mixed
@@ -57,31 +49,36 @@ class BlogController extends Controller
         return $this->mediaLandingPageService->landingDataByReferenceType(self::REFERENCE_TYPE, self::POST_REFERENCE_TYPE);
     }
 
-    public function getPressReleaseFilter($from, $to)
+    public function getBlogDetails()
     {
-        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::PRESS_RELEASE, $from, $to);
+        return $this->mediaPressNewsEventService->detailsComponent();
     }
 
-    /**
-     * @return JsonResponse|mixed
-     */
-    public function getNewsEvent()
-    {
-        return $this->mediaPressNewsEventService->mediaPressEventData(self::NEWS_EVENT);
-    }
+//    public function getPressReleaseFilter($from, $to)
+//    {
+//        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::PRESS_RELEASE, $from, $to);
+//    }
 
-    /**
-     * @param $from
-     * @param $to
-     * @return mixed
-     */
-    public function getNewsEventFilter($from, $to)
-    {
-        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::NEWS_EVENT, $from, $to);
-    }
+//    /**
+//     * @return JsonResponse|mixed
+//     */
+//    public function getNewsEvent()
+//    {
+//        return $this->mediaPressNewsEventService->mediaPressEventData(self::NEWS_EVENT);
+//    }
 
-    public function getTvcVideoData()
-    {
-        return $this->mediaTvcVideoService->getTvcVideoData();
-    }
+//    /**
+//     * @param $from
+//     * @param $to
+//     * @return mixed
+//     */
+//    public function getNewsEventFilter($from, $to)
+//    {
+//        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::NEWS_EVENT, $from, $to);
+//    }
+//
+//    public function getTvcVideoData()
+//    {
+//        return $this->mediaTvcVideoService->getTvcVideoData();
+//    }
 }
