@@ -207,6 +207,9 @@ class SearchService extends BaseService {
             $row['call_rate_unit'] = $product->productCore->call_rate_unit;
             $row['sms_rate_offer'] = $product->productCore->sms_rate_offer;
 
+            $row['sim_type'] = $product->sim_category->alias;
+            $row['offer_type'] = $product->offer_category->alias;
+
             $row['keyword'] = $data[$product->product_code]['keyword'];
             $row['product_url'] = $data[$product->product_code]['product_url'];
             $row['type'] = $data[$product->product_code]['type'];
