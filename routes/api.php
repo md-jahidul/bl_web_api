@@ -92,12 +92,22 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')->middleware('client.secret.token');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')->middleware('client.secret.token');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
+//        ->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
+//        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
+    Route::post('user/verify-otp', 'API\V1\AuthenticationController@verifyOTPForLogin');
 
     // Get JWT token with credential
     Route::post('password-login', 'API\V1\AuthenticationController@passwordLogin');
+
+    // Password
+    Route::post('set-password', 'API\V1\AuthenticationController@setPassword');
+    Route::group(['middleware' => ['verifyIdpToken']], function () {
+        Route::post('change-password', 'API\V1\AuthenticationController@changePassword');
+    });
+    Route::post('forget-password', 'API\V1\AuthenticationController@forgetPassword');
 
     // Get JWT token with Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
@@ -144,7 +154,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
-    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
+    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCarudController@cardList');
     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer

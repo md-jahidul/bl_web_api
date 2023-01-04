@@ -3,10 +3,16 @@ namespace App\Http\Controllers\API\V1;
 
 
 use App\Enums\HttpStatusCode;
+use App\Exceptions\BLServiceException;
+use App\Exceptions\CurlRequestException;
 use App\Exceptions\RequestUnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthTokenRequest;
+use App\Http\Requests\ForgetPasswordRequest;
+use App\Http\Requests\LoginWithOtpRequest;
 use App\Http\Requests\OtpLoginRequest;
+use App\Http\Requests\PasswordChangeRequest;
+use App\Http\Requests\SetPasswordRequest;
 use App\Services\ApiBaseService;
 use App\Services\NumberValidationService;
 use App\Services\SecreteTokenService;
@@ -77,17 +83,17 @@ class AuthenticationController extends Controller
         return $this->userService->otpLogin($request);
     }
 
-    public function passwordLogin(AuthTokenRequest $request) 
+    public function passwordLogin(AuthTokenRequest $request)
     {
         $data = $request->input();
         $response = $this->userService->getAuthToken($data);
         $statusCode = $response['status_code'];
-        $responseData = $response['data']; 
-        
+        $responseData = $response['data'];
+
         if (isset($responseData['error'])) {
             return $this->apiBaseService->sendErrorResponse($responseData['message'], "Incorrect Password", HttpStatusCode::UNAUTHORIZED);
         }
-        
+
         return $this->apiBaseService->sendSuccessResponse($responseData, 'Successful Attempt');
     }
 
@@ -108,4 +114,54 @@ class AuthenticationController extends Controller
 
     }
 
+    /**
+     * @param SetPasswordRequest $request
+     * @return JsonResponse
+     * @throws \App\Exceptions\TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     */
+    public function setPassword(SetPasswordRequest $request)
+    {
+        return $this->userService->setPassword($request);
+    }
+
+    /**
+     * Update Password
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \App\Exceptions\TokenInvalidException
+     */
+    public function forgetPassword(ForgetPasswordRequest $request)
+    {
+        return $this->userService->forgetPassword($request);
+    }
+
+    /**
+     * Update Password
+     *
+     * @param PasswordChangeRequest $request
+     * @return JsonResponse
+     * @throws CurlRequestException
+     * @throws \App\Exceptions\OldPasswordMismatchException
+     * @throws \App\Exceptions\TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     * @throws \App\Exceptions\TooManyRequestException
+     */
+    public function changePassword(PasswordChangeRequest $request)
+    {
+        return $this->userService->changePassword($request);
+    }
+
+
+    /**
+     * @param LoginWithOtpRequest $request
+     * @return JsonResponse
+     * @throws BLServiceException
+     * @throws CurlRequestException
+     */
+    public function verifyOTPForLogin(LoginWithOtpRequest $request)
+    {
+        return $this->userService->verifyOTPForLogin($request);
+    }
 }
