@@ -55,17 +55,22 @@ class ExploreCService extends ApiBaseService
 
         try {
             
-            $explore_c_id = $this->exploreCRepository->findOneBySlug($explore_c_slug)['id'];
-            $data['components'] = $this->componentRepository->getExploreCDetailsComponent('explore_c', $explore_c_id);
-            $data['banner'] = AlBanner::where(['section_id' => $explore_c_id])->first();
+            $explore_c = $this->exploreCRepository->findOneBySlug($explore_c_slug);
 
-            if ($data) {
-                $data['components'] = ExploreCDetailsResource::collection($data['components']);
-                $data['banner'] = AlBannerResource::make($data['banner']);
-                return $this->sendSuccessResponse($data, 'Explore C\'s Details Page content');
-            } else {
+            if ($explore_c) {
+
+                $components = $this->componentRepository->getExploreCDetailsComponent('explore_c', $explore_c->id);
+                $banner = AlBanner::where(['section_id' => $explore_c->id])->first();
+    
+                    $data['components'] = $components ? ExploreCDetailsResource::collection($components) : [];
+                    $data['banner'] = $banner ? AlBannerResource::make($banner) : null;
+
+                    return $this->sendSuccessResponse($data, 'Explore C\'s Details Page content');
+                
+            }else {
                 return response()->error("Data Not Found!");
             }
+
         } catch (QueryException $exception) {
             return response()->error("Something wrong", $exception);
         }
