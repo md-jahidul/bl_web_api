@@ -49,9 +49,9 @@ class BlogController extends Controller
         return $this->mediaLandingPageService->landingDataByReferenceType(self::REFERENCE_TYPE, self::POST_REFERENCE_TYPE);
     }
 
-    public function getBlogDetails()
+    public function getBlogDetails($urlSlug)
     {
-        return $this->mediaPressNewsEventService->detailsComponent();
+        return $this->mediaPressNewsEventService->detailsComponent($urlSlug);
     }
 
 //    public function getPressReleaseFilter($from, $to)
