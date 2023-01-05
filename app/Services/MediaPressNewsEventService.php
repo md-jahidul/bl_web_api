@@ -9,8 +9,10 @@
 
 namespace App\Services;
 
+use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
 use App\Repositories\MediaPressNewsEventRepository;
+use App\Services\Assetlite\ComponentService;
 
 class MediaPressNewsEventService extends ApiBaseService
 {
@@ -22,6 +24,10 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var MediaBannerImageRepository
      */
     private $mediaBannerImageRepository;
+    /**
+     * @var ComponentRepository
+     */
+    private $componentRepository;
 
     /**
      * DigitalServicesService constructor.
@@ -30,10 +36,12 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     public function __construct(
         MediaPressNewsEventRepository $mediaPNERepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        ComponentRepository $componentRepository
     ) {
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->componentRepository = $componentRepository;
     }
 
     public function mediaPressEventData($moduleType)
@@ -53,5 +61,15 @@ class MediaPressNewsEventService extends ApiBaseService
         $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
         $message = ucfirst(str_replace('_', ' ', $moduleType));
         return $this->sendSuccessResponse($data,"$message Filter Data");
+    }
+
+    public function detailsComponent($urlSlug)
+    {
+        $post = $this->mediaPNERepository->getDataBySlug($urlSlug);
+        $blogDetails = [];
+        if (!empty($post->id)) {
+            $blogDetails =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+        }
+        return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
 }

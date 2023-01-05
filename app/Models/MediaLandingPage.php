@@ -9,6 +9,7 @@ class MediaLandingPage extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'items' => 'array'
+        'items' => 'array',
+        'slider_items' => 'array',
     ];
 }

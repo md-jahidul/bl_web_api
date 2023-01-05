@@ -24,7 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Login Landing Page Banner
     Route::get('login-landing-banner', 'API\V1\LoginLandingPageController@getBanner');
-    
+
     // Explore C's CMS part
     Route::get('explore-c', 'API\V1\ExploreCController@getExploreC');
     Route::get('explore-c-details/{explore_c_slug}', 'API\V1\ExploreCController@getExploreCDeatils')->name('explore-c-details');
@@ -340,6 +340,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 
+    // Blog
+    Route::get('blog/landing-page', 'API\V1\BlogController@getLandingPageDataByRefType');
+    Route::get('blog/details/{slug}', 'API\V1\BlogController@getBlogDetails');
 });
+
 
 //Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');

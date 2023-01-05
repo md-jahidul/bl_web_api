@@ -43,10 +43,12 @@ class MediaLandingPageService extends ApiBaseService
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
     }
 
-    public function getMediaFeatureData($componentsData, $type = null)
+    public function getMediaFeatureData($componentsData, $type = null, $postRefType = null)
     {
         $data['title_en'] = $componentsData->title_en;
         $data['title_bn'] = $componentsData->title_bn;
+        $data['short_desc_en'] = $componentsData->short_desc_en;
+        $data['short_desc_bn'] = $componentsData->short_desc_bn;
         $data['component_type'] = $componentsData->component_type;
         $data['page_header'] = $componentsData->page_header;
         $data['page_header_bn'] = $componentsData->page_header_bn;
@@ -60,6 +62,16 @@ class MediaLandingPageService extends ApiBaseService
                     $data['data'][] = $pressNewsEvent;
                 }
             }
+        } elseif ($type == "blog_landing_page") {
+            if (!empty($componentsData->items)) {
+                $postCardItems = $this->mediaPressNewsEventRepository->landingDataByRefType($postRefType, $componentsData->items);
+                $data['card_items'] = $postCardItems;
+            }
+            if (!empty($componentsData->slider_items)) {
+                $postSlidingItems = $this->mediaPressNewsEventRepository->landingDataByRefType($postRefType, $componentsData->slider_items);
+                $data['slider_items'] = $postSlidingItems;
+            }
+            return $data;
         } else {
             foreach ($componentsData->items as $id){
                 $video = $this->mediaTvcVideoRepository->getVideoItems($id);
@@ -110,6 +122,25 @@ class MediaLandingPageService extends ApiBaseService
                 'page_header' => $bannerData->page_header,
                 'page_header_bn' => $bannerData->page_header_bn,
                 'schema_markup' => $bannerData->schema_markup
+            ]
+        ];
+        return $this->sendSuccessResponse($data, 'Media Landing Page data');
+    }
+
+    public function landingDataByReferenceType($referenceType, $postRefType)
+    {
+        $components = $this->mediaLandingPageRepository->getDataByRefType($referenceType);
+
+        foreach ($components as $items){
+            $allComponents[] = $this->getMediaFeatureData($items, $referenceType, $postRefType);
+        }
+
+        $data = [
+            'components' => $allComponents ?? [],
+            'seo_data' => [
+//                'page_header' => $bannerData->page_header,
+//                'page_header_bn' => $bannerData->page_header_bn,
+//                'schema_markup' => $bannerData->schema_markup
             ]
         ];
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
