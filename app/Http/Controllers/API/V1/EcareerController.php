@@ -147,37 +147,40 @@ class EcareerController extends Controller
 
         // Life at banglalink 3 general section
         $life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
-
+        //dd($life_at_bl_general->toArray());
 //        print_r($life_at_bl_general);die();
 
         if (!empty($life_at_bl_general) && count($life_at_bl_general) > 0) {
-            foreach ($life_at_bl_general as $general_value) {
+            foreach ($life_at_bl_general as $key=>$general_value) {
 
 
-                if ($general_value->category_type == 'news_on_top') {
+                // if ($general_value->category_type == 'news_on_top') {
 
-                    $data['news_on_top'] = $this->lifeAtBanglalinkData($general_value);
-                } elseif ($general_value->category_type == 'values_section') {
-                    $data['values_section'] = $this->lifeAtBanglalinkData($general_value);
-                } elseif ($general_value->category_type == 'campus_section') {
-                    $data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
-                }
+                //     $data['hero_section'] = $this->lifeAtBanglalinkData($general_value);
+                // } elseif ($general_value->category_type == 'values_section') {
+                //     $data['values_section'] = $this->lifeAtBanglalinkData($general_value);
+                // } elseif ($general_value->category_type == 'campus_section') {
+                //     $data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
+                // }
+
+                $data[$general_value->slug] = $this->lifeAtBanglalinkData($general_value);
+
             }
 
-            if (!isset($data['news_on_top'])) {
-                $data['news_on_top'] = null;
-            }
-            if (!isset($data['values_section'])) {
-                $data['values_section'] = null;
-            }
+            // if (!isset($data['news_on_top'])) {
+            //     $data['news_on_top'] = null;
+            // }
+            // if (!isset($data['values_section'])) {
+            //     $data['values_section'] = null;
+            // }
 
-            if (!isset($data['campus_section'])) {
-                $data['campus_section'] = null;
-            }
+            // if (!isset($data['campus_section'])) {
+            //     $data['campus_section'] = null;
+            // }
         } else {
-            $data['news_on_top'] = null;
-            $data['values_section'] = null;
-            $data['campus_section'] = null;
+            //$data['news_on_top'] = null;
+            //$data['values_section'] = null;
+            //$data['campus_section'] = null;
         }
 
 
@@ -289,7 +292,7 @@ class EcareerController extends Controller
                             $sub_items['description_bn'] = $portal_items->description_bn;
                             $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
                             $sub_items['alt_text'] = $portal_items->alt_text;
-
+                            //print_r( !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action):null);
                             #teams tab content buttons
                             $sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
 
@@ -322,6 +325,12 @@ class EcareerController extends Controller
         $sub_data_news = [];
         $sub_data_news['title_en'] = $general_value->title_en;
         $sub_data_news['title_bn'] = $general_value->title_bn;
+        $sub_data_news['description_en'] = $general_value->description_en;
+        $sub_data_news['description_bn'] = $general_value->description_bn;
+        $sub_data_news['image'] = $general_value->image;
+        $sub_data_news['image_url'] = $general_value->image_url;
+        $sub_data_news['alt_txt'] = $general_value->alt_txt;
+        $sub_data_news['alt_txt_bn'] = $general_value->alt_txt_bn;
 
 
         if (!empty($general_value->portalItems)) {
