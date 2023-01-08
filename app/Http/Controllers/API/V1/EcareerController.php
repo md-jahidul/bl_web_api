@@ -64,7 +64,7 @@ class EcareerController extends Controller
                     $sub_data_banner['schema_markup'] = $value->schema_markup;
 
 
-                    $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
+                    $sub_data_banner['image'] = !empty($value->image) ?  $value->image : null;
                     $sub_data_banner['alt_text'] = $value->alt_text;
 
                     $data['top_menu_banner'][] = $sub_data_banner;
@@ -102,7 +102,7 @@ class EcareerController extends Controller
                                 $connct_social = [];
 
                                 $connct_social['title_en'] = $social_item->title_en;
-                                $connct_social['image'] = !empty($social_item->image) ? config('filesystems.image_host_url') . $social_item->image : null;
+                                $connct_social['image'] = !empty($social_item->image) ?  $social_item->image : null;
                                 $connct_social['alt_text'] = $social_item->alt_text;
                                 $connct_social['alt_links'] = $social_item->alt_links;
 
@@ -136,8 +136,8 @@ class EcareerController extends Controller
         $seoData = $this->ecarrerService->getSeoData($category);
 
         $data['seo_data'] = array(
-            'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-            'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+            'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+            'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
             'alt_text' => $seoData->alt_text,
             'page_header' => $seoData->page_header,
             'page_header_bn' => $seoData->page_header_bn,
@@ -206,7 +206,7 @@ class EcareerController extends Controller
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -242,7 +242,7 @@ class EcareerController extends Controller
                         $sub_items = [];
 
                         $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -290,7 +290,7 @@ class EcareerController extends Controller
                             $sub_items['title_en'] = $portal_items->title_en;
                             $sub_items['description_en'] = $portal_items->description_en;
                             $sub_items['description_bn'] = $portal_items->description_bn;
-                            $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                            $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                             $sub_items['alt_text'] = $portal_items->alt_text;
                             //print_r( !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action):null);
                             #teams tab content buttons
@@ -331,7 +331,7 @@ class EcareerController extends Controller
         $sub_data_news['image_url'] = $general_value->image_url;
         $sub_data_news['alt_txt'] = $general_value->alt_txt;
         $sub_data_news['alt_txt_bn'] = $general_value->alt_txt_bn;
-
+        $sub_data_news['call_to_action_buttons'] = !empty($general_value->call_to_action) ? unserialize($general_value->call_to_action) : null;
 
         if (!empty($general_value->portalItems)) {
 
@@ -343,7 +343,7 @@ class EcareerController extends Controller
                 $sub_data_news_item['description_en'] = $portal_items->description_en;
                 $sub_data_news_item['description_bn'] = $portal_items->description_bn;
 
-                $sub_data_news_item['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                $sub_data_news_item['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
                 $sub_data_news_item['alt_links'] = $portal_items->alt_links;
                 $sub_data_news_item['video'] = $portal_items->video;
@@ -371,8 +371,8 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
@@ -395,7 +395,7 @@ class EcareerController extends Controller
      * [eCarrer Programs category sap, ennovators, aip]
      * @return [type]           [description]
      */
-    public function getEcarrerPrograms()
+    public function getEcarrerPrograms($type)
     {
 
         try {
@@ -407,27 +407,36 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+            if($type === 'sap'){
+                $ecarrer_sap = $this->ecarrerService->getProgramsSap();
+                $data['data'] = $ecarrer_sap;
+            }
+            else if($type === 'ennovators'){
+                $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
+                $data['data'] = $ecarrer_ennovators;
+            }
+            else if($type === 'aip'){
+                $ecarrer_aip = $this->ecarrerService->getProgramsAip();
+                $data['data'] = $ecarrer_aip;
+            }
 
-            $ecarrer_sap = $this->ecarrerService->getProgramsSap();
-            $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
-            $ecarrer_aip = $this->ecarrerService->getProgramsAip();
 
-            if (!empty($ecarrer_sap['tab_title'])) {
-                $data['tabs'][]['sap'] = $ecarrer_sap;
-            }
-            if (!empty($ecarrer_ennovators['tab_title'])) {
-                $data['tabs'][]['ennovators'] = $ecarrer_ennovators;
-            }
-            if (!empty($ecarrer_aip['tab_title'])) {
-                $data['tabs'][]['aip'] = $ecarrer_aip;
-            }
+            // if (!empty($ecarrer_sap['tab_title'])) {
+            //     $data['tabs'][]['sap'] = $ecarrer_sap;
+            // }
+            // if (!empty($ecarrer_ennovators['tab_title'])) {
+            //     $data['tabs'][]['ennovators'] = $ecarrer_ennovators;
+            // }
+            // if (!empty($ecarrer_aip['tab_title'])) {
+            //     $data['tabs'][]['aip'] = $ecarrer_aip;
+            // }
 
             return response()->success($data, 'Data Found!');
         } catch (\Exception $e) {

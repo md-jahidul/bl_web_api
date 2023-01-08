@@ -167,7 +167,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
     Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
 
-    Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
+    Route::get('ecarrer/programs/{type}', 'API\V1\EcareerController@getEcarrerPrograms');
     Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
 
     // eCarrer Application form api  =========================================================
