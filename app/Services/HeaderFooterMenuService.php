@@ -36,6 +36,7 @@ class HeaderFooterMenuService extends ApiBaseService
      * @var AdTechRepository
      */
     private $adTechRepository;
+    protected $subFooterRepository;
 
 
     /**
