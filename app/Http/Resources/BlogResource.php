@@ -26,6 +26,8 @@ class BlogResource extends JsonResource
             "read_time" => $this->read_time,
             "details_btn_en" => $this->details_btn_en,
             "details_btn_bn" => $this->details_btn_bn,
+            "url_slug_en" => $this->url_slug_en,
+            "url_slug_bn" => $this->url_slug_bn,
         ];
     }
 }
