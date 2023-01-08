@@ -39,6 +39,8 @@ class PartnerOfferDetailsResource extends JsonResource {
             'location_bn'           => !empty($location) ? $location->bn : "",
             'area_en'               => $this['offer_type_en'] ?? null,
             'area_bn'               => $this['offer_type_bn'] ?? null,
+            'offer_avail_en'        => $this['get_offer_msg_en'] ?? null,
+            'offer_avail_bn'        => $this['get_offer_msg_bn'] ?? null,
             'banner_image_url'      => $this['banner_image_url'] ?? null,
             'company_website'       => $this['company_website'],
             'map_link'              => $this['map_link'] ?? null,
