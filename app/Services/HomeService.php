@@ -313,7 +313,8 @@ class HomeService extends ApiBaseService
         $data = $this->dummyRes($component);
 
         $blogPostsForHome = $this->mediaPressNewsEventRepository->findByProperties(['status' => 1, 'reference_type' => 'blog', 'show_in_home' => 1], [
-            'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date', 'read_time', 'details_btn_en', 'details_btn_bn'
+            'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date', 'read_time', 'details_btn_en', 'details_btn_bn',
+            'url_slug_en', 'url_slug_bn'
         ]);
         $data['data'] = BlogResource::collection($blogPostsForHome);
         return $data;
