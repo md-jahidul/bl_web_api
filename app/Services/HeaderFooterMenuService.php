@@ -31,6 +31,7 @@ class HeaderFooterMenuService extends ApiBaseService
     protected $menuRepository;
     protected $footerMenuRepository;
     protected $configRepository;
+    protected $subFooterRepository;
 
 
     /**
