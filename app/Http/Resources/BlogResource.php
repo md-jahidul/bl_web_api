@@ -18,7 +18,7 @@ class BlogResource extends JsonResource
             "title_en" => $this->title_en,
             "title_bn" => $this->title_bn,
             "description_en" => $this->short_details_en,
-            "description_bn" => $this->short_details_en,
+            "description_bn" => $this->short_details_bn,
             "blog_image" => $this->thumbnail_image,
             "alt_text_en" => $this->alt_text_en,
             "alt_text_bn" => $this->alt_text_bn,
