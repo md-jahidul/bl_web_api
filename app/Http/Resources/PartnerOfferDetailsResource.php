@@ -13,10 +13,13 @@ class PartnerOfferDetailsResource extends JsonResource {
      * @return array
      */
     public function toArray($request) {
+        $data = isset($this['other_attributes']) ? json_decode($this['other_attributes'], true) : null;
         $phone = json_decode($this['phone']);
         $location = json_decode($this['location']);
         return [
-            "partner_logo"       => $this['company_logo'] ?? null,
+            'card_title_en'         => $data['free_text_value_en'] ?? null,
+            'card_title_bn'         => $data['free_text_value_bn'] ?? null,
+            "partner_logo"          => $this['company_logo'] ?? null,
             "partner_name_en"       => $this['company_name_en'] ?? null,
             "partner_name_bn"       => $this['company_name_bn'] ?? null,
             "validity_en"           => $this['validity_en'] ?? null,
