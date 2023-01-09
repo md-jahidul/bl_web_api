@@ -72,11 +72,141 @@ class AmarOfferService extends BaseService
     {
         $offers = [];
         $sorted_data = collect($data)->sortBy('offerRank');
-        foreach ($sorted_data as $offer) {
-            if ($data = $this->parseOfferData($offer)) {
-                $offers [] = $data;
+
+//        $offers ['internet'] = [
+//            "type" => $data['offer_type'],
+//            "title_en" => $data['offer_type'],
+//            "title_bn" => $data['offer_type'],
+//            "packs" => [$data]
+//        ];
+
+        $demoData = [
+            [
+              "offer_id" => "21466",
+              "offer_name" => "1GB-3 Days - 30TK",
+              "description" => "1GB(900MB+124MB Bonus) for 3 Days at 30TK (22.51 + 7.49 All Taxes)",
+              "minute_volume" => 0,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 1024.0,
+              "price_tk" => 30,
+              "validity_days" => 3,
+              "validity_unit" => "Days",
+              "offer_type" => "data"
+            ],
+            [
+                "offer_id" => "21558",
+              "offer_name" => "2.5GB-3 Days - 50TK",
+              "description" => "2.5GB(1.75GB+0.75GB Bonus) for 3 Days at 50TK (37.52 + 12.48 All Taxes)",
+              "minute_volume" => 0,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 2560.0,
+              "price_tk" => 50,
+              "validity_days" => 3,
+              "validity_unit" => "Days",
+              "offer_type" => "data"
+            ],
+            [
+                "offer_id" => "21452",
+              "offer_name" => "3.5GB-3 Days - 55TK",
+              "description" => "3.5GB(3GB+0.5GB Bonus) for 3 Days at 55TK (41.28 + 13.72 All Taxes)",
+              "minute_volume" => 0,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 3584.0,
+              "price_tk" => 55,
+              "validity_days" => 3,
+              "validity_unit" => "Days",
+              "offer_type" => "data"
+            ],
+            [
+                "offer_id" => "20280",
+              "offer_name" => "60min-7 Days - 37TK",
+              "description" => "60Min for 7 Days at 37TK (27.77 + 9.23 All Taxes)",
+              "minute_volume" => 60,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 0.0,
+              "price_tk" => 37,
+              "validity_days" => 7,
+              "validity_unit" => "Days",
+              "offer_type" => "voice"
+            ],
+            [
+                "offer_id" => "20547",
+              "offer_name" => "90min-7 Days - 57TK",
+              "description" => "85Min for 7 Days at 57TK (42.78 + 14.22 All Taxes)",
+              "minute_volume" => 85,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 0.0,
+              "price_tk" => 57,
+              "validity_days" => 7,
+              "validity_unit" => "Day",
+              "offer_type" => "voice"
+            ],
+            [
+                "offer_id" => "21246",
+              "offer_name" => "10GB-3 Days - 89TK",
+              "description" => "10GB(9GB+1GB Bonus) for 3 Days at 89TK  (66.79 + 22.21 All Taxes)",
+              "minute_volume" => 0,
+              "sms_volume" => 0,
+              "internet_volume_mb" => 10240.0,
+              "price_tk" => 89,
+              "validity_days" => 3,
+              "validity_unit" => "Days",
+              "offer_type" => "data"
+            ]
+        ];
+
+        $collection = collect($demoData)->groupBy('offer_type');
+
+        $offersCat = [
+            [
+                'type' =>  "data",
+                'title_en' => "Internet",
+                'title_bn' =>  "Internet BN",
+                'pack'     => isset($collection['data']) ? $collection['data'] : [],
+            ],
+            [
+                'type' =>  "voice",
+                'title_en' => "Voice",
+                'title_bn' =>  "Voice",
+                'pack'     => isset($collection['voice']) ? $collection['voice'] : [],
+            ],
+            [
+                'type' =>  "SMS",
+                'title_en' => "SMS",
+                'title_bn' =>  "SMS BN",
+                'pack'     => isset($collection['sms']) ? $collection['sms'] : []
+            ],
+            [
+                'type' =>  "all",
+                'title_en' => "All",
+                'title_bn' =>  null,
+                'pack'     => []
+            ]
+        ];
+        dd($offersCat);
+
+
+        $offers = [];
+        foreach ($demoData as $offer) {
+            if ($offer['offer_type'] == "data") {
+                $offers['type'] = $offer['offer_type'];
+                $offers['packs'][] = $offer;
+            } elseif ($offer['offer_type'] == "voice") {
+                $offers['type'] = $offer['offer_type'];
+                $offers['packs'][] = $offer;
             }
+
+//            if ($data = $this->parseOfferData($offer)) {
+//                $offers [] = $data;
+//                dd($data);
+//                $offers = [
+//                    "type" => "Internet",
+//                    "title_en" => "Internet",
+//                    "title_bn" => "Internet",
+//                ];
+//            }
         }
+        dd($offers);
         return $offers;
     }
 
@@ -90,7 +220,6 @@ class AmarOfferService extends BaseService
         $offer_details = [];
         $offer_description = $offer->offerDescriptionWeb;
         $offers = explode(';', $offer_description);
-
         $offer_details ['offer_id'] = $offer->offerID;
 
         if ($include_details) {
@@ -102,6 +231,7 @@ class AmarOfferService extends BaseService
 
 
             $data = explode('|', $segment);
+//            dd($data);
             $type = $data[0];
             switch ($type) {
                 case "VOICE":
@@ -143,12 +273,11 @@ class AmarOfferService extends BaseService
                         $offerType = $data[1];
                     }
                     $offer_details['offer_type'] = strtolower($offerType);
-
-                    $offer_details['offer_details'] = $this->getAmarOfferDetails($offerType);
+//                    $offer_details['offer_details'] = $this->getAmarOfferDetails($offerType);
                     break;
             }
         }
-
+//        dd($offer_details);
         return $offer_details;
     }
 
@@ -159,6 +288,7 @@ class AmarOfferService extends BaseService
      */
     public function getAmarOfferList(Request $request)
     {
+        $formatted_data = $this->prepareAmarOfferList('');
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
         $customer_type = $infoBl->getData()->data->connectionType;
@@ -170,6 +300,7 @@ class AmarOfferService extends BaseService
             $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
             $data['header'] = $bannerImage;
             $data['offers'] = $formatted_data;
+            return $formatted_data;
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 

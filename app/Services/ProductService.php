@@ -12,6 +12,7 @@ use App\Models\MyBlProductTab;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\AmarOfferService;
 use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
@@ -67,6 +68,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var AmarOfferService
+     */
+    private $amarOfferService;
 
     /**
      * ProductService constructor.
@@ -88,7 +93,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        AmarOfferService $amarOfferService
     )
     {
         $this->productRepository = $productRepository;
@@ -100,6 +106,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->amarOfferService = $amarOfferService;
         $this->setActionRepository($productRepository);
     }
 
@@ -233,8 +240,12 @@ class ProductService extends ApiBaseService
             $item = [];
             $data = [];
             $allPacks = [];
+            $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+
+            dd($amarOffers);
+
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -242,12 +253,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -255,9 +266,9 @@ class ProductService extends ApiBaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
-
+            dd($item);
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,7 +277,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -284,7 +295,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -588,7 +599,7 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }
