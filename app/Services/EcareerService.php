@@ -259,7 +259,7 @@ class EcareerService
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
             $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
@@ -312,7 +312,7 @@ class EcareerService
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'ennovators');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'ennovators', 'programs_steps');
             $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
@@ -363,7 +363,7 @@ class EcareerService
 
             # get sap title for tab
             $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'aip');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'aip', 'programs_steps');
 
@@ -478,6 +478,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
 
 
@@ -569,11 +571,11 @@ class EcareerService
             foreach ($programs_proiconbox as $parent_value) {
 
                 $sub_data = [];
-                // $sub_data['title_en'] = $parent_value->title_en;
-                // $sub_data['title_bn'] = $parent_value->title_bn;
+                $sub_data['title_en'] = $parent_value->title_en;
+                $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
-                // $sub_data['description_en'] = $parent_value->description_en;
-                // $sub_data['description_bn'] = $parent_value->description_bn;
+                $sub_data['description_en'] = $parent_value->description_en;
+                $sub_data['description_bn'] = $parent_value->description_bn;
                 // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
                 // $sub_data['alt_text'] = $parent_value->alt_text;
                 if (!empty($parent_value->portalItems)) {

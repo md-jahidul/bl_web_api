@@ -17,6 +17,7 @@ class BusinessTypeResource extends JsonResource
         return [
             'id' => $this->id,
             'title_en' => $this->title_en ?? null,
+            'title_bn' => $this->title_bn ?? null,
             'items' =>  BusinessTypeDataResource::collection($this->businessTypeDatas),
         ];
     }
