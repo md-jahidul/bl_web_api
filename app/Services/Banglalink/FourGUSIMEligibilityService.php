@@ -45,8 +45,8 @@ class FourGUSIMEligibilityService extends BaseService
             'redirect_url' => '/banglalink-4g'
         ],
         "prepaid_non_eligible" => [
-            'message_en' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 200',
-            'message_bn' => 'প্রিয় গ্রাহক, এই অফারটি আপনার জন্য প্রযোজ্য নয়।  আপনি যেকোনো বাংলালিংক সিম রিপ্লেসমেন্ট পয়েন্ট থেকে ২০০ টাকা রিপ্লেসমেন্ট চার্জ দিয়ে আপনার বর্তমান সিমটি বদলে 4G সিমটি নিতে পারবেন ।',
+            'message_en' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 250',
+            'message_bn' => 'প্রিয় গ্রাহক, এই অফারটি আপনার জন্য প্রযোজ্য নয়।  আপনি যেকোনো বাংলালিংক সিম রিপ্লেসমেন্ট পয়েন্ট থেকে ২৫০ টাকা রিপ্লেসমেন্ট চার্জ দিয়ে আপনার বর্তমান সিমটি বদলে 4G সিমটি নিতে পারবেন ।',
             'button_en' => 'Close',
             'button_bn' => 'বন্ধ',
             'redirect_url' => '/banglalink-4g'
