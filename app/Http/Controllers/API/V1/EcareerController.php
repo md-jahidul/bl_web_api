@@ -231,6 +231,8 @@ class EcareerController extends Controller
                 $sub_data = [];
                 $sub_data['title_en'] = $events_value->title_en;
                 $sub_data['title_bn'] = $events_value->title_bn;
+                $sub_data['description_en'] = $events_value->description_en;
+                $sub_data['description_bn'] = $events_value->description_bn;
                 $sub_data['slug'] = $events_value->slug;
                 if (!empty($events_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
@@ -267,11 +269,13 @@ class EcareerController extends Controller
 
                 if ($teams_value->category_type == 'teams_title') {
 
-                    $sub_data = [];
-                    $sub_data['title_en'] = $teams_value->title_en;
-                    $sub_data['title_bn'] = $teams_value->title_bn;
-
-                    $teams['teams_title'] = $sub_data;
+                    //$sub_data = [];
+                    $teams['title_en'] = $teams_value->title_en;
+                    $teams['title_bn'] = $teams_value->title_bn;
+                    $teams['description_en'] = $teams_value->description_en;
+                    $teams['description_bn'] = $teams_value->description_bn;
+                    // array_push($teams,$sub_data);
+                    //$teams['teams_title'] = $sub_data;
                 } else {
 
                     $sub_data = [];
