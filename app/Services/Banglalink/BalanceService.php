@@ -555,22 +555,22 @@ class BalanceService extends BaseService
         $local_balance = collect($response)->where('billingAccountType', '=', 'LOCAL')->first();
         $local = [
             'total_outstanding' => $local_balance->totalOutstanding,
-            'credit_limit' => $local_balance->creditLimit
+            'credit_limit' => $local_balance->creditLimit,
+            'next_payment_date' => isset($local_balance->nextPaymentDate) ? Carbon::parse($local_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
         ];
 
         $roaming_balance = collect($response)->where('billingAccountType', '=', 'ROAMING')->first();
         $roaming = [
             'total_outstanding' => $roaming_balance->totalOutstanding,
-            'credit_limit' => $roaming_balance->creditLimit
+            'credit_limit' => $roaming_balance->creditLimit,
+            'next_payment_date' => isset($roaming_balance->nextPaymentDate) ? Carbon::parse($roaming_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
         ];
 
-        $data = [
+        return [
             'connection_type' => 'POSTPAID',
             'local_balance' => $local,
             'roaming_balance' => $roaming
         ];
-
-        return $data;
     }
 
     private function checkPostPaidProductCode($daItem): bool
@@ -686,6 +686,7 @@ class BalanceService extends BaseService
         $allBalance['internet'] = $this->getPostpaidInternetBalance($response);
         $allBalance['sms'] = $this->getPostpaidSmsBalance($response);
         $allBalance['minute'] = $this->getPostpaidTalkTimeBalance($response);
+        $allBalance['roaming'] = [];
         $allBalance['package'] = Customer::package($customer);
         return $allBalance;
     }
@@ -816,6 +817,8 @@ class BalanceService extends BaseService
         } elseif ($type == 'balance') {
             return $this->responseFormatter->sendSuccessResponse($this->getPostpaidMainBalance($response),
                 'Main Balance Details');
+        } elseif ($type == 'roaming') {
+            return $this->responseFormatter->sendSuccessResponse([],'Main Balance Details');
         } else {
             return $this->responseFormatter->sendErrorResponse(
                 "Type Not Supported",
