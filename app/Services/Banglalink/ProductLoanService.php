@@ -239,4 +239,21 @@ class ProductLoanService extends BaseService
 
         return $prepared_loan_info;
     }
+
+    public function getLoanAmount($request)
+    {
+        $msisdn = "88" . $request->input('mobile');
+        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
+        $customerAccountId = $customerInfo->getData()->data->package->customerId;
+        $data = $this->getLoanStatus($customerAccountId, 'prepaid');
+
+        if (empty($data)) {
+           $data = [
+                'due_loan' => 0,
+                'expires_in' => null,
+           ];
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Customer due load amount');
+    }
 }

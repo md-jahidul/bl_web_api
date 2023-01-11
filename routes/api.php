@@ -337,6 +337,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Phase 1
     Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
 
+    Route::post('customer/loan-check', 'API\V1\CurrentBalanceController@customerLoanCheck');
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 
