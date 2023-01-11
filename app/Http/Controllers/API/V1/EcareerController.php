@@ -231,6 +231,8 @@ class EcareerController extends Controller
                 $sub_data = [];
                 $sub_data['title_en'] = $events_value->title_en;
                 $sub_data['title_bn'] = $events_value->title_bn;
+                $sub_data['description_en'] = $events_value->description_en;
+                $sub_data['description_bn'] = $events_value->description_bn;
                 $sub_data['slug'] = $events_value->slug;
                 if (!empty($events_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
@@ -267,11 +269,13 @@ class EcareerController extends Controller
 
                 if ($teams_value->category_type == 'teams_title') {
 
-                    $sub_data = [];
-                    $sub_data['title_en'] = $teams_value->title_en;
-                    $sub_data['title_bn'] = $teams_value->title_bn;
-
-                    $teams['teams_title'] = $sub_data;
+                    //$sub_data = [];
+                    $teams['title_en'] = $teams_value->title_en;
+                    $teams['title_bn'] = $teams_value->title_bn;
+                    $teams['description_en'] = $teams_value->description_en;
+                    $teams['description_bn'] = $teams_value->description_bn;
+                    // array_push($teams,$sub_data);
+                    //$teams['teams_title'] = $sub_data;
                 } else {
 
                     $sub_data = [];
@@ -347,6 +351,7 @@ class EcareerController extends Controller
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
                 $sub_data_news_item['alt_links'] = $portal_items->alt_links;
                 $sub_data_news_item['video'] = $portal_items->video;
+                $sub_data_news_item['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
 
                 $sub_data_news['item_list'][] = $sub_data_news_item;
             }
