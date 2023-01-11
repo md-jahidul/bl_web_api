@@ -234,15 +234,62 @@ class ProductService extends ApiBaseService
         }
     }
 
+    public function prepareAmarOffer(){
+        $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+
+        if ($amarOffers->getData()->status_code == 200) {
+            $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
+            $offersCat = [];
+            $offersCat[] = [
+                'type' =>  "all",
+                'title_en' => "All",
+                'title_bn' =>  "সকল",
+                'pack'     => $amarOffers->getData()->data ?? [],
+            ];
+            if (!empty($offerCollection['data'])) {
+                $offersCat[] = [
+                    'type' =>  "internet",
+                    'title_en' => "Internet",
+                    'title_bn' =>  "ইন্টারনেট",
+                    'pack'     => $offerCollection['data'],
+                ];
+            }
+
+            if (!empty($offerCollection['voice'])) {
+                $offersCat[] = [
+                    'type' => "voice",
+                    'title_en' => "Voice",
+                    'title_bn' => "ভয়েস",
+                    'pack' => $offerCollection['voice'],
+                ];
+            }
+
+            if (!empty($offerCollection['sms'])) {
+                $offersCat[] = [
+                    'type' => "sms",
+                    'title_en' => "SMS",
+                    'title_bn' => "এস এম এস",
+                    'pack' =>  $offerCollection['sms'],
+                ];
+            }
+
+            return $offersCat;
+        }
+
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
+    }
+
     public function simTypeOffersTypeWise($type, $offerType)
     {
         try {
             $item = [];
             $data = [];
             $allPacks = [];
-            $amarOffers = $this->amarOfferService->getAmarOfferList(request());
 
-            dd($amarOffers);
+            if ($offerType == "amar-offer") {
+                $data = $this->prepareAmarOffer();
+                return $this->sendSuccessResponse($data, "{$offerType} packs list");
+            }
 
             $products = $this->productRepository->simTypeProduct($type, $offerType);
 
@@ -266,7 +313,6 @@ class ProductService extends ApiBaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
-            dd($item);
             $sortedData = collect($item)->sortBy('display_order');
 
             foreach ($sortedData as $category => $pack) {
