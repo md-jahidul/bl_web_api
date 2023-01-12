@@ -90,7 +90,6 @@ class AmarOfferService extends BaseService
         $offer_details = [];
         $offer_description = $offer->offerDescriptionWeb;
         $offers = explode(';', $offer_description);
-
         $offer_details ['offer_id'] = $offer->offerID;
 
         if ($include_details) {
@@ -99,8 +98,6 @@ class AmarOfferService extends BaseService
         }
 
         foreach ($offers as $segment) {
-
-
             $data = explode('|', $segment);
             $type = $data[0];
             switch ($type) {
@@ -143,12 +140,10 @@ class AmarOfferService extends BaseService
                         $offerType = $data[1];
                     }
                     $offer_details['offer_type'] = strtolower($offerType);
-
-                    $offer_details['offer_details'] = $this->getAmarOfferDetails($offerType);
+//                    $offer_details['offer_details'] = $this->getAmarOfferDetails($offerType);
                     break;
             }
         }
-
         return $offer_details;
     }
 
@@ -163,13 +158,12 @@ class AmarOfferService extends BaseService
         $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
         $customer_type = $infoBl->getData()->data->connectionType;
         $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
-        $bannerImage = $this->amarOfferDetailsRepository
-            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
+//        $bannerImage = $this->amarOfferDetailsRepository
+//            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
 
         if ($response_data['status_code'] == 200){
-            $formatted_data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-            $data['header'] = $bannerImage;
-            $data['offers'] = $formatted_data;
+            //            $data['header'] = $bannerImage;
+            $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 

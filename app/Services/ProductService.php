@@ -13,6 +13,7 @@ use App\Repositories\ConfigRepository;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\AmarOfferService;
 use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
@@ -72,6 +73,10 @@ class ProductService extends ApiBaseService
      * @var ConfigRepository
      */
     private $configRepository;
+    /**
+     * @var AmarOfferService
+     */
+    private $amarOfferService;
 
     /**
      * ProductService constructor.
@@ -94,7 +99,8 @@ class ProductService extends ApiBaseService
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
         FourGLandingPageRepository $fourGLandingPageRepository,
-        ConfigRepository $configRepository
+        ConfigRepository $configRepository,
+        AmarOfferService $amarOfferService
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -106,6 +112,7 @@ class ProductService extends ApiBaseService
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
         $this->configRepository = $configRepository;
+        $this->amarOfferService = $amarOfferService;
         $this->setActionRepository($productRepository);
     }
 
@@ -233,12 +240,63 @@ class ProductService extends ApiBaseService
         }
     }
 
+    public function prepareAmarOffer(){
+        $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+
+        if ($amarOffers->getData()->status_code == 200) {
+            $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
+            $offersCat = [];
+            $offersCat[] = [
+                'type' =>  "all",
+                'title_en' => "All",
+                'title_bn' =>  "সকল",
+                'pack'     => $amarOffers->getData()->data ?? [],
+            ];
+            if (!empty($offerCollection['data'])) {
+                $offersCat[] = [
+                    'type' =>  "internet",
+                    'title_en' => "Internet",
+                    'title_bn' =>  "ইন্টারনেট",
+                    'pack'     => $offerCollection['data'],
+                ];
+            }
+
+            if (!empty($offerCollection['voice'])) {
+                $offersCat[] = [
+                    'type' => "voice",
+                    'title_en' => "Voice",
+                    'title_bn' => "ভয়েস",
+                    'pack' => $offerCollection['voice'],
+                ];
+            }
+
+            if (!empty($offerCollection['sms'])) {
+                $offersCat[] = [
+                    'type' => "sms",
+                    'title_en' => "SMS",
+                    'title_bn' => "এস এম এস",
+                    'pack' =>  $offerCollection['sms'],
+                ];
+            }
+
+            return $offersCat;
+        }
+
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
+    }
+
     public function simTypeOffersTypeWise($type, $offerType)
     {
         try {
             $item = [];
             $data = [];
             $allPacks = [];
+
+            if ($offerType == "amar-offer") {
+                $data = $this->prepareAmarOffer();
+                return $this->sendSuccessResponse($data, "{$offerType} packs list");
+            }
+
             $products = $this->productRepository->simTypeProduct($type, $offerType);
 
             if ($products) {
@@ -262,7 +320,6 @@ class ProductService extends ApiBaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
-
             $sortedData = collect($item)->sortBy('display_order');
 
             foreach ($sortedData as $category => $pack) {
