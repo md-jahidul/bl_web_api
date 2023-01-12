@@ -155,7 +155,8 @@ class BalanceService extends BaseService
             $data['minutes'] = [
                 'total' => $total_talk_time,
                 'remaining' => $total_remaining_talk_time,
-                'unit' => 'MIN'
+                'unit' => 'MIN',
+                'active_packs' => count($talk_time)
             ];
         }
 
@@ -167,7 +168,8 @@ class BalanceService extends BaseService
             $data['sms'] = [
                 'total' => $total_sms,
                 'remaining' => $total_remaining_sms,
-                'unit' => 'SMS'
+                'unit' => 'SMS',
+                'active_packs' => count($sms)
             ];
         }
 
@@ -180,7 +182,8 @@ class BalanceService extends BaseService
             $data['internet'] = [
                 'total' => $total_internet,
                 'remaining' => $total_remaining_internet,
-                'unit' => 'MB'
+                'unit' => 'MB',
+                'active_packs' => count($internet)
             ];
         }
         return $data;
