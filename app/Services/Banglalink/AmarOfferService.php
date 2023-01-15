@@ -202,8 +202,6 @@ class AmarOfferService extends BaseService
     public function buyAmarOffer(Request $request)
     {
         $customer = $this->customerService->getCustomerDetails($request);
-
-
         $response_data = $this->post($this->getBuyAmarOfferUrl(), [
             'channel' => 'Website',
             'channelId' => 7,
@@ -211,11 +209,15 @@ class AmarOfferService extends BaseService
             'offerID' => $request->offer_id
         ]);
 
-
-//        dd($response_data);
         $offer_data = json_decode($response_data['response']);
         $formatted_data = $this->prepareBuyOfferResponse($offer_data);
 
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
+    }
+
+    public function getDetails($offerType)
+    {
+        $data = $this->amarOfferDetailsRepository->offerDetails($offerType);
+        return $this->responseFormatter->sendSuccessResponse($data, "Amar Offer details");
     }
 }
