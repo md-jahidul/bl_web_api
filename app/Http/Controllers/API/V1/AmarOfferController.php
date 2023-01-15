@@ -41,8 +41,8 @@ class AmarOfferController extends Controller
         return $this->amarOfferService->buyAmarOffer($request);
     }
 
-    public function amarOfferDetails($offerType)
+    public function amarOfferDetails(Request $request, $offerType, $offerId)
     {
-        return $this->amarOfferService->getDetails($offerType);
+        return $this->amarOfferService->getDetails($request, $offerType, $offerId);
     }
 }
