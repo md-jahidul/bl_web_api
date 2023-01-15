@@ -250,14 +250,14 @@ class ProductService extends ApiBaseService
                 'type' =>  "all",
                 'title_en' => "All",
                 'title_bn' =>  "সকল",
-                'pack'     => $amarOffers->getData()->data ?? [],
+                'packs'     => $amarOffers->getData()->data ?? [],
             ];
             if (!empty($offerCollection['data'])) {
                 $offersCat[] = [
                     'type' =>  "internet",
                     'title_en' => "Internet",
                     'title_bn' =>  "ইন্টারনেট",
-                    'pack'     => $offerCollection['data'],
+                    'packs'     => $offerCollection['data'],
                 ];
             }
 
@@ -266,7 +266,7 @@ class ProductService extends ApiBaseService
                     'type' => "voice",
                     'title_en' => "Voice",
                     'title_bn' => "ভয়েস",
-                    'pack' => $offerCollection['voice'],
+                    'packs' => $offerCollection['voice'],
                 ];
             }
 
@@ -275,7 +275,7 @@ class ProductService extends ApiBaseService
                     'type' => "sms",
                     'title_en' => "SMS",
                     'title_bn' => "এস এম এস",
-                    'pack' =>  $offerCollection['sms'],
+                    'packs' =>  $offerCollection['sms'],
                 ];
             }
 
