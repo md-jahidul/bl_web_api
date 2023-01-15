@@ -47,6 +47,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     //AMAR OFFER ========================================
     Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
     Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOffer');
+    Route::get('amar-offer/details/{offerType}', 'API\V1\AmarOfferController@amarOfferDetails');
     Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
     Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');
 
