@@ -215,9 +215,22 @@ class AmarOfferService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($formatted_data, 'You have successfully purchased offer');
     }
 
-    public function getDetails($offerType)
+    public function getDetails($request, $offerType, $offerId)
     {
-        $data = $this->amarOfferDetailsRepository->offerDetails($offerType);
-        return $this->responseFormatter->sendSuccessResponse($data, "Amar Offer details");
+        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
+        $customer_type = $infoBl->getData()->data->connectionType;
+        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
+//        $bannerImage = $this->amarOfferDetailsRepository
+//            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
+        $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
+        $offer = collect($data)->where('offer_id', $offerId)->first();
+        if ($response_data['status_code'] == 200 && !empty($offer)){
+            $details = $this->amarOfferDetailsRepository->offerDetails($offerType)->toArray();
+            $data = array_merge($offer, $details);
+            return $this->responseFormatter->sendSuccessResponse($data, "Amar Offer details");
+        }
+
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
     }
 }
