@@ -126,7 +126,7 @@ class EcareerService
 
     /**
      * Life at bl teams sections
-     * @return [type] [description]
+     * @return [type] [description]0
      */
     public function ecarrerSectionsList($category, $categoryTypes = null)
     {

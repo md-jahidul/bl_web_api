@@ -346,6 +346,7 @@ class EcareerController extends Controller
                 $sub_data_news_item['title_bn'] = $portal_items->title_bn;
                 $sub_data_news_item['description_en'] = $portal_items->description_en;
                 $sub_data_news_item['description_bn'] = $portal_items->description_bn;
+                $sub_data_news_item['slug'] = $portal_items->slug;
 
                 $sub_data_news_item['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
