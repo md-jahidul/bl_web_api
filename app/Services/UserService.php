@@ -16,6 +16,7 @@ use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
+use App\Services\Banglalink\BanglalinkLoyaltyService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
@@ -80,6 +81,10 @@ class UserService extends ApiBaseService
      * @var CustomerRepository
      */
     private $customerRepository;
+    /**
+     * @var BanglalinkLoyaltyService
+     */
+    private $blLoyaltyService;
 
 
     /**
@@ -98,6 +103,7 @@ class UserService extends ApiBaseService
         BanglalinkOtpService $blOtpService,
         OtpConfigRepository $otpConfigRepository,
         BalanceService $balanceService,
+        BanglalinkLoyaltyService $blLoyaltyService,
         CustomerService $customerService,
         BanglalinkCustomerService $banglalinkCustomerService,
         LogService $logService,
@@ -109,6 +115,7 @@ class UserService extends ApiBaseService
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
+        $this->blLoyaltyService = $blLoyaltyService;
         $this->customerService = $customerService;
         $this->blCustomerService = $banglalinkCustomerService;
         $this->logService = $logService;
@@ -386,8 +393,14 @@ class UserService extends ApiBaseService
         $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
-        return $customerInfo;
+        $loyaltyInfo = $this->blLoyaltyService->getPriyojonStatus("88" . $mobile)->getData();
 
+        if ($loyaltyInfo->status_code == 200){
+            $customerInfo['loyalty_info'] = $loyaltyInfo->data->data;
+        } else {
+            $customerInfo['loyalty_info'] = null;
+        }
+        return $customerInfo;
     }
 
     /**
