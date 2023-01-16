@@ -39,11 +39,11 @@ class BanglalinkLoyaltyService extends BaseService
         if ($result['status_code'] == 200) {
             $data = json_decode($result['response'], true);
             if ($data['message'] == 'OK') {
-                return $data;
+                return $this->apiBaseService->sendSuccessResponse($data, 'Loyalty info', '', '', 200);
             }
-            throw new BLApiHubException($data['message'], 500);
+           return $this->apiBaseService->sendErrorResponse('This user is not eligible loyalty', '', 500);
         }
-        throw new BLApiHubException("Internal service error", $result['status_code']);
+        return $this->apiBaseService->sendErrorResponse('Internal service error', '', 500);
     }
 
     public function getRedeemOptions($subscriberId)
