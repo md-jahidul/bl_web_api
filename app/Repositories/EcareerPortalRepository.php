@@ -31,12 +31,12 @@ class EcareerPortalRepository extends BaseRepository
 
                 $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'asc');
 
-            }])->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->get();
+            }])->where('category', '=', $category)->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'asc')->get();
         }
         else{
             return $this->model::with(['portalItems' => function($query){
                 $query->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'desc');
-            }])->where('category', '=', $category)->where('category_type', '=', $categoryTypes)->where('is_active', 1)->whereNull('deleted_at')->get();
+            }])->where('category', '=', $category)->where('category_type', '=', $categoryTypes)->where('is_active', 1)->whereNull('deleted_at')->orderBy('display_order', 'asc')->get();
         }
     }
 

@@ -258,8 +258,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
             $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_video');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
             $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
@@ -311,8 +312,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
             $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', 'ennovators', 'programs_video');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'ennovators');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'ennovators', 'programs_steps');
             $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
@@ -362,8 +364,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
             $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', 'aip', 'programs_video');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'aip');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'aip', 'programs_steps');
 
@@ -380,6 +383,21 @@ class EcareerService
         } catch (\Exception $e) {
             return $results;
         };
+    }
+
+    public function getGeneralPrograms($type)
+    {
+        $results = null;
+        $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', $type, 'programs_news_section');
+        $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', $type, 'programs_video');
+        $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', $type);
+        $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', $type, 'programs_steps');
+
+        $sections['programs_testimonial'] = $this->getProgramsTestimonialSections('programs_progeneral', $type, 'programs_testimonial');
+
+        $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', $type, 'programs_events');
+        $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', $type);
+        $results['sections'] = $sections;
     }
 
     /**
@@ -451,6 +469,53 @@ class EcareerService
                         $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
                     }
                 }
+            }
+        }
+
+        return $sub_data;
+    }
+    /**
+     * Programs SAP news sections
+     * @return [type] [description]
+     */
+    private function getProgramsVideoSections($category, $category_type, $additional_category)
+    {
+
+        $sub_data = null;
+
+        if (empty($category) || empty($category_type) || empty($additional_category)) {
+            return $sub_data;
+        }
+
+        # Ecarrer programs news section
+        $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+        if (!empty($get_sap_news)) {
+
+            foreach ($get_sap_news as $value) {
+                //dd( $value->title_en);
+                // $sub_data['title_en'] = $value->title_en;
+                // $sub_data['title_bn'] = $value->title_bn;
+                // $sub_data['description_en'] = $value->description_en;
+                // $sub_data['description_bn'] = $value->description_bn;
+                $sub_data['video'] = $value->video;
+                //$sub_data['title_en'] = $value->title_en;
+//                 if (!empty($value->portalItems) && count($value->portalItems) > 0) {
+//                     foreach ($value->portalItems as $items_value) {
+//                         $sub_data['title_en'] = $items_value->title_en;
+//                         $sub_data['title_bn'] = $items_value->title_bn;
+//                         $sub_data['description_en'] = $items_value->description_en;
+//                         $sub_data['description_bn'] = $items_value->description_bn;
+
+//                         $sub_data['image'] = !empty($items_value->image) ?  $items_value->image : null;
+//                         $sub_data['video'] = $items_value->video;
+//                         $sub_data['alt_text'] = $items_value->alt_text;
+//                         // $sub_data['alt_links'] = $items_value->alt_links;
+//                         #teams tab content buttons
+// //                        $sub_data['call_to_action_buttons'] = null;
+//                         $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+//                     }
+//                 }
             }
         }
 
