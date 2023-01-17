@@ -69,4 +69,9 @@ class EcareerPortalRepository extends BaseRepository
             $query->whereNull('deleted_at');
         }])->where('category', 'life_at_bl_diversity')->first();
     }
+
+    public function findProgramId(){
+        return $this->model::where('is_program',1)->first();
+
+    }
 }

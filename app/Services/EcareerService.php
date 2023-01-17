@@ -1128,8 +1128,34 @@ class EcareerService
         return $results;
     }
 
+    public function getProgramsList($type){
+        $programId = $this->ecarrerPortalRepository->findProgramId();
+        if(isset($programId)){
+            $programList = $this->ecarrerPortalItemRepository->findProgramList($programId->id,$type);
+            $programs = [];
+            if(!empty($programList)){
+
+                foreach ($programList as $program){
+                    $response = [];
+                    $response['title_en'] = $program->title_en;
+                    $response['title_bn'] = $program->title_bn;
+                    $response['description_en'] = $program->description_en;
+                    $response['description_bn'] = $program->description_bn;
+                    $response['slug'] = $program->slug;
+
+                    $response['image'] = !empty($program->image) ?  $program->image : null;
+                    $response['alt_text'] = $program->alt_text;
+                    $response['alt_links'] = $program->alt_links;
+                    $response['video'] = $program->video;
+                    $response['call_to_action_buttons'] = !empty($program->call_to_action) ? unserialize($program->call_to_action) : null;
+                    $programs[] =  $response;
+                }
+            }
+            return $programs;
+        }
+    }
+
 }
 
 // Class end
-
 
