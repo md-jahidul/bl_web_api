@@ -29,7 +29,7 @@ class AboutUsRepository extends BaseRepository
      */
     public function getAboutBanglalink()
     {
-        return $this->model->get();
+        return $this->model->where('is_active',1)->get();
     }
 
 }

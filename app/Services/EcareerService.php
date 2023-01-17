@@ -449,7 +449,6 @@ class EcareerService
 
         # Ecarrer programs news section
         $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
-
         if (!empty($get_sap_news)) {
             foreach ($get_sap_news as $value) {
 
@@ -471,7 +470,6 @@ class EcareerService
                 }
             }
         }
-
         return $sub_data;
     }
     /**
