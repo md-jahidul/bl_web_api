@@ -126,13 +126,13 @@ class PartnerOfferService extends ApiBaseService {
     public function discountOffers($page, $elg, $cat, $area, $searchStr) {
         try {
 
-            $data['status'] = array(
-                1 => "Silver",
-                2 => "Gold",
-                3 => "Platinum"
-            );
-            $data['categories'] = $this->partnerOfferRepository->getCategories();
-            $data['areas'] = $this->partnerOfferRepository->getAreas();
+            // $data['status'] = array(
+            //     1 => "Silver",
+            //     2 => "Gold",
+            //     3 => "Platinum"
+            // );
+            // $data['categories'] = $this->partnerOfferRepository->getCategories();
+            // $data['areas'] = $this->partnerOfferRepository->getAreas();
 
             $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
             $data['offers'] = PartnerOfferResource::collection($offers);

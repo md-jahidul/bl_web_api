@@ -90,9 +90,10 @@ class PartnerOfferRepository extends BaseRepository {
                         ->offset($offset)->limit($limit);
 
         if ($elg != "") {
-            $elg == 1 ? $offers->where('po.silver', 1) : null;
-            $elg == 2 ? $offers->where('po.gold', 1) : null;
-            $elg == 3 ? $offers->where('po.platium', 1) : null;
+            // $elg == 1 ? $offers->where('po.silver', 1) : null;
+            // $elg == 2 ? $offers->where('po.gold', 1) : null;
+            // $elg == 3 ? $offers->where('po.platium', 1) : null;
+            $offers->where('po.loyalty_tier_id', $elg);
         }
 
         if ($cat != "") {
