@@ -16,9 +16,9 @@ class BlogResource extends JsonResource
     {
         return [
             "title_en" => $this->title_en,
-            "title_bn" => $this->title_en,
+            "title_bn" => $this->title_bn,
             "description_en" => $this->short_details_en,
-            "description_bn" => $this->short_details_en,
+            "description_bn" => $this->short_details_bn,
             "blog_image" => $this->thumbnail_image,
             "alt_text_en" => $this->alt_text_en,
             "alt_text_bn" => $this->alt_text_bn,
@@ -26,6 +26,8 @@ class BlogResource extends JsonResource
             "read_time" => $this->read_time,
             "details_btn_en" => $this->details_btn_en,
             "details_btn_bn" => $this->details_btn_bn,
+            "url_slug_en" => $this->url_slug_en,
+            "url_slug_bn" => $this->url_slug_bn,
         ];
     }
 }
