@@ -435,6 +435,7 @@ class EcareerController extends Controller
             else{
                 $data['data'] = $this->ecarrerService->getGeneralPrograms($type);
             }
+            $data['program'] = $this->ecarrerService->getProgramsList($type);
 
 
             // if (!empty($ecarrer_sap['tab_title'])) {
