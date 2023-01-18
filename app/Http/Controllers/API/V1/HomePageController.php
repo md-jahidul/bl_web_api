@@ -24,6 +24,7 @@ use App\Repositories\BusinessTypeRepository;
 use DB;
 use Validator;
 use App\Services\EcareerService;
+use Illuminate\Http\Request;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class HomePageController extends Controller
@@ -67,10 +68,10 @@ class HomePageController extends Controller
         $this->dynamicUrlRedirectionRepository = $dynamicUrlRedirectionRepository;
     }
 
-    public function getHomePageData()
+    public function getHomePageData(Request $request)
     {
-
-        return $this->homeService->getComponents();
+        // return $request->header('authorization');
+        return $this->homeService->getComponents($request);
     }
 
     /**

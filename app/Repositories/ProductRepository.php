@@ -96,6 +96,7 @@ class ProductRepository extends BaseRepository
                 ->get();
     }
 
+    #
     public function showTrendingProduct()
     {
        return $this->model->select(
@@ -128,6 +129,47 @@ class ProductRepository extends BaseRepository
            ->where('special_product', 0)
            ->orderBy('display_order')
            ->get();
+    }
+
+    #shuvo-bs
+    public function offerProductsForYou($type,$offerIDArr, $customerAvailableProducts)
+    {
+        return $this->model->select(
+                'products.id',
+                'products.product_code',
+                'products.url_slug',
+                'products.url_slug_bn',
+                'products.schema_markup',
+                'products.page_header',
+                'products.page_header_bn',
+                'products.rate_cutter_unit',
+                'products.rate_cutter_offer',
+                'products.name_en',
+                'products.name_bn',
+                'products.ussd_bn',
+                'products.balance_check_ussd_bn',
+                'products.call_rate_unit_bn',
+                'products.sms_rate_unit_bn',
+                'products.tag_category_id',
+                'products.sim_category_id',
+                'products.offer_category_id',
+                'products.special_product',
+                'products.like',
+                'products.validity_postpaid',
+                'products.offer_info'
+            )
+            ->productCore()
+            ->startEndDate()
+            ->whereIn('product_code', $customerAvailableProducts)
+            ->whereIn('offer_category_id', $offerIDArr)
+            ->where('status', 1)
+            ->where('show_in_home', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order')
+            // ->with('productCore.detialTabs')
+            ->category($type)
+            ->with(['offer_category:id,name_en,name_bn,alias'])
+            ->get();
     }
 
     /**
