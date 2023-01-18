@@ -177,7 +177,7 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    public function trendingProduct($type = "prepaid")
+    public function trendingProduct($params = [])
     {
         
         // $products = $this->productRepository->showTrendingProduct();
@@ -188,6 +188,15 @@ class ProductService extends ApiBaseService
         // }
         
         // return $products;
+
+        /**
+         * Shuvo-bs
+         */
+        $customerInfo = $params['customerInfo'] ?? null;
+        $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
+
+        $numberType  = ($customerInfo) ? $customerInfo->numberType : 'prepaid' ;
+
 
         $offerType = ['internet', 'voice', 'bundles'];
         $offerCategories =  OfferCategory::whereIn('alias', $offerType)->select('id', 'alias', 'name_en', 'name_bn')->get()?? [];
@@ -201,7 +210,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             // $products = $this->productRepository->simTypeProduct($type, $offerType);
-            return $products = $this->productRepository->offerProductsForYou($type, $offerIDArr);
+            $products = $this->productRepository->offerProductsForYou($numberType, $offerIDArr, $customerAvailableProducts);
 
             
             if ($products) {

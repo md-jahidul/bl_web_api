@@ -82,6 +82,7 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    #
     public function showTrendingProduct()
     {
        return $this->model->select(
@@ -115,7 +116,9 @@ class ProductRepository extends BaseRepository
            ->orderBy('display_order')
            ->get();
     }
-    public function offerProductsForYou($type,$offerIDArr)
+
+    #shuvo-bs
+    public function offerProductsForYou($type,$offerIDArr, $customerAvailableProducts)
     {
         return $this->model->select(
                 'products.id',
@@ -143,6 +146,7 @@ class ProductRepository extends BaseRepository
             )
             ->productCore()
             ->startEndDate()
+            ->whereIn('product_code', $customerAvailableProducts)
             ->whereIn('offer_category_id', $offerIDArr)
             ->where('status', 1)
             ->where('show_in_home', 1)
