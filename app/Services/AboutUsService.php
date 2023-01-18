@@ -95,6 +95,26 @@ class AboutUsService extends ApiBaseService
     {
         try {
             $data = $this->aboutUsRepository->getAboutUsPages($url_slug);
+            $formatted_data = [
+                'id'                      => $data->id ?? null,
+                'slug'                      => $data->slug ?? null,
+                'title_en'                => $data->title ?? null,
+                'title_bn'                => $data->title_bn ?? null,
+                'banglalink_info_en'      => $data->banglalink_info ?? null,
+                'banglalink_info_bn'      => $data->banglalink_info_bn ?? null,
+                'details_en'              => $data->details_en ?? null,
+                'details_bn'              => $data->details_bn ?? null,
+                'banner_image'            => $data->banner_image ?? null,
+                'banner_image_mobile'     => $data->banner_image_mobile ?? null,
+                'alt_text'                => $data->alt_text ?? null,
+                'schema_markup'           => $data->schema_markup ?? null,
+                'page_header'             => $data->page_header ?? null,
+                'page_header_bn'          => $data->page_header_bn ?? null,
+                'url_slug'                => $data->url_slug ?? null,
+                'url_slug_bn'             => $data->url_slug_bn ?? null,
+                'content_image'           => $data->content_image ?? null
+            ];
+            $data = $formatted_data;
             return $this->sendSuccessResponse($data, 'About Banglalink', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
