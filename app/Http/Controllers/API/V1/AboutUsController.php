@@ -35,6 +35,16 @@ class AboutUsController extends Controller
         return $this->aboutUsService->getAboutBanglalink();
     }
 
+    /**
+     * @return JsonResponse
+     */
+    public function getAboutusPages(Request $request)
+    {
+        return $this->aboutUsService->getAboutusPages($request);
+    }
+
+    
+
 
     /**
      * @param Request $request
