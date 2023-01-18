@@ -22,6 +22,11 @@ class Product extends Model
         return $this->belongsTo(SimCategory::class);
     }
 
+    public function offer_category()
+    {
+        return $this->belongsTo(OfferCategory::class);
+    }
+
 
     /**
      * @param $query

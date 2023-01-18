@@ -41,7 +41,10 @@ class HomeService extends ApiBaseService
     private $aboutUsRepository;
     private $businessTypeService;
 
-
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
 
 
 
@@ -75,7 +78,8 @@ class HomeService extends ApiBaseService
         AboutUsRepository $aboutUsRepository,
         PartnerOfferService $partnerOfferService,
         BusinessTypeService $businessTypeService,
-        MediaPressNewsEventRepository $mediaPressNewsEventRepository
+        MediaPressNewsEventRepository $mediaPressNewsEventRepository,
+        CustomerService $customerService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -86,6 +90,8 @@ class HomeService extends ApiBaseService
         $this->partnerOfferService = $partnerOfferService;
         $this->businessTypeService = $businessTypeService;
         $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
+        $this->customerService = $customerService;
+
     }
 
 
@@ -201,7 +207,7 @@ class HomeService extends ApiBaseService
         ];
     }
 
-    public function getMultipleSliderData($id,$shortCode) {
+    public function getMultipleSliderData($id,$shortCode, $customerInfo = null) {
 //        $slider = AlSlider::find($id);
         //$slider = $this->sliderRepository->findOne($id);
         //$this->bindDynamicValues($slider);
@@ -229,14 +235,16 @@ class HomeService extends ApiBaseService
 
         // }
         else {
-            $products = $this->productService->trendingProduct();
+            $products = $this->productService->trendingProduct($customerInfo->number_type??'prepaid');
             $slider->data = $products;
         }
 
         return $slider;
     }
 
-    public function factoryComponent($type, $id, $component) {
+    public function factoryComponent($type, $id, $component, $params = []) {
+
+        $customerInfo = $params['customerInfo'] ?? '';
 
         $data = null;
         switch ($type) {
@@ -250,7 +258,7 @@ class HomeService extends ApiBaseService
                 $data = $this->getQuickLaunchData($component);
                 break;
             case "slider_multiple":
-                $data = $this->getMultipleSliderData($id,$component);
+                $data = $this->getMultipleSliderData($id,$component, $customerInfo);
                 break;
             case "sales_service":
                 $data = $this->getSalesServiceData();
@@ -353,8 +361,14 @@ class HomeService extends ApiBaseService
         }
         return $data;
     }
-    public function getComponents()
+    public function getComponents($request)
     {
+        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+
+        // if ($customerInfo) {
+        //     # code...
+        // }
+        
         $componentList = ShortCode::where('page_id', 1)
             ->where('is_active', 1)
             ->orderBy('sequence', 'ASC')
@@ -367,7 +381,12 @@ class HomeService extends ApiBaseService
                 // if($component->id === 19){
                 //     continue;
                 // }
-                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
+
+                #need to remove 
+                if($component->component_key !== 'trending_slider'){
+                    continue;
+                }
+                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo]);
             }
             $value = json_encode($homePageData);
             //Redis::setex('al_home_components', 3600, json_encode($homePageData));
