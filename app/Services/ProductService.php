@@ -10,6 +10,7 @@ use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Models\MyBlProductTab;
 use App\Repositories\ConfigRepository;
+use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -57,6 +58,11 @@ class ProductService extends ApiBaseService
      * @var BanglalinkLoanService
      */
     protected $blLoanProductService;
+
+    /**
+     * @var CustomerInfo
+     */
+    protected $customerInfo;
 
     /***
      * @var ProductBookmarkRepository
@@ -184,15 +190,98 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    public function trendingProduct()
+    public function trendingProduct($params = [])
     {
-        $products = $this->productRepository->showTrendingProduct();
-        foreach ($products as $product) {
-            $this->bindDynamicValues($product, 'offer_info', $product->productCore);
-            unset($product->productCore);
-        }
+        
+        // $products = $this->productRepository->showTrendingProduct();
+        
+        // foreach ($products as $product) {
+        //     $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+        //     unset($product->productCore);
+        // }
+        
+        // return $products;
 
-        return $products;
+        /**
+         * Shuvo-bs
+         */
+        $customerInfo = $params['customerInfo'] ?? null;
+        $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
+
+        $numberType  = ($customerInfo) ? $customerInfo->numberType : 'prepaid' ;
+
+
+        $offerType = ['internet', 'voice', 'bundles'];
+        $offerCategories =  OfferCategory::whereIn('alias', $offerType)->select('id', 'alias', 'name_en', 'name_bn')->get()?? [];
+
+        $offerIDArr = collect($offerCategories)->pluck('id');
+        
+
+
+        try {
+            $item = [];
+            $data = [];
+            $allPacks = [];
+            // $products = $this->productRepository->simTypeProduct($type, $offerType);
+            $products = $this->productRepository->offerProductsForYou($numberType, $offerIDArr, $customerAvailableProducts);
+
+            
+            if ($products) {
+                foreach ($products as $product) {
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
+                    unset($product->productCore);
+                }
+            }
+            
+            foreach ($products as $offer) {
+
+                $pack = $offer->getAttributes();
+                
+                // foreach ($offerCategories as $category) {
+                //     $item[$category->alias]['title_en'] = $category->name_en;
+                //     $item[$category->alias]['title_bn'] = $category->name_bn;
+                //     $item[$category->alias]['packs'][] = $pack;
+                // }
+                $item[$offer->offer_category->alias]['title_en'] = $offer->offer_category->name_en;
+                $item[$offer->offer_category->alias]['title_bn'] = $offer->offer_category->name_bn;
+                $item[$offer->offer_category->alias]['packs'][] = $pack;
+            }
+
+
+
+
+            $sortedData = collect($item);
+
+
+            
+            foreach ($sortedData as $category => $pack) {
+                $data[] = [
+                    'type' => $category,
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'packs' => array_values($pack['packs']) ?? []
+                ];
+            }
+            
+            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
+
+            // if(!empty($data)) {
+            //     array_unshift($data, [
+            //         'type' => 'all',
+            //         'title_en' => 'All',
+            //         'title_bn' => Null,
+            //         'packs' => $allPacks->toArray() ?? []
+            //     ]);
+            // }
+
+            return $data;
+
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        } 
+
+
     }
 
     /**

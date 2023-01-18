@@ -20,6 +20,7 @@ use App\Repositories\AboutUsRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\MediaPressNewsEventRepository;
 use App\Repositories\SliderRepository;
+use App\Services\Banglalink\CustomerAvailableProductsService;
 use App\Services\Banglalink\CustomerPackageService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -41,7 +42,14 @@ class HomeService extends ApiBaseService
     private $aboutUsRepository;
     private $businessTypeService;
 
-
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+    /**
+     * @var CustomerAvailableProductsService
+     */
+    protected $customerAvailableProductsService;
 
 
 
@@ -75,7 +83,9 @@ class HomeService extends ApiBaseService
         AboutUsRepository $aboutUsRepository,
         PartnerOfferService $partnerOfferService,
         BusinessTypeService $businessTypeService,
-        MediaPressNewsEventRepository $mediaPressNewsEventRepository
+        MediaPressNewsEventRepository $mediaPressNewsEventRepository,
+        CustomerService $customerService,
+        CustomerAvailableProductsService $customerAvailableProductsService
     ) {
         $this->productService = $productService;
         $this->sliderRepository = $sliderRepository;
@@ -86,6 +96,9 @@ class HomeService extends ApiBaseService
         $this->partnerOfferService = $partnerOfferService;
         $this->businessTypeService = $businessTypeService;
         $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
+        $this->customerService = $customerService;
+        $this->customerAvailableProductsService = $customerAvailableProductsService;
+
     }
 
 
@@ -201,7 +214,7 @@ class HomeService extends ApiBaseService
         ];
     }
 
-    public function getMultipleSliderData($id,$shortCode) {
+    public function getMultipleSliderData($id,$shortCode,$params = []) {
 //        $slider = AlSlider::find($id);
         //$slider = $this->sliderRepository->findOne($id);
         //$this->bindDynamicValues($slider);
@@ -229,14 +242,17 @@ class HomeService extends ApiBaseService
 
         // }
         else {
-            $products = $this->productService->trendingProduct();
+            $products = $this->productService->trendingProduct($params);
             $slider->data = $products;
         }
 
         return $slider;
     }
 
-    public function factoryComponent($type, $id, $component) {
+    public function factoryComponent($type, $id, $component, $params = []) {
+
+        // $customerInfo = $params['customerInfo'] ?? '';
+        // $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
 
         $data = null;
         switch ($type) {
@@ -250,7 +266,8 @@ class HomeService extends ApiBaseService
                 $data = $this->getQuickLaunchData($component);
                 break;
             case "slider_multiple":
-                $data = $this->getMultipleSliderData($id,$component);
+                // $data = $this->getMultipleSliderData($id,$component, $customerInfo, ['customerAvailableProducts' => $customerAvailableProducts]);
+                $data = $this->getMultipleSliderData($id,$component,$params);
                 break;
             case "sales_service":
                 $data = $this->getSalesServiceData();
@@ -353,8 +370,18 @@ class HomeService extends ApiBaseService
         }
         return $data;
     }
-    public function getComponents()
+    public function getComponents($request)
     {
+        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+
+        $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
+
+
+
+        // if ($customerInfo) {
+        //     # code...
+        // }
+        
         $componentList = ShortCode::where('page_id', 1)
             ->where('is_active', 1)
             ->orderBy('sequence', 'ASC')
@@ -364,10 +391,16 @@ class HomeService extends ApiBaseService
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
+                
                 if($component->id === 19){
                     continue;
                 }
-                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component);
+
+                #need to remove 
+                // if($component->component_key !== 'trending_slider'){
+                //     continue;
+                // }
+                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
             }
             $value = json_encode($homePageData);
             //Redis::setex('al_home_components', 3600, json_encode($homePageData));
