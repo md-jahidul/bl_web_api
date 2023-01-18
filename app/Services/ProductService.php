@@ -192,10 +192,13 @@ class ProductService extends ApiBaseService
         /**
          * Shuvo-bs
          */
+
+
+        
         $customerInfo = $params['customerInfo'] ?? null;
         $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
 
-        $numberType  = ($customerInfo) ? $customerInfo->numberType : 'prepaid' ;
+        $numberType  = ($customerInfo) ? $customerInfo->number_type : 'prepaid' ;
 
 
         $offerType = ['internet', 'voice', 'bundles'];
@@ -247,7 +250,7 @@ class ProductService extends ApiBaseService
                     'type' => $category,
                     'title_en' => $pack['title_en'],
                     'title_bn' => $pack['title_bn'],
-                    'packs' => array_values($pack['packs']) ?? []
+                    'items' => array_values($pack['packs']) ?? []
                 ];
             }
             
