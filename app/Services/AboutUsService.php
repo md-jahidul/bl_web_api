@@ -91,9 +91,8 @@ class AboutUsService extends ApiBaseService
     /**
      * @return JsonResponse
      */
-    public function getAboutusPages($request)
+    public function getAboutusPages($url_slug)
     {
-       $url_slug = $request->url_slug ?? '';
         try {
             $data = $this->aboutUsRepository->getAboutUsPages($url_slug);
             $formatted_data = [
