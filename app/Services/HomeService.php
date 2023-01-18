@@ -377,10 +377,6 @@ class HomeService extends ApiBaseService
         $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
 
 
-
-        // if ($customerInfo) {
-        //     # code...
-        // }
         
         $componentList = ShortCode::where('page_id', 1)
             ->where('is_active', 1)
@@ -396,10 +392,6 @@ class HomeService extends ApiBaseService
                     continue;
                 }
 
-                #need to remove 
-                // if($component->component_key !== 'trending_slider'){
-                //     continue;
-                // }
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
             }
             $value = json_encode($homePageData);
