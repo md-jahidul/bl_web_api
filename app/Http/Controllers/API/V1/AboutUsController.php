@@ -38,9 +38,9 @@ class AboutUsController extends Controller
     /**
      * @return JsonResponse
      */
-    public function getAboutusPages(Request $request)
+    public function getAboutusPages($url_slug)
     {
-        return $this->aboutUsService->getAboutusPages($request);
+        return $this->aboutUsService->getAboutusPages($url_slug);
     }
 
     

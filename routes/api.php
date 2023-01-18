@@ -178,7 +178,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
     Route::get('about-us-management', 'API\V1\AboutUsController@getAboutManagement');
     Route::get('about-us-eCareer', 'API\V1\AboutUsController@getEcareersInfo');
-    Route::get('about-us-pages', 'API\V1\AboutUsController@getAboutusPages');
+    Route::get('about-us-pages/{url_slug}', 'API\V1\AboutUsController@getAboutusPages');
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
