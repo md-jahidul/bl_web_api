@@ -25,8 +25,7 @@ class UserProfileController extends Controller
 
     public function view(Request $request)
     {
-        $userDetails = $this->userService->viewProfile($request);
-        return $userDetails;
+        return $this->userService->viewProfile($request);
     }
 
     public function update(Request $request)

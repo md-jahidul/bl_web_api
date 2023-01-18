@@ -96,6 +96,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
     Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
 
+    Route::get('balance/details/{type}', 'API\V1\CurrentBalanceController@getBalanceDetails');
+
     // Product Purchase
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
@@ -312,6 +314,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Phase 1
     Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
 
+    Route::post('customer/loan-check', 'API\V1\CurrentBalanceController@customerLoanCheck');
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 });

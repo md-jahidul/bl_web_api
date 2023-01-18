@@ -7,6 +7,7 @@ use App\Exceptions\BLApiHubException;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
+use App\Services\Banglalink\BanglalinkLoyaltyService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
@@ -56,6 +57,10 @@ class UserService extends ApiBaseService
      * @var CustomerService
      */
     protected $customerService;
+    /**
+     * @var BanglalinkLoyaltyService
+     */
+    private $blLoyaltyService;
 
 
     /**
@@ -67,16 +72,23 @@ class UserService extends ApiBaseService
      * @param BanglalinkOtpService $blOtpService
      * @param OtpConfigRepository $otpConfigRepository
      */
-    public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository,
-                                BalanceService $balanceService, CustomerService $customerService)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        NumberValidationService $numberValidationService,
+        OtpRepository $otpRepository,
+        BanglalinkOtpService $blOtpService,
+        OtpConfigRepository $otpConfigRepository,
+        BalanceService $balanceService,
+        BanglalinkLoyaltyService $blLoyaltyService,
+        CustomerService $customerService
+    ){
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
         $this->otpRepository = $otpRepository;
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
+        $this->blLoyaltyService = $blLoyaltyService;
         $this->customerService = $customerService;
     }
 
@@ -351,8 +363,14 @@ class UserService extends ApiBaseService
         $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
-        return $customerInfo;
+        $loyaltyInfo = $this->blLoyaltyService->getPriyojonStatus("88" . $mobile)->getData();
 
+        if ($loyaltyInfo->status_code == 200){
+            $customerInfo['loyalty_info'] = $loyaltyInfo->data->data;
+        } else {
+            $customerInfo['loyalty_info'] = null;
+        }
+        return $customerInfo;
     }
 
     /**
@@ -584,7 +602,7 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
-    public function getAuthToken($data) 
+    public function getAuthToken($data)
     {
         $response = IdpIntegrationService::loginRequest($data);
 
