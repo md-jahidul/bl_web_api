@@ -230,6 +230,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // App and service get details page with product id
     Route::get('app-service/details/{slug}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
 
+    //FB campaign=======
+    Route::post('fb-campaign', 'API\V1\FbCampaningController@store');
+
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
 
