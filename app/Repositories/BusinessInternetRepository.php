@@ -19,6 +19,7 @@ class BusinessInternetRepository extends BaseRepository {
         $internet = $this->model->where('status', 1)
             ->whereNotNull('product_code')
             ->where('product_code', '!=', "")
+            ->with('tag_category')
             ->orderBy('sort');
 
         if ($homeShow == 1) {
@@ -54,6 +55,13 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['url_slug'] = $p->url_slug;
             $data[$count]['url_slug_bn'] = $p->url_slug_bn;
             $data[$count]['likes'] = $p->likes;
+
+            $data[$count]['name_en'] = $p->product_commercial_name_en;
+            $data[$count]['name_bn'] = $p->product_commercial_name_bn;
+            $data[$count]['tag_name_en'] = optional($p->tag_category)->name_en;
+            $data[$count]['tag_name_bn'] = optional($p->tag_category)->name_bn;
+
+
             $count++;
         }
 
