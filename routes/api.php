@@ -202,8 +202,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // App and service get details page with product id
     Route::get('app-service/details/{slug}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
 
-    //FB Campaning=======
-    Route::post('fb-campaning', 'API\V1\FbCampaningController@store');
+    //FB campaign=======
+    Route::post('fb-campaign', 'API\V1\FbCampaningController@store');
 
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
@@ -307,7 +307,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // MyBl Product Detail
     // Route::get('mybl-product/{productCode}/details', 'API\V1\UpsellFacebook\UpsellController@getProductDetails')->middleware('verifyFacebookUpsellKey');
-    
+
     // Performance API
     Route::post('upsell/report-facebook', 'API\V1\UpsellFacebook\UpsellController@reportFacebook')->middleware('verifyFacebookUpsellKey');
 
@@ -317,7 +317,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 
-    
+
 
 });
 
