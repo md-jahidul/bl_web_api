@@ -60,6 +60,33 @@ class MediaPressNewsEventRepository extends BaseRepository
             ->get();
     }
 
+    public function filterArchive($postRefType, $param,$limit)
+    {
+        $q = $this->model
+            ->latest()
+            ->select('title_en', 'title_bn',
+                'short_details_en', 'short_details_bn',
+                'long_details_en', 'long_details_bn',
+                'details_image', 'details_alt_text_en',
+                'thumbnail_image', 'alt_text_en','date',
+                'read_time', 'details_btn_en', 'details_btn_bn',
+                'tag_en', 'tag_bn', 'url_slug_en', 'url_slug_bn'
+            )
+            ->where('reference_type', $postRefType);
+            if(!empty($param['media_news_category_id'])){
+                $q->where('media_news_category_id', $param['media_news_category_id']);
+            }
+            if(!empty($param['year']) && empty($param['month'])){
+                $q->whereRaw('DATE_FORMAT(date,"%Y") ='.$param['year']);
+            }
+            if(!empty($param['year']) && !empty($param['month'])){
+                $q->whereRaw("DATE_FORMAT(date,'%Y-%m') = '".$param['year']."-".$param['month']."'");
+            }
+        $data = $q->where('status', 1)
+        ->paginate($limit);
+        return $data;
+    }
+
     public function filterByDate($moduleType, $from, $to)
     {
         return $this->model

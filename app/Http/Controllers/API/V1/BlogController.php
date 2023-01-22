@@ -6,7 +6,9 @@ use App\Services\MediaLandingPageService;
 use App\Http\Controllers\Controller;
 use App\Services\MediaPressNewsEventService;
 use App\Services\MediaTvcVideoService;
+
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
@@ -52,6 +54,11 @@ class BlogController extends Controller
     public function getBlogDetails($urlSlug)
     {
         return $this->mediaPressNewsEventService->detailsComponent($urlSlug);
+    }
+
+    public function getBlogArchive(Request $request)
+    {
+        return $this->mediaPressNewsEventService->filterArchive(self::POST_REFERENCE_TYPE,$request->all(),10);
     }
 
 //    public function getPressReleaseFilter($from, $to)
