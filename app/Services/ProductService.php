@@ -192,34 +192,27 @@ class ProductService extends ApiBaseService
 
     public function trendingProduct($params = [])
     {
-        
+
         // $products = $this->productRepository->showTrendingProduct();
-        
+
         // foreach ($products as $product) {
         //     $this->bindDynamicValues($product, 'offer_info', $product->productCore);
         //     unset($product->productCore);
         // }
-        
+
         // return $products;
 
         /**
          * Shuvo-bs
          */
 
-
-        
         $customerInfo = $params['customerInfo'] ?? null;
         $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
-
         $numberType  = ($customerInfo) ? $customerInfo->number_type : 'prepaid' ;
-
 
         $offerType = ['internet', 'voice', 'bundles'];
         $offerCategories =  OfferCategory::whereIn('alias', $offerType)->select('id', 'alias', 'name_en', 'name_bn')->get()?? [];
-
         $offerIDArr = collect($offerCategories)->pluck('id');
-        
-
 
         try {
             $item = [];
@@ -228,7 +221,7 @@ class ProductService extends ApiBaseService
             // $products = $this->productRepository->simTypeProduct($type, $offerType);
             $products = $this->productRepository->offerProductsForYou($numberType, $offerIDArr, $customerAvailableProducts);
 
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -236,11 +229,9 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
-            foreach ($products as $offer) {
 
+            foreach ($products as $offer) {
                 $pack = $offer->getAttributes();
-                
                 // foreach ($offerCategories as $category) {
                 //     $item[$category->alias]['title_en'] = $category->name_en;
                 //     $item[$category->alias]['title_bn'] = $category->name_bn;
@@ -251,13 +242,7 @@ class ProductService extends ApiBaseService
                 $item[$offer->offer_category->alias]['packs'][] = $pack;
             }
 
-
-
-
             $sortedData = collect($item);
-
-
-            
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,9 +251,8 @@ class ProductService extends ApiBaseService
                     'items' => array_values($pack['packs']) ?? []
                 ];
             }
-            
-            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
+//            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
             // if(!empty($data)) {
             //     array_unshift($data, [
             //         'type' => 'all',
@@ -278,11 +262,21 @@ class ProductService extends ApiBaseService
             //     ]);
             // }
 
-            return $data;
+            $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+            $amarOfferData = [];
+            if (!empty($amarOffers->getData()->data)) {
+                $amarOfferData[] = [
+                    "type" => "amar-offer",
+                    "title_en" => "Amar Offer",
+                    "title_bn" => "আমার অফার",
+                    "items" => $amarOffers->getData()->data
+                ];
+            }
+            return array_merge($data, $amarOfferData);
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        } 
+        }
 
 
     }

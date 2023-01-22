@@ -242,8 +242,7 @@ class HomeService extends ApiBaseService
 
         // }
         else {
-            $products = $this->productService->trendingProduct($params);
-            $slider->data = $products;
+            $slider->data = $this->productService->trendingProduct($params);
         }
 
         return $slider;
@@ -373,11 +372,8 @@ class HomeService extends ApiBaseService
     public function getComponents($request)
     {
         $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
-
         $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
 
-
-        
         $componentList = ShortCode::where('page_id', 1)
             ->where('is_active', 1)
             ->orderBy('sequence', 'ASC')
@@ -387,7 +383,7 @@ class HomeService extends ApiBaseService
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
-                
+
                 if($component->id === 19){
                     continue;
                 }
