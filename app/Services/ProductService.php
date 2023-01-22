@@ -262,15 +262,17 @@ class ProductService extends ApiBaseService
             //     ]);
             // }
 
-            $amarOffers = $this->amarOfferService->getAmarOfferList(request());
             $amarOfferData = [];
-            if (!empty($amarOffers->getData()->data)) {
-                $amarOfferData[] = [
-                    "type" => "amar-offer",
-                    "title_en" => "Amar Offer",
-                    "title_bn" => "আমার অফার",
-                    "items" => $amarOffers->getData()->data
-                ];
+            if (request()->header('authorization')) {
+                $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+                if (!empty($amarOffers->getData()->data)) {
+                    $amarOfferData[] = [
+                        "type" => "amar-offer",
+                        "title_en" => "Amar Offer",
+                        "title_bn" => "আমার অফার",
+                        "items" => $amarOffers->getData()->data
+                    ];
+                }
             }
             return array_merge($data, $amarOfferData);
 
