@@ -72,4 +72,9 @@ class MediaPressNewsEventService extends ApiBaseService
         }
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
+
+    public function filterArchive($type,$param,$limit){
+        $data = $this->mediaPNERepository->filterArchive($type,$param,$limit);
+        return $this->sendSuccessResponse($data, "Filter Date");
+    }
 }
