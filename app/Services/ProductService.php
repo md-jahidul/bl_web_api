@@ -13,6 +13,7 @@ use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Banglalink\AmarOfferService;
 use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
@@ -73,6 +74,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var AmarOfferService
+     */
+    private $amarOfferService;
 
     /**
      * ProductService constructor.
@@ -94,7 +99,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        AmarOfferService $amarOfferService
     )
     {
         $this->productRepository = $productRepository;
@@ -106,6 +112,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->amarOfferService = $amarOfferService;
         $this->setActionRepository($productRepository);
     }
 
@@ -319,14 +326,65 @@ class ProductService extends ApiBaseService
         }
     }
 
+    public function prepareAmarOffer(){
+        $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+
+        if ($amarOffers->getData()->status_code == 200) {
+            $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
+            $offersCat = [];
+            $offersCat[] = [
+                'type' =>  "all",
+                'title_en' => "All",
+                'title_bn' =>  "সকল",
+                'packs'     => $amarOffers->getData()->data ?? [],
+            ];
+            if (!empty($offerCollection['data'])) {
+                $offersCat[] = [
+                    'type' =>  "internet",
+                    'title_en' => "Internet",
+                    'title_bn' =>  "ইন্টারনেট",
+                    'packs'     => $offerCollection['data'],
+                ];
+            }
+
+            if (!empty($offerCollection['voice'])) {
+                $offersCat[] = [
+                    'type' => "voice",
+                    'title_en' => "Voice",
+                    'title_bn' => "ভয়েস",
+                    'packs' => $offerCollection['voice'],
+                ];
+            }
+
+            if (!empty($offerCollection['sms'])) {
+                $offersCat[] = [
+                    'type' => "sms",
+                    'title_en' => "SMS",
+                    'title_bn' => "এস এম এস",
+                    'packs' =>  $offerCollection['sms'],
+                ];
+            }
+
+            return $offersCat;
+        }
+
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
+    }
+
     public function simTypeOffersTypeWise($type, $offerType)
     {
         try {
             $item = [];
             $data = [];
             $allPacks = [];
+
+            if ($offerType == "amar-offer") {
+                $data = $this->prepareAmarOffer();
+                return $this->sendSuccessResponse($data, "{$offerType} packs list");
+            }
+
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -334,12 +392,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -347,9 +405,8 @@ class ProductService extends ApiBaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
-
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -358,7 +415,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -376,7 +433,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -680,7 +737,7 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }
