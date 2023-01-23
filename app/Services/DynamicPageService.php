@@ -69,12 +69,12 @@ class DynamicPageService extends ApiBaseService
                         $check_external = 'target="_blank"';
                         # code...
                         $link_en = $link_bn = (isset($value->other_attributes['external_url'])) ? $value->other_attributes['external_url'] : '';
-                    }else{
-
-                        $link_en = (isset($value->other_attributes['redirect_url_en'])) ? $value->other_attributes['redirect_url_en'] : '';
-                        $link_bn = (isset($value->other_attributes['redirect_url_bn'])) ? $value->other_attributes['redirect_url_bn'] : '';
                     }
 
+                }else{
+
+                    $link_en = (isset($value->other_attributes['redirect_url_en'])) ? $value->other_attributes['redirect_url_en'] : '';
+                    $link_bn = (isset($value->other_attributes['redirect_url_bn'])) ? $value->other_attributes['redirect_url_bn'] : '';
                 }
 
                 $btn_html_en = '<a class="btn btn-danger" href="'.$link_en.'"'.$check_external.'  >'.$value->title_en.'</a>';
