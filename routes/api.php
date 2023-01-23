@@ -155,7 +155,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
-    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCarudController@cardList');
+    Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');
     Route::get('easy-payment-area-list/{division}', 'API\V1\EasyPaymentCardController@getAreaList');
 
     //Device offer
