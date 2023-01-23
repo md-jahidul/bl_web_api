@@ -9,6 +9,9 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AlBannerResource;
+use App\Models\AlBanner;
+use App\Repositories\AlBannerRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\DynamicPageRepository;
 use App\Repositories\FooterMenuRepository;
@@ -31,6 +34,7 @@ class DynamicPageService extends ApiBaseService
     protected $componentRepository;
 
     protected $footerMenuRepository;
+    protected $alBannerRepository;
 
     protected const PageType = "other_dynamic_page";
 
@@ -43,12 +47,14 @@ class DynamicPageService extends ApiBaseService
     public function __construct(
         DynamicPageRepository $pageRepo,
         ComponentRepository $componentRepository,
-        FooterMenuRepository $footerMenuRepository
+        FooterMenuRepository $footerMenuRepository,
+        AlBannerRepository $alBannerRepository
     )
     {
         $this->pageRepo = $pageRepo;
         $this->componentRepository = $componentRepository;
         $this->footerMenuRepository = $footerMenuRepository;
+        $this->alBannerRepository = $alBannerRepository;
         $this->setActionRepository($pageRepo);
     }
 
@@ -97,6 +103,10 @@ class DynamicPageService extends ApiBaseService
                 unset($value->other_attributes);
             }
         }
+        
+        $banner     = $this->alBannerRepository->findOneByProperties(['section_id' => $pageData->id, 'section_type' => 'other_dynamic_page']);
+        $pageData['banner'] = $banner ? AlBannerResource::make($banner) : null;
+
         return $this->sendSuccessResponse($pageData, 'Dynamic page data');
     }
 }
