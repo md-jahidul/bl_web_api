@@ -60,7 +60,7 @@ class ExploreCService extends ApiBaseService
             if ($explore_c) {
 
                 $components = $this->componentRepository->getExploreCDetailsComponent('explore_c', $explore_c->id);
-                $banner = AlBanner::where(['section_id' => $explore_c->id])->first();
+                $banner = AlBanner::where(['section_id' => $explore_c->id, 'section_type' => 'explore_c'])->first();
     
                     $data['components'] = $components ? ExploreCDetailsResource::collection($components) : [];
                     $data['banner'] = $banner ? AlBannerResource::make($banner) : null;
