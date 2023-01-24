@@ -19,7 +19,7 @@ class RoamingCategoryRepository extends BaseRepository {
                         ->orderBy('sort')->get();
         $data = [];
         $count = 0;
-        
+
         $slugs = array(
             1 => 'offer',
             2 => 'about-roaming',
@@ -40,8 +40,12 @@ class RoamingCategoryRepository extends BaseRepository {
             $data[$count]['name_en'] = $v->name_en;
             $data[$count]['name_bn'] = $v->name_bn;
             $data[$count]['alt_text'] = $v->alt_text;
-            $data[$count]['banner_photo_web'] = $v->banner_web == "" ? "" : config('filesystems.image_host_url') . $v->banner_web;
-            $data[$count]['banner_photo_mobile'] = $v->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $v->banner_mobile;
+            $data[$count]['banner_photo_web'] = $v->banner_web == "" ? "" : $v->banner_web;
+            $data[$count]['banner_photo_mobile'] = $v->banner_mobile == "" ? "" : $v->banner_mobile;
+            $data[$count]['banner_desc_bn'] = $v->banner_desc_bn == "" ? "" : $v->banner_desc_bn;
+            $data[$count]['banner_desc_en'] = $v->banner_desc_en == "" ? "" : $v->banner_desc_en;
+            $data[$count]['banner_title_bn'] = $v->banner_title_bn == "" ? "" : $v->banner_title_bn;
+            $data[$count]['banner_title_en'] = $v->banner_title_en == "" ? "" : $v->banner_title_en;
             $count++;
         }
         return $data;
