@@ -100,6 +100,8 @@ class AboutUsService extends ApiBaseService
                 'slug'                      => $data->slug ?? null,
                 'title_en'                => $data->title ?? null,
                 'title_bn'                => $data->title_bn ?? null,
+                'sub_title_en'            => $data->sub_title ?? null,
+                'sub_title_bn'            => $data->sub_title_bn ?? null,
                 'banglalink_info_en'      => $data->banglalink_info ?? null,
                 'banglalink_info_bn'      => $data->banglalink_info_bn ?? null,
                 'details_en'              => $data->details_en ?? null,
