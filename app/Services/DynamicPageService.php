@@ -65,35 +65,9 @@ class DynamicPageService extends ApiBaseService
 
         foreach ($pageData->components as $key => $value) {
             if ($value->component_type == 'button_component') {
-                $check_external = '';
-                $link_en = '#';
-                $link_bn = '#';
-
-                if (isset($value->other_attributes['is_external_url'])) {
-
-                    if ($value->other_attributes['is_external_url'] == 1) {
-                        $check_external = 'target="_blank"';
-                        # code...
-                        $link_en = $link_bn = (isset($value->other_attributes['external_url'])) ? $value->other_attributes['external_url'] : '';
-                    }
-
-                }else{
-
-                    $link_en = (isset($value->other_attributes['redirect_url_en'])) ? $value->other_attributes['redirect_url_en'] : '';
-                    $link_bn = (isset($value->other_attributes['redirect_url_bn'])) ? $value->other_attributes['redirect_url_bn'] : '';
-                }
-
-                $btn_html_en = '<a class="btn btn-danger" href="'.$link_en.'"'.$check_external.'  >'.$value->title_en.'</a>';
-                $btn_html_bn = '<a class="btn btn-danger" href="'.$link_bn.'"'.$check_external.'  >'.$value->title_bn.'</a>';
-
-
-                $value->button_en = $btn_html_en;
-                $value->button_bn = $btn_html_bn;
 
                 unset($value->title_en);
                 unset($value->title_bn);
-                unset($value->editor_en);
-                unset($value->editor_bn);
                 unset($value->extra_title_bn);
                 unset($value->extra_title_en);
                 unset($value->multiple_attributes);
