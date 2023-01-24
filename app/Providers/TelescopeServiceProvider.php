@@ -21,7 +21,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         $this->hideSensitiveRequestDetails();
 
         Telescope::filter(function (IncomingEntry $entry) {
-            if ($this->app->environment('local')) {
+            if ($this->app->environment('staging')) {
                 return true;
             }
 
@@ -40,7 +40,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function hideSensitiveRequestDetails()
     {
-        if ($this->app->environment('local')) {
+        if ($this->app->environment('staging')) {
             return;
         }
 
@@ -51,6 +51,21 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             'x-csrf-token',
             'x-xsrf-token',
         ]);
+    }
+
+    /**
+     * Configure the Telescope authorization services.
+     *
+     * @return void
+     */
+    protected function authorization()
+    {
+        $this->gate();
+
+        Telescope::auth(function ($request) {
+            return app()->environment('staging') ||
+                Gate::check('viewTelescope', [$request->user()]);
+        });
     }
 
     /**
