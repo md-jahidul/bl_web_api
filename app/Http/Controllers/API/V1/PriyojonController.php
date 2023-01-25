@@ -99,7 +99,7 @@ class PriyojonController extends Controller
         return $this->aboutPriyojonService->lmsAboutBanner($slug);
     }
 
-    public function loyaltyCatOffers(Request $request, $page)
+    public function loyaltyCatOffers(Request $request, $page = null)
     {
         $elg = $request->status;
         $cat = $request->category;
