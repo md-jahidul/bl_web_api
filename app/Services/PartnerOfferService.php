@@ -16,7 +16,8 @@ use App\Repositories\PriyojonRepository;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
 
-class PartnerOfferService extends ApiBaseService {
+class PartnerOfferService extends ApiBaseService
+{
 
     use CrudTrait;
 
@@ -79,7 +80,8 @@ class PartnerOfferService extends ApiBaseService {
      * @param string $json_data
      * In PHP, By default objects are passed as reference copy to a new Object.
      */
-    public function bindDynamicValues($obj, $json_data = 'other_attributes') {
+    public function bindDynamicValues($obj, $json_data = 'other_attributes')
+    {
         if (!empty($obj->{$json_data})) {
             foreach ($obj->{$json_data} as $key => $value) {
                 $obj->{$key} = $value;
@@ -92,7 +94,8 @@ class PartnerOfferService extends ApiBaseService {
      * @param $products
      * @return array
      */
-    public function findRelatedProduct($products) {
+    public function findRelatedProduct($products)
+    {
         $data = [];
         foreach ($products as $product) {
 
@@ -105,7 +108,8 @@ class PartnerOfferService extends ApiBaseService {
     /**
      * @Get_Priyojon_Offers form Partner table
      */
-    public function priyojonOffers() {
+    public function priyojonOffers()
+    {
         try {
             $partnerOffers = $this->partnerOfferRepository->offers();
 
@@ -123,7 +127,8 @@ class PartnerOfferService extends ApiBaseService {
     /**
      * @Get_Priyojon_Offers form Partner table
      */
-    public function discountOffers($page, $elg, $cat, $area, $searchStr) {
+    public function discountOffers($page, $elg, $cat, $area, $searchStr)
+    {
         try {
 
             // $data['status'] = array(
@@ -138,7 +143,7 @@ class PartnerOfferService extends ApiBaseService {
             $data['offers'] = PartnerOfferResource::collection($offers);
 
             if ($data) {
-//                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
+                //                $partnerOffers = PartnerOfferResource::collection($partnerOffers);
                 return response()->success($data, 'Data Found!');
             }
             return response()->error("Data Not Found!");
@@ -150,7 +155,8 @@ class PartnerOfferService extends ApiBaseService {
     /**
      * @Get_Priyojon_Offers form Partner table
      */
-    public function offerLike($id) {
+    public function offerLike($id)
+    {
         try {
 
             $offer = $this->findOrFail($id);
@@ -178,9 +184,9 @@ class PartnerOfferService extends ApiBaseService {
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
     }
 
-    public function categoryOffers()
+    public function categoryOffers($page, $elg, $cat, $area, $searchStr)
     {
-        $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers();
+        $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
         $data = LoyaltyOfferCatResource::collection($offers);
         return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }
@@ -199,8 +205,10 @@ class PartnerOfferService extends ApiBaseService {
     public function getComponentByPageType($pageType)
     {
         $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
-        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => "about_loyalty"],
-            ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']);;
+        $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(
+            ['page_type' => "about_loyalty"],
+            ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']
+        );;
         return $this->sendSuccessResponse($data, 'About loyalty components');
     }
 
@@ -208,7 +216,8 @@ class PartnerOfferService extends ApiBaseService {
     {
         $data = [
             'status'     => $this->loyaltyTierRepository->findByProperties(['status' => 1], ['title_en', 'title_bn', 'slug']),
-            'categories' => $this->partnerOfferCategoryRepository->findByProperties(['status' => 1],
+            'categories' => $this->partnerOfferCategoryRepository->findByProperties(
+                ['status' => 1],
                 [
                     'name_en',
                     'name_bn',
@@ -217,7 +226,8 @@ class PartnerOfferService extends ApiBaseService {
                     'schema_markup',
                     'url_slug_en',
                     'url_slug_bn',
-                ]),
+                ]
+            ),
             'area'       => $this->partnerAreaRepository->findByProperties([], ['area_en', 'area_bn']),
         ];
         return $this->sendSuccessResponse($data, 'All loyalty filter options');

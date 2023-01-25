@@ -15,9 +15,12 @@ class PartnerOfferCategoryRepository extends BaseRepository
 {
     public $modelName = PartnerCategory::class;
 
-    public function loyaltyCatOffers()
+    public function loyaltyCatOffers($page, $elg, $cat, $area, $searchStr)
     {
-        return $this->model->where('status', 1)
+        $actualPage = $page - 1;
+        $limit = 9;
+        $offset = $actualPage * $limit;
+        $offers =  $this->model->where('status', 1)
             ->whereHas('partnerOffers')
             ->select(
                 'id',
@@ -29,8 +32,14 @@ class PartnerOfferCategoryRepository extends BaseRepository
                 'page_header_bn',
                 'schema_markup'
             )
-            ->with(['partnerOffers' => function ($q) {
+            ->with(['partnerOffers' => function ($q) use ($elg, $area, $searchStr, $offset, $limit) {
                 $q->where('is_active', 1);
+                $q->whereHas('partner', function ($q) use ($searchStr) {
+                    if ($searchStr != "") {
+                        $q->whereRaw("company_name_en Like '%$searchStr%'");
+                        $q->whereRaw("company_name_bn Like '%$searchStr%'");
+                    }
+                });
                 $q->select(
                     'id',
                     'partner_id',
@@ -48,10 +57,29 @@ class PartnerOfferCategoryRepository extends BaseRepository
                     'schema_markup',
                     'other_attributes'
                 )
-                ->with([ 'partner' => function ($q){
-                    $q->select('id', 'company_name_en', 'company_name_bn');
-                }]);
-            }])
+                    ->with(['partner' => function ($q) use ($searchStr) {
+                        $q->select('id', 'company_name_en', 'company_name_bn');
+                        if ($searchStr != "") {
+                            $q->whereRaw("company_name_en Like '%$searchStr%'");
+                            $q->whereRaw("company_name_bn Like '%$searchStr%'");
+                        }
+                    }]);
+                if ($elg != "") {
+                    $q->where('loyalty_tier_id', $elg);
+                }
+                if ($area != "") {
+                    $q->where('area_id', $area);
+                }
+                $q->offset($offset)->limit($limit);
+            }]);
+        if (
+            $cat != ""
+        ) {
+            $offers->where('id', $cat);
+        }
+        $res = $offers
             ->get();
+
+        return $res;
     }
 }
