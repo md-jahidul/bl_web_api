@@ -23,6 +23,11 @@ class DynamicPageRepository extends BaseRepository {
             )
             ->with(['components' => function($q){
                 $q->orderBy('component_order', 'ASC')
+                    ->with(['componentMultiData' => function($q){
+                        $q->select('component_id', 'title_en', 'title_bn', 'alt_text_en', 'alt_text_bn',
+                            'base_image', 'img_name_en', 'img_name_bn'
+                        );
+                    }])
                     ->where('page_type', 'other_dynamic_page')
                     ->select(
                         'id', 'section_details_id', 'page_type',

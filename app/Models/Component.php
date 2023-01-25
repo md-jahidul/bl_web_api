@@ -37,4 +37,9 @@ class Component extends Model
     {
         return $this->hasOne(Product::class,  'id','offer_type_id')->productCore();
     }
+
+    public function componentMultiData()
+    {
+        return $this->hasMany(ComponentMultiData::class, 'component_id', 'id');
+    }
 }

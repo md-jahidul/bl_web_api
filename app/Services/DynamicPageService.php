@@ -56,12 +56,11 @@ class DynamicPageService extends ApiBaseService
     public function pageData($slug)
     {
         $pageData = $this->pageRepo->page(strtolower($slug));
-
         if (!empty($pageData)) {
 
             foreach ($pageData->components as $key => $value) {
                 if ($value->component_type == 'button_component') {
-    
+
                     unset($value->title_en);
                     unset($value->title_bn);
                     unset($value->extra_title_bn);
