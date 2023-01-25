@@ -62,7 +62,7 @@ class PriyojonController extends Controller
      */
     public function priyojonOffers()
     {
-       return $this->partnerOfferService->priyojonOffers();
+        return $this->partnerOfferService->priyojonOffers();
     }
 
     public function partnerCampaignOffers()
@@ -77,11 +77,11 @@ class PriyojonController extends Controller
      */
     public function discountOffers(Request $request, $page)
     {
-       $elg = $request->status;
-       $cat = $request->category;
-       $area = $request->area;
-       $searchStr = $request->search;
-       return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
+        $elg = $request->status;
+        $cat = $request->category;
+        $area = $request->area;
+        $searchStr = $request->search;
+        return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
     }
 
     public function getAboutPage($slug)
@@ -99,9 +99,13 @@ class PriyojonController extends Controller
         return $this->aboutPriyojonService->lmsAboutBanner($slug);
     }
 
-    public function loyaltyCatOffers()
+    public function loyaltyCatOffers(Request $request, $page)
     {
-        return $this->partnerOfferService->categoryOffers();
+        $elg = $request->status;
+        $cat = $request->category;
+        $area = $request->area;
+        $searchStr = $request->search;
+        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $area, $searchStr);
     }
 
     public function loyaltyTierOffers()

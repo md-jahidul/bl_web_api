@@ -34,7 +34,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('header-footer', 'API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page', 'API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-//    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
+    //    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
 
     Route::get('offers/{type}/{offer_type?}', 'API\V1\ProductController@simPackageOffers');
 
@@ -64,7 +64,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Bookmark =======================================
     Route::post('product/bookmark/save-remove', 'API\V1\ProductController@bookmarkProductSaveRemove');
-//    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
+    //    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
     Route::get('bookmark/app-and-service/', 'API\V1\ProductBookmarkController@getBookmarkAppService');
     Route::get('bookmark/business/', 'API\V1\ProductBookmarkController@getBookmarkBusiness');
     Route::get('bookmark/offers/', 'API\V1\ProductBookmarkController@getBookmarkOffers');
@@ -94,9 +94,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
     Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
-//        ->middleware('client.secret.token');
+    //        ->middleware('client.secret.token');
     Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
-//        ->middleware('client.secret.token');
+    //        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
     Route::post('user/verify-otp', 'API\V1\AuthenticationController@verifyOTPForLogin');
 
@@ -133,7 +133,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
 
-    Route::get('loyalty-category-offers', 'API\V1\PriyojonController@loyaltyCatOffers');
+    Route::get('loyalty-category-offers/{page?}', 'API\V1\PriyojonController@loyaltyCatOffers');
     Route::get('loyalty-tier-offers', 'API\V1\PriyojonController@loyaltyTierOffers');
     Route::get('about-loyalty', 'API\V1\PriyojonController@aboutLoyalty');
     Route::get('loyalty/filter-options', 'API\V1\PriyojonController@filterOptions');
@@ -317,7 +317,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Image File Viewer
     Route::get('test-offers', 'API\V1\ImageFileViewerController@offerList');
-//    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
+    //    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
 
     // SEO Image URL generator test
     Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
