@@ -17,6 +17,12 @@ class PartnerOfferCategoryRepository extends BaseRepository
 
     public function loyaltyCatOffers($page, $elg, $cat, $area, $searchStr)
     {
+        if ($cat) {
+            $catId = $this->findCategoryId($cat);
+        } else {
+            $catId = "";
+        }
+
         $actualPage = $page - 1;
         $limit = 9;
         $offset = $actualPage * $limit;
@@ -35,6 +41,7 @@ class PartnerOfferCategoryRepository extends BaseRepository
             ->with(['partnerOffers' => function ($q) use ($elg, $area, $searchStr, $offset, $limit) {
                 $q->where('is_active', 1);
                 $q->whereHas('partner', function ($q) use ($searchStr) {
+                    //$q->select('id', 'company_name_en', 'company_name_bn');
                     if ($searchStr != "") {
                         $q->whereRaw("company_name_en Like '%$searchStr%'");
                         $q->whereRaw("company_name_bn Like '%$searchStr%'");
@@ -73,13 +80,26 @@ class PartnerOfferCategoryRepository extends BaseRepository
                 $q->offset($offset)->limit($limit);
             }]);
         if (
-            $cat != ""
+            $catId != ""
         ) {
-            $offers->where('id', $cat);
+            $offers->where('id', $catId);
         }
         $res = $offers
             ->get();
 
         return $res;
+    }
+
+    public function findCategoryId($cat)
+    {
+        $data = $this->model
+            ->where('name_en', 'like', $cat)
+            ->orWhere('name_bn', 'like', $cat)
+            ->first();
+        if ($data) {
+            return $data->id;
+        } else {
+            return null;
+        }
     }
 }
