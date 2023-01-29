@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\AlBannerResource;
 use App\Http\Resources\LoyaltyOfferCatResource;
+use App\Http\Resources\OrangeClubTierOffersResource;
 use App\Http\Resources\OrangeClubTierResource;
 use App\Http\Resources\PartnerOfferDetailsResource;
 use App\Http\Resources\PartnerOfferResource;
@@ -17,6 +18,7 @@ use App\Repositories\PartnerOfferRepository;
 use App\Repositories\PriyojonRepository;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 
 class PartnerOfferService extends ApiBaseService
 {
@@ -194,8 +196,20 @@ class PartnerOfferService extends ApiBaseService
 
     public function categoryOffers($page, $elg, $cat, $area, $searchStr)
     {
+        if (!empty($cat)) {
+            $cat = $this->partnerOfferCategoryRepository->findCategoryId($cat);
+        } else {
+            $cat = "";
+        }
         $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
+        $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
         $data = LoyaltyOfferCatResource::collection($offers);
+
+        if (empty($cat)) {
+            $obj = collect();
+            $obj['offers'] = OrangeClubTierOffersResource::collection($all);
+            $data->prepend($obj);
+        }
         return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }
 
