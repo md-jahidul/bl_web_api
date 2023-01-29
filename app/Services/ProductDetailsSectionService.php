@@ -89,6 +89,7 @@ class ProductDetailsSectionService extends ApiBaseService
                 'name_en',
                 'name_bn',
                 'ussd_bn',
+                'product_image',
                 'call_rate_unit_bn',
                 'balance_check_ussd_bn',
                 'like',
