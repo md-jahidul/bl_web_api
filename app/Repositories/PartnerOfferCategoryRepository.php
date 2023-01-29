@@ -15,19 +15,14 @@ class PartnerOfferCategoryRepository extends BaseRepository
 {
     public $modelName = PartnerCategory::class;
 
-    public function loyaltyCatOffers($page, $elg, $cat, $area, $searchStr)
+    public function loyaltyCatOffers($page, $elg, $catId, $area, $searchStr)
     {
-        if ($cat) {
-            $catId = $this->findCategoryId($cat);
-        } else {
-            $catId = "";
-        }
 
         $actualPage = $page - 1;
         $limit = 9;
         $offset = $actualPage * $limit;
         $offers =  $this->model->where('status', 1)
-            ->whereHas('partnerOffers')
+            //->whereHas('partnerOffers')
             ->select(
                 'id',
                 'name_en',
@@ -41,7 +36,6 @@ class PartnerOfferCategoryRepository extends BaseRepository
             ->with(['partnerOffers' => function ($q) use ($elg, $area, $searchStr, $offset, $limit) {
                 $q->where('is_active', 1);
                 $q->whereHas('partner', function ($q) use ($searchStr) {
-                    //$q->select('id', 'company_name_en', 'company_name_bn');
                     if ($searchStr != "") {
                         $q->whereRaw("company_name_en Like '%$searchStr%'");
                         $q->whereRaw("company_name_bn Like '%$searchStr%'");
