@@ -207,6 +207,13 @@ class PartnerOfferService extends ApiBaseService
 
         if (empty($cat)) {
             $obj = collect();
+            $obj['name_en'] = 'All';
+            $obj['name_bn'] = 'সব';
+            $obj['url_slug_en'] = null;
+            $obj['url_slug_bn'] = null;
+            $obj['page_header'] = null;
+            $obj['page_header_bn'] = null;
+            $obj['schema_markup'] = null;
             $obj['offers'] = OrangeClubTierOffersResource::collection($all);
             $data->prepend($obj);
         }
