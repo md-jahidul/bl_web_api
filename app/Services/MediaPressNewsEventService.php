@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
+use App\Repositories\MediaNewsCategoryRepository;
 use App\Repositories\MediaPressNewsEventRepository;
 use App\Services\Assetlite\ComponentService;
 
@@ -28,6 +29,10 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var ComponentRepository
      */
     private $componentRepository;
+    /**
+     * @var MediaNewsCategoryRepository
+     */
+    private $mediaNewsCategoryRepository;
 
     /**
      * DigitalServicesService constructor.
@@ -37,11 +42,13 @@ class MediaPressNewsEventService extends ApiBaseService
     public function __construct(
         MediaPressNewsEventRepository $mediaPNERepository,
         MediaBannerImageRepository $mediaBannerImageRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        MediaNewsCategoryRepository $mediaNewsCategoryRepository
     ) {
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
         $this->componentRepository = $componentRepository;
+        $this->mediaNewsCategoryRepository = $mediaNewsCategoryRepository;
     }
 
     public function mediaPressEventData($moduleType)
@@ -60,7 +67,7 @@ class MediaPressNewsEventService extends ApiBaseService
     {
         $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
         $message = ucfirst(str_replace('_', ' ', $moduleType));
-        return $this->sendSuccessResponse($data,"$message Filter Data");
+        return $this->sendSuccessResponse($data, "$message Filter Data");
     }
 
     public function detailsComponent($urlSlug)
@@ -73,8 +80,14 @@ class MediaPressNewsEventService extends ApiBaseService
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
 
-    public function filterArchive($type,$param,$limit){
-        $data = $this->mediaPNERepository->filterArchive($type,$param,$limit);
+    public function filterArchive($type, $param, $limit)
+    {
+        $data = $this->mediaPNERepository->filterArchive($type, $param, $limit);
         return $this->sendSuccessResponse($data, "Filter Date");
+    }
+
+    public function topicList()
+    {
+        return $this->sendSuccessResponse($this->mediaNewsCategoryRepository->findAll(), "Topic List");
     }
 }

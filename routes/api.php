@@ -352,6 +352,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('blog/landing-page', 'API\V1\BlogController@getLandingPageDataByRefType');
     Route::get('blog/details/{slug}', 'API\V1\BlogController@getBlogDetails');
     Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 });
 
 
