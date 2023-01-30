@@ -88,6 +88,7 @@ class MediaPressNewsEventService extends ApiBaseService
 
     public function topicList()
     {
-        return $this->sendSuccessResponse($this->mediaNewsCategoryRepository->findAll(), "Topic List");
+        $data = $this->mediaNewsCategoryRepository->findByProperties([], ['id', 'title_en', 'title_bn']);
+        return $this->sendSuccessResponse($data, "Topic List");
     }
 }
