@@ -105,7 +105,10 @@ class OfferCategoryService extends ApiBaseService
         $sim = SimCategory::all(['id', 'name', 'alias']);
         $offer = OfferCategory::where('status', 1)
             ->where('parent_id', 0)
-            ->with('children')->get();
+            ->with(['children' => function($q){
+                $q->where('status', 1);
+            }])
+            ->get();
         $offer->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
 //        if (!empty($offer)) {
 //            $offer_final = array_map(function($value) {
