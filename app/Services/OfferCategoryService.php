@@ -103,7 +103,9 @@ class OfferCategoryService extends ApiBaseService
     {
         $tags = TagCategory::all();
         $sim = SimCategory::all();
-        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
+        $offer = OfferCategory::where('status', 1)
+            ->where('parent_id', 0)
+            ->with('children')->get();
 //        dd($offer);
         if (!empty($offer)) {
             $offer_final = array_map(function($value) {
