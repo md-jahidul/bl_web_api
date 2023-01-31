@@ -172,6 +172,40 @@ class ProductRepository extends BaseRepository
             ->get();
     }
 
+    public function getProductById($productIds)
+    {
+        return $this->model->whereIn('id', $productIds)
+            ->select(
+            'id',
+            'product_code',
+            'url_slug',
+            'url_slug_bn',
+            'schema_markup',
+            'page_header',
+            'rate_cutter_unit',
+            'rate_cutter_offer',
+            'name_en',
+            'name_bn',
+            'ussd_bn',
+            'balance_check_ussd_bn',
+            'call_rate_unit_bn',
+            'sms_rate_unit_bn',
+            'tag_category_id',
+            'sim_category_id',
+            'offer_category_id',
+            'special_product',
+            'like',
+            'validity_postpaid',
+            'offer_info'
+        )
+            ->productCore()
+            ->startEndDate()
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order')
+            ->get();
+    }
+
     /**
      * @param $type
      * @param $id
@@ -377,7 +411,7 @@ class ProductRepository extends BaseRepository
                     $query->select(
                         'id',
                         'product_code',
-                        'name', 
+                        'name',
                         'price',
                         'mrp_price as price_tk',
                         'validity as validity_days',

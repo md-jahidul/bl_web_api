@@ -12,6 +12,7 @@ use App\Repositories\AppServiceProductDetailsRepository;
 use App\Repositories\BannerImgRelatedProductRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\ProductDetailsSectionRepository;
+use App\Repositories\ProductRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
@@ -36,6 +37,10 @@ class ProductDetailsSectionService extends ApiBaseService
      * @var BannerImgRelatedProductRepository
      */
     private $bannerImgRelatedProductRepository;
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
 
 
     /**
@@ -47,11 +52,13 @@ class ProductDetailsSectionService extends ApiBaseService
     public function __construct(
         ProductDetailsSectionRepository $productDetailsSectionRepository,
         BannerImgRelatedProductRepository $bannerImgRelatedProductRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        ProductRepository $productRepository
     ) {
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->bannerImgRelatedProductRepository = $bannerImgRelatedProductRepository;
         $this->componentRepository = $componentRepository;
+        $this->productRepository = $productRepository;
         $this->setActionRepository($productDetailsSectionRepository);
     }
 
@@ -145,12 +152,23 @@ class ProductDetailsSectionService extends ApiBaseService
         ];
 
         $data['product'] = $parentProduct;
+        $data['section'] = $sections;
+        foreach ($sections as $sectionKey => $section) {
 
-        foreach ($sections as $category => $section) {
-            $data['section'] = $sections;
+            foreach ($section->components as $key => $component) {
+                if ($component->component_type == "bondho_sim_offer") {
+                    $products = $this->productRepository->getProductById($component->other_attributes);
+                    $productData = [];
+                    if (isset($products)){
+                        foreach ($products as $product) {
+                            $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
+                        }
+                    }
+                    $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
+                }
+            }
         }
         $data['related_products'] = $products;
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
-
 }
