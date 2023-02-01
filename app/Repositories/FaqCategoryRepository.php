@@ -18,7 +18,7 @@ class FaqCategoryRepository extends BaseRepository
     public function getData($slug)
     {
         return $this->model->where('slug', $slug)
-            ->select('slug', 'description_en', 'description_bn')
+            ->select('slug', 'name_en', 'name_bn', 'description_en', 'description_bn')
             ->with(['faqs' => function($q){
                 $q->where('status', 1);
                 $q->select(
