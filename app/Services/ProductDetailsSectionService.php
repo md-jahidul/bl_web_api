@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Assetlite;
+namespace App\Services;
 
 //use App\Repositories\AppServiceProductegoryRepository;
 
@@ -156,7 +156,7 @@ class ProductDetailsSectionService extends ApiBaseService
 
             foreach ($section->components as $key => $component) {
                 if ($component->component_type == "bondho_sim_offer") {
-                    $products = $this->productRepository->getProductById($component->other_attributes);
+                    $products = $this->productRepository->getProductById($component->other_attributes??[]);
                     $productData = [];
                     if (isset($products)){
                         foreach ($products as $product) {
