@@ -67,6 +67,10 @@ class ProductService extends ApiBaseService
      * @var FourGLandingPageRepository
      */
     private $fourGLandingPageRepository;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
     /**
      * ProductService constructor.
@@ -88,7 +92,8 @@ class ProductService extends ApiBaseService
         BanglalinkCustomerService $banglalinkCustomerService,
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
-        FourGLandingPageRepository $fourGLandingPageRepository
+        FourGLandingPageRepository $fourGLandingPageRepository,
+        AlBannerService $alBannerService
     )
     {
         $this->productRepository = $productRepository;
@@ -100,6 +105,7 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->alBannerService = $alBannerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -234,7 +240,7 @@ class ProductService extends ApiBaseService
             $data = [];
             $allPacks = [];
             $products = $this->productRepository->simTypeProduct($type, $offerType);
-            
+
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
@@ -242,12 +248,12 @@ class ProductService extends ApiBaseService
                     unset($product->productCore);
                 }
             }
-            
+
             foreach ($products as $offer) {
 
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
-                
+
                 foreach ($productTabs as $productTab) {
                     $item[$productTab->slug]['title_en'] = $productTab->name;
                     $item[$productTab->slug]['title_bn'] = $productTab->name_bn;
@@ -257,7 +263,7 @@ class ProductService extends ApiBaseService
             }
 
             $sortedData = collect($item)->sortBy('display_order');
-            
+
             foreach ($sortedData as $category => $pack) {
                 $data[] = [
                     'type' => $category,
@@ -266,7 +272,7 @@ class ProductService extends ApiBaseService
                     'packs' => array_values($pack['packs']) ?? []
                 ];
             }
-            
+
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
             if(!empty($data)) {
@@ -284,7 +290,7 @@ class ProductService extends ApiBaseService
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
-        }        
+        }
     }
 
     /**
@@ -396,10 +402,13 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                if( !empty($productDetail->product_details->banner_image_url) ){
-                    $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
-                    $productDetail->product_details->banner_image_mobile = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_mobile;
-                }
+                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
+
+                $productDetail->product_details->banner_image_url = $banner->image ?? null;
+                $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
+                $productDetail->product_details->banner_title_bn = $banner->title_bn ?? null;
+                $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
+                $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
 
                 return response()->success($productDetail, 'Data Found!');
             }
@@ -588,7 +597,7 @@ class ProductService extends ApiBaseService
     }
 
     public function getProductByCode($productId){
-        
+
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
     }
 }
