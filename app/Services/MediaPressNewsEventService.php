@@ -75,7 +75,10 @@ class MediaPressNewsEventService extends ApiBaseService
         $post = $this->mediaPNERepository->getDataBySlug($urlSlug);
         $blogDetails = [];
         if (!empty($post->id)) {
-            $blogDetails =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+            $blogDetails['components'] =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+
+            $blogDetails['post'] = $post;
+            $blogDetails['related_blogs'] = $this->mediaPNERepository->getRelatedBlog($post->id,$post->media_news_category_id);
         }
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
