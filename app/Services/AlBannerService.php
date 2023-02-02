@@ -26,4 +26,9 @@ class AlBannerService extends ApiBaseService
         $this->alBannerRepository = $alBannerRepository;
     }
 
+    public function getBanner($sectionId, $sectionType)
+    {
+        dd($sectionId);
+        return $this->alBannerRepository->findOneByProperties(['section_id' => $sectionId, 'section_type' => $sectionType]);
+    }
 }
