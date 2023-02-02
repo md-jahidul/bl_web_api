@@ -83,6 +83,10 @@ class ProductService extends ApiBaseService
      * @var AmarOfferService
      */
     private $amarOfferService;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
     /**
      * ProductService constructor.
@@ -106,7 +110,8 @@ class ProductService extends ApiBaseService
         BalanceService $balanceService,
         FourGLandingPageRepository $fourGLandingPageRepository,
         ConfigRepository $configRepository,
-        AmarOfferService $amarOfferService
+        AmarOfferService $amarOfferService,
+        AlBannerService $alBannerService
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -119,6 +124,7 @@ class ProductService extends ApiBaseService
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
         $this->configRepository = $configRepository;
         $this->amarOfferService = $amarOfferService;
+        $this->alBannerService = $alBannerService;
         $this->setActionRepository($productRepository);
     }
 
@@ -548,10 +554,13 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                if( !empty($productDetail->product_details->banner_image_url) ){
-                    $productDetail->product_details->banner_image_url = $productDetail->product_details->banner_image_url;
-                    $productDetail->product_details->banner_image_mobile = $productDetail->product_details->banner_image_mobile;
-                }
+                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
+
+                $productDetail->product_details->banner_image_url = $banner->image ?? null;
+                $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
+                $productDetail->product_details->banner_title_bn = $banner->title_bn ?? null;
+                $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
+                $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
 
                 return response()->success($productDetail, 'Data Found!');
             }
