@@ -20,7 +20,7 @@ class DynamicPageRepository extends BaseRepository {
             return $this->model->where('url_slug', $dynamicPageSlug->key)
                 ->select(
                     'id', 'page_header', 'page_header_bn', 'schema_markup',
-                    'banner_image_url', 'banner_mobile_view',
+                    // 'banner_image_url', 'banner_mobile_view',
                     'alt_text', 'page_name_en', 'page_name_bn',
                     'page_content_en', 'page_content_bn',
                     'url_slug', 'url_slug_bn'
