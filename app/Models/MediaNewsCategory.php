@@ -6,4 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class MediaNewsCategory extends Model
 {
+    //protected $guarded = ['id'];
 }
