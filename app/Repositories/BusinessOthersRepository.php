@@ -78,10 +78,10 @@ class BusinessOthersRepository extends BaseRepository {
         $count = 0;
         foreach ($servces as $s) {
             $data[$count]['id'] = $s->id;
-            $data[$count]['banner_photo'] = $s->banner_photo == "" ? "" : config('filesystems.image_host_url') . $s->banner_photo;
-            $data[$count]['banner_photo_mobile'] = $s->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $s->banner_image_mobile;
+            $data[$count]['banner_photo'] = $s->banner_photo == "" ? "" :  $s->banner_photo;
+            $data[$count]['banner_photo_mobile'] = $s->banner_image_mobile == "" ? "" : $s->banner_image_mobile;
             $data[$count]['alt_text'] = $s->alt_text;
-            $data[$count]['icon'] = $s->icon == "" ? "" : config('filesystems.image_host_url') . $s->icon;
+            $data[$count]['icon'] = $s->icon == "" ? "" :  $s->icon;
             $data[$count]['name_en'] = $s->name;
             $data[$count]['name_bn'] = $s->name_bn;
             $data[$count]['short_details_en'] = $s->home_short_details_en;

@@ -10,6 +10,7 @@
 namespace App\Repositories;
 
 use App\Models\MediaPressNewsEvent;
+use Illuminate\Support\Facades\DB;
 
 class MediaPressNewsEventRepository extends BaseRepository
 {
@@ -38,8 +39,21 @@ class MediaPressNewsEventRepository extends BaseRepository
             ->where('status', 1)
             ->where('url_slug_en', $slug)
             ->orWhere('url_slug_bn', $slug)
-            ->select('id')
+            ->select('id','title_en','title_bn','date', 'media_news_category_id', 'read_time')
             ->first();
+    }
+
+    public function getRelatedBlog($postId,$categoryId)
+    {
+        return DB::table('media_press_news_events as mpne')
+                ->join('media_news_categories as mnc', 'mnc.id', '=', 'mpne.media_news_category_id')
+                ->where('mpne.status', 1)
+                ->where('mpne.media_news_category_id', $categoryId)
+                ->where('mpne.id','!=', $postId)
+                ->select('mpne.title_en', 'mpne.title_bn', 'mpne.date', 'mpne.thumbnail_image', 'mnc.title_en as blog_category_en', 'mnc.title_bn as blog_category_bn')
+                ->orderBy('date','desc')
+                ->limit(6)
+                ->get();
     }
 
     public function landingDataByRefType($postRefType, $id = [])
