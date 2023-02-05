@@ -244,13 +244,13 @@ class ProductService extends ApiBaseService
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
+                    $tag = $product->tag;
                     $this->bindDynamicValues($product, 'offer_info', $productData);
+                    $this->bindDynamicValues($product, 'offer_info', $tag);
                     unset($product->productCore);
                 }
             }
-
             foreach ($products as $offer) {
-
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
 
@@ -275,11 +275,11 @@ class ProductService extends ApiBaseService
 
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
-            if(!empty($data)) {
+            if(!empty($allPacks)) {
                 array_unshift($data, [
                     'type' => 'all',
                     'title_en' => 'All',
-                    'title_bn' => Null,
+                    'title_bn' => "সকল",
                     'packs' => $allPacks->toArray() ?? []
                 ]);
             }

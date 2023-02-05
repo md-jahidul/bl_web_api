@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\AlCoreProduct;
+use App\Models\OfferCategory;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Models\ProductPriceSlab;
@@ -16,25 +17,15 @@ class ProductRepository extends BaseRepository
 
     protected function getOfferTypeId($offerType)
     {
-        switch ($offerType) {
-            case "internet":
-                return 1;
-                break;
-            case "voice":
-                return 2;
-                break;
-            case "bundles":
-                return 3;
-                break;
-            case "packages":
-                return 4;
-                break;
-            case "others":
-                return 9;
-                break;
-            default:
-                return false; /*Offer type not found*/
+        $offerType = OfferCategory::where('url_slug', $offerType)
+            ->orWhere('url_slug_bn', $offerType)
+            ->select('id', 'url_slug', 'url_slug_bn', 'alias')
+            ->first();
+
+        if ($offerType) {
+            return $offerType->id;
         }
+        return false;
     }
 
     /**
@@ -45,7 +36,13 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
-        return $this->model->select(
+
+        return $this->model
+            ->where('status', 1)
+            ->where('offer_category_id', $offerTypeById)
+            ->where('special_product', 0)
+            ->startEndDate()
+            ->select(
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
@@ -68,15 +65,8 @@ class ProductRepository extends BaseRepository
                 'products.like',
                 'products.validity_postpaid',
                 'products.offer_info'
-            // 'd.url_slug'
             )
-            // ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
-            // ->where('content_type', 'data')
-            ->where('offer_category_id', $offerTypeById)
-            ->where('status', 1)
-            ->where('special_product', 0)
-            ->with('productCore.detialTabs')
-            ->startEndDate()
+            ->with('tag', 'productCore.detialTabs')
             ->productCore()
             ->category($type)
             ->get();
@@ -352,7 +342,7 @@ class ProductRepository extends BaseRepository
                     $query->select(
                         'id',
                         'product_code',
-                        'name', 
+                        'name',
                         'price',
                         'mrp_price as price_tk',
                         'validity as validity_days',
