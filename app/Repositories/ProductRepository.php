@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\AlCoreProduct;
+use App\Models\OfferCategory;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Models\ProductPriceSlab;
@@ -16,34 +17,15 @@ class ProductRepository extends BaseRepository
 
     protected function getOfferTypeId($offerType)
     {
-        switch ($offerType) {
-            case "internet":
-                return 1;
-                break;
-            case "voice":
-                return 2;
-                break;
-            case "bundles":
-                return 3;
-                break;
-            case "packages":
-                return 4;
-                break;
-            case "others":
-                return 9;
-                break;
-            case "bondho_sim":
-                return 22;
-                break;
-            case "new_sim_offer":
-                return 23;
-                break;
-            case "call_rate":
-                return 19;
-                break;
-            default:
-                return false; /*Offer type not found*/
+        $offerType = OfferCategory::where('url_slug', $offerType)
+            ->orWhere('url_slug_bn', $offerType)
+            ->select('id', 'url_slug', 'url_slug_bn', 'alias')
+            ->first();
+
+        if ($offerType) {
+            return $offerType->id;
         }
+        return false;
     }
 
     /**
@@ -54,7 +36,13 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
-        $data = $this->model->select(
+
+        return $this->model
+            ->where('status', 1)
+            ->where('offer_category_id', $offerTypeById)
+            ->where('special_product', 0)
+            ->startEndDate()
+            ->select(
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
@@ -78,22 +66,11 @@ class ProductRepository extends BaseRepository
                 'products.validity_postpaid',
                 'products.offer_info',
                 'products.product_image'
-            );
-
-        if ($offerTypeById == 22){
-//            $data = $data->whereRaw('JSON_CONTAINS(`offer_info`, \'{"other_offer_type_id": 13}\')');
-            $data = $data->where('offer_info->other_offer_type_id', 13);
-        } else {
-            $data = $data->where('offer_category_id', $offerTypeById);
-        }
-
-        return $data->where('status', 1)
-                ->where('special_product', 0)
-                ->with('tag', 'productCore.detialTabs')
-                ->startEndDate()
-                ->productCore()
-                ->category($type)
-                ->get();
+            )
+            ->with('tag', 'productCore.detialTabs')
+            ->productCore()
+            ->category($type)
+            ->get();
     }
 
     #
