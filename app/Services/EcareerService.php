@@ -592,6 +592,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
                 if (!empty($parents_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
