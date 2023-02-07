@@ -56,7 +56,8 @@ class BusinessPackageRepository extends BaseRepository {
             $data['banner_photo'] = $package->banner_photo == "" ? "" : $package->banner_photo;
             $data['banner_photo_mobile'] = $package->banner_image_mobile == "" ? "" : $package->banner_image_mobile;
             $data['alt_text'] = $package->alt_text;
-
+            $data['icon'] = $package->icon == "" ? "" : $package->icon;
+            $data['detail_image'] = $package->detail_image == "" ? "" : $package->detail_image;
             $data['banner_title_en'] = $package->banner_title_en;
             $data['banner_title_bn'] = $package->banner_title_bn;
             $data['banner_desc_en'] = $package->banner_desc_en;

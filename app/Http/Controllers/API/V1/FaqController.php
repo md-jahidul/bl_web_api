@@ -31,8 +31,8 @@ class FaqController extends Controller
      * @param $slug
      * @return JsonResponse|mixed
      */
-    public function getFAQ($slug)
+    public function getFAQ($slug, $id = null)
     {
-        return $this->faqService->getQuestionAnswer($slug);
+        return $this->faqService->getQuestionAnswer($slug, $id);
     }
 }
