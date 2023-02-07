@@ -13,6 +13,7 @@ use App\Repositories\ConfigRepository;
 use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
+use App\Repositories\ProductDetailsSectionRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\AmarOfferService;
 use App\Services\Banglalink\BalanceService;
@@ -111,7 +112,8 @@ class ProductService extends ApiBaseService
         FourGLandingPageRepository $fourGLandingPageRepository,
         ConfigRepository $configRepository,
         AmarOfferService $amarOfferService,
-        AlBannerService $alBannerService
+        AlBannerService $alBannerService,
+        ProductDetailsSectionRepository $productDetailsSectionRepository
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -125,6 +127,7 @@ class ProductService extends ApiBaseService
         $this->configRepository = $configRepository;
         $this->amarOfferService = $amarOfferService;
         $this->alBannerService = $alBannerService;
+        $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -509,6 +512,28 @@ class ProductService extends ApiBaseService
         try {
             $productDetail = $this->productRepository->detailProducts($slug);
 
+            $sections = $this->productDetailsSectionRepository->section($productDetail->id);
+            foreach ($sections as $section){
+                ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
+            }
+
+            $data = $sections;
+            foreach ($sections as $sectionKey => $section) {
+
+                foreach ($section->components as $key => $component) {
+                    if ($component->component_type == "bondho_sim_offer") {
+                        $products = $this->productRepository->getProductById($component->other_attributes??[]);
+                        $productData = [];
+                        if (isset($products)){
+                            foreach ($products as $product) {
+                                $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
+                            }
+                        }
+                        $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
+                    }
+                }
+            }
+
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
 
@@ -554,14 +579,14 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
+                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_other_details');
 
                 $productDetail->product_details->banner_image_url = $banner->image ?? null;
                 $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
                 $productDetail->product_details->banner_title_bn = $banner->title_bn ?? null;
                 $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
                 $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
-
+                $productDetail['section'] = $data;
                 return response()->success($productDetail, 'Data Found!');
             }
 
