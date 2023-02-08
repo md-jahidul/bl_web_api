@@ -592,6 +592,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
                 if (!empty($parents_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
@@ -869,6 +871,8 @@ class EcareerService
         if (!empty($batch_title) && count($batch_title) > 0) {
             $sub_data['title_en'] = $batch_title->first()->title_en;
             $sub_data['title_bn'] = $batch_title->first()->title_bn;
+            $sub_data['description_en'] = $batch_title->first()->description_en;
+            $sub_data['description_bn'] = $batch_title->first()->description_bn;
             $sub_data['slug'] = $batch_title->first()->slug;
             $results['batch_main_title'] = $sub_data;
         }
@@ -1014,6 +1018,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
+                $sub_data['description_en'] = $parent_value->description_en;
+                $sub_data['description_bn'] = $parent_value->description_bn;
                 $sub_data['slug'] = $parent_value->slug;
 
                 if (!empty($parent_value->portalItems) && count($parent_value->portalItems) > 0) {
