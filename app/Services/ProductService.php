@@ -728,6 +728,8 @@ class ProductService extends ApiBaseService
             $collection = [
                 'component_title_en' => $fourGComponent->title_en,
                 'component_title_bn' => $fourGComponent->title_bn,
+                'component_description_en' => $fourGComponent->description_en,
+                'component_description_bn' => $fourGComponent->description_bn,
                 'current_page' => $internetOffers->currentPage(),
                 'products' => $internetOffers->items(),
                 'last_page' => $internetOffers->lastPage(),
