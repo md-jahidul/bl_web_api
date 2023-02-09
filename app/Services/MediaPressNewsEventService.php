@@ -9,6 +9,7 @@
 
 namespace App\Services;
 
+use App\Repositories\AdTechRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
 use App\Repositories\MediaPressNewsEventRepository;
@@ -28,6 +29,10 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var ComponentRepository
      */
     private $componentRepository;
+    /**
+     * @var AdTechRepository
+     */
+    private $adTechRepository;
 
     /**
      * DigitalServicesService constructor.
@@ -37,11 +42,13 @@ class MediaPressNewsEventService extends ApiBaseService
     public function __construct(
         MediaPressNewsEventRepository $mediaPNERepository,
         MediaBannerImageRepository $mediaBannerImageRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        AdTechRepository $adTechRepository
     ) {
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
         $this->componentRepository = $componentRepository;
+        $this->adTechRepository = $adTechRepository;
     }
 
     public function mediaPressEventData($moduleType)
@@ -66,10 +73,14 @@ class MediaPressNewsEventService extends ApiBaseService
     public function detailsComponent($urlSlug)
     {
         $post = $this->mediaPNERepository->getDataBySlug($urlSlug);
-        $blogDetails = [];
+        $components = [];
         if (!empty($post->id)) {
-            $blogDetails =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+            $components =  $this->componentRepository->getComponentByPageType('blog', $post->id);
         }
+
+        $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_type' => "blog"]);
+        $blogDetails['components'] = $components;
+
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
 
