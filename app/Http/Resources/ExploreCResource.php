@@ -17,7 +17,7 @@ class ExploreCResource extends JsonResource
         // return parent::toArray($request);
 
         return [
-            // 'id' => $this->id ?? null,
+            'explore_c_id' => $this->id ?? null,
             'title_en' => $this->title_en ?? null,
             'title_bn' => $this->title_bn ?? null,
             'short_desc_en' => $this->short_desc_en ?? null,
