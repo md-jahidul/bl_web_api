@@ -20,7 +20,7 @@ class EthicsRepository extends BaseRepository {
         $data['page_name_en'] = $info->page_name_en;
         $data['page_name_bn'] = $info->page_name_bn;
         $data['banner_desc_en'] = $info->banner_desc_en;
-        $data['banner_desc_bn'] = $info->banner_desc_en;
+        $data['banner_desc_bn'] = $info->banner_desc_bn;
         $data['banner_web'] = $info->banner_web  == "" ? "" :  $info->banner_web;
         $data['banner_mobile'] = $info->banner_mobile == "" ? "" :  $info->banner_mobile;
         $data['alt_text'] = $info->alt_text;
