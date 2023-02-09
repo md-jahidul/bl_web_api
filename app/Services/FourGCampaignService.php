@@ -57,4 +57,11 @@ class FourGCampaignService extends ApiBaseService
 
         return $this->sendSuccessResponse($data, '4G Campaign With Banner Image');
     }
+
+    public function getFourGCoverage(){
+        $campaign = $this->fourGLandingPageRepository->findOneByProperties(['component_type' => 'four_g_coverage'], [
+            'description_en', 'description_bn', 'title_en', 'title_bn'
+        ]);
+        return $this->sendSuccessResponse($campaign, '4G Coverage ');
+    }
 }

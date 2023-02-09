@@ -51,4 +51,11 @@ class EcareerPortalItemRepository extends BaseRepository
 
     }
 
+    public function findProgramList($programId,$type){
+        return $this->model::where('ecarrer_portals_id', '=', $programId)
+            ->where('slug','!=',$type)
+            ->whereNull('deleted_at')
+            ->orderBy('display_order')->get();
+    }
+
 }

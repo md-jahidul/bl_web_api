@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Assetlite;
+namespace App\Services;
 
 //use App\Repositories\AppServiceProductegoryRepository;
 
@@ -12,6 +12,7 @@ use App\Repositories\AppServiceProductDetailsRepository;
 use App\Repositories\BannerImgRelatedProductRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\ProductDetailsSectionRepository;
+use App\Repositories\ProductRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
@@ -36,6 +37,14 @@ class ProductDetailsSectionService extends ApiBaseService
      * @var BannerImgRelatedProductRepository
      */
     private $bannerImgRelatedProductRepository;
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
 
     /**
@@ -47,11 +56,15 @@ class ProductDetailsSectionService extends ApiBaseService
     public function __construct(
         ProductDetailsSectionRepository $productDetailsSectionRepository,
         BannerImgRelatedProductRepository $bannerImgRelatedProductRepository,
-        ComponentRepository $componentRepository
+        ComponentRepository $componentRepository,
+        ProductRepository $productRepository,
+        AlBannerService $alBannerService
     ) {
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->bannerImgRelatedProductRepository = $bannerImgRelatedProductRepository;
         $this->componentRepository = $componentRepository;
+        $this->productRepository = $productRepository;
+        $this->alBannerService = $alBannerService;
         $this->setActionRepository($productDetailsSectionRepository);
     }
 
@@ -89,6 +102,7 @@ class ProductDetailsSectionService extends ApiBaseService
                 'name_en',
                 'name_bn',
                 'ussd_bn',
+                'product_image',
                 'call_rate_unit_bn',
                 'balance_check_ussd_bn',
                 'like',
@@ -99,12 +113,10 @@ class ProductDetailsSectionService extends ApiBaseService
             unset($parentProduct->productCore);
         }
 
-        $offerTypeId = isset($parentProduct->package_offer_type_id) ? $parentProduct->package_offer_type_id : null;
-
-        $offerType = OfferCategory::where('id', $offerTypeId)->select('id', 'name_en', 'alias')->first();
+//        $offerTypeId = isset($parentProduct->package_offer_type_id) ? $parentProduct->package_offer_type_id : null;
+//        $offerType = OfferCategory::where('id', $offerTypeId)->select('id', 'name_en', 'alias')->first();
 
         $sections = $this->productDetailsSectionRepository->section($parentProduct->id);
-
         foreach ($sections as $section){
             ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
         }
@@ -135,21 +147,34 @@ class ProductDetailsSectionService extends ApiBaseService
             }
         }
 
+        $banner = $this->alBannerService->getBanner($parentProduct->id, 'product_other_details');
+
         $data['header'] = [
-            "banner_image" => isset($bannerRelatedData->banner_image_url) ? $bannerRelatedData->banner_image_url : null,
-            "banner_mobile_view" => isset($bannerRelatedData->mobile_view_img_url) ? $bannerRelatedData->mobile_view_img_url : null,
-            "alt_text" => isset($bannerRelatedData->alt_text) ? $bannerRelatedData->alt_text : null,
-            "isTab" => isset($isTab) ? $isTab : null,
-            "product_type" => isset($offerType) ? $offerType->alias : null
+            "banner_image" => $banner->image ?? null,
+            "banner_title_en" => $banner->title_en ?? null,
+            "banner_title_bn" => $banner->title_bn ?? null,
+            "banner_desc_en" => $banner->desc_en ?? null,
+            "banner_desc_bn" => $banner->desc_bn ?? null
         ];
 
         $data['product'] = $parentProduct;
+        $data['section'] = $sections;
+        foreach ($sections as $sectionKey => $section) {
 
-        foreach ($sections as $category => $section) {
-            $data['section'] = $sections;
+            foreach ($section->components as $key => $component) {
+                if ($component->component_type == "bondho_sim_offer") {
+                    $products = $this->productRepository->getProductById($component->other_attributes??[]);
+                    $productData = [];
+                    if (isset($products)){
+                        foreach ($products as $product) {
+                            $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
+                        }
+                    }
+                    $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
+                }
+            }
         }
         $data['related_products'] = $products;
         return $this->sendSuccessResponse($data, 'Product details page', [], HttpStatusCode::SUCCESS);
     }
-
 }

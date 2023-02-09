@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\AlCoreProduct;
+use App\Models\OfferCategory;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Models\ProductPriceSlab;
@@ -16,25 +17,15 @@ class ProductRepository extends BaseRepository
 
     protected function getOfferTypeId($offerType)
     {
-        switch ($offerType) {
-            case "internet":
-                return 1;
-                break;
-            case "voice":
-                return 2;
-                break;
-            case "bundles":
-                return 3;
-                break;
-            case "packages":
-                return 4;
-                break;
-            case "others":
-                return 9;
-                break;
-            default:
-                return false; /*Offer type not found*/
+        $offerType = OfferCategory::where('url_slug', $offerType)
+            ->orWhere('url_slug_bn', $offerType)
+            ->select('id', 'url_slug', 'url_slug_bn', 'alias')
+            ->first();
+
+        if ($offerType) {
+            return $offerType->id;
         }
+        return false;
     }
 
     /**
@@ -45,7 +36,13 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
-        return $this->model->select(
+
+        return $this->model
+            ->where('status', 1)
+            ->where('offer_category_id', $offerTypeById)
+            ->where('special_product', 0)
+            ->startEndDate()
+            ->select(
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
@@ -67,21 +64,16 @@ class ProductRepository extends BaseRepository
                 'products.special_product',
                 'products.like',
                 'products.validity_postpaid',
-                'products.offer_info'
-            // 'd.url_slug'
+                'products.offer_info',
+                'products.product_image'
             )
-            // ->leftJoin('product_details as d', 'd.product_id', '=', 'products.id')
-            // ->where('content_type', 'data')
-            ->where('offer_category_id', $offerTypeById)
-            ->where('status', 1)
-            ->where('special_product', 0)
-            ->with('productCore.detialTabs')
-            ->startEndDate()
+            ->with('tag', 'productCore.detialTabs')
             ->productCore()
             ->category($type)
             ->get();
     }
 
+    #
     public function showTrendingProduct()
     {
        return $this->model->select(
@@ -116,6 +108,81 @@ class ProductRepository extends BaseRepository
            ->get();
     }
 
+    #shuvo-bs
+    public function offerProductsForYou($type,$offerIDArr, $customerAvailableProducts)
+    {
+        return $this->model->select(
+                'products.id',
+                'products.product_code',
+                'products.url_slug',
+                'products.url_slug_bn',
+                'products.schema_markup',
+                'products.page_header',
+                'products.page_header_bn',
+                'products.rate_cutter_unit',
+                'products.rate_cutter_offer',
+                'products.name_en',
+                'products.name_bn',
+                'products.ussd_bn',
+                'products.balance_check_ussd_bn',
+                'products.call_rate_unit_bn',
+                'products.sms_rate_unit_bn',
+                'products.tag_category_id',
+                'products.sim_category_id',
+                'products.offer_category_id',
+                'products.special_product',
+                'products.like',
+                'products.validity_postpaid',
+                'products.offer_info'
+            )
+            ->productCore()
+            ->startEndDate()
+            ->whereIn('product_code', $customerAvailableProducts)
+            ->whereIn('offer_category_id', $offerIDArr)
+            ->where('status', 1)
+            ->where('show_in_home', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order')
+            // ->with('productCore.detialTabs')
+            ->category($type)
+            ->with(['offer_category:id,name_en,name_bn,alias'])
+            ->get();
+    }
+
+    public function getProductById($productIds)
+    {
+        return $this->model->whereIn('id', $productIds)
+            ->select(
+            'id',
+            'product_code',
+            'url_slug',
+            'url_slug_bn',
+            'schema_markup',
+            'page_header',
+            'rate_cutter_unit',
+            'rate_cutter_offer',
+            'name_en',
+            'name_bn',
+            'ussd_bn',
+            'balance_check_ussd_bn',
+            'call_rate_unit_bn',
+            'sms_rate_unit_bn',
+            'tag_category_id',
+            'sim_category_id',
+            'offer_category_id',
+            'special_product',
+            'like',
+            'validity_postpaid',
+            'offer_info'
+        )
+            ->productCore()
+            ->startEndDate()
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order')
+            ->get();
+    }
+
     /**
      * @param $type
      * @param $id
@@ -146,7 +213,8 @@ class ProductRepository extends BaseRepository
                 'call_rate_unit_bn',
                 'offer_info',
                 'status',
-                'like')
+                'like',
+                'image')
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }
@@ -308,5 +376,38 @@ class ProductRepository extends BaseRepository
             ->category($type)
             ->paginate(4);
     }
+
+    public function getProductInfoByCode(array $productCodes)
+    {
+         return $this->model->whereIn('product_code', $productCodes)
+                ->select('id','product_code', 'url_slug', 'name_en', 'name_bn', 'bonus', 'point', 'sim_category_id', 'offer_category_id')
+                 ->where('status', 1)
+                 ->with(['sim_category:id,name,alias'])
+                 ->with(['offer_category:id,name_en,name_bn,alias'])
+                 ->with(['productCore' => function ( $query ){
+                    $query->select(
+                        'id',
+                        'product_code',
+                        'name',
+                        'price',
+                        'mrp_price as price_tk',
+                        'validity as validity_days',
+                        'validity_unit',
+                        'internet_volume_mb',
+                        'sms_volume',
+                        'minute_volume',
+                        'call_rate as callrate_offer',
+                        'call_rate_unit',
+                        'sms_rate as sms_rate_offer',
+                        'renew_product_code',
+                        'recharge_product_code',
+                        'sd_vat_tax_en',
+                        'sd_vat_tax_bn'
+                    );
+                }])
+                ->get();
+                // ->paginate(1);
+    }
+
 
 }

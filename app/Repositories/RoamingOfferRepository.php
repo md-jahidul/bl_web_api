@@ -42,6 +42,7 @@ class RoamingOfferRepository extends BaseRepository {
                 $data[$k]['offers'][$key]['schema_markup'] = $v->schema_markup;
                 $data[$k]['offers'][$key]['card_text_en'] = $v->card_text_en;
                 $data[$k]['offers'][$key]['card_text_bn'] = $v->card_text_bn;
+                $data[$k]['offers'][$key]['card_image'] = $v->card_image;
                 $data[$k]['offers'][$key]['likes'] = $v->likes;
             }
         }
@@ -52,43 +53,47 @@ class RoamingOfferRepository extends BaseRepository {
         return $data;
     }
 
-    public function getOtherOffersDetails($offerSlug) 
-    {   
+    public function getOtherOffersDetails($offerSlug)
+    {
         $offer = $this->model->where('url_slug', $offerSlug)->orWhere('url_slug_bn', $offerSlug)->first();
 
         $data = [];
 
-        $data['name_en'] = $offer->name_en;
-        $data['name_bn'] = $offer->name_bn;
-        $data['short_text_en'] = $offer->short_text_en;
-        $data['short_text_bn'] = $offer->short_text_bn;
-        $data['banner_web'] = $offer->banner_web == "" ? "" : config('filesystems.image_host_url') . $offer->banner_web;
-        $data['banner_mobile'] = $offer->banner_mobile == "" ? "" : config('filesystems.image_host_url') . $offer->banner_mobile;
-        $data['alt_text'] = $offer->alt_text;
-        $data['url_slug'] = $offer->url_slug;
-        $data['url_slug_bn'] = $offer->url_slug_bn;
-        $data['page_header'] = $offer->page_header;
-        $data['page_header_bn'] = $offer->page_header_bn;
-        $data['schema_markup'] = $offer->schema_markup;
-        $data['likes'] = $offer->likes;
+        if ($offer) {
+            $data['name_en'] = $offer->name_en;
+            $data['name_bn'] = $offer->name_bn;
+            $data['card_image'] = $offer->card_image;
+            $data['short_text_en'] = $offer->short_text_en;
+            $data['short_text_bn'] = $offer->short_text_bn;
+            $data['banner_web'] = $offer->banner_web == "" ? "" : $offer->banner_web;
+            $data['banner_mobile'] = $offer->banner_mobile == "" ? "" : $offer->banner_mobile;
+            $data['banner_title_en'] = $offer->banner_title_en;
+            $data['banner_title_bn'] = $offer->banner_title_bn;
+            $data['banner_desc_en'] = $offer->banner_desc_en;
+            $data['banner_desc_bn'] = $offer->banner_desc_bn;
+            $data['alt_text'] = $offer->alt_text;
+            $data['url_slug'] = $offer->url_slug;
+            $data['url_slug_bn'] = $offer->url_slug_bn;
+            $data['page_header'] = $offer->page_header;
+            $data['page_header_bn'] = $offer->page_header_bn;
+            $data['schema_markup'] = $offer->schema_markup;
+            $data['likes'] = $offer->likes;
 
-        $components = RoamingOtherOfferComponents::where('parent_id', $offer->id)->orderBy('position')->get();
-        $data['components'] = [];
-        foreach ($components as $k => $val) {
+            $components = RoamingOtherOfferComponents::where('parent_id', $offer->id)->orderBy('position')->get();
+            $data['components'] = [];
+            foreach ($components as $k => $val) {
 
-            $textEn = json_decode($val->body_text_en);
-            $textBn = json_decode($val->body_text_bn);
+                $textEn = json_decode($val->body_text_en);
+                $textBn = json_decode($val->body_text_bn);
 
-            $data['components'][$k]['component_type'] = $val->component_type;
-            $data['components'][$k]['data_en'] = $textEn;
-            $data['components'][$k]['data_bn'] = $textBn;
+                $data['components'][$k]['component_type'] = $val->component_type;
+                $data['components'][$k]['data_en'] = $textEn;
+                $data['components'][$k]['data_bn'] = $textBn;
+            }
+
+            $data['details_en'] = $offer->details_en;
+            $data['details_bn'] = $offer->details_en;
         }
-
-        $data['details_en'] = $offer->details_en;
-        $data['details_bn'] = $offer->details_en;
-
-
-
 
         return $data;
     }

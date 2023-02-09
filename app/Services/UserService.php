@@ -4,13 +4,26 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\BLApiHubException;
+use App\Exceptions\BLServiceException;
+use App\Exceptions\CurlRequestException;
+use App\Exceptions\OldPasswordMismatchException;
+use App\Exceptions\TokenInvalidException;
+use App\Exceptions\TokenNotFoundException;
+use App\Jobs\ProcessHibernateCustomerLoginBonus;
+use App\Models\Customer;
+use App\Repositories\CustomerRepository;
 use App\Repositories\OtpConfigRepository;
 use App\Repositories\OtpRepository;
 use App\Services\Banglalink\BalanceService;
+use App\Services\Banglalink\BanglalinkCustomerService;
+use App\Services\Banglalink\BanglalinkLoyaltyService;
 use App\Services\Banglalink\BanglalinkOtpService;
 use App\Repositories\UserRepository;
 use App\Http\Requests\DeviceTokenRequest;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -56,6 +69,22 @@ class UserService extends ApiBaseService
      * @var CustomerService
      */
     protected $customerService;
+    /**
+     * @var CustomerService
+     */
+    private $blCustomerService;
+    /**
+     * @var LogService
+     */
+    private $logService;
+    /**
+     * @var CustomerRepository
+     */
+    private $customerRepository;
+    /**
+     * @var BanglalinkLoyaltyService
+     */
+    private $blLoyaltyService;
 
 
     /**
@@ -67,17 +96,30 @@ class UserService extends ApiBaseService
      * @param BanglalinkOtpService $blOtpService
      * @param OtpConfigRepository $otpConfigRepository
      */
-    public function __construct(UserRepository $userRepository, NumberValidationService $numberValidationService,
-                                OtpRepository $otpRepository, BanglalinkOtpService $blOtpService, OtpConfigRepository $otpConfigRepository,
-                                BalanceService $balanceService, CustomerService $customerService)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        NumberValidationService $numberValidationService,
+        OtpRepository $otpRepository,
+        BanglalinkOtpService $blOtpService,
+        OtpConfigRepository $otpConfigRepository,
+        BalanceService $balanceService,
+        BanglalinkLoyaltyService $blLoyaltyService,
+        CustomerService $customerService,
+        BanglalinkCustomerService $banglalinkCustomerService,
+        LogService $logService,
+        CustomerRepository $customerRepository
+    ) {
         $this->userRepository = $userRepository;
         $this->numberValidationService = $numberValidationService;
         $this->otpRepository = $otpRepository;
         $this->blOtpService = $blOtpService;
         $this->otpConfigRepository = $otpConfigRepository;
         $this->balanceService = $balanceService;
+        $this->blLoyaltyService = $blLoyaltyService;
         $this->customerService = $customerService;
+        $this->blCustomerService = $banglalinkCustomerService;
+        $this->logService = $logService;
+        $this->customerRepository = $customerRepository;
     }
 
 
@@ -351,8 +393,14 @@ class UserService extends ApiBaseService
         $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
-        return $customerInfo;
+        $loyaltyInfo = $this->blLoyaltyService->getPriyojonStatus("88" . $mobile)->getData();
 
+        if ($loyaltyInfo->status_code == 200){
+            $customerInfo['loyalty_info'] = $loyaltyInfo->data->data;
+        } else {
+            $customerInfo['loyalty_info'] = null;
+        }
+        return $customerInfo;
     }
 
     /**
@@ -584,7 +632,7 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
-    public function getAuthToken($data) 
+    public function getAuthToken($data)
     {
         $response = IdpIntegrationService::loginRequest($data);
 
@@ -646,4 +694,306 @@ class UserService extends ApiBaseService
         // );
     }
 
+    public function setPassword(Request $request)
+    {
+        if (!$request->bearerToken()) {
+            throw new TokenNotFoundException();
+        }
+
+        // validate the token and get details info
+        $bearerToken = ['token' => $request->header('authorization')];
+
+        $result = IdpIntegrationService::tokenValidationRequest($bearerToken);
+
+        $data = json_decode($result['data'], true);
+
+        if ($data['token_status'] != 'Valid') {
+            throw new TokenInvalidException();
+        }
+
+        $msisdn_key = 'mobile';
+
+        $customer = Customer::where('phone', $data['user'][$msisdn_key])->first();
+
+        if (!$customer) {
+            throw new TokenInvalidException();
+        }
+
+        // validate otp token first
+        /* $token_exist = Otp::where('phone', $customer->phone)->first();
+
+         if (!($token_exist && $request->otp_token == $token_exist->token)) {
+             return $this->sendErrorResponse("OTP token is invalid", [
+                 'message' => "OTP token is invalid",
+                 'hint' => 'OTP token is invalid',
+                 'target' => 'query'
+             ], 400);
+         }
+
+         $token_exist->delete();*/
+
+        $idp_customer_info = $data['user'];
+
+        if ($idp_customer_info['is_password_set']) {
+            return $this->sendErrorResponse("Password is already set", [
+                'message' => "Password is already set",
+                'hint' => 'Password is already set',
+                'target' => 'query'
+            ], 400);
+        }
+
+        $client = new Client();
+
+        $data['otp'] = $request->otp;
+        $data['password'] = $request->password;
+
+        try {
+            $response = $client->post(
+                env('IDP_HOST') . '/api/v1/customers/set/password',
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $request->bearerToken(),
+                    ],
+
+                    'form_params' => $data
+                ]
+            );
+        } catch (ClientException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            $error = json_decode($responseBodyAsString);
+
+            return $this->sendErrorResponse($error->message, [
+                'message' => $error->message,
+                'hint' => $response,
+                'target' => 'query',
+                'details' => $error
+            ], 500);
+        }
+
+        return $this->sendSuccessResponse([], 'Password set Successfully');
+    }
+
+    /**
+     * Verify OTP for Login
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws BLServiceException
+     * @throws CurlRequestException
+     */
+    public function verifyOTPForLogin($request)
+    {
+        $number = $request->input('username');
+        // validate the number
+        $validate_response = $this->blCustomerService->getCustomerInfoByNumber("88" . $number);
+        $response_status = $validate_response->getData()->status;
+
+        if ($response_status != 'SUCCESS') {
+            $this->logService->LoginLog("Login with OTP", "Number Not valid", $number, HttpStatusCode::BAD_REQUEST, HttpStatusCode::BAD_REQUEST,
+                "Number Not valid", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                "The number is not valid banglalink number",
+                [
+                    'message' => 'The number is not valid banglalink number',
+                ],
+                HttpStatusCode::BAD_REQUEST
+            );
+        }
+
+        $customer_info = $validate_response->getData()->data;
+
+        if (!$this->isUserExist($number)) {
+            // register user
+            $registerResponse = $this->register($customer_info, $number);
+        }
+
+        //login with otp perform
+
+        $otp_grant_data = [
+            'grant_type' => 'otp_grant',
+            'client_id' => $request->client_id,
+            'client_secret' => $request->client_secret,
+            'otp' => $request->otp,
+            'username' => $request->username,
+            'provider' => $request->provider,
+        ];
+
+        $token = IdpIntegrationService::otpGrantTokenRequest($otp_grant_data);
+
+        if ($token['http_code'] != 200) {
+            $error_response = json_decode($token['data'], true);
+            $message = $error_response['message'];
+            if ($error_response['error'] == 'invalid_otp') {
+                $message = 'Your OTP is invalid';
+            }
+
+            $this->logService->LoginLog("Login with OTP", "Invalid OTP", $number, $token['http_code'], HttpStatusCode::BAD_REQUEST,
+                "invalid_otp", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                $message,
+                [
+                    'message' => $message,
+                    'hint' => 'Getting HTTP error from IDP',
+                    'details' => $error_response,
+                ],
+                400
+            );
+        }
+//        $customerBasic = IdpIntegrationService::getCustomerBasicInfo($number);
+
+//        $customer_info2 = json_decode($customerBasic['data'], true);
+        $user = Customer::where('phone', $number)->first();
+//        $lastLoginAt = isset($user->last_login_at) ? $user->last_login_at : null;
+
+//        $customer = $this->blCustomerService->getCustomerInfoByNumber($customer_info2['data']['msisdn']);
+//        $customerResponseData = $customer->getData();
+
+
+        $response = IdpIntegrationService::getCustomerInfo($number);
+
+        if ($response['http_code'] != 200) {
+
+            $this->logService->LoginLog("Login with OTP", "Problem in IDP", $number, $response['http_code'], HttpStatusCode::BAD_REQUEST,
+                "Getting HTTP error from IDP", $request->otp, $request->otp_token);
+
+            return $this->sendErrorResponse(
+                'IDP Customer info Problem',
+                [
+                    'message' => 'Something went wrong. try again later',
+                    'hint' => 'Getting HTTP error from IDP',
+                    'details' => [],
+                ],
+                400
+            );
+        }
+
+//        $data = json_decode($response['data'], true);
+
+//        $this->updateNumberTypeForOTPLogin($request, $user, $customerResponseData);
+
+        if ($user->customer_account_id != $customer_info->id) {
+            $this->customerRepository->updateCustomerAccountId($customer_info->msisdn, $customer_info->id);
+        }
+
+//        $customer = $this->customerService->prepareCustomerBasicInfo($user, $data['data']);
+
+        $this->logService->LoginLog("Login with OTP", "success", $number, $response['http_code'], HttpStatusCode::SUCCESS,
+            "success", $request->otp, $request->otp_token);
+
+//        if(Carbon::parse($lastLoginAt)->diffInDays(Carbon::now()) > 90) {
+//            dispatch(new ProcessHibernateCustomerLoginBonus('LoginBonus', $user))->onQueue('process-bonus');
+//        }
+
+
+        return $this->sendSuccessResponse(
+            [
+                'token' => json_decode($token['data']),
+//                'customer' => $customer,
+                "is_new_user" => isset($registerResponse) && $registerResponse
+            ],
+            'Customer login with OTP'
+        );
+    }
+
+    /**
+     * Forgot password
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws TokenInvalidException
+     */
+    public function forgetPassword($request)
+    {
+        $data = $request->all();
+        $data['provider'] = "users";
+        $data['otp'] = $request->input('otp');
+        $data['mobile'] = $request->input('phone');
+        $data['password'] = $request->input('password');
+        $data['password_confirmation'] = $request->input('password');
+
+        $response = IdpIntegrationService::forgetPasswordRequest($data);
+
+        if ($response['http_code'] == 200) {
+            return $this->sendSuccessResponse(
+                [],
+                "Password updated successfully!"
+            );
+        }
+
+        $errors = json_decode($response['data'], true);
+        $message = "Password reset failed. please try again later";
+
+        if ($errors['error'] == 'invalid_otp') {
+            $message = "Your OTP is invalid";
+        }
+
+        return $this->sendErrorResponse(
+            $message,
+            [
+                'message' => $message,
+                'hint' => $errors['error_description'],
+                'details' => $errors,
+            ],
+            HttpStatusCode::BAD_REQUEST
+        );
+    }
+
+    /**
+     * Change Password
+     *
+     * @param $request
+     * @return JsonResponse
+     * @throws CurlRequestException
+     * @throws OldPasswordMismatchException
+     * @throws TokenInvalidException
+     * @throws \App\Exceptions\TokenNotFoundException
+     * @throws \App\Exceptions\TooManyRequestException
+     */
+    public function changePassword($request)
+    {
+        $user = $this->customerService->getAuthenticateCustomer($request);
+
+        if (!$user) {
+            return $this->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $data['oldPassword'] = $request->old_password;
+        $data['newPassword'] = $request->new_password;
+        $data['newPassword_confirmation'] = $request->new_password;
+        $data['mobile'] = $user->phone;
+        $data['customer_token'] = $request->bearerToken();
+
+        $response = IdpIntegrationService::changePasswordRequest($data);
+
+        if ($response['http_code'] != 200) {
+            $errors = json_decode($response['data'], true);
+            if ($errors['error'] == 'Invalid password') {
+                throw new OldPasswordMismatchException();
+            }
+
+            $errorObj = new \stdClass();
+            $errorObj->message = $errors['message'];
+            $errorObj->hint = $errors['message'];
+            $errorObj->code = 500;
+            $errorObj->target = 'query';
+
+            return response()->json(
+                [
+                    'status' => 'FAIL',
+                    'status_code' => 400,
+                    'error' => $errorObj,
+                ],
+                400
+            );
+        }
+
+        return $this->sendSuccessResponse(
+            [],
+            "Password updated successfully!"
+        );
+    }
 }

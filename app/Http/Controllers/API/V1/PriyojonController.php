@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PartnerOfferResource;
 use App\Models\Priyojon;
 use App\Services\AboutPageService;
+use App\Services\ComponentService;
 use App\Services\PartnerOfferService;
 use App\Services\PriyojonService;
 use Illuminate\Database\QueryException;
@@ -25,6 +26,10 @@ class PriyojonController extends Controller
      * @var PriyojonService
      */
     private $priyojonService;
+    /**
+     * @var ComponentService
+     */
+    private $componentService;
 
     /**
      * PriyojonController constructor.
@@ -35,11 +40,13 @@ class PriyojonController extends Controller
     public function __construct(
         PriyojonService $priyojonService,
         PartnerOfferService $partnerOfferService,
-        AboutPageService $aboutPriyojonService
+        AboutPageService $aboutPriyojonService,
+        ComponentService $componentService
     ) {
         $this->priyojonService = $priyojonService;
         $this->partnerOfferService = $partnerOfferService;
         $this->aboutPriyojonService = $aboutPriyojonService;
+        $this->componentService = $componentService;
     }
 
     /**
@@ -55,7 +62,7 @@ class PriyojonController extends Controller
      */
     public function priyojonOffers()
     {
-       return $this->partnerOfferService->priyojonOffers();
+        return $this->partnerOfferService->priyojonOffers();
     }
 
     public function partnerCampaignOffers()
@@ -70,11 +77,11 @@ class PriyojonController extends Controller
      */
     public function discountOffers(Request $request, $page)
     {
-       $elg = $request->status;
-       $cat = $request->category;
-       $area = $request->area;
-       $searchStr = $request->search;
-       return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
+        $elg = $request->status;
+        $cat = $request->category;
+        $area = $request->area;
+        $searchStr = $request->search;
+        return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
     }
 
     public function getAboutPage($slug)
@@ -90,5 +97,34 @@ class PriyojonController extends Controller
     public function aboutBannerImage($slug)
     {
         return $this->aboutPriyojonService->lmsAboutBanner($slug);
+    }
+
+    public function loyaltyCatOffers(Request $request, $page = null)
+    {
+        $elg = $request->status;
+        $cat = !empty($request->url_slug) ? $request->url_slug : null;
+        $area = $request->area;
+        $searchStr = $request->search;
+        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $area, $searchStr);
+    }
+
+    public function loyaltyTierOffers()
+    {
+        return $this->partnerOfferService->tierOffers();
+    }
+
+    public function aboutLoyalty()
+    {
+        return $this->partnerOfferService->getComponentByPageType('about_loyalty');
+    }
+
+    public function discountPrivilege()
+    {
+        return $this->partnerOfferService->getComponentByPageType('discount_privilege');
+    }
+    
+    public function filterOptions()
+    {
+        return $this->partnerOfferService->getFilterOption();
     }
 }

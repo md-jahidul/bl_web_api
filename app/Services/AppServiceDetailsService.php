@@ -74,10 +74,15 @@ class AppServiceDetailsService extends ApiBaseService
 		$get_product_details_banner = $this->appServiceProductDetailsRepository->appServiceDetailsOtherInfo($product_id);
 
 		if( !empty($get_product_details_banner) ){
-			$results['banner']['image'] = !empty($get_product_details_banner->image) ? config('filesystems.image_host_url') . $get_product_details_banner->image : null;
+			$results['banner']['image'] = !empty($get_product_details_banner->image) ? $get_product_details_banner->image : null;
 			$results['banner']['alt_text'] = $get_product_details_banner->alt_text;
 
-			$results['banner']['image_mobile'] = !empty($get_product_details_banner->banner_image_mobile) ? config('filesystems.image_host_url') . $get_product_details_banner->banner_image_mobile : null;
+			$results['banner']['banner_title_en'] = $get_product_details_banner->banner_title_en;
+			$results['banner']['banner_title_bn'] = $get_product_details_banner->banner_title_bn;
+			$results['banner']['banner_desc_en'] = $get_product_details_banner->banner_desc_en;
+			$results['banner']['banner_desc_bn'] = $get_product_details_banner->banner_desc_bn;
+
+			$results['banner']['image_mobile'] = !empty($get_product_details_banner->banner_image_mobile) ? $get_product_details_banner->banner_image_mobile : null;
 
 			$all_releated_products_ids = $get_product_details_banner->other_attributes;
 			$all_releated_products_ids = isset($all_releated_products_ids['related_product_id']) ? $all_releated_products_ids['related_product_id'] : null;
@@ -220,14 +225,13 @@ class AppServiceDetailsService extends ApiBaseService
 	public function getDetails($slug)
     {
         $data = null;
-
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
-		
+
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
 		$data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
-		
+
 		$data['page_header'] = $product_info->page_header;
 		$data['page_header_bn'] = $product_info->page_header_bn;
 		$data['schema_markup'] = $product_info->schema_markup;
@@ -236,7 +240,7 @@ class AppServiceDetailsService extends ApiBaseService
 
         $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
 
-        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
+        $data['section_banner']['app_info'] = !empty($product_info) ? $product_info->getAttributes() : null;
 
         # Get App tab details component
         if( $product_info->appServiceTab->alias == 'app' ){

@@ -22,11 +22,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
+    // Login Landing Page Banner
+    Route::get('login-landing-banner', 'API\V1\LoginLandingPageController@getBanner');
+
+    // Explore C's CMS part
+    Route::get('explore-c', 'API\V1\ExploreCController@getExploreC');
+    Route::get('explore-c-details/{explore_c_slug}', 'API\V1\ExploreCController@getExploreCDeatils')->name('explore-c-details');
+
+
     Route::get('menu', 'API\V1\MenuApiController@getMenu');
     Route::get('header-footer', 'API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page', 'API\V1\HomePageController@getHomePageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
-//    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
+    //    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
 
     Route::get('offers/{type}/{offer_type?}', 'API\V1\ProductController@simPackageOffers');
 
@@ -47,6 +55,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     //AMAR OFFER ========================================
     Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
     Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOffer');
+    Route::get('amar-offer/details/{offerType}/{offerId}', 'API\V1\AmarOfferController@amarOfferDetails');
     Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
     Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');
 
@@ -55,7 +64,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Bookmark =======================================
     Route::post('product/bookmark/save-remove', 'API\V1\ProductController@bookmarkProductSaveRemove');
-//    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
+    //    Route::get('customer/bookmark/app-and-service','API\V1\ProductController@getCustomerBookmarkProducts');
     Route::get('bookmark/app-and-service/', 'API\V1\ProductBookmarkController@getBookmarkAppService');
     Route::get('bookmark/business/', 'API\V1\ProductBookmarkController@getBookmarkBusiness');
     Route::get('bookmark/offers/', 'API\V1\ProductBookmarkController@getBookmarkOffers');
@@ -63,6 +72,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('recharge-offers/view/{amount}', 'API\V1\ProductController@rechargeOfferByAmount');
     Route::get('recharge-offers', 'API\V1\ProductController@rechargeOffers');
+
+    Route::get('recharge/pre-set-amount', 'API\V1\ProductController@preSetRechargeAmount');
 
 
     Route::post('ssl', 'API\V1\SslCommerzController@ssl');
@@ -82,12 +93,22 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('user/profile/update', 'API\V1\UserProfileController@update');
     Route::post('user/profile/image/update', 'API\V1\UserProfileController@updateProfileImage');
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
-    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation')->middleware('client.secret.token');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')->middleware('client.secret.token');
+    Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
+    //        ->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
+    //        ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
+    Route::post('user/verify-otp', 'API\V1\AuthenticationController@verifyOTPForLogin');
 
     // Get JWT token with credential
     Route::post('password-login', 'API\V1\AuthenticationController@passwordLogin');
+
+    // Password
+    Route::post('set-password', 'API\V1\AuthenticationController@setPassword');
+    Route::group(['middleware' => ['verifyIdpToken']], function () {
+        Route::post('change-password', 'API\V1\AuthenticationController@changePassword');
+    });
+    Route::post('forget-password', 'API\V1\AuthenticationController@forgetPassword');
 
     // Get JWT token with Refresh token
     Route::post('refresh', 'API\V1\AuthenticationController@getRefreshToken');
@@ -96,6 +117,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('current-balance', 'API\V1\CurrentBalanceController@getCurrentBalance');
     Route::get('balance/summary', 'API\V1\CurrentBalanceController@getBalanceSummary');
 
+    Route::get('balance/details/{type}', 'API\V1\CurrentBalanceController@getBalanceDetails');
+
     // Product Purchase
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
@@ -103,13 +126,19 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
 
     //Loyalty or Priyojon section
-        // Bl API Hub part
-//    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
+    //    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
     Route::get('partner-offers', 'API\V1\LoyaltyController@partnerCatWithOffers');
     Route::get('loyalty/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
     Route::get('loyalty/redeem-offer-purchase/{offerId}', 'API\V1\LoyaltyController@redeemOfferPurchase');
     Route::get('priyojon/status', 'API\V1\LoyaltyController@priyojonStatus');
     Route::get('partner-offers/like/{offerID}', 'API\V1\LoyaltyController@partnerOfferLike');
+
+    Route::get('loyalty-category-offers/{page?}', 'API\V1\PriyojonController@loyaltyCatOffers');
+    Route::get('loyalty-tier-offers', 'API\V1\PriyojonController@loyaltyTierOffers');
+    Route::get('about-loyalty', 'API\V1\PriyojonController@aboutLoyalty');
+    Route::get('loyalty/filter-options', 'API\V1\PriyojonController@filterOptions');
+
+    Route::get('discount-privilege', 'API\V1\PriyojonController@discountPrivilege');
 
     // CMS part
     Route::get('partner-offers/campaign', 'API\V1\PriyojonController@partnerCampaignOffers');
@@ -164,9 +193,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // eCarrer api
     Route::get('ecarrer/banner-contact', 'API\V1\EcareerController@topBannerContact');
-    Route::get('ecarrer/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
+    Route::get('career/life-at-bl', 'API\V1\EcareerController@lifeAtBanglalink');
 
-    Route::get('ecarrer/programs', 'API\V1\EcareerController@getEcarrerPrograms');
+    Route::get('career/programs/{type}', 'API\V1\EcareerController@getEcarrerPrograms');
     Route::get('ecarrer/vacancy', 'API\V1\EcareerController@getEcarrerVacancy');
 
     // eCarrer Application form api  =========================================================
@@ -178,6 +207,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('about-us-banglalink', 'API\V1\AboutUsController@getAboutBanglalink');
     Route::get('about-us-management', 'API\V1\AboutUsController@getAboutManagement');
     Route::get('about-us-eCareer', 'API\V1\AboutUsController@getEcareersInfo');
+    Route::get('about-us-pages/{url_slug}', 'API\V1\AboutUsController@getAboutusPages');
 
     // App And Service
     Route::get('app-service', 'API\V1\AppServiceController@appServiceAllComponent');
@@ -201,6 +231,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // App and service get details page with product id
     Route::get('app-service/details/{slug}', 'API\V1\AppServiceDetailsController@appServiceDetailsComponent');
+
+    //FB campaign=======
+    Route::post('fb-campaign', 'API\V1\FbCampaningController@store');
 
     # Frontend route for seo tab
     Route::get('frontend-route', 'API\V1\HomePageController@frontendDynamicRoute');
@@ -237,7 +270,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('media-tvc-video', 'API\V1\MediaController@getTvcVideoData');
 
     // FAQ
-    Route::get('faq/{slug}', 'API\V1\FaqController@getFAQ');
+    Route::get('faq/{slug}/{id?}', 'API\V1\FaqController@getFAQ');
 
     // 4G Internet Offers
     Route::get('four-g-internet/{package_type}', 'API\V1\BanglalinkFourGController@getFourGInternet');
@@ -247,6 +280,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // 4G Campaign
     Route::get('four-g-campaign', 'API\V1\BanglalinkFourGController@getCampaignWithBanner');
+
+    // 4G Covarage
+    Route::get('four-g-coverage', 'API\V1\BanglalinkFourGController@getFourGCoverage');
 
     // 4G Status Check
     Route::get('four-g-usim-eligibility/{msisdn}', 'API\V1\BanglalinkFourGController@checkUSIMEligibility');
@@ -286,7 +322,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     //Image File Viewer
     Route::get('test-offers', 'API\V1\ImageFileViewerController@offerList');
-//    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
+    //    Route::get('show-file/{dirLocation}/{fileName}', 'API\V1\FileViewController@showFile');
 
     // SEO Image URL generator test
     Route::get('banner-image/web/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
@@ -311,6 +347,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Phase 1
     Route::post('upsell/request-purchase', 'API\V1\UpsellFacebook\UpsellController@requestPurchase')->middleware('verifyIdpToken');
 
+    Route::post('customer/loan-check', 'API\V1\CurrentBalanceController@customerLoanCheck');
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 
@@ -318,6 +355,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('blog/landing-page', 'API\V1\BlogController@getLandingPageDataByRefType');
     Route::get('blog/details/{slug}', 'API\V1\BlogController@getBlogDetails');
     Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 });
 
 

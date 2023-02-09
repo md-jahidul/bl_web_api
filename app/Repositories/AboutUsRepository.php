@@ -29,7 +29,17 @@ class AboutUsRepository extends BaseRepository
      */
     public function getAboutBanglalink()
     {
-        return $this->model->get();
+        return $this->model->where('is_active',1)->get();
+    }
+
+    /**
+     * Retrieve About Banglalink
+     *
+     * @return mixed
+     */
+    public function getAboutUsPages($url_slug)
+    {
+        return $this->model->where('url_slug',$url_slug)->first();
     }
 
 }

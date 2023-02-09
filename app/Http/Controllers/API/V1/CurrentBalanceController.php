@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Exceptions\BLServiceException;
-use App\Exceptions\CurlRequestException;
-use App\Exceptions\PinInvalidException;
 use App\Exceptions\TokenInvalidException;
 use App\Http\Controllers\Controller;
 use App\Services\Banglalink\BalanceService;
+use App\Services\Banglalink\ProductLoanService;
 use App\Services\CurrentBalanceService;
 use App\Services\IdpIntegrationService;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +27,10 @@ class CurrentBalanceController extends Controller
     protected $idpService;
 
     protected $balanceTransferService;
+    /**
+     * @var ProductLoanService
+     */
+    private $productLoanService;
 
 
     /**
@@ -38,10 +40,12 @@ class CurrentBalanceController extends Controller
      */
     public function __construct(
         BalanceService $balanceService,
-        IdpIntegrationService $idpIntegrationService
+        IdpIntegrationService $idpIntegrationService,
+        ProductLoanService $productLoanService
     ) {
         $this->balanceService = $balanceService;
         $this->idpService = $idpIntegrationService;
+        $this->productLoanService = $productLoanService;
         //$this->middleware('idp.verify');
     }
 
@@ -82,5 +86,11 @@ class CurrentBalanceController extends Controller
     public function transferBalance(TransferBalanceRequest $request)
     {
         return $this->balanceTransferService->transferBalance($request);
+    }
+
+
+    public function customerLoanCheck(Request $request)
+    {
+        return $this->productLoanService->getLoanAmount($request);
     }
 }

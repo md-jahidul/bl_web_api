@@ -12,7 +12,9 @@ namespace App\Services;
 use App\Repositories\AdTechRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
+use App\Repositories\MediaNewsCategoryRepository;
 use App\Repositories\MediaPressNewsEventRepository;
+use App\Repositories\MediaLandingPageRepository;
 use App\Services\Assetlite\ComponentService;
 
 class MediaPressNewsEventService extends ApiBaseService
@@ -33,7 +35,12 @@ class MediaPressNewsEventService extends ApiBaseService
      * @var AdTechRepository
      */
     private $adTechRepository;
+    /**
+     * @var MediaNewsCategoryRepository
+     */
+    private $mediaNewsCategoryRepository;
 
+    protected $mediaLandingPageRepository;
     /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
@@ -43,12 +50,16 @@ class MediaPressNewsEventService extends ApiBaseService
         MediaPressNewsEventRepository $mediaPNERepository,
         MediaBannerImageRepository $mediaBannerImageRepository,
         ComponentRepository $componentRepository,
-        AdTechRepository $adTechRepository
+        AdTechRepository $adTechRepository,
+        MediaNewsCategoryRepository $mediaNewsCategoryRepository,
+        MediaLandingPageRepository $mediaLandingPageRepository
     ) {
+        $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
         $this->componentRepository = $componentRepository;
         $this->adTechRepository = $adTechRepository;
+        $this->mediaNewsCategoryRepository = $mediaNewsCategoryRepository;
     }
 
     public function mediaPressEventData($moduleType)
@@ -67,25 +78,35 @@ class MediaPressNewsEventService extends ApiBaseService
     {
         $data = $this->mediaPNERepository->filterByDate($moduleType, $from, $to);
         $message = ucfirst(str_replace('_', ' ', $moduleType));
-        return $this->sendSuccessResponse($data,"$message Filter Data");
+        return $this->sendSuccessResponse($data, "$message Filter Data");
     }
 
     public function detailsComponent($urlSlug)
     {
         $post = $this->mediaPNERepository->getDataBySlug($urlSlug);
-        $components = [];
+        $blogDetails = [];
         if (!empty($post->id)) {
-            $components =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+            $blogDetails['components'] =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+            $blogDetails['post'] = $post;
+            $blogDetails['related_blogs'] = $this->mediaPNERepository->getRelatedBlog($post->id,$post->media_news_category_id);
+            $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_type' => "blog"]);
         }
-
-        $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_type' => "blog"]);
-        $blogDetails['components'] = $components;
 
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
 
-    public function filterArchive($type,$param,$limit){
-        $data = $this->mediaPNERepository->filterArchive($type,$param,$limit);
-        return $this->sendSuccessResponse($data, "Filter Date");
+    public function filterArchive($type, $param, $limit)
+    {
+        $banner = $this->mediaLandingPageRepository->findOneByProperties(['component_type'=> 'news_archive'],['title_en','title_bn', 'short_desc_en', 'short_desc_bn']);
+        $data = $this->mediaPNERepository->filterArchive($type, $param, $limit);
+        $custom = collect(['banner'=>$banner]);
+        $res = $custom->merge($data);
+        return $this->sendSuccessResponse($res, "Filter Date");
+    }
+
+    public function topicList()
+    {
+        $data = $this->mediaNewsCategoryRepository->findByProperties([], ['id', 'title_en', 'title_bn']);
+        return $this->sendSuccessResponse($data, "Topic List");
     }
 }

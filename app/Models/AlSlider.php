@@ -13,4 +13,10 @@ class AlSlider extends Model
     public function sliderImages(){
         return $this->hasMany(AlSliderImage::class, 'slider_id');
     }
+
+    public function shortCode(){
+        return $this->hasMany(ShortCode::class, 'slider_id');
+    }
+
+
 }

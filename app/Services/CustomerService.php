@@ -176,13 +176,11 @@ class CustomerService extends ApiBaseService
 
         $response = IdpIntegrationService::tokenValidationRequest($bearerToken);
 
-//        dd($response);
-
-        if ($response['status_code'] == 429) {
+        if ($response['http_code'] == 429) {
             throw new TooManyRequestException();
         }
 
-        $data = json_decode($response['response'], true);
+        $data = json_decode($response['data'], true);
 
         if ($data['token_status'] != 'Valid') {
             throw new TokenInvalidException();

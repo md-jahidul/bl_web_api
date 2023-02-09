@@ -38,4 +38,21 @@ class ComponentRepository extends BaseRepository
             ->get();
     }
 
+    public function getExploreCDetailsComponent($pageType, $section_details_id)
+    {
+        return $this->model
+             ->orderBy('component_order', 'ASC')
+             ->where('page_type', $pageType)
+             ->where('section_details_id', $section_details_id)
+             ->select(
+                 'id', 'section_details_id', 'page_type',
+                 'component_type', 'title_en', 'title_bn', 'description_en', 'description_bn',
+                 'editor_en', 'editor_bn', 'extra_title_bn',
+                 'extra_title_en', 'multiple_attributes',
+                 'video', 'image', 'alt_text', 'other_attributes', 'component_order'
+             )
+             ->where('status', 1)
+            ->get();
+    }
+
 }

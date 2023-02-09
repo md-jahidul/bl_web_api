@@ -38,10 +38,10 @@ class BlogController extends Controller
         $this->mediaPressNewsEventService = $mediaPressNewsEventService;
     }
 
-//    public function getComponents()
-//    {
-//        return $this->mediaLandingPageService->landingData();
-//    }
+    //    public function getComponents()
+    //    {
+    //        return $this->mediaLandingPageService->landingData();
+    //    }
 
     /**
      * @return JsonResponse|mixed
@@ -58,34 +58,39 @@ class BlogController extends Controller
 
     public function getBlogArchive(Request $request)
     {
-        return $this->mediaPressNewsEventService->filterArchive(self::POST_REFERENCE_TYPE,$request->all(),10);
+        return $this->mediaPressNewsEventService->filterArchive(self::POST_REFERENCE_TYPE, $request->all(), 10);
     }
 
-//    public function getPressReleaseFilter($from, $to)
-//    {
-//        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::PRESS_RELEASE, $from, $to);
-//    }
+    public function getTopicList(Request $request)
+    {
+        return $this->mediaPressNewsEventService->topicList();
+    }
 
-//    /**
-//     * @return JsonResponse|mixed
-//     */
-//    public function getNewsEvent()
-//    {
-//        return $this->mediaPressNewsEventService->mediaPressEventData(self::NEWS_EVENT);
-//    }
+    //    public function getPressReleaseFilter($from, $to)
+    //    {
+    //        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::PRESS_RELEASE, $from, $to);
+    //    }
 
-//    /**
-//     * @param $from
-//     * @param $to
-//     * @return mixed
-//     */
-//    public function getNewsEventFilter($from, $to)
-//    {
-//        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::NEWS_EVENT, $from, $to);
-//    }
-//
-//    public function getTvcVideoData()
-//    {
-//        return $this->mediaTvcVideoService->getTvcVideoData();
-//    }
+    //    /**
+    //     * @return JsonResponse|mixed
+    //     */
+    //    public function getNewsEvent()
+    //    {
+    //        return $this->mediaPressNewsEventService->mediaPressEventData(self::NEWS_EVENT);
+    //    }
+
+    //    /**
+    //     * @param $from
+    //     * @param $to
+    //     * @return mixed
+    //     */
+    //    public function getNewsEventFilter($from, $to)
+    //    {
+    //        return $this->mediaPressNewsEventService->mediaPressEventFilterData(self::NEWS_EVENT, $from, $to);
+    //    }
+    //
+    //    public function getTvcVideoData()
+    //    {
+    //        return $this->mediaTvcVideoService->getTvcVideoData();
+    //    }
 }

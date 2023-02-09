@@ -126,7 +126,7 @@ class EcareerService
 
     /**
      * Life at bl teams sections
-     * @return [type] [description]
+     * @return [type] [description]0
      */
     public function ecarrerSectionsList($category, $categoryTypes = null)
     {
@@ -249,8 +249,8 @@ class EcareerService
 //            dd($seoData);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
@@ -258,8 +258,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsNewsSections('programs_progeneral', 'sap', 'programs_video');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'sap', 'programs_steps');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
             $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
@@ -302,8 +303,8 @@ class EcareerService
             $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
@@ -311,8 +312,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', 'ennovators', 'programs_video');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'ennovators');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'ennovators', 'programs_steps');
             $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_ennovatorbatches');
@@ -353,8 +355,8 @@ class EcareerService
             $seoData = $this->programsTapSeoData($category);
 
             $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
@@ -362,8 +364,9 @@ class EcareerService
             );
 
             # get sap title for tab
-            $results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
-            $sections['news_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
+            //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');
+            $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'aip', 'programs_news_section');
+            $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', 'aip', 'programs_video');
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'aip');
             $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', 'aip', 'programs_steps');
 
@@ -380,6 +383,21 @@ class EcareerService
         } catch (\Exception $e) {
             return $results;
         };
+    }
+
+    public function getGeneralPrograms($type)
+    {
+        $results = null;
+        $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', $type, 'programs_news_section');
+        $sections['video_section'] = $this->getProgramsVideoSections('programs_progeneral', $type, 'programs_video');
+        $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', $type);
+        $sections['steps_section'] = $this->getProgramsStepsSections('programs_progeneral', $type, 'programs_steps');
+
+        $sections['programs_testimonial'] = $this->getProgramsTestimonialSections('programs_progeneral', $type, 'programs_testimonial');
+
+        $sections['programs_events'] = $this->getProgramsEventsSections('programs_progeneral', $type, 'programs_events');
+        $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', $type);
+        $results['sections'] = $sections;
     }
 
     /**
@@ -431,7 +449,6 @@ class EcareerService
 
         # Ecarrer programs news section
         $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
-
         if (!empty($get_sap_news)) {
             foreach ($get_sap_news as $value) {
 
@@ -442,7 +459,7 @@ class EcareerService
                         $sub_data['description_en'] = $items_value->description_en;
                         $sub_data['description_bn'] = $items_value->description_bn;
 
-                        $sub_data['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+                        $sub_data['image'] = !empty($items_value->image) ?  $items_value->image : null;
                         $sub_data['video'] = $items_value->video;
                         $sub_data['alt_text'] = $items_value->alt_text;
                         // $sub_data['alt_links'] = $items_value->alt_links;
@@ -451,6 +468,52 @@ class EcareerService
                         $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
                     }
                 }
+            }
+        }
+        return $sub_data;
+    }
+    /**
+     * Programs SAP news sections
+     * @return [type] [description]
+     */
+    private function getProgramsVideoSections($category, $category_type, $additional_category)
+    {
+
+        $sub_data = null;
+
+        if (empty($category) || empty($category_type) || empty($additional_category)) {
+            return $sub_data;
+        }
+
+        # Ecarrer programs news section
+        $get_sap_news = $this->getProgramsByCateogryType($category, $category_type, $additional_category);
+
+        if (!empty($get_sap_news)) {
+
+            foreach ($get_sap_news as $value) {
+                //dd( $value->title_en);
+                // $sub_data['title_en'] = $value->title_en;
+                // $sub_data['title_bn'] = $value->title_bn;
+                // $sub_data['description_en'] = $value->description_en;
+                // $sub_data['description_bn'] = $value->description_bn;
+                $sub_data['video'] = $value->video;
+                //$sub_data['title_en'] = $value->title_en;
+//                 if (!empty($value->portalItems) && count($value->portalItems) > 0) {
+//                     foreach ($value->portalItems as $items_value) {
+//                         $sub_data['title_en'] = $items_value->title_en;
+//                         $sub_data['title_bn'] = $items_value->title_bn;
+//                         $sub_data['description_en'] = $items_value->description_en;
+//                         $sub_data['description_bn'] = $items_value->description_bn;
+
+//                         $sub_data['image'] = !empty($items_value->image) ?  $items_value->image : null;
+//                         $sub_data['video'] = $items_value->video;
+//                         $sub_data['alt_text'] = $items_value->alt_text;
+//                         // $sub_data['alt_links'] = $items_value->alt_links;
+//                         #teams tab content buttons
+// //                        $sub_data['call_to_action_buttons'] = null;
+//                         $sub_data['call_to_action_buttons'] = !empty($items_value->call_to_action) ? unserialize($items_value->call_to_action) : null;
+//                     }
+//                 }
             }
         }
 
@@ -478,16 +541,21 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
-
+                $sub_data['call_to_action_buttons'] = !empty($parents_value->call_to_action) ? unserialize($parents_value->call_to_action) : null;
 
                 if (!empty($parents_value->portalItems)) {
 
                     foreach ($parents_value->portalItems as $portal_items) {
                         $sub_items = [];
 
-                        // $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['title_en'] = $portal_items->title_en;
+                        $sub_items['title_bn'] = $portal_items->title_bn;
+                        $sub_items['description_en'] = $portal_items->description_en;
+                        $sub_items['description_bn'] = $portal_items->description_bn;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -524,6 +592,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
                 if (!empty($parents_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
@@ -535,7 +605,7 @@ class EcareerService
                         $sub_items = [];
 
                         // $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
                         $sub_items['video'] = $portal_items->video;
                         $sub_data['item_list'][] = $sub_items;
@@ -569,12 +639,12 @@ class EcareerService
             foreach ($programs_proiconbox as $parent_value) {
 
                 $sub_data = [];
-                // $sub_data['title_en'] = $parent_value->title_en;
-                // $sub_data['title_bn'] = $parent_value->title_bn;
+                $sub_data['title_en'] = $parent_value->title_en;
+                $sub_data['title_bn'] = $parent_value->title_bn;
                 $sub_data['slug'] = $parent_value->slug;
-                // $sub_data['description_en'] = $parent_value->description_en;
-                // $sub_data['description_bn'] = $parent_value->description_bn;
-                // $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+                $sub_data['description_en'] = $parent_value->description_en;
+                $sub_data['description_bn'] = $parent_value->description_bn;
+                // $sub_data['image'] = !empty($parent_value->image) ?  $parent_value->image : null;
                 // $sub_data['alt_text'] = $parent_value->alt_text;
                 if (!empty($parent_value->portalItems)) {
 
@@ -585,7 +655,7 @@ class EcareerService
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -617,7 +687,7 @@ class EcareerService
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+                $sub_data['image'] = !empty($parent_value->image) ?  $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
                 $results = $sub_data;
             } // Foreach end
@@ -672,7 +742,7 @@ class EcareerService
                 $sub_data['slug'] = $parent_value->slug;
                 $sub_data['description_en'] = $parent_value->description_en;
                 $sub_data['description_bn'] = $parent_value->description_bn;
-                $sub_data['image'] = !empty($parent_value->image) ? config('filesystems.image_host_url') . $parent_value->image : null;
+                $sub_data['image'] = !empty($parent_value->image) ?  $parent_value->image : null;
                 $sub_data['alt_text'] = $parent_value->alt_text;
 
                 $results[] = $sub_data;
@@ -801,6 +871,8 @@ class EcareerService
         if (!empty($batch_title) && count($batch_title) > 0) {
             $sub_data['title_en'] = $batch_title->first()->title_en;
             $sub_data['title_bn'] = $batch_title->first()->title_bn;
+            $sub_data['description_en'] = $batch_title->first()->description_en;
+            $sub_data['description_bn'] = $batch_title->first()->description_bn;
             $sub_data['slug'] = $batch_title->first()->slug;
             $results['batch_main_title'] = $sub_data;
         }
@@ -823,7 +895,7 @@ class EcareerService
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         if (isset($portal_items->additional_info) && !empty($portal_items->additional_info)) {
@@ -908,7 +980,7 @@ class EcareerService
                         $sub_items['description_en'] = $items_value->description_en;
                         $sub_items['description_bn'] = $items_value->description_bn;
 
-                        $sub_items['image'] = !empty($items_value->image) ? config('filesystems.image_host_url') . $items_value->image : null;
+                        $sub_items['image'] = !empty($items_value->image) ?  $items_value->image : null;
                         $sub_items['alt_text'] = $items_value->alt_text;
                         $sub_items['video'] = $items_value->video;
 
@@ -946,6 +1018,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parent_value->title_en;
                 $sub_data['title_bn'] = $parent_value->title_bn;
+                $sub_data['description_en'] = $parent_value->description_en;
+                $sub_data['description_bn'] = $parent_value->description_bn;
                 $sub_data['slug'] = $parent_value->slug;
 
                 if (!empty($parent_value->portalItems) && count($parent_value->portalItems) > 0) {
@@ -957,7 +1031,7 @@ class EcareerService
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
 
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
 
                         $sub_items['alt_text'] = $portal_items->alt_text;
                         // $sub_items['alt_links'] = $portal_items->alt_links;
@@ -1060,8 +1134,34 @@ class EcareerService
         return $results;
     }
 
+    public function getProgramsList($type){
+        $programId = $this->ecarrerPortalRepository->findProgramId();
+        if(isset($programId)){
+            $programList = $this->ecarrerPortalItemRepository->findProgramList($programId->id,$type);
+            $programs = [];
+            if(!empty($programList)){
+
+                foreach ($programList as $program){
+                    $response = [];
+                    $response['title_en'] = $program->title_en;
+                    $response['title_bn'] = $program->title_bn;
+                    $response['description_en'] = $program->description_en;
+                    $response['description_bn'] = $program->description_bn;
+                    $response['slug'] = $program->slug;
+
+                    $response['image'] = !empty($program->image) ?  $program->image : null;
+                    $response['alt_text'] = $program->alt_text;
+                    $response['alt_links'] = $program->alt_links;
+                    $response['video'] = $program->video;
+                    $response['call_to_action_buttons'] = !empty($program->call_to_action) ? unserialize($program->call_to_action) : null;
+                    $programs[] =  $response;
+                }
+            }
+            return $programs;
+        }
+    }
+
 }
 
 // Class end
-
 

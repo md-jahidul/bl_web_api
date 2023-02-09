@@ -64,7 +64,7 @@ class EcareerController extends Controller
                     $sub_data_banner['schema_markup'] = $value->schema_markup;
 
 
-                    $sub_data_banner['image'] = !empty($value->image) ? config('filesystems.image_host_url') . $value->image : null;
+                    $sub_data_banner['image'] = !empty($value->image) ?  $value->image : null;
                     $sub_data_banner['alt_text'] = $value->alt_text;
 
                     $data['top_menu_banner'][] = $sub_data_banner;
@@ -102,7 +102,7 @@ class EcareerController extends Controller
                                 $connct_social = [];
 
                                 $connct_social['title_en'] = $social_item->title_en;
-                                $connct_social['image'] = !empty($social_item->image) ? config('filesystems.image_host_url') . $social_item->image : null;
+                                $connct_social['image'] = !empty($social_item->image) ?  $social_item->image : null;
                                 $connct_social['alt_text'] = $social_item->alt_text;
                                 $connct_social['alt_links'] = $social_item->alt_links;
 
@@ -136,8 +136,8 @@ class EcareerController extends Controller
         $seoData = $this->ecarrerService->getSeoData($category);
 
         $data['seo_data'] = array(
-            'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-            'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+            'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+            'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
             'alt_text' => $seoData->alt_text,
             'page_header' => $seoData->page_header,
             'page_header_bn' => $seoData->page_header_bn,
@@ -147,37 +147,40 @@ class EcareerController extends Controller
 
         // Life at banglalink 3 general section
         $life_at_bl_general = $this->ecarrerService->ecarrerSectionsList('life_at_bl_general');
-
+        //dd($life_at_bl_general->toArray());
 //        print_r($life_at_bl_general);die();
 
         if (!empty($life_at_bl_general) && count($life_at_bl_general) > 0) {
-            foreach ($life_at_bl_general as $general_value) {
+            foreach ($life_at_bl_general as $key=>$general_value) {
 
 
-                if ($general_value->category_type == 'news_on_top') {
+                // if ($general_value->category_type == 'news_on_top') {
 
-                    $data['news_on_top'] = $this->lifeAtBanglalinkData($general_value);
-                } elseif ($general_value->category_type == 'values_section') {
-                    $data['values_section'] = $this->lifeAtBanglalinkData($general_value);
-                } elseif ($general_value->category_type == 'campus_section') {
-                    $data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
-                }
+                //     $data['hero_section'] = $this->lifeAtBanglalinkData($general_value);
+                // } elseif ($general_value->category_type == 'values_section') {
+                //     $data['values_section'] = $this->lifeAtBanglalinkData($general_value);
+                // } elseif ($general_value->category_type == 'campus_section') {
+                //     $data['campus_section'] = $this->lifeAtBanglalinkData($general_value);
+                // }
+
+                $data[$general_value->slug] = $this->lifeAtBanglalinkData($general_value);
+
             }
 
-            if (!isset($data['news_on_top'])) {
-                $data['news_on_top'] = null;
-            }
-            if (!isset($data['values_section'])) {
-                $data['values_section'] = null;
-            }
+            // if (!isset($data['news_on_top'])) {
+            //     $data['news_on_top'] = null;
+            // }
+            // if (!isset($data['values_section'])) {
+            //     $data['values_section'] = null;
+            // }
 
-            if (!isset($data['campus_section'])) {
-                $data['campus_section'] = null;
-            }
+            // if (!isset($data['campus_section'])) {
+            //     $data['campus_section'] = null;
+            // }
         } else {
-            $data['news_on_top'] = null;
-            $data['values_section'] = null;
-            $data['campus_section'] = null;
+            //$data['news_on_top'] = null;
+            //$data['values_section'] = null;
+            //$data['campus_section'] = null;
         }
 
 
@@ -203,7 +206,7 @@ class EcareerController extends Controller
                         $sub_items['title_bn'] = $portal_items->title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -228,6 +231,8 @@ class EcareerController extends Controller
                 $sub_data = [];
                 $sub_data['title_en'] = $events_value->title_en;
                 $sub_data['title_bn'] = $events_value->title_bn;
+                $sub_data['description_en'] = $events_value->description_en;
+                $sub_data['description_bn'] = $events_value->description_bn;
                 $sub_data['slug'] = $events_value->slug;
                 if (!empty($events_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($events_value->additional_info)->sider_info;
@@ -239,7 +244,7 @@ class EcareerController extends Controller
                         $sub_items = [];
 
                         $sub_items['title_en'] = $portal_items->title_en;
-                        $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                        $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                         $sub_items['alt_text'] = $portal_items->alt_text;
 
                         $sub_data['item_list'][] = $sub_items;
@@ -264,11 +269,13 @@ class EcareerController extends Controller
 
                 if ($teams_value->category_type == 'teams_title') {
 
-                    $sub_data = [];
-                    $sub_data['title_en'] = $teams_value->title_en;
-                    $sub_data['title_bn'] = $teams_value->title_bn;
-
-                    $teams['teams_title'] = $sub_data;
+                    //$sub_data = [];
+                    $teams['title_en'] = $teams_value->title_en;
+                    $teams['title_bn'] = $teams_value->title_bn;
+                    $teams['description_en'] = $teams_value->description_en;
+                    $teams['description_bn'] = $teams_value->description_bn;
+                    // array_push($teams,$sub_data);
+                    //$teams['teams_title'] = $sub_data;
                 } else {
 
                     $sub_data = [];
@@ -285,11 +292,12 @@ class EcareerController extends Controller
                             $sub_items = [];
 
                             $sub_items['title_en'] = $portal_items->title_en;
+                            $sub_items['title_bn'] = $portal_items->title_bn;
                             $sub_items['description_en'] = $portal_items->description_en;
                             $sub_items['description_bn'] = $portal_items->description_bn;
-                            $sub_items['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                            $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                             $sub_items['alt_text'] = $portal_items->alt_text;
-
+                            //print_r( !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action):null);
                             #teams tab content buttons
                             $sub_items['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
 
@@ -322,7 +330,13 @@ class EcareerController extends Controller
         $sub_data_news = [];
         $sub_data_news['title_en'] = $general_value->title_en;
         $sub_data_news['title_bn'] = $general_value->title_bn;
-
+        $sub_data_news['description_en'] = $general_value->description_en;
+        $sub_data_news['description_bn'] = $general_value->description_bn;
+        $sub_data_news['image'] = $general_value->image;
+        $sub_data_news['image_url'] = $general_value->image_url;
+        $sub_data_news['alt_txt'] = $general_value->alt_txt;
+        $sub_data_news['alt_txt_bn'] = $general_value->alt_txt_bn;
+        $sub_data_news['call_to_action_buttons'] = !empty($general_value->call_to_action) ? unserialize($general_value->call_to_action) : null;
 
         if (!empty($general_value->portalItems)) {
 
@@ -333,11 +347,13 @@ class EcareerController extends Controller
                 $sub_data_news_item['title_bn'] = $portal_items->title_bn;
                 $sub_data_news_item['description_en'] = $portal_items->description_en;
                 $sub_data_news_item['description_bn'] = $portal_items->description_bn;
+                $sub_data_news_item['slug'] = $portal_items->slug;
 
-                $sub_data_news_item['image'] = !empty($portal_items->image) ? config('filesystems.image_host_url') . $portal_items->image : null;
+                $sub_data_news_item['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
                 $sub_data_news_item['alt_text'] = $portal_items->alt_text;
                 $sub_data_news_item['alt_links'] = $portal_items->alt_links;
                 $sub_data_news_item['video'] = $portal_items->video;
+                $sub_data_news_item['call_to_action_buttons'] = !empty($portal_items->call_to_action) ? unserialize($portal_items->call_to_action) : null;
 
                 $sub_data_news['item_list'][] = $sub_data_news_item;
             }
@@ -362,8 +378,8 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
@@ -386,7 +402,7 @@ class EcareerController extends Controller
      * [eCarrer Programs category sap, ennovators, aip]
      * @return [type]           [description]
      */
-    public function getEcarrerPrograms()
+    public function getEcarrerPrograms($type)
     {
 
         try {
@@ -398,27 +414,40 @@ class EcareerController extends Controller
             $seoData = $this->ecarrerService->getSeoData($category);
 
             $data['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" : config('filesystems.image_host_url') . $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" : config('filesystems.image_host_url') . $seoData->image_mobile,
+                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
+                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
                 'alt_text' => $seoData->alt_text,
                 'page_header' => $seoData->page_header,
                 'page_header_bn' => $seoData->page_header_bn,
                 'schema_markup' => $seoData->schema_markup
             );
+            if($type === 'sap'){
+                $ecarrer_sap = $this->ecarrerService->getProgramsSap();
+                $data['data'] = $ecarrer_sap;
+            }
+            else if($type === 'ennovators'){
+                $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
+                $data['data'] = $ecarrer_ennovators;
+            }
+            else if($type === 'aip'){
+                $ecarrer_aip = $this->ecarrerService->getProgramsAip();
+                $data['data'] = $ecarrer_aip;
+            }
+            else{
+                $data['data'] = $this->ecarrerService->getGeneralPrograms($type);
+            }
+            $data['program'] = $this->ecarrerService->getProgramsList($type);
 
-            $ecarrer_sap = $this->ecarrerService->getProgramsSap();
-            $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
-            $ecarrer_aip = $this->ecarrerService->getProgramsAip();
 
-            if (!empty($ecarrer_sap['tab_title'])) {
-                $data['tabs'][]['sap'] = $ecarrer_sap;
-            }
-            if (!empty($ecarrer_ennovators['tab_title'])) {
-                $data['tabs'][]['ennovators'] = $ecarrer_ennovators;
-            }
-            if (!empty($ecarrer_aip['tab_title'])) {
-                $data['tabs'][]['aip'] = $ecarrer_aip;
-            }
+            // if (!empty($ecarrer_sap['tab_title'])) {
+            //     $data['tabs'][]['sap'] = $ecarrer_sap;
+            // }
+            // if (!empty($ecarrer_ennovators['tab_title'])) {
+            //     $data['tabs'][]['ennovators'] = $ecarrer_ennovators;
+            // }
+            // if (!empty($ecarrer_aip['tab_title'])) {
+            //     $data['tabs'][]['aip'] = $ecarrer_aip;
+            // }
 
             return response()->success($data, 'Data Found!');
         } catch (\Exception $e) {

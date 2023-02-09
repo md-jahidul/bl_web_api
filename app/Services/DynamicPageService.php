@@ -9,10 +9,13 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AlBannerResource;
+use App\Models\AlBanner;
+use App\Repositories\AlBannerRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\DynamicPageRepository;
 use App\Repositories\FooterMenuRepository;
-use App\Services\Assetlite\ComponentService;
+use App\Services\ComponentService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -31,6 +34,7 @@ class DynamicPageService extends ApiBaseService
     protected $componentRepository;
 
     protected $footerMenuRepository;
+    protected $alBannerRepository;
 
     protected const PageType = "other_dynamic_page";
 
@@ -43,12 +47,14 @@ class DynamicPageService extends ApiBaseService
     public function __construct(
         DynamicPageRepository $pageRepo,
         ComponentRepository $componentRepository,
-        FooterMenuRepository $footerMenuRepository
+        FooterMenuRepository $footerMenuRepository,
+        AlBannerRepository $alBannerRepository
     )
     {
         $this->pageRepo = $pageRepo;
         $this->componentRepository = $componentRepository;
         $this->footerMenuRepository = $footerMenuRepository;
+        $this->alBannerRepository = $alBannerRepository;
         $this->setActionRepository($pageRepo);
     }
 
@@ -56,6 +62,28 @@ class DynamicPageService extends ApiBaseService
     public function pageData($slug)
     {
         $pageData = $this->pageRepo->page(strtolower($slug));
+        if (!empty($pageData)) {
+
+            foreach ($pageData->components as $key => $value) {
+                if ($value->component_type == 'button_component') {
+
+                    unset($value->title_en);
+                    unset($value->title_bn);
+                    unset($value->extra_title_bn);
+                    unset($value->extra_title_en);
+                    unset($value->multiple_attributes);
+                    unset($value->video);
+                    unset($value->image);
+                    unset($value->alt_text);
+                    unset($value->other_attributes);
+                }
+            }
+            
+            $banner     = $this->alBannerRepository->findOneByProperties(['section_id' => $pageData->id, 'section_type' => 'other_dynamic_page']);
+            $pageData['banner'] = $banner ? AlBannerResource::make($banner) : null;
+        }
+        
+
         return $this->sendSuccessResponse($pageData, 'Dynamic page data');
     }
 }

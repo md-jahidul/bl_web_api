@@ -101,13 +101,18 @@ class OfferCategoryService extends ApiBaseService
 
     public function offerCatList()
     {
-        $tags = TagCategory::all();
-        $sim = SimCategory::all();
-        $offer = OfferCategory::where('parent_id', 0)->with('children')->get();
-//        dd($offer);
-        if (!empty($offer)) {
-            $offer_final = array_map(function($value) {
-                if (!empty($value['banner_image_url'])) {
+        $tags = TagCategory::all(['id', 'name_en', 'name_bn', 'alias', 'tag_color']);
+        $sim = SimCategory::all(['id', 'name', 'alias']);
+        $offer = OfferCategory::where('status', 1)
+            ->where('parent_id', 0)
+            ->with(['children' => function($q){
+                $q->where('status', 1);
+            }])
+            ->get();
+        $offer->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
+//        if (!empty($offer)) {
+//            $offer_final = array_map(function($value) {
+//                if (!empty($value['banner_image_url'])) {
 
 //                    $encrypted = base64_encode($value['banner_image_url']);
 //
@@ -120,23 +125,23 @@ class OfferCategoryService extends ApiBaseService
 
 //                    $value['banner_image_url'] = request()->root() . "/$model/$fileName";
 //                    $value['banner_image_url'] = request()->root() . "banner-image/web/$model/{fileName}". "/api/v1/show-file/$encrypted/" . $fileName;
-                    $value['banner_image_url'] = config('filesystems.image_host_url') . $value['banner_image_url'];
-                }
-                if (!empty($value['banner_image_mobile'])) {
-                    $value['banner_image_mobile'] = config('filesystems.image_host_url') . $value['banner_image_mobile'];
-                }
-                return $value;
-            }, $offer->toArray());
-        } else {
-            $offer_final = [];
-        }
+//                    $value['banner_image_url'] = $value['banner_image_url'];
+//                }
+//                if (!empty($value['banner_image_mobile'])) {
+//                    $value['banner_image_mobile'] = $value['banner_image_mobile'];
+//                }
+//                return $value;
+//            }, $offer->toArray());
+//        } else {
+//            $offer_final = [];
+//        }
 
         $duration = DurationCategory::all();
 
         $data[] = [
                 'tag' => $tags,
                 'sim' => $sim,
-                'offer' => $offer_final,
+                'offer' => $offer,
                 'duration' => $duration
             ];
 
