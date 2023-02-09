@@ -1161,7 +1161,7 @@ class EcareerService
                     $response['alt_links'] = $program->alt_links;
                     $response['video'] = $program->video;
                     $response['call_to_action_buttons'] = !empty($program->call_to_action) ? unserialize($program->call_to_action) : null;
-                    $programs['item'] =  $response;
+                    $programs['item'][] =  $response;
                 }
             }
             return $programs;
