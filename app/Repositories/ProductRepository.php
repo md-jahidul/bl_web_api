@@ -309,4 +309,35 @@ class ProductRepository extends BaseRepository
             ->paginate(4);
     }
 
+    public function getProductInfoByCode(array $productCodes)
+    {
+         return $this->model->whereIn('product_code', $productCodes)
+                ->select('id','product_code', 'url_slug', 'name_en', 'name_bn', 'bonus', 'point')
+                 ->where('status', 1)
+                 ->with(['productCore' => function ( $query ){
+                    $query->select(
+                        'id',
+                        'product_code',
+                        'name', 
+                        'price',
+                        'mrp_price as price_tk',
+                        'validity as validity_days',
+                        'validity_unit',
+                        'internet_volume_mb',
+                        'sms_volume',
+                        'minute_volume',
+                        'call_rate as callrate_offer',
+                        'call_rate_unit',
+                        'sms_rate as sms_rate_offer',
+                        'renew_product_code',
+                        'recharge_product_code',
+                        'sd_vat_tax_en',
+                        'sd_vat_tax_bn'
+                    );
+                }])
+                ->get();
+                // ->paginate(1);
+    }
+
+
 }
