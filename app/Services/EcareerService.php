@@ -553,6 +553,8 @@ class EcareerService
 
                         $sub_items['title_en'] = $portal_items->title_en;
                         $sub_items['title_bn'] = $portal_items->title_bn;
+                        $sub_items['sub_title_en'] = $portal_items->sub_title_en;
+                        $sub_items['sub_title_bn'] = $portal_items->sub_title_bn;
                         $sub_items['description_en'] = $portal_items->description_en;
                         $sub_items['description_bn'] = $portal_items->description_bn;
                         $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;
@@ -592,6 +594,8 @@ class EcareerService
                 $sub_data = [];
                 $sub_data['title_en'] = $parents_value->title_en;
                 $sub_data['title_bn'] = $parents_value->title_bn;
+                $sub_data['description_en'] = $parents_value->description_en;
+                $sub_data['description_bn'] = $parents_value->description_bn;
                 $sub_data['slug'] = $parents_value->slug;
                 if (!empty($parents_value->additional_info)) {
                     $sub_data['sider_info'] = json_decode($parents_value->additional_info)->sider_info;
@@ -1137,6 +1141,11 @@ class EcareerService
         if(isset($programId)){
             $programList = $this->ecarrerPortalItemRepository->findProgramList($programId->id,$type);
             $programs = [];
+            $programs['title_en'] = $programId->title_en;
+            $programs['title_bn'] = $programId->title_bn;
+            $programs['description_en'] = $programId->description_en;
+            $programs['description_bn'] = $programId->description_bn;
+            //$programs = $programId->title_bn;
             if(!empty($programList)){
 
                 foreach ($programList as $program){
@@ -1152,7 +1161,7 @@ class EcareerService
                     $response['alt_links'] = $program->alt_links;
                     $response['video'] = $program->video;
                     $response['call_to_action_buttons'] = !empty($program->call_to_action) ? unserialize($program->call_to_action) : null;
-                    $programs[] =  $response;
+                    $programs['item'] =  $response;
                 }
             }
             return $programs;

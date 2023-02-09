@@ -71,6 +71,14 @@ class BanglalinkFourGController extends Controller
     {
         return $this->fourGDevicesService->fourGDevice();
     }
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function getFourGCoverage()
+    {
+        return $this->fourGCampaignService->getFourGCoverage();
+    }
 
 
     /**
