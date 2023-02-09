@@ -87,8 +87,8 @@ class PartnerOfferCategoryRepository extends BaseRepository
     public function findCategoryId($cat)
     {
         $data = $this->model
-            ->where('name_en', 'like', $cat)
-            ->orWhere('name_bn', 'like', $cat)
+            ->where('url_slug_en', 'like', $cat)
+            ->orWhere('url_slug_bn', 'like', $cat)
             ->first();
         if ($data) {
             return $data->id;

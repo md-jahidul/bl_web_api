@@ -36,6 +36,7 @@ class MediaPressNewsEventRepository extends BaseRepository
     public function getDataBySlug($slug)
     {
         return $this->model
+            ->with('mediaNewsCategory')
             ->where('status', 1)
             ->where('url_slug_en', $slug)
             ->orWhere('url_slug_bn', $slug)
@@ -61,13 +62,24 @@ class MediaPressNewsEventRepository extends BaseRepository
         return $this->model
             ->latest()
             ->where('reference_type', $postRefType)
-            ->select('title_en', 'title_bn',
-                'short_details_en', 'short_details_bn',
-                'long_details_en', 'long_details_bn',
-                'details_image', 'details_alt_text_en',
-                'thumbnail_image', 'alt_text_en','date',
-                'read_time', 'details_btn_en', 'details_btn_bn',
-                'tag_en', 'tag_bn', 'url_slug_en', 'url_slug_bn'
+            ->with('mediaNewsCategory')
+            ->select(
+                'title_en',
+                'title_bn',
+                'media_news_category_id',
+                'short_details_en',
+                'short_details_bn',
+                'long_details_en',
+                'long_details_bn',
+                'details_image',
+                'details_alt_text_en',
+                'thumbnail_image',
+                'alt_text_en','date',
+                'read_time',
+                'details_btn_en',
+                'details_btn_bn',
+                'tag_en',
+                'tag_bn', 'url_slug_en', 'url_slug_bn'
             )
             ->where('status', 1)
             ->whereIn('id', $id)
