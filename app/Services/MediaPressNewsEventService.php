@@ -9,6 +9,7 @@
 
 namespace App\Services;
 
+use App\Repositories\AdTechRepository;
 use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
 use App\Repositories\MediaNewsCategoryRepository;
@@ -31,6 +32,10 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     private $componentRepository;
     /**
+     * @var AdTechRepository
+     */
+    private $adTechRepository;
+    /**
      * @var MediaNewsCategoryRepository
      */
     private $mediaNewsCategoryRepository;
@@ -45,6 +50,7 @@ class MediaPressNewsEventService extends ApiBaseService
         MediaPressNewsEventRepository $mediaPNERepository,
         MediaBannerImageRepository $mediaBannerImageRepository,
         ComponentRepository $componentRepository,
+        AdTechRepository $adTechRepository,
         MediaNewsCategoryRepository $mediaNewsCategoryRepository,
         MediaLandingPageRepository $mediaLandingPageRepository
     ) {
@@ -52,6 +58,7 @@ class MediaPressNewsEventService extends ApiBaseService
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
         $this->componentRepository = $componentRepository;
+        $this->adTechRepository = $adTechRepository;
         $this->mediaNewsCategoryRepository = $mediaNewsCategoryRepository;
     }
 
@@ -80,10 +87,11 @@ class MediaPressNewsEventService extends ApiBaseService
         $blogDetails = [];
         if (!empty($post->id)) {
             $blogDetails['components'] =  $this->componentRepository->getComponentByPageType('blog', $post->id);
-
             $blogDetails['post'] = $post;
             $blogDetails['related_blogs'] = $this->mediaPNERepository->getRelatedBlog($post->id,$post->media_news_category_id);
+            $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_type' => "blog"]);
         }
+
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
     }
 
