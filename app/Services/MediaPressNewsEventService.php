@@ -13,6 +13,7 @@ use App\Repositories\ComponentRepository;
 use App\Repositories\MediaBannerImageRepository;
 use App\Repositories\MediaNewsCategoryRepository;
 use App\Repositories\MediaPressNewsEventRepository;
+use App\Repositories\MediaLandingPageRepository;
 use App\Services\Assetlite\ComponentService;
 
 class MediaPressNewsEventService extends ApiBaseService
@@ -34,6 +35,7 @@ class MediaPressNewsEventService extends ApiBaseService
      */
     private $mediaNewsCategoryRepository;
 
+    protected $mediaLandingPageRepository;
     /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
@@ -43,8 +45,10 @@ class MediaPressNewsEventService extends ApiBaseService
         MediaPressNewsEventRepository $mediaPNERepository,
         MediaBannerImageRepository $mediaBannerImageRepository,
         ComponentRepository $componentRepository,
-        MediaNewsCategoryRepository $mediaNewsCategoryRepository
+        MediaNewsCategoryRepository $mediaNewsCategoryRepository,
+        MediaLandingPageRepository $mediaLandingPageRepository
     ) {
+        $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaPNERepository = $mediaPNERepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
         $this->componentRepository = $componentRepository;
@@ -85,8 +89,11 @@ class MediaPressNewsEventService extends ApiBaseService
 
     public function filterArchive($type, $param, $limit)
     {
+        $banner = $this->mediaLandingPageRepository->findOneByProperties(['component_type'=> 'news_archive'],['title_en','title_bn', 'short_desc_en', 'short_desc_bn']);
         $data = $this->mediaPNERepository->filterArchive($type, $param, $limit);
-        return $this->sendSuccessResponse($data, "Filter Date");
+        $custom = collect(['banner'=>$banner]);
+        $res = $custom->merge($data);
+        return $this->sendSuccessResponse($res, "Filter Date");
     }
 
     public function topicList()
