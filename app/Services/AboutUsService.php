@@ -8,7 +8,9 @@ use App\Http\Resources\AboutUsResource;
 use App\Http\Resources\ManagementResource;
 use App\Http\Resources\SliderImageResource;
 use App\Repositories\AboutUsEcareerRepository;
+use App\Repositories\AboutUsLandingRepository;
 use App\Repositories\AboutUsRepository;
+use App\Repositories\AlBannerRepository;
 use App\Repositories\EcareerPortalRepository;
 use App\Repositories\ManagementRepository;
 use App\Repositories\SliderImageRepository;
@@ -44,6 +46,14 @@ class AboutUsService extends ApiBaseService
      * @var SliderImageRepository
      */
     private $sliderImageRepository;
+    /**
+     * @var AboutUsLandingRepository
+     */
+    private $aboutUsLandingRepository;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
 
     /**
@@ -59,13 +69,17 @@ class AboutUsService extends ApiBaseService
         ManagementRepository $managementRepository,
         AboutUsEcareerRepository $aboutUsEcareerRepository,
         SliderRepository $sliderRepository,
-        SliderImageRepository $sliderImageRepository
+        SliderImageRepository $sliderImageRepository,
+        AboutUsLandingRepository $aboutUsLandingRepository,
+        AlBannerService $alBannerService
     ) {
         $this->aboutUsRepository = $aboutUsRepository;
         $this->managementRepository = $managementRepository;
         $this->aboutUsEcareerRepository = $aboutUsEcareerRepository;
         $this->sliderRepository = $sliderRepository;
         $this->sliderImageRepository = $sliderImageRepository;
+        $this->aboutUsLandingRepository = $aboutUsLandingRepository;
+        $this->alBannerService = $alBannerService;
     }
 
 
@@ -80,7 +94,9 @@ class AboutUsService extends ApiBaseService
             $sliderImage = SliderImageResource::collection($sliderImage);
             $data = $this->aboutUsRepository->getAboutBanglalink();
             $formatted_data = AboutUsResource::collection($data);
-            $component['banner'] = $formatted_data;
+
+            $component['banner'] = $this->alBannerService->getBanner(0, 'about_us_landing');
+            $component['items'] = $formatted_data;
             $component['slider'] = [ 'slider_data' => $sliderData, 'slider_images' => $sliderImage];
             return $this->sendSuccessResponse($component, 'About Banglalink', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
@@ -123,7 +139,7 @@ class AboutUsService extends ApiBaseService
         }
     }
 
-    
+
 
     /**
      * @return JsonResponse
@@ -131,9 +147,15 @@ class AboutUsService extends ApiBaseService
     public function getAboutManagement()
     {
         try {
-            $data = $this->managementRepository->getAboutManagement();
-            $formatted_data = ManagementResource::collection($data);
-            return $this->sendSuccessResponse($formatted_data, 'Banglalink Management', [], HttpStatusCode::SUCCESS);
+            $managements = $this->managementRepository->getAboutManagement();
+            $formatted_data = ManagementResource::collection($managements);
+            $data['head'] = $this->aboutUsLandingRepository->findOneByProperties(['component_type' => 'management'],
+                [
+                    'title_en', 'title_bn', 'description_en', 'description_bn'
+                ]
+            );
+            $data['items'] = $formatted_data;
+            return $this->sendSuccessResponse($data, 'Banglalink Management', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
