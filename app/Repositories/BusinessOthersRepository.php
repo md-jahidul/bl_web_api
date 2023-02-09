@@ -108,6 +108,10 @@ class BusinessOthersRepository extends BaseRepository {
         $data['alt_text'] = $service->details_alt_text;
         $data['name_en'] = $service->name;
         $data['name_bn'] = $service->name_bn;
+        $data['banner_title_en'] = $service->banner_title_en;
+        $data['banner_title_bn'] = $service->banner_title_bn;
+        $data['banner_subtitle_en'] = $service->banner_subtitle_en;
+        $data['banner_subtitle_bn'] = $service->banner_subtitle_bn;
         $data['short_details_en'] = $service->short_details;
         $data['short_details_bn'] = $service->short_details_bn;
         $data['offer_details_en'] = $service->offer_details_en;

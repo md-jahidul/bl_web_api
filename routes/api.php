@@ -270,7 +270,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('media-tvc-video', 'API\V1\MediaController@getTvcVideoData');
 
     // FAQ
-    Route::get('faq/{slug}', 'API\V1\FaqController@getFAQ');
+    Route::get('faq/{slug}/{id?}', 'API\V1\FaqController@getFAQ');
 
     // 4G Internet Offers
     Route::get('four-g-internet/{package_type}', 'API\V1\BanglalinkFourGController@getFourGInternet');
@@ -280,6 +280,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // 4G Campaign
     Route::get('four-g-campaign', 'API\V1\BanglalinkFourGController@getCampaignWithBanner');
+
+    // 4G Covarage
+    Route::get('four-g-coverage', 'API\V1\BanglalinkFourGController@getFourGCoverage');
 
     // 4G Status Check
     Route::get('four-g-usim-eligibility/{msisdn}', 'API\V1\BanglalinkFourGController@checkUSIMEligibility');

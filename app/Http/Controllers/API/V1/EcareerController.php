@@ -292,6 +292,7 @@ class EcareerController extends Controller
                             $sub_items = [];
 
                             $sub_items['title_en'] = $portal_items->title_en;
+                            $sub_items['title_bn'] = $portal_items->title_bn;
                             $sub_items['description_en'] = $portal_items->description_en;
                             $sub_items['description_bn'] = $portal_items->description_bn;
                             $sub_items['image'] = !empty($portal_items->image) ?  $portal_items->image : null;

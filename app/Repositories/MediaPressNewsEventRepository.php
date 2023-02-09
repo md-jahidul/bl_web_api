@@ -50,7 +50,7 @@ class MediaPressNewsEventRepository extends BaseRepository
                 ->where('mpne.status', 1)
                 ->where('mpne.media_news_category_id', $categoryId)
                 ->where('mpne.id','!=', $postId)
-                ->select('mpne.title_en', 'mpne.title_bn', 'mpne.date', 'mpne.thumbnail_image', 'mnc.title_en as blog_category_en', 'mnc.title_bn as blog_category_bn')
+                ->select('mpne.title_en', 'mpne.title_bn', 'mpne.date', 'mpne.url_slug_en','mpne.url_slug_bn', 'mpne.thumbnail_image', 'mnc.title_en as blog_category_en', 'mnc.title_bn as blog_category_bn')
                 ->orderBy('date','desc')
                 ->limit(6)
                 ->get();
