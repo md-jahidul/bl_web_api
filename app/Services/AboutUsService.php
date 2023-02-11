@@ -113,11 +113,13 @@ class AboutUsService extends ApiBaseService
             $data = $this->aboutUsRepository->getAboutUsPages($url_slug);
             $formatted_data = [
                 'id'                      => $data->id ?? null,
-                'slug'                      => $data->slug ?? null,
+                'slug'                    => $data->slug ?? null,
                 'title_en'                => $data->title ?? null,
                 'title_bn'                => $data->title_bn ?? null,
-                'sub_title_en'            => $data->sub_title ?? null,
-                'sub_title_bn'            => $data->sub_title_bn ?? null,
+                'banner_title_en'         => $data->banner_title_en ?? null,
+                'banner_title_bn'         => $data->banner_title_bn ?? null,
+                'banner_desc_en'          => $data->banner_desc_en ?? null,
+                'banner_desc_bn'          => $data->banner_desc_bn ?? null,
                 'banglalink_info_en'      => $data->banglalink_info ?? null,
                 'banglalink_info_bn'      => $data->banglalink_info_bn ?? null,
                 'details_en'              => $data->details_en ?? null,
