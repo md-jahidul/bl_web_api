@@ -246,7 +246,17 @@ class PartnerOfferService extends ApiBaseService
 
             return $this->sendSuccessResponse($data, 'Discount Privilege components');
 
-        } else {
+        }else if ($pageType == 'benefits_for_you') {
+
+            $data['benefits_for_you'] = $this->priyojonRepository->findOneByProperties(
+                ['component_type' => $pageType, 'status' => 1],
+                // ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup', 'url_slug_en', 'url_slug_bn', 'alias']
+                ['title_en', 'title_bn', 'desc_en', 'desc_bn']
+            );
+
+            return $this->sendSuccessResponse($data, 'Benefites for you components');
+
+        }else {
 
             $data['component'] = $this->componentRepository->getComponentByPageType($pageType);
             $data['banner'] = $this->lmsAboutBannerRepository->findOneByProperties(
@@ -261,10 +271,10 @@ class PartnerOfferService extends ApiBaseService
     public function getFilterOption()
     {
         $data = [
-            'status'     => $this->loyaltyTierRepository->findByProperties(['status' => 1], ['title_en', 'title_bn', 'slug']),
-            'categories' => $this->partnerOfferCategoryRepository->findByProperties(
-                ['status' => 1],
+            'status'     => $this->loyaltyTierRepository->findByProperties(['status' => 1], ['id', 'title_en', 'title_bn', 'slug']),
+            'categories' => $this->partnerOfferCategoryRepository->findByProperties(['status' => 1],
                 [
+                    'id',
                     'name_en',
                     'name_bn',
                     'page_header',
@@ -272,9 +282,8 @@ class PartnerOfferService extends ApiBaseService
                     'schema_markup',
                     'url_slug_en',
                     'url_slug_bn',
-                ]
-            ),
-            'area'       => $this->partnerAreaRepository->findByProperties([], ['area_en', 'area_bn']),
+                ]),
+            'area'       => $this->partnerAreaRepository->findByProperties([], ['id', 'area_en', 'area_bn']),
         ];
         return $this->sendSuccessResponse($data, 'All loyalty filter options');
     }

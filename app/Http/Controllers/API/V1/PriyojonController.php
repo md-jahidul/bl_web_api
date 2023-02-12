@@ -122,6 +122,11 @@ class PriyojonController extends Controller
     {
         return $this->partnerOfferService->getComponentByPageType('discount_privilege');
     }
+
+    public function benefitsForYou()
+    {
+        return $this->partnerOfferService->getComponentByPageType('benefits_for_you');
+    }
     
     public function filterOptions()
     {
