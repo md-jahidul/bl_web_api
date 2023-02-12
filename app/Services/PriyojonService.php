@@ -33,7 +33,18 @@ class PriyojonService extends ApiBaseService
     public function headerMenu()
     {
         $data = $this->priyojonRepository->landingPageBannerAndContent();
+
+        foreach ($data as $key => $headerMenu) {
+            /**
+             * If type is discount_privilege and benefits_for_you then unset this 
+             */
+            if (in_array($headerMenu->component_type, ['discount_privilege', 'benefits_for_you'])) {
+                unset($data[$key]);
+            }
+        }
+        
         return $this->sendSuccessResponse($data, 'Priyojon Landing Page Header Menu');
+        
         $data = $this->priyojonRepository->findBy(['parent_id' => 0, 'status' => 1, 'component_type' => null], ['children' => function($q){
             $q->where('status', 1)
               ->select('parent_id', 'title_en', 'title_bn', 'url', 'url_slug_en', 'url_slug_bn', 'page_header', 'page_header_bn', 'schema_markup', 'alias');
