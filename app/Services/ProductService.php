@@ -757,7 +757,9 @@ class ProductService extends ApiBaseService
         if ($internetOffers) {
             foreach ($internetOffers as $product) {
                 $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+                $this->bindDynamicValues($product, 'offer_info', $product->tag);
                 unset($product->productCore);
+                unset($product->tag);
             }
             $collection = [
                 'component_title_en' => $fourGComponent->title_en,
