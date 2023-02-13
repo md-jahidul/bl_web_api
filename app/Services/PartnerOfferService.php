@@ -199,13 +199,14 @@ class PartnerOfferService extends ApiBaseService
         if (!empty($cat)) {
             $cat = $this->partnerOfferCategoryRepository->findCategoryId($cat);
         } else {
-            $cat = "";
+            $cat = "all";
         }
         $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
-        $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
+
         $data = LoyaltyOfferCatResource::collection($offers);
 
-        if (empty($cat)) {
+        if ($cat === 'all') {
+            $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
             $obj = collect();
             $obj['name_en'] = 'All';
             $obj['name_bn'] = 'সব';
