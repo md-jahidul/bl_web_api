@@ -194,28 +194,49 @@ class PartnerOfferService extends ApiBaseService
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
     }
 
-    public function categoryOffers($page, $elg, $cat, $area, $searchStr)
+    public function categoryOffers($page, $elg, $cat, $url_slug, $area, $searchStr)
     {
-        if (!empty($cat)) {
-            $cat = $this->partnerOfferCategoryRepository->findCategoryId($cat);
-        } else {
-            $cat = null;
-        }
-        $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
-        $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
-        $data = LoyaltyOfferCatResource::collection($offers);
+        $data = null;
+        $offers = null;
+        $all = null;
+        if (empty($url_slug)) {
+            if(!empty($elg) || !empty($cat) || !empty($area) || !empty($searchStr) ){
+                $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
+                $obj = collect();
+                $obj['name_en'] = 'All';
+                $obj['name_bn'] = 'সব';
+                $obj['url_slug_en'] = null;
+                $obj['url_slug_bn'] = null;
+                $obj['page_header'] = null;
+                $obj['page_header_bn'] = null;
+                $obj['schema_markup'] = null;
+                $obj['offers'] = OrangeClubTierOffersResource::collection($all);
+                $obj['count'] = $this->partnerOfferRepository->allOffersCount($elg, $cat, $area, $searchStr);
+                $data = [$obj];
+            }else{
+                $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
+                $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
+                $data = LoyaltyOfferCatResource::collection($offers);
+                if (empty($cat)) {
+                    $obj = collect();
+                    $obj['name_en'] = 'All';
+                    $obj['name_bn'] = 'সব';
+                    $obj['url_slug_en'] = null;
+                    $obj['url_slug_bn'] = null;
+                    $obj['page_header'] = null;
+                    $obj['page_header_bn'] = null;
+                    $obj['schema_markup'] = null;
+                    $obj['offers'] = OrangeClubTierOffersResource::collection($all);
+                    $obj['count'] = $this->partnerOfferRepository->allOffersCount($elg, $cat, $area, $searchStr);
+                    $data->prepend($obj);
+                }
+            }
 
-        if (empty($cat)) {
-            $obj = collect();
-            $obj['name_en'] = 'All';
-            $obj['name_bn'] = 'সব';
-            $obj['url_slug_en'] = null;
-            $obj['url_slug_bn'] = null;
-            $obj['page_header'] = null;
-            $obj['page_header_bn'] = null;
-            $obj['schema_markup'] = null;
-            $obj['offers'] = OrangeClubTierOffersResource::collection($all);
-            $data->prepend($obj);
+        }else if(!empty($url_slug)){
+            $cat = $this->partnerOfferCategoryRepository->findCategoryId($url_slug);
+            $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
+            //$offersCount = $this->partnerOfferCategoryRepository->loyaltyCatOffersCount($elg, $cat, $area, $searchStr);
+            $data =  LoyaltyOfferCatResource::collection($offers);
         }
         return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }
