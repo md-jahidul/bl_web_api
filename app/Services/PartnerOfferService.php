@@ -212,7 +212,7 @@ class PartnerOfferService extends ApiBaseService
                 $obj['schema_markup'] = null;
                 $obj['offers'] = OrangeClubTierOffersResource::collection($all);
                 $obj['count'] = $this->partnerOfferRepository->allOffersCount($elg, $cat, $area, $searchStr);
-                $data = $obj;
+                $data = [$obj];
             }else{
                 $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
                 $all = $this->partnerOfferRepository->allOffers($page, $elg, $cat, $area, $searchStr);
@@ -235,15 +235,8 @@ class PartnerOfferService extends ApiBaseService
         }else if(!empty($url_slug)){
             $cat = $this->partnerOfferCategoryRepository->findCategoryId($url_slug);
             $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
-            $offersCount = $this->partnerOfferCategoryRepository->loyaltyCatOffersCount($elg, $cat, $area, $searchStr);
-            //dd($offersCount->partner_offers_count);
-            //$offers->count = $offersCount->partner_offers_count;
+            //$offersCount = $this->partnerOfferCategoryRepository->loyaltyCatOffersCount($elg, $cat, $area, $searchStr);
             $data =  LoyaltyOfferCatResource::collection($offers);
-            //$count = $offersCount[0]->partnerOffers;
-           // $data->concat($count);
-            //dd($count);
-
-            //$data = $offersCount;
         }
         return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }
