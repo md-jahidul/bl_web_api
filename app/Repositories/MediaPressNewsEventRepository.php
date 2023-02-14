@@ -57,9 +57,9 @@ class MediaPressNewsEventRepository extends BaseRepository
                 ->get();
     }
 
-    public function landingDataByRefType($postRefType, $id = [])
+    public function landingDataByRefType($postRefType, $id = [], $pagination = false)
     {
-        return $this->model
+        $data = $this->model
             ->latest()
             ->where('reference_type', $postRefType)
             ->with('mediaNewsCategory')
@@ -82,8 +82,12 @@ class MediaPressNewsEventRepository extends BaseRepository
                 'tag_bn', 'url_slug_en', 'url_slug_bn'
             )
             ->where('status', 1)
-            ->whereIn('id', $id)
-            ->get();
+            ->whereIn('id', $id);
+
+        if ($pagination) {
+           return $data->paginate(6);
+        }
+        return $data->get();
     }
 
     public function filterArchive($postRefType, $param,$limit)

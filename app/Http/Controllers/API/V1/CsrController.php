@@ -22,8 +22,8 @@ class CsrController extends Controller
      */
     private $mediaPressNewsEventService;
 
-    private const REFERENCE_TYPE = "blog_landing_page";
-    private const POST_REFERENCE_TYPE = "blog";
+    private const REFERENCE_TYPE = "csr_landing_page";
+    private const POST_REFERENCE_TYPE = "csr";
 
     /**
      * RolesController constructor.
