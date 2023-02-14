@@ -25,7 +25,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     
     // Explore C's CMS part
     Route::get('explore-c', 'API\V1\ExploreCController@getExploreC');
-    Route::get('explore-c-details/{explore_c_slug}', 'API\V1\ExploreCController@getExploreCDeatils')->name('explore-c-details');
+    Route::get('explore-c-details/{explore_c_page_slug}', 'API\V1\ExploreCDetailsController@getExploreCDeatils')->name('explore-c-details');
 
 
     Route::get('menu', 'API\V1\MenuApiController@getMenu');

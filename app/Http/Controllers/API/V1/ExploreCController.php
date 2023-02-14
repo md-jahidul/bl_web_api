@@ -22,11 +22,5 @@ class ExploreCController extends Controller
     {
         return $this->exploreCService->getExploreC();
     }
-    /**
-     * @return JsonResponse|mixed
-     */
-    public function getExploreCDeatils($explore_c_slug)
-    {
-        return $this->exploreCService->getExploreCDetailsComponent($explore_c_slug);
-    }
+    
 }
