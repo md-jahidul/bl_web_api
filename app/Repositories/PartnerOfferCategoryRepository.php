@@ -18,7 +18,7 @@ class PartnerOfferCategoryRepository extends BaseRepository
     public function loyaltyCatOffers($page, $elg, $cat, $area, $searchStr)
     {
         $actualPage = $page - 1;
-        $limit = 1;
+        $limit =9;
         $offset = $actualPage * $limit;
         $offers =  $this->model->where('status', 1)
             //->whereHas('partnerOffers')
