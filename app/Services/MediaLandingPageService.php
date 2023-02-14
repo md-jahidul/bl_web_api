@@ -53,6 +53,9 @@ class MediaLandingPageService extends ApiBaseService
         $data['page_header'] = $componentsData->page_header;
         $data['page_header_bn'] = $componentsData->page_header_bn;
         $data['schema_markup'] = $componentsData->schema_markup;
+
+
+
         if ($type == 'press_release' || $type == 'news_events'){
             foreach ($componentsData->items as $id){
                 $data['sliding_speed'] = $componentsData->sliding_speed;
@@ -62,15 +65,25 @@ class MediaLandingPageService extends ApiBaseService
                     $data['data'][] = $pressNewsEvent;
                 }
             }
-        } elseif ($type == "blog_landing_page") {
+        } elseif ($type == "blog_landing_page" || $type == "csr_landing_page") {
             if (!empty($componentsData->items)) {
-                $postCardItems = $this->mediaPressNewsEventRepository->landingDataByRefType($postRefType, $componentsData->items);
+                $pagination = $type == "csr_landing_page";
+                $postCardItems = $this->mediaPressNewsEventRepository->landingDataByRefType($postRefType, $componentsData->items, $pagination);
                 $data['card_items'] = $postCardItems;
+
+                if ($type == "csr_landing_page") {
+                    $data['card_items'] = $postCardItems->items();
+                    $data['current_page'] = $postCardItems->currentPage();
+                    $data['last_page'] = $postCardItems->lastPage();
+                    $data['per_page'] = $postCardItems->perPage();
+                    $data['total'] = $postCardItems->total();
+                }
             }
             if (!empty($componentsData->slider_items)) {
                 $postSlidingItems = $this->mediaPressNewsEventRepository->landingDataByRefType($postRefType, $componentsData->slider_items);
                 $data['slider_items'] = $postSlidingItems;
             }
+
             return $data;
         } else {
             foreach ($componentsData->items as $id){
