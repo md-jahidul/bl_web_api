@@ -102,10 +102,11 @@ class PriyojonController extends Controller
     public function loyaltyCatOffers(Request $request, $page = null)
     {
         $elg = $request->status;
-        $cat = !empty($request->url_slug) ? $request->url_slug : null;
+        $cat = !empty($request->category) ? $request->category : null;
+        $url_slug = !empty($request->url_slug) ? $request->url_slug : null;
         $area = $request->area;
         $searchStr = $request->search;
-        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $area, $searchStr);
+        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $url_slug, $area, $searchStr);
     }
 
     public function loyaltyTierOffers()

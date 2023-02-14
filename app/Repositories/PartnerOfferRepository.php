@@ -77,7 +77,7 @@ class PartnerOfferRepository extends BaseRepository
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function allOffers($page, $elg, $area, $searchStr)
+    public function allOffers($page, $elg, $cat, $area, $searchStr)
     {
         $actualPage = $page - 1;
         $limit = 9;
@@ -118,9 +118,61 @@ class PartnerOfferRepository extends BaseRepository
         if ($area != "") {
             $q->where('area_id', $area);
         }
+        if ($cat != "") {
+            $q->where('partner_category_id', $cat);
+        }
 
         $priyojonOffers = $q
             ->offset($offset)->limit($limit)->get();
+        //dd($priyojonOffers);
+        return $priyojonOffers;
+    }
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function allOffersCount( $elg,  $cat, $area, $searchStr)
+    {
+        $q = $this->model->where('is_active', 1)
+            ->select(
+                'id',
+                'partner_id',
+                'partner_category_id',
+                'loyalty_tier_id',
+                'card_img',
+                'validity_en',
+                'validity_bn',
+                'btn_text_en',
+                'btn_text_bn',
+                'url_slug',
+                'url_slug_bn',
+                'page_header',
+                'page_header_bn',
+                'schema_markup',
+                'other_attributes'
+            )
+            ->whereHas('partner', function ($q) use ($searchStr) {
+                if ($searchStr != "") {
+                    $q->whereRaw("company_name_en Like '%$searchStr%'");
+                    $q->whereRaw("company_name_bn Like '%$searchStr%'");
+                }
+            })
+            ->with(['partner' => function ($q) use ($searchStr) {
+                if ($searchStr != "") {
+                    $q->whereRaw("company_name_en Like '%$searchStr%'");
+                    $q->whereRaw("company_name_bn Like '%$searchStr%'");
+                }
+            }]);
+        if ($elg != "") {
+            $q->where('loyalty_tier_id', $elg);
+        }
+        if ($area != "") {
+            $q->where('area_id', $area);
+        }
+        if ($cat != "") {
+            $q->where('partner_category_id', $cat);
+        }
+        $priyojonOffers = $q->count();
+
         return $priyojonOffers;
     }
 
