@@ -296,6 +296,9 @@ class HomeService extends ApiBaseService
             case "fast_forward":
                 $data = $this->getFastForwardData($component);
                 break;
+            case "csr":
+                $data = $this->getCSRData($component);
+                break;
             case "besic":
                 $data = $this->getBasicData($component);
                 break;
@@ -308,33 +311,38 @@ class HomeService extends ApiBaseService
 
 
     // public function getOclaData($component){
-    //     $data = $this->dummyRes($component);
+    //     $data = $this->commonRes($component);
     //     $data['data'] = OclaResource::collection(Ocla::get());
     //     return $data;
     // }
     public function getBasicData($component)
     {
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
+        return $data;
+    }
+    public function getCSRData($component)
+    {
+        $data = $this->commonRes($component);
         return $data;
     }
     public function getFastForwardData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         return $data;
     }
     public function getBusinessData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] = $this->businessTypeService->getBusinessTypeInfo();
         return $data;
     }
 
     public function getCareerData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] = [];
         return $data;
     }
 
     public function getBlogData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
 
         $blogPostsForHome = $this->mediaPressNewsEventRepository->findByProperties(['status' => 1, 'reference_type' => 'blog', 'show_in_home' => 1], [
             'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date', 'read_time', 'details_btn_en', 'details_btn_bn',
@@ -345,30 +353,30 @@ class HomeService extends ApiBaseService
     }
 
     public function getAboutData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] =  AboutUsBanglalinkResource::collection($this->aboutUsRepository->getAboutBanglalink());
         return $data;
     }
 
     public function getMemoryData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] = MediaTvcVideo::where('status',1)->get();
         return $data;
     }
 
     public function getSuperAppLandingData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] = [];
         return $data;
     }
 
     public function getMapViewData($component){
-        $data = $this->dummyRes($component);
+        $data = $this->commonRes($component);
         $data['data'] = NetworkType::all();
         return $data;
     }
 
-    private function dummyRes($component){
+    private function commonRes($component){
         $data = Shortcode::findOrFail($component->id);
         if ($component->other_attributes) {
             foreach ($component->other_attributes as $key => $value) {
