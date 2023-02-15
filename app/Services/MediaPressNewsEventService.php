@@ -81,15 +81,18 @@ class MediaPressNewsEventService extends ApiBaseService
         return $this->sendSuccessResponse($data, "$message Filter Data");
     }
 
-    public function detailsComponent($urlSlug)
+    public function detailsComponent($urlSlug, $referenceType = false)
     {
         $post = $this->mediaPNERepository->getDataBySlug($urlSlug);
         $blogDetails = [];
         if (!empty($post->id)) {
-            $blogDetails['components'] =  $this->componentRepository->getComponentByPageType('blog', $post->id);
+            $blogDetails['components'] =  $this->componentRepository->getComponentByPageType($referenceType, $post->id);
             $blogDetails['post'] = $post;
-            $blogDetails['related_blogs'] = $this->mediaPNERepository->getRelatedBlog($post->id,$post->media_news_category_id);
-            $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_id' => $post->id,'reference_type' => "blog"]);
+
+            if ($referenceType != "csr") {
+                $blogDetails['related_blogs'] = $this->mediaPNERepository->getRelatedBlog($post->id,$post->media_news_category_id);
+                $blogDetails['ad_tech'] = $this->adTechRepository->findOneByProperties(['reference_id' => $post->id,'reference_type' => "blog"]);
+            }
         }
 
         return $this->sendSuccessResponse($blogDetails, "Blog details component");
