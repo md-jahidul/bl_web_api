@@ -53,7 +53,7 @@ class CsrController extends Controller
 
     public function getBlogDetails($urlSlug)
     {
-        return $this->mediaPressNewsEventService->detailsComponent($urlSlug);
+        return $this->mediaPressNewsEventService->detailsComponent($urlSlug, self::POST_REFERENCE_TYPE);
     }
 
     public function getBlogArchive(Request $request)
