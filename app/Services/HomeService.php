@@ -14,6 +14,7 @@ use App\Models\Blog;
 use App\Models\BusinessOthers;
 use App\Models\MediaTvcVideo;
 use App\Models\MetaTag;
+use App\Models\NetworkType;
 use App\Models\ShortCode;
 use App\Models\Ocla;
 use App\Repositories\AboutUsRepository;
@@ -295,6 +296,9 @@ class HomeService extends ApiBaseService
             case "fast_forward":
                 $data = $this->getFastForwardData($component);
                 break;
+            case "besic":
+                $data = $this->getBasicData($component);
+                break;
             default:
                 $data = "No suitable component found";
         }
@@ -308,7 +312,11 @@ class HomeService extends ApiBaseService
     //     $data['data'] = OclaResource::collection(Ocla::get());
     //     return $data;
     // }
-
+    public function getBasicData($component)
+    {
+        $data = $this->dummyRes($component);
+        return $data;
+    }
     public function getFastForwardData($component){
         $data = $this->dummyRes($component);
         return $data;
@@ -356,7 +364,7 @@ class HomeService extends ApiBaseService
 
     public function getMapViewData($component){
         $data = $this->dummyRes($component);
-        $data['data'] = [];
+        $data['data'] = NetworkType::all();
         return $data;
     }
 
