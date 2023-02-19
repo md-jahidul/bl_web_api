@@ -33,6 +33,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('menu', 'API\V1\MenuApiController@getMenu');
     Route::get('header-footer', 'API\V1\MenuController@getHeaderFooterMenus');
     Route::get('home-page', 'API\V1\HomePageController@getHomePageData');
+    Route::get('bl-lab-page', 'API\V1\BlLabController@getBlLabPageData');
     // Route::get('digital-services','API\V1\DigitalServiceController@getDigitalService');
     //    Route::get('partner-offers', 'API\V1\PartnerOfferController@index');
 
