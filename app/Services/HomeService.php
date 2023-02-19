@@ -173,6 +173,8 @@ class HomeService extends ApiBaseService
                 $data["display_order"] = $request->display_order ?? null;
                 $data["is_active"] = $request->is_active ?? null;
                 $data["icon_image"] = $request->icon_image ?? null;
+                $data["icon_alt_text_en"] = $request->icon_alt_text_en ?? null;
+                $data["icon_alt_text_bn"] = $request->icon_alt_text_bn ?? null;
 
 
 
