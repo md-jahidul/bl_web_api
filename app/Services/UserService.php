@@ -397,6 +397,7 @@ class UserService extends ApiBaseService
 
         if ($loyaltyInfo->status_code == 200){
             $customerInfo['loyalty_info'] = $loyaltyInfo->data->data;
+            $customerInfo['loyalty_info']->priyojonInfo->tier_slug = strtolower($loyaltyInfo->data->data->priyojonInfo->slab);
         } else {
             $customerInfo['loyalty_info'] = null;
         }
