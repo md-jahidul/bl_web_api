@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\AboutUsBanglalinkResource;
 use App\Http\Resources\BlogResource;
+use App\Http\Resources\CsrResource;
 use App\Http\Resources\OclaResource;
 use App\Http\Resources\PartnerOfferResource;
 use App\Http\Resources\ShortcodeResource;
@@ -324,6 +325,11 @@ class HomeService extends ApiBaseService
     public function getCSRData($component)
     {
         $data = $this->commonRes($component);
+        $csrData = $this->mediaPressNewsEventRepository->findByProperties(['status' => 1, 'reference_type' => 'csr', 'show_in_home' => 1], [
+            'title_en', 'title_bn', 'short_details_en', 'short_details_bn', 'thumbnail_image', 'date', 'read_time', 'details_btn_en', 'details_btn_bn',
+            'url_slug_en', 'url_slug_bn'
+        ]);
+        $data['data'] = CsrResource::collection($csrData);
         return $data;
     }
     public function getFastForwardData($component){
