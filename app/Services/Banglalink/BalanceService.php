@@ -870,10 +870,12 @@ class BalanceService extends BaseService
         ];
 
         $usage = collect($balance_data_local->productUsage)->where('code', '<>', '');
-
         $minutes = [];
         $sms = [];
         $internet = [];
+        $smsActivePack = 0;
+        $minutesActivePack = 0;
+        $internetActivePack = 0;
         $local_product_usage = [];
         foreach ($usage as $product) {
             foreach ($product->usages as $item) {
@@ -882,14 +884,17 @@ class BalanceService extends BaseService
                     case "DATA":
                         $internet ['total'][] = $item->total;
                         $internet ['remaining'][] = $item->left;
+                        $internetActivePack += 1;
                         break;
                     case "VOICE":
                         $minutes ['total'][] = $item->total;
                         $minutes ['remaining'][] = $item->left;
+                        $minutesActivePack += 1;
                         break;
                     case "SMS":
                         $sms ['total'][] = $item->total;
                         $sms ['remaining'][] = $item->left;
+                        $smsActivePack += 1;
                         break;
                 }
             }
@@ -900,17 +905,20 @@ class BalanceService extends BaseService
         $local_product_usage ['minutes'] = [
             'total' => isset($minutes['total']) ? array_sum($minutes['total']) : 0,
             'remaining' => isset($minutes['remaining']) ? array_sum($minutes['remaining']) : 0,
-            'unit' => 'MIN'
+            'unit' => 'MIN',
+            'active_packs' => $minutesActivePack
         ];
         $local_product_usage ['internet'] = [
             'total' => isset($internet['total']) ? array_sum($internet['total']) : 0,
             'remaining' => isset($internet['remaining']) ? array_sum($internet['remaining']) : 0,
-            'unit' => 'MB'
+            'unit' => 'MB',
+            'active_packs' => $internetActivePack
         ];
         $local_product_usage ['sms'] = [
             'total' => isset($sms['total']) ? array_sum($sms['total']) : 0,
             'remaining' => isset($sms['remaining']) ? array_sum($sms['remaining']) : 0,
-            'unit' => 'SMS'
+            'unit' => 'SMS',
+            'active_packs' => $smsActivePack
         ];
 
 
