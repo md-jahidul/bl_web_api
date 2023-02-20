@@ -178,8 +178,8 @@ class BlLabService extends ApiBaseService
     public function getFaqData($component)
     {
         $data = $this->commonRes($component);
-        //$data['data'] = AlFaq::where('slug', 'bl_lab_faq')->get();
-        $data['data'] = [];
+        $data['data'] = AlFaq::where('slug', 'bl_lab_faq')->get();
+        //$data['data'] = [];
         //dd($data);
         return $data;
     }
