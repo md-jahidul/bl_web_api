@@ -2,30 +2,18 @@
 
 namespace App\Services;
 
-use App\Http\Resources\AboutUsBanglalinkResource;
-use App\Http\Resources\BlogResource;
-use App\Http\Resources\CsrResource;
-use App\Http\Resources\OclaResource;
-use App\Http\Resources\PartnerOfferResource;
-use App\Http\Resources\ShortcodeResource;
-use App\Models\AboutPage;
+
 use App\Models\AlFaq;
 use App\Models\AlSliderComponentType;
 use App\Models\AlSliderImage;
-use App\Models\Blog;
+
 use App\Models\BusinessOthers;
-use App\Models\MediaTvcVideo;
+
 use App\Models\MetaTag;
-use App\Models\NetworkType;
+
 use App\Models\ShortCode;
-use App\Models\Ocla;
-use App\Repositories\AboutUsRepository;
-use App\Repositories\CustomerRepository;
 use App\Repositories\MediaPressNewsEventRepository;
 use App\Repositories\SliderRepository;
-use App\Services\Banglalink\CustomerAvailableProductsService;
-use App\Services\Banglalink\CustomerPackageService;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 /**
@@ -191,6 +179,7 @@ class BlLabService extends ApiBaseService
     {
         $data = $this->commonRes($component);
         $data['data'] = AlFaq::where('slug', 'bl_lab_faq')->get();
+        dd($data);
         return $data;
     }
 
