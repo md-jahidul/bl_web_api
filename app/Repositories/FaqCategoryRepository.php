@@ -22,10 +22,11 @@ class FaqCategoryRepository extends BaseRepository
             ->with(['faqs' => function($q) use($id){
                 $q->where('status', 1);
                 $q->where('model_id', $id);
+                $q->orderBy('display_order', 'ASC');
                 $q->select(
                     'id', 'slug',
                     'question_en', 'question_bn',
-                    'answer_en', 'answer_bn'
+                    'answer_en', 'answer_bn', 'display_order'
                 );
                 }])
             ->first();
