@@ -42,7 +42,7 @@ release_uat_repo_clone:
     #- sudo git clone -b $BRANCH https://$MYUSERNAME:$MYTOKEN@gitlab.com/techbeach1/mybl-qa.git
     - cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- sudo git checkout develop
-    - git pull origin
+    - git pull origin $BRANCH
 
 # build:
 #   <<: *template
