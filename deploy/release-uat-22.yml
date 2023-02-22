@@ -1,0 +1,82 @@
+variables:
+  BUILD_LOCATION: ""
+stages:
+  - uat_backup
+  - clone
+  - build
+  - deploy
+
+.job_template: &template
+    tags:
+      - bl-devops
+    # only:
+    #   - develop
+
+tar_backup:
+  <<: *template
+  variables:
+    data_location: "/app/mybl-qa"
+  stage: uat_backup
+  #needs: [CI_Pre-check]
+  when: manual
+  # rules:
+  #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+  script:
+    - echo "Starting backup"
+    - sudo tar -czvf /mybl/backup/"$CI_PROJECT_NAME"-"$CI_PIPELINE_ID"_`date +"%d-%m-%Y-%H:%M:%S"`.tar.gz $data_location
+
+stg_repo_clone:
+  <<: *template
+  stage: clone
+#   only:
+#     - main
+  when: manual
+  variables:
+    BRANCH: develop
+  #  BUILD_LOCATION: "/home/gitlab-runner/app"
+  script:
+    - echo "Clonging repo"
+    #- cd $STG_BUILD_LOCATION
+    #- sudo git clone -b $BRANCH https://$MYUSERNAME:$MYTOKEN@gitlab.com/techbeach1/mybl-qa.git
+    - cd $STG_BUILD_LOCATION/$CI_PROJECT_NAME
+    #- sudo git checkout develop
+    - git pull origin $BRANCH
+
+# build:
+#   <<: *template
+#   stage: build
+#   when: manual
+#   # rules:
+#   #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+#   script:
+#     - echo "Buliding with NPM"
+#     - cd $STG_BUILD_LOCATION/$CI_PROJECT_NAME
+#     - npm run build
+#   artifacts:
+#     name: build_artifacts
+#     paths:
+#       - ./
+#     exclude:
+#       - ".gitlab-ci.yml"
+#       - "README.md"
+#       - ".git"
+
+deploy_ubuntu:
+  <<: *template
+  variables:
+    #path_1: "/home/bs1048/artifacts"
+    path_2: "/root/myld-qa/app"
+  stage: deploy
+  when: manual
+  # rules:
+  #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+  before_script:
+    - eval $(ssh-agent -s)
+  script:
+    - echo "Copying build artifacts to live server"
+    - ssh-add <(echo "$STAGING_PRIVATE_KEY")
+   # - rsync -avzt ./* bs1048@192.168.56.1:$path
+    #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ bs1048@192.168.56.1:$path_1/$DEST
+    - rsync -avzt $STG_BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ root@192.168.56.104:$path_2/$DEST
+    #- cd $BUILD_LOCATION/$CI_PROJECT_NAME
+    #- scp -r $BUILD_LOCATION/$CI_PROJECT_NAME/app/* bs1048@192.168.56.1:$path_1
