@@ -415,11 +415,11 @@ class HomeService extends ApiBaseService
 
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
             }
-            $value = json_encode($homePageData);
-            //Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            //$value = Redis::get('al_home_components');
+            //$value = json_encode($homePageData);
+            Redis::setex('al_home_components', 3600, json_encode($homePageData));
+            $value = Redis::get('al_home_components');
         } else {
-            //$value = Redis::get('al_home_components');
+            $value = Redis::get('al_home_components');
         }
         $data = [
             'metatags' => $metainfo,
