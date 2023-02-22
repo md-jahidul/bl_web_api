@@ -1,6 +1,6 @@
 variables:
   SERVER_IP: "172.16.191.44"
-  BUILD_LOCATION: "/app/assetelite/src/projects_uat/gitlab_uat/"
+  BUILD_LOCATION: "/app/assetelite/src/projects_uat/gitlab_uat"
 stages:
   - uat_backup
   - clone
