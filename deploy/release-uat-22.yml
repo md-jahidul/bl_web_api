@@ -1,4 +1,5 @@
 variables:
+  SERVER_IP: "172.16.191.44"
   BUILD_LOCATION: "/app/assetelite/src/projects_uat/gitlab_uat/"
 stages:
   - uat_backup
@@ -32,7 +33,7 @@ stg_repo_clone:
 #     - main
   when: manual
   variables:
-    BRANCH: develop
+    BRANCH: release-uat-22
   #  BUILD_LOCATION: "/home/gitlab-runner/app"
   script:
     - echo "Clonging repo"
@@ -65,7 +66,7 @@ deploy_ubuntu:
   <<: *template
   variables:
     #path_1: "/home/bs1048/artifacts"
-    path_2: "/root/myld-qa/app"
+    PATH: ""
   stage: deploy
   when: manual
   # rules:
@@ -77,6 +78,6 @@ deploy_ubuntu:
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
    # - rsync -avzt ./* bs1048@192.168.56.1:$path
     #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ bs1048@192.168.56.1:$path_1/$DEST
-    - rsync -avzt $STG_BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ root@192.168.56.104:$path_2/$DEST
+    - rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ usrdev@SERVER_IP:$PATH/$DEST
     #- cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- scp -r $BUILD_LOCATION/$CI_PROJECT_NAME/app/* bs1048@192.168.56.1:$path_1
