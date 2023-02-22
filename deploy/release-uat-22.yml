@@ -26,7 +26,7 @@ tar_backup:
     - echo "Starting backup"
     - sudo tar -czvf /mybl/backup/"$CI_PROJECT_NAME"-"$CI_PIPELINE_ID"_`date +"%d-%m-%Y-%H:%M:%S"`.tar.gz $data_location
 
-stg_repo_clone:
+release_uat_repo_clone:
   <<: *template
   stage: clone
 #   only:
@@ -62,7 +62,7 @@ stg_repo_clone:
 #       - "README.md"
 #       - ".git"
 
-deploy_ubuntu:
+deploy_release_uat_22:
   <<: *template
   variables:
     #path_1: "/home/bs1048/artifacts"
