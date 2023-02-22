@@ -37,11 +37,12 @@ release_uat_repo_clone:
   #  BUILD_LOCATION: "/home/gitlab-runner/app"
   script:
     - echo "Clonging repo"
+    - git branch
     #- cd $STG_BUILD_LOCATION
     #- sudo git clone -b $BRANCH https://$MYUSERNAME:$MYTOKEN@gitlab.com/techbeach1/mybl-qa.git
     - cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- sudo git checkout develop
-    - git pull origin $BRANCH
+    - git pull origin
 
 # build:
 #   <<: *template
