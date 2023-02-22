@@ -1,5 +1,5 @@
 variables:
-  BUILD_LOCATION: ""
+  BUILD_LOCATION: "/app/assetelite/src/projects_uat/gitlab_uat/"
 stages:
   - uat_backup
   - clone
@@ -38,7 +38,7 @@ stg_repo_clone:
     - echo "Clonging repo"
     #- cd $STG_BUILD_LOCATION
     #- sudo git clone -b $BRANCH https://$MYUSERNAME:$MYTOKEN@gitlab.com/techbeach1/mybl-qa.git
-    - cd $STG_BUILD_LOCATION/$CI_PROJECT_NAME
+    - cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- sudo git checkout develop
     - git pull origin $BRANCH
 
