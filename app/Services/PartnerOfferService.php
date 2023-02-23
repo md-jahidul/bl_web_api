@@ -252,7 +252,7 @@ class PartnerOfferService extends ApiBaseService
                 $obj['schema_markup'] = $offers->schema_markup ?? null;
                 $obj['offers'] = OrangeClubTierOffersRenovateResource::collection($all);
                 $obj['count'] = count($count);
-                $data = $obj;
+                $data = [$obj];
             }else{
                 $data = [];
             }
