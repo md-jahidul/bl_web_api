@@ -67,7 +67,7 @@ deploy_release_uat_22:
   <<: *template
   variables:
     #path_1: "/home/bs1048/artifacts"
-    PATH: ""
+    PATH: "/app/asset_lite_prd/www/bl_assetelite_api"
   stage: deploy
   when: manual
   # rules:
@@ -79,6 +79,6 @@ deploy_release_uat_22:
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
    # - rsync -avzt ./* bs1048@192.168.56.1:$path
     #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ bs1048@192.168.56.1:$path_1/$DEST
-    - rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ usrdev@SERVER_IP:$PATH/$DEST
+    - rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/ usrdev@SERVER_IP:$PATH/
     #- cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- scp -r $BUILD_LOCATION/$CI_PROJECT_NAME/app/* bs1048@192.168.56.1:$path_1
