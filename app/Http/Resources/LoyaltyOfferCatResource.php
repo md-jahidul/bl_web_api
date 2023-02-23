@@ -24,7 +24,7 @@ class LoyaltyOfferCatResource extends JsonResource
             'page_header_bn' => $this->page_header_bn,
             'schema_markup' => $this->schema_markup,
             'offers' => OrangeClubTierOffersResource::collection($this->partnerOffers),
-            'count' => count($this->partnerOffers)
+            'count' =>$this->partner_offers_count
         ];
     }
 }
