@@ -579,7 +579,7 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_other_details');
+                $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
 
                 $productDetail->product_details->banner_image_url = $banner->image ?? null;
                 $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
