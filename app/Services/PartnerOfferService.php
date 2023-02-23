@@ -235,8 +235,9 @@ class PartnerOfferService extends ApiBaseService
         }else if(!empty($url_slug)){
             $cat = $this->partnerOfferCategoryRepository->findCategoryId($url_slug);
             $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
-            //$offersCount = $this->partnerOfferCategoryRepository->loyaltyCatOffersCount($elg, $cat, $area, $searchStr);
-            $data =  LoyaltyOfferCatResource::collection($offers);
+            $offersCount = $this->partnerOfferCategoryRepository->loyaltyCatOffersCount($elg, $cat, $area, $searchStr);
+            $count = $offersCount ? $offersCount->partner_offers_count : 0;
+            $data =  LoyaltyOfferCatResource::collection($offers)->additional(['count' => $count]);
         }
         return $this->sendSuccessResponse($data, 'Orange club Category offers');
     }

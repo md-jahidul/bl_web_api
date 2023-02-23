@@ -172,7 +172,7 @@ class PartnerOfferRepository extends BaseRepository
             $q->where('partner_category_id', $cat);
         }
         $priyojonOffers = $q->count();
-
+        dd($priyojonOffers);
         return $priyojonOffers;
     }
 
