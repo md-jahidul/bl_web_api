@@ -24,7 +24,7 @@ tar_backup:
   #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
   script:
     - echo "Starting backup"
-    - tar -czvf /app/backup/"$CI_PROJECT_NAME"-"$CI_PIPELINE_ID"_`date +"%d-%m-%Y-%H:%M:%S"`.tar.gz $data_location
+    - ssh usrdev@$SERVER_IP tar czf - /app/asset_lite_prd/www/bl_assetelite_api > /app/backup/"$CI_PROJECT_NAME"_"$CI_PIPELINE_IID"_`date +"%d-%m-%Y-%H:%M:%S"`.tar.gz
 
 release_uat_repo_clone:
   <<: *template
