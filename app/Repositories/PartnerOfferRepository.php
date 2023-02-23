@@ -172,7 +172,6 @@ class PartnerOfferRepository extends BaseRepository
             $q->where('partner_category_id', $cat);
         }
         $priyojonOffers = $q->count();
-        dd($priyojonOffers);
         return $priyojonOffers;
     }
 
@@ -199,16 +198,14 @@ class PartnerOfferRepository extends BaseRepository
                 'p.company_name_en',
                 'p.company_name_bn',
                 'p.company_logo',
-                'pc.name_en AS offer_type_en',
-                'pc.name_bn AS offer_type_bn',
                 'pc.page_header',
                 'pc.page_header_bn',
                 'pc.schema_markup',
                 'pc.url_slug_en',
                 'pc.url_slug_bn'
             )
-            ->orderBy('po.display_order')
-            ->offset($offset)->limit($limit);
+            ->orderBy('po.display_order');
+            //->offset($offset)->limit($limit);
 
         if ($elg != "") {
             // $elg == 1 ? $offers->where('po.silver', 1) : null;
@@ -225,6 +222,58 @@ class PartnerOfferRepository extends BaseRepository
         }
         if ($searchStr != "") {
             $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+            //$offers->orwhereRaw("p.company_name_bn Like '%$searchStr%'");
+        }
+
+
+        $priyojonOffers = $offers->get();
+
+        return $priyojonOffers;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function discountOffersCount( $elg, $cat, $area, $searchStr)
+    {
+        $offers = DB::table('partner_offers as po')
+            ->where('po.is_campaign', 0)
+            ->where('po.is_active', 1)
+            ->join('partners as p', 'po.partner_id', '=', 'p.id')
+            ->LeftJoin('partner_area_list as a', 'po.area_id', '=', 'a.id')
+            ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
+            ->select(
+                'po.*',
+                'a.area_en',
+                'a.area_bn',
+                'pc.name_en AS offer_type_en',
+                'pc.name_bn AS offer_type_bn',
+                'p.company_name_en',
+                'p.company_name_bn',
+                'p.company_logo',
+                'pc.page_header',
+                'pc.page_header_bn',
+                'pc.schema_markup',
+                'pc.url_slug_en',
+                'pc.url_slug_bn'
+            )
+            ->orderBy('po.display_order');
+        if ($elg != "") {
+            // $elg == 1 ? $offers->where('po.silver', 1) : null;
+            // $elg == 2 ? $offers->where('po.gold', 1) : null;
+            // $elg == 3 ? $offers->where('po.platium', 1) : null;
+            $offers->where('po.loyalty_tier_id', $elg);
+        }
+
+        if ($cat != "") {
+            $offers->where('p.partner_category_id', $cat);
+        }
+        if ($area != "") {
+            $offers->where('po.area_id', $area);
+        }
+        if ($searchStr != "") {
+            $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+            //$offers->orwhereRaw("p.company_name_bn Like '%$searchStr%'");
         }
 
 
