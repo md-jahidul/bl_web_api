@@ -261,7 +261,7 @@ class BalanceService extends BaseService
                 'unit' => $item->unit,
                 'url_slug_en' => $urlSlugEn,
                 'url_slug_bn' => $urlSlugBn,
-                'expires_in' => Carbon::parse($item->expiryDateTime)->setTimezone('UTC')->toDateTimeString(),
+                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
                 'auto_renew' => false
             ];
         }
