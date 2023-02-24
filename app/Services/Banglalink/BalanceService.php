@@ -235,6 +235,11 @@ class BalanceService extends BaseService
         return ['status' => 'SUCCESS', 'data' => $balanceSummary];
     }
 
+    public function fetchBalanceName($item): string
+    {
+        return $item->product->name ?? (explode('|', $item->balanceName)[1] ?? $item->type);
+    }
+
     /**
      * @param $response
      * @return JsonResponse|mixed
@@ -254,8 +259,8 @@ class BalanceService extends BaseService
 
             $data [] = [
                 'product_code' => ($item->type != "BONUS" && isset($item->product->code)) ? $item->product->code : "",
-                'package_name_en' => $item->product->name ?? null,
-                'package_name_bn' => $item->product->name ?? null,
+                'package_name_en' => $this->fetchBalanceName($item),
+                'package_name_bn' => $this->fetchBalanceName($item),
                 'total' => $item->totalAmount,
                 'remaining' => $item->amount,
                 'unit' => $item->unit,
