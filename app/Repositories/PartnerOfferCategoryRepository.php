@@ -21,7 +21,7 @@ class PartnerOfferCategoryRepository extends BaseRepository
         $limit =9;
         $offset = $actualPage * $limit;
         $offers =  $this->model->where('status', 1)
-            //->whereHas('partnerOffers')
+            ->whereHas('partnerOffers')
             ->select(
                 'id',
                 'name_en',
@@ -35,12 +35,7 @@ class PartnerOfferCategoryRepository extends BaseRepository
             ->withCount(['partnerOffers'])
             ->with(['partnerOffers' => function ($q) use ($elg, $area, $searchStr, $offset, $limit) {
                 $q->where('is_active', 1);
-                $q->whereHas('partner', function ($q) use ($searchStr) {
-                    if ($searchStr != "") {
-                        $q->whereRaw("company_name_en Like '%$searchStr%'");
-                        $q->whereRaw("company_name_bn Like '%$searchStr%'");
-                    }
-                });
+
                 $q->select(
                     'id',
                     'partner_id',
@@ -64,7 +59,13 @@ class PartnerOfferCategoryRepository extends BaseRepository
                             $q->whereRaw("company_name_en Like '%$searchStr%'");
                             $q->whereRaw("company_name_bn Like '%$searchStr%'");
                         }
-                    }]);
+                    }])
+                    ->whereHas('partner', function ($q) use ($searchStr) {
+                        if ($searchStr != "") {
+                            $q->whereRaw("company_name_en Like '%$searchStr%'");
+                            $q->whereRaw("company_name_bn Like '%$searchStr%'");
+                        }
+                    });
                 if ($elg != "") {
                     $q->where('loyalty_tier_id', $elg);
                 }
@@ -86,28 +87,26 @@ class PartnerOfferCategoryRepository extends BaseRepository
 
     public function loyaltyCatOffersCount( $elg, $cat, $area, $searchStr)
     {
-
         $offers =  $this->model->where('status', 1)
-            //->whereHas('partnerOffers')
-            ->select(
-                'id',
-                'name_en',
-                'name_bn',
-                'url_slug_en',
-                'url_slug_bn',
-                'page_header',
-                'page_header_bn',
-                'schema_markup'
-            )
+        ->whereHas('partnerOffers')
+        ->select(
+            'id',
+            'name_en',
+            'name_bn',
+            'url_slug_en',
+            'url_slug_bn',
+            'page_header',
+            'page_header_bn',
+            'schema_markup'
+        )
+
             ->with(['partnerOffers' => function ($q) use ($elg, $area, $searchStr) {
                 $q->where('is_active', 1);
                 $q->whereHas('partner', function ($q) use ($searchStr) {
                     if ($searchStr != "") {
                         $q->whereRaw("company_name_en Like '%$searchStr%'");
                         $q->whereRaw("company_name_bn Like '%$searchStr%'");
-                    $q->count();
                     }
-
                 });
                 $q->select(
                     'id',
@@ -131,7 +130,6 @@ class PartnerOfferCategoryRepository extends BaseRepository
                         if ($searchStr != "") {
                             $q->whereRaw("company_name_en Like '%$searchStr%'");
                             $q->whereRaw("company_name_bn Like '%$searchStr%'");
-                    $q->count();
                         }
                     }]);
                 if ($elg != "") {
@@ -149,6 +147,7 @@ class PartnerOfferCategoryRepository extends BaseRepository
         }
         $res = $offers
             ->first();
+
         return $res;
     }
 
