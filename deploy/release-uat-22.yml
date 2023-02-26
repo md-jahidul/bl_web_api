@@ -92,4 +92,3 @@ service_restart:
     #- cp -r /home/usrdev/config /home/usrdev/builds/BErMj8E2/0/bl-front/bl-web-frontend/.git/config
     - cd $ANSIBLE_PATH && ansible-playbook service-manage.yml
     - echo 1>/app/mybl/runner/stdout
-
