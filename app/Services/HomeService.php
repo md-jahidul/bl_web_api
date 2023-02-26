@@ -405,6 +405,21 @@ class HomeService extends ApiBaseService
             ->get();
         $metainfo = MetaTag::where('page_id', 1)
             ->first()->toArray();
+
+        $homePageData = [];
+        foreach ($componentList as $component) {
+            if($component->id === 19){
+                continue;
+            }
+            $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
+        }
+        $data = [
+            'metatags' => $metainfo,
+            'components' => $homePageData
+        ];
+
+        return $this->sendSuccessResponse($data, 'Home page components data');
+
         if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
