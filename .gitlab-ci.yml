@@ -36,5 +36,5 @@ release_UAT_22_deploy:
     #strategy: depend
   rules:
     - if: $branch == "release-uat-22"
-    - if: '$CI_COMMIT_BRANCH == "release-uat-22"'
+    #- if: '$CI_COMMIT_BRANCH == "release-uat-22"'
       when: manual
