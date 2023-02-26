@@ -178,7 +178,7 @@ class PartnerOfferRepository extends BaseRepository
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function discountOffers($page, $elg, $cat, $area, $searchStr)
+    public function discountOffers($page, $elg, $cat, $area, $lang, $searchStr)
     {
         $actualPage = $page - 1;
         $limit = 9;
@@ -204,8 +204,8 @@ class PartnerOfferRepository extends BaseRepository
                 'pc.url_slug_en',
                 'pc.url_slug_bn'
             )
-            ->orderBy('po.display_order');
-            //->offset($offset)->limit($limit);
+            ->orderBy('po.display_order')
+            ->offset($offset)->limit($limit);
 
         if ($elg != "") {
             // $elg == 1 ? $offers->where('po.silver', 1) : null;
@@ -221,8 +221,16 @@ class PartnerOfferRepository extends BaseRepository
             $offers->where('po.area_id', $area);
         }
         if ($searchStr != "") {
-            $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
-            //$offers->orwhereRaw("p.company_name_bn Like '%$searchStr%'");
+            if(!empty($lang)){
+                if($lang === 'en'){
+                    $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+                }
+                if($lang === 'bn'){
+                    $offers->whereRaw("p.company_name_bn Like '%$searchStr%'");
+                }
+            } else {
+                $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+            }
         }
 
 
@@ -234,7 +242,7 @@ class PartnerOfferRepository extends BaseRepository
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function discountOffersCount( $elg, $cat, $area, $searchStr)
+    public function discountOffersCount( $elg, $cat, $area, $lang, $searchStr)
     {
         $offers = DB::table('partner_offers as po')
             ->where('po.is_campaign', 0)
@@ -272,8 +280,17 @@ class PartnerOfferRepository extends BaseRepository
             $offers->where('po.area_id', $area);
         }
         if ($searchStr != "") {
-            $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
-            //$offers->orwhereRaw("p.company_name_bn Like '%$searchStr%'");
+            if (!empty($lang)) {
+                if ($lang === 'en') {
+                    $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+                }
+                if ($lang === 'bn') {
+                    $offers->whereRaw("p.company_name_bn Like '%$searchStr%'");
+                }
+            }
+            else {
+                $offers->whereRaw("p.company_name_en Like '%$searchStr%'");
+            }
         }
 
 
