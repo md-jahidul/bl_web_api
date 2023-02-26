@@ -80,8 +80,9 @@ class PriyojonController extends Controller
         $elg = $request->status;
         $cat = $request->category;
         $area = $request->area;
+        $lang = null;
         $searchStr = $request->search;
-        return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $searchStr);
+        return $this->partnerOfferService->discountOffers($page, $elg, $cat, $area, $lang,$searchStr);
     }
 
     public function getAboutPage($slug)
@@ -105,8 +106,9 @@ class PriyojonController extends Controller
         $cat = !empty($request->category) ? $request->category : null;
         $url_slug = !empty($request->url_slug) ? $request->url_slug : null;
         $area = $request->area;
+        $lang = $request->lang;
         $searchStr = $request->search;
-        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $url_slug, $area, $searchStr);
+        return $this->partnerOfferService->categoryOffers($page, $elg, $cat, $url_slug, $area, $lang, $searchStr);
     }
 
     public function loyaltyTierOffers()
