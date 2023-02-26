@@ -139,7 +139,7 @@ class BalanceService extends BaseService
             'amount' => isset($main_balance->amount) ? $main_balance->amount : 0 ,
             'unit' => isset($main_balance->unit) ? $main_balance->unit : 'Tk.',
             'expires_in' => isset($main_balance->expiryDateTime) ?
-                Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null,
+                Carbon::parse($main_balance->expiryDateTime)->toDateTimeString() : null,
             'loan' => [
                 'is_eligible' => $is_eligible_to_loan,
                 'amount'      => ($is_eligible_to_loan) ? 30 : 0
@@ -564,14 +564,14 @@ class BalanceService extends BaseService
         $local = [
             'total_outstanding' => $local_balance->totalOutstanding,
             'credit_limit' => $local_balance->creditLimit,
-            'next_payment_date' => isset($local_balance->nextPaymentDate) ? Carbon::parse($local_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'next_payment_date' => isset($local_balance->nextPaymentDate) ? Carbon::parse($local_balance->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $roaming_balance = collect($response)->where('billingAccountType', '=', 'ROAMING')->first();
         $roaming = [
             'total_outstanding' => $roaming_balance->totalOutstanding,
             'credit_limit' => $roaming_balance->creditLimit,
-            'next_payment_date' => isset($roaming_balance->nextPaymentDate) ? Carbon::parse($roaming_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'next_payment_date' => isset($roaming_balance->nextPaymentDate) ? Carbon::parse($roaming_balance->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         return [
@@ -603,11 +603,12 @@ class BalanceService extends BaseService
                 if ($type == 'DATA') {
 
                     $sms = [
-                        'package_name' => isset($product->name) ? $product->name : null,
+                        'package_name_en' => isset($product->name) ? $product->name : null,
+                        'package_name_bn' => isset($product->name) ? $product->name : null,
                         'total' => $item->total,
                         'remaining' => $item->left,
                         'unit' => $item->unit,
-                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->toDateTimeString(),
                         'auto_renew' => false,
                         'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
                     ];
@@ -634,11 +635,12 @@ class BalanceService extends BaseService
                 $type = $item->serviceType;
                 if ($type == 'SMS') {
                     $sms = [
-                        'package_name' => isset($product->name) ? $product->name : null,
+                        'package_name_en' => isset($product->name) ? $product->name : null,
+                        'package_name_bn' => isset($product->name) ? $product->name : null,
                         'total' => $item->total,
                         'remaining' => $item->left,
                         'unit' => $item->unit,
-                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->toDateTimeString(),
                         'auto_renew' => false,
                         'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
                     ];
@@ -665,11 +667,12 @@ class BalanceService extends BaseService
                 $type = $item->serviceType;
                 if ($type == 'VOICE') {
                     $minutes = [
-                        'package_name' => isset($product->name) ? $product->name : null,
+                        'package_name_en' => isset($product->name) ? $product->name : null,
+                        'package_name_bn' => isset($product->name) ? $product->name : null,
                         'total' => $item->total,
                         'remaining' => $item->left,
                         'unit' => $item->unit,
-                        'expires_in' => Carbon::parse($product->deactivatedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'expires_in' => Carbon::parse($product->deactivatedAt)->toDateTimeString(),
                         'auto_renew' => false,
                         'product_code' => $this->checkPostPaidProductCode($item) ? $productCode : ""
                     ];
@@ -696,6 +699,7 @@ class BalanceService extends BaseService
         $allBalance['minute'] = $this->getPostpaidTalkTimeBalance($response);
         $allBalance['roaming'] = [];
         $allBalance['package'] = Customer::package($customer);
+
         return $allBalance;
     }
 
