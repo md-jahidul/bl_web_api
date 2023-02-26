@@ -68,7 +68,7 @@ deploy_release_uat_22:
   <<: *template
   variables:
     #path_1: "/home/bs1048/artifacts"
-    PATH: "/app/asset_lite_prd/www/bl_assetelite_api"
+    PATH: "/app/asset_lite_prd/www/bl_assetelite_api_23"
   stage: deploy
   when: manual
   # rules:
