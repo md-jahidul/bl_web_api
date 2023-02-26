@@ -66,7 +66,7 @@ release_uat_repo_clone:
 deploy_release_uat_22:
   <<: *template
   variables:
-    PATH: "/app/asset_lite_prd/www/bl_assetelite_api_23"
+    DEST_PATH: "/app/asset_lite_prd/www/bl_assetelite_api_23"
   stage: deploy
   when: manual
   # rules:
@@ -77,4 +77,5 @@ deploy_release_uat_22:
     - echo "Copying build artifacts to live server"
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
     #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ bs1048@192.168.56.1:$path_1/$DEST
-    - rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/ --exclude .git/ --exclude .gitlab-ci.yml --exclude .gitignore usrdev@SERVER_IP:$PATH
+    - echo "$BUILD_LOCATION/$CI_PROJECT_NAME/"
+    #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/ --exclude .git/ --exclude .gitlab-ci.yml --exclude .gitignore usrdev@SERVER_IP:$DEST_PATH
