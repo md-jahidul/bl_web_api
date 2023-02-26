@@ -139,7 +139,7 @@ class PartnerOfferService extends ApiBaseService
     /**
      * @Get_Priyojon_Offers form Partner table
      */
-    public function discountOffers($page, $elg, $cat, $area, $searchStr)
+    public function discountOffers($page, $elg, $cat, $area, $lang, $searchStr)
     {
         try {
 
@@ -151,7 +151,7 @@ class PartnerOfferService extends ApiBaseService
             // $data['categories'] = $this->partnerOfferRepository->getCategories();
             // $data['areas'] = $this->partnerOfferRepository->getAreas();
 
-            $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
+            $offers = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area,$lang, $searchStr);
             $data['offers'] = PartnerOfferResource::collection($offers);
 
             if ($data) {
@@ -196,15 +196,15 @@ class PartnerOfferService extends ApiBaseService
         return $this->sendSuccessResponse($campaignOffers, 'Partner Campaign Offers');
     }
 
-    public function categoryOffers($page, $elg, $cat, $url_slug, $area, $searchStr)
+    public function categoryOffers($page, $elg, $cat, $url_slug, $area, $lang, $searchStr)
     {
         $data = null;
         $offers = null;
         $all = null;
         if (empty($url_slug)) {
             if(!empty($elg) || !empty($cat) || !empty($area) || !empty($searchStr) ){
-                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
-                $count = $this->partnerOfferRepository->discountOffersCount($elg, $cat, $area, $searchStr);
+                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $lang, $searchStr);
+                $count = $this->partnerOfferRepository->discountOffersCount($elg, $cat, $area, $lang, $searchStr);
                 $obj = collect();
                 $obj['name_en'] = 'All';
                 $obj['name_bn'] = 'সব';
@@ -217,10 +217,10 @@ class PartnerOfferService extends ApiBaseService
                 $obj['count'] = count($count);
                 $data = [$obj];
             }else{
-                $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $searchStr);
+                $offers = $this->partnerOfferCategoryRepository->loyaltyCatOffers($page, $elg, $cat, $area, $lang, $searchStr);
                 $data = LoyaltyOfferCatResource::collection($offers);
-                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
-                $count = $this->partnerOfferRepository->discountOffersCount( $elg, $cat, $area, $searchStr);
+                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $lang, $searchStr);
+                $count = $this->partnerOfferRepository->discountOffersCount( $elg, $cat, $area, $lang, $searchStr);
                 if (empty($cat)) {
                     $obj = collect();
                     $obj['name_en'] = 'All';
@@ -241,8 +241,8 @@ class PartnerOfferService extends ApiBaseService
             $cat = $this->partnerOfferCategoryRepository->findCategoryId($url_slug);
             if(!empty($cat)){
                 $offers = $this->partnerOfferCategoryRepository->findOne($cat);
-                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $searchStr);
-                $count = $count = $this->partnerOfferRepository->discountOffersCount($elg, $cat, $area, $searchStr);
+                $all = $this->partnerOfferRepository->discountOffers($page, $elg, $cat, $area, $lang, $searchStr);
+                $count = $count = $this->partnerOfferRepository->discountOffersCount($elg, $cat, $area, $lang, $searchStr);
                 $obj = collect();
                 $obj['name_en'] = $offers->name_en ?? null;
                 $obj['name_bn'] = $offers->name_bn ?? null;
