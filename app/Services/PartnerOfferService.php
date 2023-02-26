@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+
 use App\Http\Resources\AlBannerResource;
 use App\Http\Resources\LoyaltyOfferCatResource;
 use App\Http\Resources\OrangeClubTierResource;
@@ -208,6 +209,7 @@ class PartnerOfferService extends ApiBaseService {
     {
         if ($pageType == 'discount_privilege') {
 
+            #
             $data['discount_privilege'] = $this->priyojonRepository->findOneByProperties(
                 ['component_type' => $pageType, 'status' => 1],
                 // ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup', 'url_slug_en', 'url_slug_bn', 'alias']
