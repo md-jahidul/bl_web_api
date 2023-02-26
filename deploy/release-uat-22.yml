@@ -86,7 +86,7 @@ service_restart:
     ANSIBLE_PATH: "/app/mybl/ansible/ansible-mybl-app-deploy/ENV/PROD/WEB-API"
   when: manual
   tags:
-    - ci-ansible
+    - bl-web-api
   script:
     #- echo $ANSIBLE_PATH
     #- cp -r /home/usrdev/config /home/usrdev/builds/BErMj8E2/0/bl-front/bl-web-frontend/.git/config
