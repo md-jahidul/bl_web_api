@@ -173,8 +173,8 @@ class AppServiceDetailsService extends ApiBaseService
 									}
 
 
-									if( $value['status'] == 0 ){
-										return null;
+									if( isset($value['status'])){
+										if ($value['status'] == 0)  return null;
 									}
 
 									return $value;
@@ -182,7 +182,14 @@ class AppServiceDetailsService extends ApiBaseService
 								}, $res);
 
 								$final_multi_res = array_values(array_filter($multi_res));
-								usort($final_multi_res, function($a, $b){return strcmp($a["display_order"], $b["display_order"]);});
+								usort($final_multi_res, function($a, $b){
+
+									if (isset($a["display_order"]) && isset($b["display_order"])){
+
+										return strcmp($a["display_order"], $b["display_order"]);
+									}
+
+								});
 
 								$sub_item['multiple_attributes'] = $final_multi_res;
 							}
