@@ -738,11 +738,21 @@ class UserService extends ApiBaseService
         $idp_customer_info = $data['user'];
 
         if ($idp_customer_info['is_password_set']) {
-            return $this->sendErrorResponse("Password is already set", [
-                'message' => "Password is already set",
-                'hint' => 'Password is already set',
-                'target' => 'query'
-            ], 400);
+            return [
+                "errors" => [
+                    "message" => "Password is already set",
+                    "hint" => "Password is already set",
+                    "target" => "query"
+                ],
+                "message" => "Password is already set",
+                "status" => "FAIL",
+                "status_code" => 400
+            ];
+//            return $this->sendErrorResponse("Password is already set", [
+//                'message' => "Password is already set",
+//                'hint' => 'Password is already set',
+//                'target' => 'query'
+//            ], 400);
         }
 
         $client = new Client();
