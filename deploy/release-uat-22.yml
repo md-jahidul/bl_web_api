@@ -1,0 +1,84 @@
+variables:
+  SERVER_IP: "172.16.191.44"
+  BUILD_LOCATION: "/app/assetlite/src/projects_uat/gitlab_uat"
+stages:
+  - uat_backup
+  - clone
+  - build
+  - deploy
+
+.job_template: &template
+    tags:
+      - bl-devops
+    # only:
+    #   - develop
+
+tar_backup:
+  <<: *template
+  variables:
+    data_location: "/app/asset_lite_prd/www/bl_assetelite_api"
+  stage: uat_backup
+  #needs: [CI_Pre-check]
+  when: manual
+  # rules:
+  #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+  script:
+    - echo "Starting backup"
+    - ssh usrdev@$SERVER_IP tar czf - /app/asset_lite_prd/www/bl_assetelite_api > /app/backup/"$CI_PROJECT_NAME"_"$CI_PIPELINE_IID"_`date +"%d-%m-%Y-%H:%M:%S"`.tar.gz
+
+release_uat_repo_clone:
+  <<: *template
+  stage: clone
+#   only:
+#     - main
+  when: manual
+  variables:
+    BRANCH: release-uat-22
+  #  BUILD_LOCATION: "/home/gitlab-runner/app"
+  script:
+    - echo "Clonging repo"
+    - git branch
+    #- cd $STG_BUILD_LOCATION
+    #- sudo git clone -b $BRANCH https://$MYUSERNAME:$MYTOKEN@gitlab.com/techbeach1/mybl-qa.git
+    - cd $BUILD_LOCATION/$CI_PROJECT_NAME
+    #- sudo git checkout develop
+    - git pull origin $BRANCH
+
+# build:
+#   <<: *template
+#   stage: build
+#   when: manual
+#   # rules:
+#   #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+#   script:
+#     - echo "Buliding with NPM"
+#     - cd $STG_BUILD_LOCATION/$CI_PROJECT_NAME
+#     - npm run build
+#   artifacts:
+#     name: build_artifacts
+#     paths:
+#       - ./
+#     exclude:
+#       - ".gitlab-ci.yml"
+#       - "README.md"
+#       - ".git"
+
+deploy_release_uat_22:
+  <<: *template
+  variables:
+    #path_1: "/home/bs1048/artifacts"
+    PATH: "/app/asset_lite_prd/www/bl_assetelite_api"
+  stage: deploy
+  when: manual
+  # rules:
+  #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
+  before_script:
+    - eval $(ssh-agent -s)
+  script:
+    - echo "Copying build artifacts to live server"
+    - ssh-add <(echo "$STAGING_PRIVATE_KEY")
+   # - rsync -avzt ./* bs1048@192.168.56.1:$path
+    #- rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/$SOURCE/ bs1048@192.168.56.1:$path_1/$DEST
+    - rsync -avzt $BUILD_LOCATION/$CI_PROJECT_NAME/ --exlcude .git/ --exclude .gitlab-ci.yml --exclude .gitignore usrdev@SERVER_IP:$PATH/
+    #- cd $BUILD_LOCATION/$CI_PROJECT_NAME
+    #- scp -r $BUILD_LOCATION/$CI_PROJECT_NAME/app/* bs1048@192.168.56.1:$path_1

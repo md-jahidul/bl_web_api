@@ -25,7 +25,7 @@ class BusinessAssignedFeaturesRepository extends BaseRepository {
         $count = 0;
         foreach ($data as $f) {
             $features[$count]['feature_id'] = $f->feature_id;
-            $features[$count]['icon'] = config('filesystems.image_host_url') . $f->icon_url;
+            $features[$count]['icon'] = $f->icon_url;
             $features[$count]['alt_text'] = $f->alt_text;
             $features[$count]['title'] = $f->title;
             $features[$count]['title_bn'] = $f->title_bn;

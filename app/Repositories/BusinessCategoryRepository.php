@@ -33,8 +33,8 @@ class BusinessCategoryRepository extends BaseRepository {
             $data[$count]['name_en'] = $v->name;
             $data[$count]['name_bn'] = $v->name_bn;
             $data[$count]['alt_text'] = $v->alt_text;
-            $data[$count]['banner_photo'] = $v->banner_photo == "" ? "" : config('filesystems.image_host_url') . $v->banner_photo;
-            $data[$count]['banner_photo_mobile'] = $v->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $v->banner_image_mobile;
+            $data[$count]['banner_photo'] = $v->banner_photo == "" ? "" :  $v->banner_photo;
+            $data[$count]['banner_photo_mobile'] = $v->banner_image_mobile == "" ? "" :  $v->banner_image_mobile;
             $data[$count]['url_slug'] = $v->url_slug;
             $data[$count]['url_slug_bn'] = $v->url_slug_bn;
             $data[$count]['page_header'] = $v->page_header;
