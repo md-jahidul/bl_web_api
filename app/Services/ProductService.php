@@ -579,11 +579,20 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                if (isset($productDetail->offer_category->alias) && $productDetail->offer_category->alias == "new_sim_offer") {
-                    $banner = $this->alBannerService->getBanner($productDetail->id, 'product_other_details');
-                } else {
+
+                $offerType = [
+                    OfferType::INTERNET,
+                    OfferType::VOICE,
+                    OfferType::CALL_RATE,
+                    OfferType::RECHARGE_OFFER,
+                ];
+
+                if (in_array($productDetail->offer_category_id, $offerType)) {
                     $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
+                } else {
+                    $banner = $this->alBannerService->getBanner($productDetail->id, 'product_other_details');
                 }
+
                 unset($productDetail->offer_category);
                 $productDetail->product_details->banner_image_url = $banner->image ?? null;
                 $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
