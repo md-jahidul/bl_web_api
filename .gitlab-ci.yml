@@ -1,0 +1,40 @@
+stages:
+    - triggers
+
+.job_template: &template
+    tags:
+        - bl-devops
+
+prod_deploy:
+  stage: triggers
+  trigger:
+    include: deploy/prod_deploy.yml
+    #strategy: depend
+  rules:
+    - if: $branch == "master"
+
+dev_deploy:
+  stage: triggers
+  trigger:
+    include: deploy/stg_deploy.yml
+    #strategy: depend
+  rules:
+    - if: $branch == "develop"
+
+# stg_deploy:
+#   stage: triggers
+#   trigger:
+#     include: deploy/stg_deploy.yml
+#     #strategy: depend
+#   rules:
+#     - if: $branch == "staging"
+
+release_UAT_22_deploy:
+  stage: triggers
+  trigger:
+    include: deploy/release-uat-22.yml
+    #strategy: depend
+  rules:
+    - if: $branch == "release-uat-22"
+    #- if: '$CI_COMMIT_BRANCH == "release-uat-22"'
+      when: manual
