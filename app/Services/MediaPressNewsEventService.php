@@ -107,9 +107,9 @@ class MediaPressNewsEventService extends ApiBaseService
         return $this->sendSuccessResponse($res, "Filter Date");
     }
 
-    public function topicList()
+    public function topicList($sectionType)
     {
-        $data = $this->mediaNewsCategoryRepository->findByProperties([]);
+        $data = $this->mediaNewsCategoryRepository->findByProperties(['section_type' => $sectionType]);
         return $this->sendSuccessResponse($data, "Topic List");
     }
 }

@@ -63,7 +63,7 @@ class BlogController extends Controller
 
     public function getTopicList(Request $request)
     {
-        return $this->mediaPressNewsEventService->topicList();
+        return $this->mediaPressNewsEventService->topicList(self::POST_REFERENCE_TYPE);
     }
 
     //    public function getPressReleaseFilter($from, $to)
