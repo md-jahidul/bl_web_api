@@ -364,6 +364,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('csr/details/{slug}', 'API\V1\CsrController@getBlogDetails');
 //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    Route::get('recharge-iris-offer', 'API\V1\RechargeIrisOfferController@getRechargeIrisOffers');
 });
 
 
