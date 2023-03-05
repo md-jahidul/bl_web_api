@@ -313,6 +313,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Phase 2
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
+
+    #Cashback amount
+    Route::post('recharge-cashback-offers', 'API\V1\AlCashBackController@getCashbackAmount');
 });
 
 
