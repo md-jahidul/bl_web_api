@@ -366,6 +366,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 
     Route::get('recharge-iris-offer', 'API\V1\RechargeIrisOfferController@getRechargeIrisOffers');
+    #Cashback amount
+    Route::post('recharge-cashback-offers', 'API\V1\AlCashBackController@getCashbackAmount');
 });
 
 
