@@ -154,9 +154,13 @@ class ProductController extends Controller
         return $this->productService->like($productId);
     }
 
-    public function customerLoanProducts(Request $request, $loanType, $msisdn)
+    // public function customerLoanProducts(Request $request, $loanType, $msisdn)
+    // {
+    //     return $this->productLoanService->getLoanInfo($request, $loanType, $msisdn);
+    // }
+    public function customerLoanProducts(Request $request)
     {
-        return $this->productLoanService->getLoanInfo($request, $loanType, $msisdn);
+        return $this->productLoanService->getLoanInfo($request);
     }
 
     /**

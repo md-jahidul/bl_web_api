@@ -121,22 +121,81 @@ class ProductLoanService extends BaseService
         ];
     }
 
-    public function getLoanInfo($request, $loanType, $msisdn)
+    // public function getLoanInfo($request, $loanType, $msisdn)
+    // {
+    //     // $user = $this->customerService->getCustomerDetails($request);
+    //     $msisdn = "88" . $msisdn;
+    //     $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
+    //     // $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
+
+    //     $customer_type = $customerInfo->getData()->data->connectionType;
+    //     $customer_account_id = $customerInfo->getData()->data->package->customerId;
+
+    //     // if (!$user) {
+    //     //     return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+    //     // }
+
+    //     // Customer type check
+    //     if ($customer_type == 'POSTPAID') {
+    //         return $this->responseFormatter->sendErrorResponse(
+    //             'POSTPAID_USER',
+    //             [
+    //                 'message' => 'Emergency Balance is not eligible for Postpaid user',
+    //                 'hint'    => 'Postpaid user not eligible for Emergency balance'
+    //             ],
+    //             400
+    //         );
+    //     }
+
+
+    //     $balance = $this->getMainBalance($customer_account_id);
+
+
+    //     $eligibility_cap = Config::where('key', self::ADVANCE_MINIMUM_BALANCE)->first()->value;
+
+    //     $min_amount = 10;
+    //     if ($eligibility_cap){
+    //         $min_amount = (int)$eligibility_cap;
+    //     }
+
+    //     // Balance Check more than 10 tk
+    //     if ($loanType == "balance"){
+    //         if ($balance > $min_amount) {
+    //             return $this->responseFormatter->sendSuccessResponse(
+    //                 [],
+    //                 "NOT_ELIGIBLE"
+    //             );
+    //         }
+    //     }
+    //     $loanProducts = $this->getAvailableLoansByCustomer($customer_account_id);
+
+    //     $availableLoanProducts = $this->prepareLoanData($loanProducts, $loanType);
+
+    //     if ($availableLoanProducts){
+    //         return $this->responseFormatter->sendSuccessResponse($availableLoanProducts, 'Available loan products');
+    //     }
+    //     return $this->responseFormatter->sendSuccessResponse(
+    //         [],
+    //         "NOT_ELIGIBLE"
+    //     );
+    // }
+
+    public function getLoanInfo($request)
     {
-//        $user = $this->customerService->getCustomerDetails($request);
-        $msisdn = "88" . $msisdn;
-        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
-//        $customerInfo = $this->blCustomerService->getCustomerInfoByNumber($user->msisdn);
+        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+        // return $customerInfo->number_type;
+        // return $customerInfo;
 
-        $customer_type = $customerInfo->getData()->data->connectionType;
-        $customer_account_id = $customerInfo->getData()->data->package->customerId;
+        $customer_type = $customerInfo->number_type;
+        $customer_account_id = $customerInfo->customer_account_id;
+        // $customer_account_id = 64761808;
 
-//        if (!$user) {
-//            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
-//        }
+        if (!$customerInfo) {
+            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        }
 
         // Customer type check
-        if ($customer_type == 'POSTPAID') {
+        if (strtoupper($customer_type) == 'POSTPAID') {
             return $this->responseFormatter->sendErrorResponse(
                 'POSTPAID_USER',
                 [
@@ -148,61 +207,104 @@ class ProductLoanService extends BaseService
         }
 
 
-        $balance = $this->getMainBalance($customer_account_id);
+        // $balance = $this->getMainBalance($customer_account_id);
 
 
-        $eligibility_cap = Config::where('key', self::ADVANCE_MINIMUM_BALANCE)->first()->value;
+        // $eligibility_cap = Config::where('key', self::ADVANCE_MINIMUM_BALANCE)->first()->value;
 
-        $min_amount = 10;
-        if ($eligibility_cap){
-            $min_amount = (int)$eligibility_cap;
-        }
+        // $min_amount = 10;
+        // if ($eligibility_cap){
+        //     $min_amount = (int)$eligibility_cap;
+        // }
 
-        // Balance Check more than 10 tk
-        if ($loanType == "balance"){
-            if ($balance > $min_amount) {
-                return $this->responseFormatter->sendSuccessResponse(
-                    [],
-                    "NOT_ELIGIBLE"
-                );
-            }
-        }
+        #Balance Check more than 10 tk
+        // if ($loanType == "balance"){
+        //     if ($balance > $min_amount) {
+        //         return $this->responseFormatter->sendSuccessResponse(
+        //             [],
+        //             "NOT_ELIGIBLE"
+        //         );
+        //     }
+        // }
+
+        // customer loan Status check
+        // return $hasloan = $this->hasMALoan($customer_account_id);
+        $loanStatus = $this->getLoanStatus($customer_account_id, $customer_type);
+
+        if(!empty($loanStatus)){
+            return $this->responseFormatter->sendSuccessResponse(
+               [],
+               "Sorry, you are not eligible for emergency balance as you have already loan due. Please recharge sufficient amount to become eligible again."
+           );
+       }
+
         $loanProducts = $this->getAvailableLoansByCustomer($customer_account_id);
 
-        $availableLoanProducts = $this->prepareLoanData($loanProducts, $loanType);
+        $availableLoanProducts = $this->prepareLoanData($loanProducts);
 
         if ($availableLoanProducts){
             return $this->responseFormatter->sendSuccessResponse($availableLoanProducts, 'Available loan products');
         }
         return $this->responseFormatter->sendSuccessResponse(
             [],
-            "NOT_ELIGIBLE"
+            "There is no loan product for you"
         );
     }
 
-    public function prepareLoanData($loanProducts, $loanType)
+    // public function prepareLoanData($loanProducts, $loanType)
+    // {
+    //     $availableLoanProducts = [];
+    //     foreach ($loanProducts as $loan) {
+    //         $product = AlCoreProduct::where('product_code', $loan['code'])->first();
+    //         // if (empty($product)) {
+    //         //     return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
+    //         // }
+    //         if (!empty($product)) {
+    //             $product = array(
+    //                 'product_code' => $product->product_code,
+    //                 'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
+    //                 'title' => $product->name,
+    //                 'internet_volume_mb' => $product->internet_volume_mb,
+    //                 'price_tk' => $product->mrp_price,
+    //                 'validity' => $product->validity,
+    //                 'validity_unit' => $product->validity_unit
+    //             );
+    //         }
+
+    //         if ($loanType == $product['type']) {
+    //             array_push($availableLoanProducts, $product);
+    //         }
+    //     }
+    //     return $availableLoanProducts;
+    // }
+
+    public function prepareLoanData($loanProducts, $loanType = null)
     {
         $availableLoanProducts = [];
+        /**
+         * Comment By: Mehedi Hasan Shuvo
+         * Description: Need to check if it is only for this type or for all
+         */
+        $types = ['internet', 'balance'];
         foreach ($loanProducts as $loan) {
             $product = AlCoreProduct::where('product_code', $loan['code'])->first();
-//            if (empty($product)) {
-//                return $this->responseFormatter->sendErrorResponse([], "Load Product not found" . " Product code = " . $loan['code']);
-//            }
+            
             if (!empty($product)) {
                 $product = array(
                     'product_code' => $product->product_code,
                     'type' => ($product->content_type == 'data loan') ? 'internet' : 'balance',
                     'title' => $product->name,
-                    'internet_volume_mb' => $product->internet_volume_mb,
+                    'amount' => ($product->content_type == 'data loan') ? $product->internet_volume_mb : $product->mrp_price,
                     'price_tk' => $product->mrp_price,
                     'validity' => $product->validity,
                     'validity_unit' => $product->validity_unit
                 );
+
+                if (in_array($product['type'],$types)) {
+                    array_push($availableLoanProducts, $product);
+                }
             }
 
-            if ($loanType == $product['type']) {
-                array_push($availableLoanProducts, $product);
-            }
         }
         return $availableLoanProducts;
     }
