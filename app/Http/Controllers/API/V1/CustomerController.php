@@ -182,34 +182,4 @@ class CustomerController extends Controller
 //    {
 //        return $this->blCustomerService->deviceSetting($request);
 //    }
-
-    /**
-     * @param SetBalanceTransferPinRequest $request
-     * @return JsonResponse
-     * @throws \App\Exceptions\PinAlreadySetException
-     */
-    public function generateCustomerPin(Request $request)
-    {
-        $request->validate([
-            'pin' => 'required|numeric|digits:4'
-        ]);
-        return $this->customerService->setTransferPin($request);
-    }
-
-    /**
-     * @param ChangeBalanceTransferPinRequest $request`
-     * @return JsonResponse
-     * @throws \App\Exceptions\OldPinInvalidException
-     * @throws \App\Exceptions\PinNotSetException
-     * @throws \App\Exceptions\TokenInvalidException
-     */
-    public function changeCustomerPin(ChangeBalanceTransferPinRequest $request)
-    {
-        return $this->customerService->changeTransferPin($request);
-    }
-
-    public function resetCustomerPin(ResetBalanceTransferPinRequest $request)
-    {
-        return $this->customerService->resetTransferPin($request);
-    }
 }
