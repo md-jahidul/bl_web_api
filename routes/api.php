@@ -371,6 +371,15 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     #Cashback amount
     Route::post('recharge-cashback-offers', 'API\V1\AlCashBackController@getCashbackAmount');
+
+    /**
+     *  Balance transfer
+     */
+    Route::post('balance-transfer/set-pin', 'API\V1\CustomerController@generateCustomerPin');
+    Route::post('balance-transfer/change-pin', 'API\V1\CustomerController@changeCustomerPin');
+    Route::post('balance-transfer/reset-pin', 'API\V1\CustomerController@resetCustomerPin');
+    Route::post('balance-transfer', 'API\V1\CurrentBalanceController@transferBalance');
+//    Route::get('balance-transfer/conditions', 'API\V1\CurrentBalanceController@balanceTransferConditions');
 });
 
 
