@@ -6,7 +6,7 @@ use App\Services\AlBannerService;
 use App\Http\Controllers\Controller;
 
 
-class AlBannerController extends Controller
+class EmergencyBalanceController extends Controller
 {
 
     /**
@@ -14,15 +14,10 @@ class AlBannerController extends Controller
      */
     private $alBannerService;
 
-    /**
-     * @var ComponentService
-     */
-    private $componentService;
-
     protected const PAGE_TYPE = "emergency_balance";
 
     /**
-     * AlBannerController constructor.
+     * EmergencyBalanceController constructor.
      * @param AlBannerService $pageService
      */
     public function __construct(AlBannerService $alBannerService)
