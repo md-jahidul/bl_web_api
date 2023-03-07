@@ -375,11 +375,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     /**
      *  Balance transfer
      */
-    Route::post('balance-transfer/set-pin', 'API\V1\CustomerController@generateCustomerPin');
-    Route::post('balance-transfer/change-pin', 'API\V1\CustomerController@changeCustomerPin');
-    Route::post('balance-transfer/reset-pin', 'API\V1\CustomerController@resetCustomerPin');
-    Route::post('balance-transfer', 'API\V1\CurrentBalanceController@transferBalance');
-//    Route::get('balance-transfer/conditions', 'API\V1\CurrentBalanceController@balanceTransferConditions');
+    Route::post('balance-transfer', 'API\V1\BalanceTransferController@transferBalance');
+    Route::post('balance-transfer/set-pin', 'API\V1\BalanceTransferController@generateCustomerPin');
+    Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
+    Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
+    Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
 });
 
 

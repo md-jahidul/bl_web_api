@@ -73,22 +73,6 @@ class CurrentBalanceController extends Controller
         return $this->balanceService->getBalanceDetails($type, $request);
     }
 
-    /**
-     * Transfer Balance
-     *
-     * @param TransferBalanceRequest $request
-     * @return JsonResponse
-     * @throws BLServiceException
-     * @throws CurlRequestException
-     * @throws PinInvalidException
-     * @throws TokenInvalidException
-     */
-    public function transferBalance(TransferBalanceRequest $request)
-    {
-        return $this->balanceTransferService->transferBalance($request);
-    }
-
-
     public function customerLoanCheck(Request $request)
     {
         return $this->productLoanService->getLoanAmount($request);
