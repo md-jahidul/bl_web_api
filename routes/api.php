@@ -126,6 +126,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
     // Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
     Route::get('available-loan-products', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('emergency-balance-banner', 'API\V1\AlBannerController@emergencyBalancebanner');
 
     //Loyalty or Priyojon section
     //    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');

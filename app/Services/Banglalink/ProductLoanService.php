@@ -206,27 +206,6 @@ class ProductLoanService extends BaseService
             );
         }
 
-
-        // $balance = $this->getMainBalance($customer_account_id);
-
-
-        // $eligibility_cap = Config::where('key', self::ADVANCE_MINIMUM_BALANCE)->first()->value;
-
-        // $min_amount = 10;
-        // if ($eligibility_cap){
-        //     $min_amount = (int)$eligibility_cap;
-        // }
-
-        #Balance Check more than 10 tk
-        // if ($loanType == "balance"){
-        //     if ($balance > $min_amount) {
-        //         return $this->responseFormatter->sendSuccessResponse(
-        //             [],
-        //             "NOT_ELIGIBLE"
-        //         );
-        //     }
-        // }
-
         // customer loan Status check
         // return $hasloan = $this->hasMALoan($customer_account_id);
         $loanStatus = $this->getLoanStatus($customer_account_id, $customer_type);
