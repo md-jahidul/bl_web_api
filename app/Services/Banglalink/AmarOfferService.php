@@ -23,6 +23,7 @@ class AmarOfferService extends BaseService
     public $productService;
     public $responseFormatter;
     protected const AMAR_OFFER_API_ENDPOINT = "/product-offer/offer/amar-offers";
+//    protected const AMAR_OFFER_API_ENDPOINT = "/product-offer/offer/v2/amar-offers";
 
     protected const BANNER_IMAGE = "banner_image";
     /**
@@ -156,18 +157,20 @@ class AmarOfferService extends BaseService
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
-        $customer_type = $infoBl->getData()->data->connectionType;
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
+        dd($customerInfo, $infoBl);
+        $customerType = $infoBl->getData()->data->connectionType;
+        $responseData = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customerType));
 //        $bannerImage = $this->amarOfferDetailsRepository
 //            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
-
-        if ($response_data['status_code'] == 200){
+        dd($responseData);
+        if ($responseData['status_code'] == 200){
+//            dd($responseData);
             //            $data['header'] = $bannerImage;
-            $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
+            $data = $this->prepareAmarOfferList(json_decode($responseData['response']));
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 
-        if ($response_data['status_code'] == 500){
+        if ($responseData['status_code'] == 500){
             return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
         }
 
