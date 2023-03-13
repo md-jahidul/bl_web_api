@@ -38,7 +38,7 @@ class CustomerInternetUsageService extends BaseService
             $to,
             $transactionType
         ));
-        dd($response_data, 'data');
+
         $formatted_internet_usage_data = $this->prepareInternetUsageHistory(json_decode($response_data['response']));
 
         $formatted_internet_usage_data = collect($formatted_internet_usage_data)->sortByDesc('start_time')->values();
