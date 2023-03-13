@@ -115,7 +115,7 @@ class CustomerRechargeHistoryService extends BaseService
      */
     public function getRechargeHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
@@ -123,16 +123,13 @@ class CustomerRechargeHistoryService extends BaseService
 
         $customer_id = $user->customer_account_id;
 
-        $customer_type = Customer::connectionType(Customer::find($user->id));
-
-        if ($customer_type == 'PREPAID') {
+        if ($user->number_type == 'prepaid') {
             return $this->getPrepaidRechargeHistory($customer_id, $request);
         }
 
-        if ($customer_type == 'POSTPAID') {
+        if ($user->number_type == 'postpaid') {
             return $this->getPostpaidRechargeHistory($customer_id, $request);
         }
-
     }
 
 

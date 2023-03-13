@@ -90,7 +90,7 @@ class CustomerRoamingUsageService extends BaseService
 
     public function getCallUsageHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
@@ -130,7 +130,7 @@ class CustomerRoamingUsageService extends BaseService
 
     public function getDataUsageHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
@@ -156,6 +156,7 @@ class CustomerRoamingUsageService extends BaseService
 //        if ($ttl_settings) {
 //            $redis_ttl = json_decode($ttl_settings->value)->value;
 //        }
+
         if (!$roaming_data = Redis::get($redis_key)) {
             $response_data = $this->get($this->getRoamingUsageUrl(
                 $customer_id,
@@ -199,7 +200,7 @@ class CustomerRoamingUsageService extends BaseService
 
     public function getSmsUsageHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
@@ -280,7 +281,7 @@ class CustomerRoamingUsageService extends BaseService
 
     public function getSummaryUsageHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);

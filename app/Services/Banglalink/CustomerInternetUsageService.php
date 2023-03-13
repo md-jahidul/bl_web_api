@@ -69,7 +69,7 @@ class CustomerInternetUsageService extends BaseService
 
     public function getInternetUsageHistory(Request $request)
     {
-        $user = $this->customerService->getAuthenticateCustomer($request);
+        $user = $this->customerService->getCustomerDetails($request);
 
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
