@@ -380,6 +380,26 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
     Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
     Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
+
+    # Usage History
+    Route::get('usage-history', 'API\V1\CustomerUsageHistoryController@getSummaryHistory');
+
+    /*    Route::get('usage-history/total-amount', 'API\V1\UsageHistory\SummaryUsageHistoryController@getTotalUsageAmount');*/
+
+    Route::get('usage-history/call', 'API\V1\CustomerUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/sms', 'API\V1\UsageHistory\SmsUsageHistoryController@getSmsUsageHistory');
+    Route::get('usage-history/internet', 'API\V1\UsageHistory\InternetUsageHistoryController@getInternetUsageHistory');
+    Route::get('usage-history/subscription',
+        'API\V1\UsageHistory\SubscriptionUsageHistoryController@getSubscriptionUsageHistory'
+    );
+    Route::get('usage-history/recharge', 'API\V1\UsageHistory\RechargeHistoryController@getRechargeHistory');
+
+    Route::get('usage-history/roaming/call', 'API\V1\UsageHistory\RoamingUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/roaming/sms', 'API\V1\UsageHistory\RoamingUsageHistoryController@getSmsUsageHistory');
+    Route::get('usage-history/roaming/internet',
+        'API\V1\UsageHistory\RoamingUsageHistoryController@getDataUsageHistory'
+    );
+    Route::get('usage-history/roaming', 'API\V1\UsageHistory\RoamingUsageHistoryController@getSummaryUsageHistory');
 });
 
 
