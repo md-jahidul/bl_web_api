@@ -107,7 +107,7 @@ class BaseService
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         static::makeRequest($ch, $url, $body, $headers);
         $result = curl_exec($ch);
-        dd($result);
+
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         return ['response' => $result, 'status_code' => $httpCode];

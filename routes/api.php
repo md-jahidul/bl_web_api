@@ -317,5 +317,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Route::post('upsell/purchase-product', 'API\V1\UpsellFacebook\UpsellController@purchaseProduct')->middleware('verifyFacebookUpsellKey');
 });
 
+Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
+    //AMAR OFFER ========================================
+    Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferListV2');
+    Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOfferV2');
+});
 
 //Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
