@@ -11,9 +11,7 @@ stages:
 .job_template: &template
     tags:
       - bl-devops
-    # only:
-    #   - develop
-
+    
 tar_backup:
   <<: *template
   variables:
@@ -44,25 +42,6 @@ release_uat_repo_clone:
     - cd $BUILD_LOCATION/$CI_PROJECT_NAME
     #- sudo git checkout develop
     - git pull origin $BRANCH
-
-# build:
-#   <<: *template
-#   stage: build
-#   when: manual
-#   # rules:
-#   #   - if: ($CI_COMMIT_BRANCH == "develop" || $NPM_VERSION == "$NPM_VERSION")
-#   script:
-#     - echo "Buliding with NPM"
-#     - cd $STG_BUILD_LOCATION/$CI_PROJECT_NAME
-#     - npm run build
-#   artifacts:
-#     name: build_artifacts
-#     paths:
-#       - ./
-#     exclude:
-#       - ".gitlab-ci.yml"
-#       - "README.md"
-#       - ".git"
 
 deploy_release_uat_22:
   <<: *template
