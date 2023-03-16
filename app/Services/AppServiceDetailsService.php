@@ -167,7 +167,12 @@ class AppServiceDetailsService extends ApiBaseService
 
 						// Multiple attributed formated
 						if( $item->multiple_attributes != null && !empty($item->multiple_attributes) ){
-							$res = json_decode($item->multiple_attributes, true);
+							
+							if ($item->component_type != 'multiple_tab_image') {
+								$res = json_decode($item->multiple_attributes, true);
+							}else{
+								$res = $item->multiple_attributes;
+							}
 
 							if( !empty($res) && count($res) > 0 ){
 
