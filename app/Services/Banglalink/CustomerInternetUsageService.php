@@ -110,9 +110,8 @@ class CustomerInternetUsageService extends BaseService
                 $item = $usage_data->attributes;
                 if ($item) {
                     $internet_data [] = [
-                        'start_time' => Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString(),
+                        'start_time' => Carbon::parse($item->eventAt)->toDateTimeString(),
                         'end_time' => Carbon::parse($item->eventAt)->addSeconds($item->duration)
-                            ->setTimezone('UTC')
                             ->toDateTimeString(),
                         'usage' => $this->formatUnit($item->dataAmount),
                         'cost' => $this->formatCost($item->transactionAmount)

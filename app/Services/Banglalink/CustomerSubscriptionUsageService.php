@@ -110,9 +110,8 @@ class CustomerSubscriptionUsageService extends BaseService
                     $subscription_data [] = [
                         'service_name' => $item->productName,
                         'activated_date' => ($this->checkValidDateFormat($item->activatedAt)) ?
-                            Carbon::parse($item->activatedAt)->setTimezone('UTC')->toDateTimeString() : null,
+                            Carbon::parse($item->activatedAt)->toDateTimeString() : null,
                         'deactivated_date' => ($item->deactivatedAt) ? Carbon::parse($item->deactivatedAt)
-                            ->setTimezone('UTC')
                             ->toDateTimeString() : null,
                         'billing_date' => null,
                         'is_active' => $item->active,

@@ -114,7 +114,7 @@ class CustomerRoamingUsageService extends BaseService
                 $item = $usage_data->attributes;
                 if ($item) {
                     $call_data [] = [
-                        'date' => Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString(),
+                        'date' => Carbon::parse($item->eventAt)->toDateTimeString(),
                         'number' => $item->calledNumber,
                         'is_outgoing' => ($item->transactionType == 'Outgoing call') ? true : false,
                         'duration' => $this->formatUnit('call', $item->duration),
@@ -184,9 +184,8 @@ class CustomerRoamingUsageService extends BaseService
                 $item = $usage_data->attributes;
                 if ($item) {
                     $internet_data [] = [
-                        'start_time' => Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString(),
+                        'start_time' => Carbon::parse($item->eventAt)->toDateTimeString(),
                         'end_time' => Carbon::parse($item->eventAt)->addSeconds($item->duration)
-                            ->setTimezone('UTC')
                             ->toDateTimeString(),
                         'usage' => $this->formatUnit('internet', $item->dataAmount),
                         'cost' => $this->formatCost($item->transactionAmount)
@@ -250,7 +249,7 @@ class CustomerRoamingUsageService extends BaseService
                 $item = $usage_data->attributes;
                 if ($item) {
                     $sms_data [] = [
-                        'date' => Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString(),
+                        'date' => Carbon::parse($item->eventAt)->toDateTimeString(),
                         'number' => $item->calledNumber,
                         'is_outgoing' => true,
                         'usage' => $this->formatUnit('sms', $item->duration),

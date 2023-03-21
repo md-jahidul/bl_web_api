@@ -166,7 +166,7 @@ class CustomerSmsUsageService extends BaseService
                 if ($item) {
                     $sms_data [] = [
                         'date' => ($this->checkValidDateFormat($item->eventAt)) ?
-                            Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString() : null,
+                            Carbon::parse($item->eventAt)->toDateTimeString() : null,
                         'number' => $item->calledNumber,
                         'is_outgoing' => true,
                         'usage' => $this->formatUnit($item->duration),
@@ -188,7 +188,7 @@ class CustomerSmsUsageService extends BaseService
                 if ($item) {
                     $sms_data [] = [
                         'date' => ($this->checkValidDateFormat($item->eventAt)) ?
-                            Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString() : null,
+                            Carbon::parse($item->eventAt)->toDateTimeString() : null,
                         'number' => $item->callingNumber,
                         'is_outgoing' => false,
                         'usage' => $this->formatUnit($item->duration),
