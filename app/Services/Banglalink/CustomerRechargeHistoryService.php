@@ -214,7 +214,7 @@ class CustomerRechargeHistoryService extends BaseService
             foreach ($data as $item) {
                 if ($item) {
                     $recharge_data [] = [
-                        'date'          => Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString(),
+                        'date'          => Carbon::parse($item->eventAt)->toDateTimeString(),
                         'recharge_from' => $item->msisdn,
                         'amount'        => $item->transactionAmount,
                     ];
@@ -237,7 +237,7 @@ class CustomerRechargeHistoryService extends BaseService
             foreach ($data as $item) {
                 if ($item) {
                     $recharge_data [] = [
-                        'date'          => Carbon::parse($item->receivedAt)->setTimezone('UTC')->toDateTimeString(),
+                        'date'          => Carbon::parse($item->receivedAt)->toDateTimeString(),
                         'recharge_from' => null,
                         'amount'        => $item->paymentAmount,
                     ];

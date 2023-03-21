@@ -160,7 +160,7 @@ class CustomerCallUsageService extends BaseService
                 if ($item) {
                     $incoming_data [] = [
                         'date' => $this->checkValidDateFormat($item->eventAt) ?
-                            Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString() : null,
+                            Carbon::parse($item->eventAt)->toDateTimeString() : null,
                         'number' => $item->callingNumber,
                         'is_outgoing' => false,
                         'duration' => $this->formatUnit($item->duration),
@@ -183,7 +183,7 @@ class CustomerCallUsageService extends BaseService
                 if ($item) {
                     $outgoing_data [] = [
                         'date' => $this->checkValidDateFormat($item->eventAt) ?
-                            Carbon::parse($item->eventAt)->setTimezone('UTC')->toDateTimeString() : null,
+                            Carbon::parse($item->eventAt)->toDateTimeString() : null,
                         'number' => $item->calledNumber,
                         'is_outgoing' => true,
                         'duration' => $this->formatUnit($item->duration),
