@@ -14,6 +14,7 @@ use App\Models\DurationCategory;
 use App\Models\OfferCategory;
 use App\Models\SimCategory;
 use App\Models\TagCategory;
+use App\Repositories\AlBannerRepository;
 use App\Repositories\OfferCategoryRepository;
 use App\Repositories\ProductRepository;
 use App\Traits\CrudTrait;
@@ -37,6 +38,10 @@ class OfferCategoryService extends ApiBaseService
      * @var ImageFileViewerService
      */
     private $fileViewerService;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
     /**
      * OfferCategoryService constructor.
@@ -47,11 +52,13 @@ class OfferCategoryService extends ApiBaseService
     public function __construct(
         OfferCategoryRepository $offerCategoryRepository,
         ProductRepository $productRepository,
-        ImageFileViewerService $fileViewerService
+        ImageFileViewerService $fileViewerService,
+        AlBannerService $alBannerService
     ) {
         $this->offerCategoryRepository = $offerCategoryRepository;
         $this->productRepository = $productRepository;
         $this->fileViewerService = $fileViewerService;
+        $this->alBannerService = $alBannerService;
     }
 
     public function bindDynamicValues($obj, $json_data = 'offer_info', $data = null)
@@ -138,26 +145,23 @@ class OfferCategoryService extends ApiBaseService
 
         $duration = DurationCategory::all();
 
+        $banner = $this->alBannerService->getBanner(0, 'amar_offer');
+
+        $amarOfferBanner[] = [
+            'banner_image_url' => $banner->image ?? null,
+            'postpaid_banner_image_url' => null,
+            'url_slug' => 'amar-offer',
+            'url_slug_bn' => 'amar-offer',
+        ];
+
+        $offerData = array_merge($offer->toArray(), $amarOfferBanner);
+
         $data[] = [
                 'tag' => $tags,
                 'sim' => $sim,
-                'offer' => $offer,
+                'offer' => $offerData,
                 'duration' => $duration
             ];
-
-//        return response()->json(
-//            [
-//                'status' => 200,
-//                'success' => true,
-//                'message' => 'Data Found!',
-//                'data' => [
-//                    'tag' => $tags,
-//                    'sim' => $sim,
-//                    'offer' => $offer_final,
-//                    'duration' => $duration
-//                ]
-//            ]
-//        );
 
         return $this->sendSuccessResponse($data, 'Offer Categories');
     }
