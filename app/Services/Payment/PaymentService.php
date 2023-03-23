@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services\Banglalink;
+namespace App\Services\Payment;
+use App\Services\Banglalink\curl_init;
 use Illuminate\Support\Facades\Redis;
 
-class BaseService
+class PaymentBaseService
 {
 
     const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
@@ -25,15 +26,9 @@ class BaseService
      */
     protected function makeHeader()
     {
-        $client_token = Redis::get(self::IDP_TOKEN_REDIS_KEY);
-        $customer_token = app('request')->bearerToken();
-
         $header = [
-            'Accept: application/vnd.banglalink.apihub-v1.0+json',
-            'Content-Type: application/vnd.banglalink.apihub-v1.0+json',
-            'accept: application/json',
-            'client_authorization:' . $client_token,
-            'customer_authorization:' . $customer_token
+            'Content-Type' => 'application/json',
+            'Accept'     => 'application/json',
         ];
 
         return $header;
@@ -48,9 +43,9 @@ class BaseService
      * @param array $headers
      * @return string
      */
-    protected function get($url, $body = [], $headers = null)
+    protected function get($baseUrl, $url, $body = [], $headers = null)
     {
-        return $this->makeMethod('get', $url, $body, $headers);
+        return $this->makeMethod($baseUrl,'get', $url, $body, $headers);
     }
 
     /**
@@ -99,17 +94,17 @@ class BaseService
      * @param array $headers
      * @return string
      */
-    protected function makeMethod($method, $url, $body = [], $headers = null)
+    protected function makeMethod($baseUrl, $method, $url, $body = [], $headers = null)
     {
         $ch = curl_init();
         $headers = $headers ?: $this->makeHeader();
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        static::makeRequest($ch, $url, $body, $headers);
+        static::makeRequest($ch, $baseUrl, $url, $body, $headers);
         $result = curl_exec($ch);
         //dd($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+        dd($result);
         return ['response' => $result, 'status_code' => $httpCode];
     }
 
@@ -123,10 +118,9 @@ class BaseService
      * @param array $headers
      * @return string
      */
-    protected function makeRequest($ch, $url, $body, $headers)
+    protected function makeRequest($ch, $baseUrl, $url, $body, $headers)
     {
-        $url = $this->getHost() . $url;
-
+        $url = $baseUrl . $url;
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
