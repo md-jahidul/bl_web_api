@@ -1,131 +1,159 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: jahangir
+ * Date: 12/27/19
+ * Time: 12:00 PM
+ */
 
 namespace App\Services\Payment;
-use App\Services\Banglalink\curl_init;
+
+
+use App\Enums\HttpStatusCode;
+use App\Repositories\RechargeLogRepository;
+use App\Services\ApiBaseService;
+use App\Services\NumberValidationService;
+use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use GuzzleHttp\Exception\ClientException;
 
-class PaymentBaseService
+
+class PaymentService extends ApiBaseService
 {
+    /**
+     * @var PaymentService
+     */
+    private $paymentBaseService;
 
-    const IDP_TOKEN_REDIS_KEY = "ASSETLITE_IDP_TOKEN";
+    protected const OWN_PAYMENT_GATEWAYS_END_POINT = "/api/v1/payment-gateways";
+    protected const OWN_PAYMENT_END_POINT = "/api/v1/pay";
+    protected const SSL_PAYMENT_GATEWAYS_END_POINT = "/available-card";
 
     /**
-     * Return BL API Host
-     *
-     * @return mixed
+     * PaymentService constructor.
      */
-    protected function getHost()
-    {
-        return config('apiurl.bl_api_host');
+    public function __construct(
+        //
+    ) {
+        //
     }
 
     /**
-     * Make the header array with authentication.
-     *
-     * @return array
+     * @return JsonResponse|mixed
      */
-    protected function makeHeader()
+    public function paymentGateways()
     {
+        $sslRgwPaymentGateways = $this->sslPaymentGateways();
+        $ownRgwPaymentGateways = $this->ownRgwPaymentGateways();
+        $data = [
+            'own_rgw' => is_array($ownRgwPaymentGateways) ? $ownRgwPaymentGateways : $ownRgwPaymentGateways->getData(),
+            'ssl_rgw' => is_array($sslRgwPaymentGateways) ? $sslRgwPaymentGateways : $sslRgwPaymentGateways->getData()
+        ];
+        return $this->sendSuccessResponse($data, 'Payment gateways!!');
+    }
+
+    public function ownRgwPaymentGateways()
+    {
+        $baseURL = env('OWN_RGW_API_HOST', 'https://pay-test.banglalink.net');
         $header = [
-            'Content-Type' => 'application/json',
-            'Accept'     => 'application/json',
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept'     => 'application/json',
+                'cl-id' => env('OWN_RGW_CLIENT_ID'),
+                'cl-secret' => env('OWN_RGW_CLIENT_SECRET'),
+            ]
         ];
 
-        return $header;
-    }
-
-
-    /**
-     * Make CURL request for GET request.
-     *
-     * @param string $url
-     * @param array $body
-     * @param array $headers
-     * @return string
-     */
-    protected function get($baseUrl, $url, $body = [], $headers = null)
-    {
-        return $this->makeMethod($baseUrl,'get', $url, $body, $headers);
+        try {
+            $client = new Client(["base_uri" => $baseURL]);
+            $response = $client->get(self::OWN_PAYMENT_GATEWAYS_END_POINT, $header)->getBody()->getContents();
+            $response = json_decode($response, true);
+            return $response['data'];
+        } catch (\Exception $exception) {
+            Log::channel('paymentReqLog')->info('pgw_payment_gateway_error : ' . $exception->getMessage());
+            return $this->sendErrorResponse('Internal server Error', $exception->getMessage(), $exception->getCode());
+        }
     }
 
     /**
-     * Make CURL request for POST request.
-     *
-     * @param string $url
-     * @param array $body
-     * @param array $headers
-     * @return string
+     * @return JsonResponse|mixed|void
      */
-    protected function post($url, $body = [], $headers = null)
+    public function sslPaymentGateways()
     {
-        return $this->makeMethod('post', $url, $body, $headers);
+        $baseURL = env('SSL_API_HOST', 'https://core.easy.com.bd/api/v1/blweb');
+
+        $header = [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept'     => 'application/json',
+            ]
+        ];
+
+        try {
+            $client = new Client(["base_uri" => $baseURL]);
+            $response = $client->get(self::SSL_PAYMENT_GATEWAYS_END_POINT, $header);
+            if ($response->getStatusCode() == 200) {
+                return json_decode($response->getBody()->getContents(), true);
+            }
+        } catch (\Exception $exception) {
+            Log::channel('paymentReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
+            return $this->sendErrorResponse('Internal server Error', "PGW couldn't perform", $exception->getCode());
+        }
     }
 
-    /**
-     * Make CURL request for PUT request.
-     *
-     * @param string $url
-     * @param array $body
-     * @param array $headers
-     * @return string
-     */
-    protected function put($url, $body = [], $headers = [])
+    public function ownRgwPayment($data)
     {
-        return $this->makeMethod('put', $url, $body, $headers);
+        $baseURL = env('OWN_RGW_API_HOST', 'https://pay-test.banglalink.net');
+        //  $validatedCashbackAndIris = $this->getCashbackAndIrisMapping($data);
+        //  $curatedPaymentData = $this->curePaymentData($data, $validatedCashbackAndIris);
+        //  $data['recharge_data'] = $data;
+        //  $data['requester_msisdn'] = $requesterUserMsisdn;
+        //  dd($data['recharge_data']);
+        $client = new Client(["base_uri" => $baseURL]);
+
+        $options = [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept'     => 'application/json',
+                'cl-id' => env('OWN_RGW_CLIENT_ID'),
+                'cl-secret' => env('OWN_RGW_CLIENT_SECRET'),
+            ],
+            'json' => $data
+        ];
+
+        try {
+            $response = $client->post(self::OWN_PAYMENT_END_POINT, $options)->getBody()->getContents();
+            $this->logToDbInitiatePayment($data, $response);
+            $this->logToFile($options, $response);
+            return json_decode($response, true);
+        } catch (\Exception $exception) {
+            Log::channel('paymentReqLog')->info('pgw_error : ' . $exception->getMessage());
+            return $this->sendErrorResponse('Internal server error', "PGW couldn't perform", $exception->getCode());
+        }
     }
 
-    /**
-     * @param $url
-     * @param array $body
-     * @param array $headers
-     * @return string
-     */
-    protected function delete($url, $body = [], $headers = [])
+    private function logToDbInitiatePayment($req, $res)
     {
-        return $this->makeMethod('delete', $url, $body, $headers);
+        $res = is_array($res) ?  json_decode(json_encode($res)) : json_decode($res);
+
+        $data = [
+            // 'requester_msisdn' => $req['requester_msisdn'],
+            'initiate_status_code' => $res->statusCode,
+            'initiate_status' => $res->statusCode == 200 ? 'SUCCESSFUL' : 'FAILED',
+            'trx_id' => $res->statusCode == 200 ? $res->data->tran_id : '',
+            'gateway' => 'PGW',
+            'channel' => $req['recharge_platform'],
+            'recharge_amounts' => implode(',', collect($req['recharge_data'])->pluck('recharge_amount')->toArray()),
+            'msisdns' => implode(',', collect($req['recharge_data'])->pluck('mobile_number')->toArray()),
+            'total_payment_amount' => $res->statusCode == 200 ? $res->data->total_payment_amount : 0
+        ];
+        (new RechargeLogRepository)->create($data);
     }
 
-    /**
-     * Make CURL request for a HTTP request.
-     *
-     * @param string $method
-     * @param string $url
-     * @param array $body
-     * @param array $headers
-     * @return string
-     */
-    protected function makeMethod($baseUrl, $method, $url, $body = [], $headers = null)
+    private function logToFile($req, $res)
     {
-        $ch = curl_init();
-        $headers = $headers ?: $this->makeHeader();
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        static::makeRequest($ch, $baseUrl, $url, $body, $headers);
-        $result = curl_exec($ch);
-        //dd($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        dd($result);
-        return ['response' => $result, 'status_code' => $httpCode];
-    }
-
-
-    /**
-     * Make CURL object for HTTP request verbs.
-     *
-     * @param curl_init() $ch
-     * @param string $url
-     * @param array $body
-     * @param array $headers
-     * @return string
-     */
-    protected function makeRequest($ch, $baseUrl, $url, $body, $headers)
-    {
-        $url = $baseUrl . $url;
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+        Log::channel('pgwLogRec')->info('Req : ' . json_encode($req, JSON_PRETTY_PRINT) . 'Res : ' . $res);
     }
 }

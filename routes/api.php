@@ -76,13 +76,19 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     Route::get('recharge/pre-set-amount', 'API\V1\ProductController@preSetRechargeAmount');
 
-
+    // SSL Payment
     Route::post('ssl', 'API\V1\SslCommerzController@ssl');
     Route::get('ssl-api', 'API\V1\SslCommerzController@sslApi');
     Route::get('ssl/request/details', 'API\V1\SslCommerzController@getRequestDetails');
     Route::post('success', 'API\V1\SslCommerzController@success');
     Route::post('failure', 'API\V1\SslCommerzController@failure');
     Route::post('cancel', 'API\V1\SslCommerzController@cancel');
+
+    // Payment Gateways
+    Route::get('payment-gateways', 'API\V1\PaymentController@paymentGateways');
+
+    // Own Channel Payment
+    Route::post('pgw/initiate-payment', 'API\V1\PaymentController@ownRgwInitiatePayment');
 
     Route::get('ebl-pay', 'API\V1\EblPaymentApiController@postData');
     Route::get('ebl-pay/complete/{order_id}', 'API\V1\EblPaymentApiController@complete');

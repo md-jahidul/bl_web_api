@@ -94,6 +94,16 @@ return [
             'path' => storage_path('logs/lever_api.log'),
             'level' => 'info',
         ],
+        'pgwLogRec' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/pgw_log/pgw_request_log.log'),
+            'level' => 'info',
+        ],
+        'paymentReqLog' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/payment_log/request_fail_log.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];
