@@ -73,7 +73,7 @@ class PaymentService extends ApiBaseService
             return $response['data'];
         } catch (\Exception $exception) {
             Log::channel('paymentReqLog')->info('pgw_payment_gateway_error : ' . $exception->getMessage());
-            return $this->sendErrorResponse('Internal server Error', $exception->getMessage(), $exception->getCode());
+            return $this->sendErrorResponse('Internal server Error', $exception->getMessage(), 404);
         }
     }
 
@@ -99,18 +99,20 @@ class PaymentService extends ApiBaseService
             }
         } catch (\Exception $exception) {
             Log::channel('paymentReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
-            return $this->sendErrorResponse('Internal server Error', "PGW couldn't perform", $exception->getCode());
+            return $this->sendErrorResponse('Internal server Error', "PGW couldn't perform", 404);
         }
     }
 
     public function ownRgwPayment($data)
     {
         $baseURL = env('OWN_RGW_API_HOST', 'https://pay-test.banglalink.net');
+        //TODO: CashBack and Iris Offer
         //  $validatedCashbackAndIris = $this->getCashbackAndIrisMapping($data);
         //  $curatedPaymentData = $this->curePaymentData($data, $validatedCashbackAndIris);
         //  $data['recharge_data'] = $data;
         //  $data['requester_msisdn'] = $requesterUserMsisdn;
         //  dd($data['recharge_data']);
+
         $client = new Client(["base_uri" => $baseURL]);
 
         $options = [
@@ -130,7 +132,7 @@ class PaymentService extends ApiBaseService
             return json_decode($response, true);
         } catch (\Exception $exception) {
             Log::channel('paymentReqLog')->info('pgw_error : ' . $exception->getMessage());
-            return $this->sendErrorResponse('Internal server error', "PGW couldn't perform", $exception->getCode());
+            return $this->sendErrorResponse('Internal server error', "PGW couldn't perform", 404);
         }
     }
 
