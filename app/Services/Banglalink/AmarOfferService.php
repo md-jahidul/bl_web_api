@@ -411,12 +411,20 @@ class AmarOfferService extends BaseService
     public function getDetails($request, $offerType, $offerId)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
-        $customer_type = $infoBl->getData()->data->connectionType;
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
-        $bannerImage = $this->alBannerService->getBanner(0, "amar_offer");
 
-        $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
+        $body = array(
+            "channel" => "MYBLAPP",
+            "msisdn" => $customerInfo->msisdn,
+            "offerSubType" => "ALL",
+            "offerType" => "ALL",
+            "requestID" => $this->generateRequestID(),
+            "serviceType" => ucfirst($customerInfo->number_type)
+        );
+        $response_data = $this->post(self::AMAR_OFFER_API_ENDPOINT_V2, $body);
+//        $bannerImage = $this->amarOfferDetailsRepository
+//            ->findOneByProperties(['type' => self::BANNER_IMAGE], ['banner_image_url', 'banner_mobile_view', 'alt_text']);
+        $bannerImage = $this->alBannerService->getBanner(0, "amar_offer");
+        $data = $this->prepareAmarOfferListV2(json_decode($response_data['response']));
         $offer = collect($data)->where('offer_id', $offerId)->first();
         if ($response_data['status_code'] == 200 && !empty($offer)){
             $details = $this->amarOfferDetailsRepository->offerDetails($offerType)->toArray();
