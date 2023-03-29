@@ -9,8 +9,11 @@ use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
 use App\Models\MyBlProductTab;
+use App\Repositories\ConfigRepository;
+use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
 use App\Repositories\ProductBookmarkRepository;
+use App\Repositories\ProductDetailsSectionRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Banglalink\AmarOfferService;
 use App\Services\Banglalink\BalanceService;
@@ -57,6 +60,11 @@ class ProductService extends ApiBaseService
      */
     protected $blLoanProductService;
 
+    /**
+     * @var CustomerInfo
+     */
+    protected $customerInfo;
+
     /***
      * @var ProductBookmarkRepository
      */
@@ -69,9 +77,17 @@ class ProductService extends ApiBaseService
      */
     private $fourGLandingPageRepository;
     /**
+     * @var ConfigRepository
+     */
+    private $configRepository;
+    /**
      * @var AmarOfferService
      */
     private $amarOfferService;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
     /**
      * ProductService constructor.
@@ -94,9 +110,11 @@ class ProductService extends ApiBaseService
         BanglalinkLoanService $blLoanProductService,
         BalanceService $balanceService,
         FourGLandingPageRepository $fourGLandingPageRepository,
-        AmarOfferService $amarOfferService
-    )
-    {
+        ConfigRepository $configRepository,
+        AmarOfferService $amarOfferService,
+        AlBannerService $alBannerService,
+        ProductDetailsSectionRepository $productDetailsSectionRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
         $this->customerService = $customerService;
@@ -106,7 +124,10 @@ class ProductService extends ApiBaseService
         $this->responseFormatter = new ApiBaseService();
         $this->balanceService = $balanceService;
         $this->fourGLandingPageRepository = $fourGLandingPageRepository;
+        $this->configRepository = $configRepository;
         $this->amarOfferService = $amarOfferService;
+        $this->alBannerService = $alBannerService;
+        $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->setActionRepository($productRepository);
     }
 
@@ -178,15 +199,97 @@ class ProductService extends ApiBaseService
         return $data;
     }
 
-    public function trendingProduct()
+    public function trendingProduct($params = [])
     {
-        $products = $this->productRepository->showTrendingProduct();
-        foreach ($products as $product) {
-            $this->bindDynamicValues($product, 'offer_info', $product->productCore);
-            unset($product->productCore);
+
+        // $products = $this->productRepository->showTrendingProduct();
+
+        // foreach ($products as $product) {
+        //     $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+        //     unset($product->productCore);
+        // }
+
+        // return $products;
+
+        /**
+         * Shuvo-bs
+         */
+
+        $customerInfo = $params['customerInfo'] ?? null;
+        $customerAvailableProducts = $params['customerAvailableProducts'] ?? [];
+        $numberType  = ($customerInfo) ? $customerInfo->number_type : 'prepaid' ;
+
+        $offerType = ['internet', 'voice', 'bundles'];
+        $offerCategories =  OfferCategory::whereIn('alias', $offerType)->select('id', 'alias', 'name_en', 'name_bn')->get()?? [];
+        $offerIDArr = collect($offerCategories)->pluck('id');
+
+        try {
+            $item = [];
+            $data = [];
+            $allPacks = [];
+            // $products = $this->productRepository->simTypeProduct($type, $offerType);
+            $products = $this->productRepository->offerProductsForYou($numberType, $offerIDArr, $customerAvailableProducts);
+
+
+            if ($products) {
+                foreach ($products as $product) {
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
+                    unset($product->productCore);
+                }
+            }
+
+            foreach ($products as $offer) {
+                $pack = $offer->getAttributes();
+                // foreach ($offerCategories as $category) {
+                //     $item[$category->alias]['title_en'] = $category->name_en;
+                //     $item[$category->alias]['title_bn'] = $category->name_bn;
+                //     $item[$category->alias]['packs'][] = $pack;
+                // }
+                $item[$offer->offer_category->alias]['title_en'] = $offer->offer_category->name_en;
+                $item[$offer->offer_category->alias]['title_bn'] = $offer->offer_category->name_bn;
+                $item[$offer->offer_category->alias]['packs'][] = $pack;
+            }
+
+            $sortedData = collect($item);
+            foreach ($sortedData as $category => $pack) {
+                $data[] = [
+                    'type' => $category,
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'items' => array_values($pack['packs']) ?? []
+                ];
+            }
+
+//            $allPacks = $products->map(function($item) { return $item->getAttributes(); });
+            // if(!empty($data)) {
+            //     array_unshift($data, [
+            //         'type' => 'all',
+            //         'title_en' => 'All',
+            //         'title_bn' => Null,
+            //         'packs' => $allPacks->toArray() ?? []
+            //     ]);
+            // }
+
+            $amarOfferData = [];
+            if (request()->header('authorization')) {
+                $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+                if (!empty($amarOffers->getData()->data)) {
+                    $amarOfferData[] = [
+                        "type" => "amar-offer",
+                        "title_en" => "Amar Offer",
+                        "title_bn" => "আমার অফার",
+                        "items" => $amarOffers->getData()->data
+                    ];
+                }
+            }
+            return array_merge($data, $amarOfferData);
+
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
         }
 
-        return $products;
+
     }
 
     /**
@@ -298,13 +401,14 @@ class ProductService extends ApiBaseService
             if ($products) {
                 foreach ($products as $product) {
                     $productData = $product->productCore;
+                    $tag = $product->tag;
                     $this->bindDynamicValues($product, 'offer_info', $productData);
+                    $this->bindDynamicValues($product, 'offer_info', $tag);
                     unset($product->productCore);
                 }
             }
 
             foreach ($products as $offer) {
-
                 $pack = $offer->getAttributes();
                 $productTabs = $offer->productCore->detialTabs()->where('my_bl_product_tabs.platform', MyBlProductTab::PLATFORM)->get() ?? [];
 
@@ -328,11 +432,11 @@ class ProductService extends ApiBaseService
 
             $allPacks = $products->map(function($item) { return $item->getAttributes(); });
 
-            if(!empty($data)) {
+            if(!empty($allPacks)) {
                 array_unshift($data, [
                     'type' => 'all',
                     'title_en' => 'All',
-                    'title_bn' => Null,
+                    'title_bn' => "সকল",
                     'packs' => $allPacks->toArray() ?? []
                 ]);
             }
@@ -410,6 +514,28 @@ class ProductService extends ApiBaseService
         try {
             $productDetail = $this->productRepository->detailProducts($slug);
 
+            $sections = $this->productDetailsSectionRepository->section($productDetail->id);
+            foreach ($sections as $section){
+                ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
+            }
+
+            $data = $sections;
+            foreach ($sections as $sectionKey => $section) {
+
+                foreach ($section->components as $key => $component) {
+                    if ($component->component_type == "bondho_sim_offer") {
+                        $products = $this->productRepository->getProductById($component->other_attributes??[]);
+                        $productData = [];
+                        if (isset($products)){
+                            foreach ($products as $product) {
+                                $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
+                            }
+                        }
+                        $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
+                    }
+                }
+            }
+
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
 
@@ -455,11 +581,27 @@ class ProductService extends ApiBaseService
                 unset($productDetail->related_product);
                 unset($productDetail->productCore);
 
-                if( !empty($productDetail->product_details->banner_image_url) ){
-                    $productDetail->product_details->banner_image_url = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_url;
-                    $productDetail->product_details->banner_image_mobile = config('filesystems.image_host_url') . $productDetail->product_details->banner_image_mobile;
+
+                $offerType = [
+                    OfferType::INTERNET,
+                    OfferType::VOICE,
+                    OfferType::CALL_RATE,
+                    OfferType::RECHARGE_OFFER,
+                ];
+
+                if (in_array($productDetail->offer_category_id, $offerType)) {
+                    $banner = $this->alBannerService->getBanner($productDetail->id, 'product_details');
+                } else {
+                    $banner = $this->alBannerService->getBanner($productDetail->id, 'product_other_details');
                 }
 
+                unset($productDetail->offer_category);
+                $productDetail->product_details->banner_image_url = $banner->image ?? null;
+                $productDetail->product_details->banner_title_en = $banner->title_en ?? null;
+                $productDetail->product_details->banner_title_bn = $banner->title_bn ?? null;
+                $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
+                $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
+                $productDetail['section'] = $data;
                 return response()->success($productDetail, 'Data Found!');
             }
 
@@ -630,11 +772,15 @@ class ProductService extends ApiBaseService
         if ($internetOffers) {
             foreach ($internetOffers as $product) {
                 $this->bindDynamicValues($product, 'offer_info', $product->productCore);
+                $this->bindDynamicValues($product, 'offer_info', $product->tag);
                 unset($product->productCore);
+                unset($product->tag);
             }
             $collection = [
                 'component_title_en' => $fourGComponent->title_en,
                 'component_title_bn' => $fourGComponent->title_bn,
+                'component_description_en' => $fourGComponent->description_en,
+                'component_description_bn' => $fourGComponent->description_bn,
                 'current_page' => $internetOffers->currentPage(),
                 'products' => $internetOffers->items(),
                 'last_page' => $internetOffers->lastPage(),
@@ -649,5 +795,18 @@ class ProductService extends ApiBaseService
     public function getProductByCode($productId){
 
         return $this->productRepository->findOneByProperties(['product_code' => $productId]);
+    }
+
+    public function preSetRechargeAmount()
+    {
+        $defaultAmount = [20, 30, 50, 100, 150, 200];
+        $data = $this->configRepository->findOneByProperties(['key' => 'recharge_pre_set_amount'], ['key', 'value']);
+
+        if (isset($data)) {
+            $data = array_map('intval', explode(',', $data->value));
+        } else {
+            $data = $defaultAmount;
+        }
+        return $this->sendSuccessResponse($data, "Recharge preset amount");
     }
 }

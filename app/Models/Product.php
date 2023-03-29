@@ -22,6 +22,17 @@ class Product extends Model
         return $this->belongsTo(SimCategory::class);
     }
 
+    public function offer_category()
+    {
+        return $this->belongsTo(OfferCategory::class);
+    }
+
+
+    public function tag()
+    {
+        return $this->belongsTo(TagCategory::class, 'tag_category_id', 'id')
+            ->select('id', 'name_en as tag_name_en', 'name_bn as tag_name_bn');
+    }
 
     /**
      * @param $query

@@ -21,9 +21,9 @@ class FaqService extends ApiBaseService
         $this->faqCatRepository = $faqCategoryRepository;
     }
 
-    public function getQuestionAnswer($slug)
+    public function getQuestionAnswer($slug, $id)
     {
-        $data = $this->faqCatRepository->getData($slug);
+        $data = $this->faqCatRepository->getData($slug, $id);
         return $this->sendSuccessResponse($data, 'FAQ Question and Answer');
     }
 }

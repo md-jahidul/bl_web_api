@@ -19,6 +19,7 @@ class BusinessInternetRepository extends BaseRepository {
         $internet = $this->model->where('status', 1)
             ->whereNotNull('product_code')
             ->where('product_code', '!=', "")
+            ->with('tag_category')
             ->orderBy('sort');
 
         if ($homeShow == 1) {
@@ -54,6 +55,13 @@ class BusinessInternetRepository extends BaseRepository {
             $data[$count]['url_slug'] = $p->url_slug;
             $data[$count]['url_slug_bn'] = $p->url_slug_bn;
             $data[$count]['likes'] = $p->likes;
+
+            $data[$count]['name_en'] = $p->product_commercial_name_en;
+            $data[$count]['name_bn'] = $p->product_commercial_name_bn;
+            $data[$count]['tag_name_en'] = optional($p->tag_category)->name_en;
+            $data[$count]['tag_name_bn'] = optional($p->tag_category)->name_bn;
+
+
             $count++;
         }
 
@@ -83,12 +91,12 @@ class BusinessInternetRepository extends BaseRepository {
         $data['price_tk'] = $internet->mrp;
         $data['activation_ussd_code'] = $internet->activation_ussd_code;
         $data['balance_check_ussd_code'] = $internet->balance_check_ussd_code;
-        $data['banner_photo'] = $internet->banner_photo == "" ? "" : config('filesystems.image_host_url') . $internet->banner_photo;
-        $data['banner_photo_mobile'] = $internet->banner_image_mobile == "" ? "" : config('filesystems.image_host_url') . $internet->banner_image_mobile;
+        $data['banner_photo'] = $internet->banner_photo == "" ? "" : $internet->banner_photo;
+        $data['banner_photo_mobile'] = $internet->banner_image_mobile == "" ? "" : $internet->banner_image_mobile;
         $data['alt_text'] = $internet->alt_text;
         $data['package_details_en'] = $internet->package_details_en;
         $data['package_details_bn'] = $internet->package_details_bn;
-        $data['banner_photo'] = $internet->banner_photo != "" ? config('filesystems.image_host_url') . $internet->banner_photo : "";
+        $data['banner_photo'] = $internet->banner_photo != "" ? $internet->banner_photo : "";
         $data['alt_text'] = $internet->alt_text;
         $data['url_slug'] = $internet->url_slug;
         $data['url_slug_bn'] = $internet->url_slug_bn;

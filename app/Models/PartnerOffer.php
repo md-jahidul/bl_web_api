@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Partner;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PartnerOffer extends Model
 {
@@ -17,6 +18,11 @@ class PartnerOffer extends Model
     public function partner_offer_details()
     {
         return $this->hasOne(PartnerOfferDetail::class);
+    }
+
+    public function offer_category(): BelongsTo
+    {
+        return $this->belongsTo(PartnerCategory::class, 'partner_category_id', 'id');
     }
 
     protected $casts = [

@@ -73,61 +73,6 @@ class AppServiceDetailsController extends Controller
     public function appServiceDetailsComponent($slug)
     {
         return $this->appServiceDetailsService->getDetails($slug);
-
-//          try{
-//            $data = null;
-//            # get app and service product info
-//            $product_info = $this->appServiceDetailsService->getProductInformationByID($product_id);
-//
-//
-//            $additional_details = $this->appServiceDetailsService->getProductDetailsOthersInfo($product_id);
-//
-//            $data['tab_name'] = isset($product_info->appServiceTab->alias) ? $product_info->appServiceTab->alias : null;
-//
-//            $data['section_banner']['section_banner_info'] = isset($additional_details['banner']) ? $additional_details['banner'] : null;
-//
-//            $data['section_banner']['app_info'] = !empty($product_info) ? $product_info : null;
-//
-//            # Get App tab details component
-//            if( $product_info->appServiceTab->alias == 'app' ){
-//                # Get component "text with image right", "text with image bottom"
-//                $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
-//
-//                // $data['section_component']['app_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['text_with_image_right', 'text_with_image_bottom']);
-//
-//                // $data['section_component']['slider_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['slider_text_with_image_right']);
-//
-//                // $data['section_component']['others_view'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id, ['title_text_editor', 'video_with_text_right', 'multiple_image_banner']);
-//            }
-//            elseif( $product_info->appServiceTab->alias == 'vas' ){
-//
-//                $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
-//            }
-//            elseif( $product_info->appServiceTab->alias == 'financial' ){
-//
-//                $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
-//            }
-//            elseif( $product_info->appServiceTab->alias == 'others' ){
-//
-//                $data['section_component'] = $this->appServiceDetailsService->getDetailsSectionComponents($product_id);
-//            }
-//            else{
-//                $data['section_component'] = null;
-//            }
-//
-//
-//
-//            $data['related_products'] = isset($additional_details['releated_products']) ? $additional_details['releated_products'] : null;
-//
-//
-//            return response()->json(['status' => 'SUCCESS', "status_code" => 200,  "message" => "Data Found!", 'data' => $data], 200);
-//            // return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
-//          }
-//          catch(\Exception $e){
-//            // return response()->error('Data Not Found!');
-//            return response()->json(['status' => 'FAILED', "status_code" => 404,  "message" => "Data Not Found!", 'data' => []], 404);
-//          }
-
     }
 
     public function getReferralCode($mobileNo, $appId)

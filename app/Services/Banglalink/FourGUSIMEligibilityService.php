@@ -10,7 +10,7 @@ use App\Exceptions\IdpAuthException;
 use App\Repositories\AmarOfferDetailsRepository;
 use App\Services\ApiBaseService;
 use App\Services\CustomerService;
-
+use App\Repositories\FourGEligibilityMsgRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -25,54 +25,65 @@ class FourGUSIMEligibilityService extends BaseService
      * @var BanglalinkCustomerService
      */
     protected $blCustomerService;
+    /**
+     * @var FourGEligibilityMsgRepository
+     */
+    private $fourGEligibilityMsgRepository;
 
     protected const CUSTOMER_ENDPOINT   = "/customer-information/customer-information/";
 
     public function __construct(
         ApiBaseService $apiBaseService,
-        BanglalinkCustomerService $banglalinkCustomerService
+        BanglalinkCustomerService $banglalinkCustomerService,
+        FourGEligibilityMsgRepository $fourGEligibilityMsgRepository
     ) {
         $this->blCustomerService = $banglalinkCustomerService;
         $this->responseFormatter = $apiBaseService;
+        $this->fourGEligibilityMsgRepository = $fourGEligibilityMsgRepository;
     }
 
-    protected $eligibilityMessage = [
-        '4g_usim' => [
-            'message_en' => 'Dear customer, this is already a 4G USIM. Dial *121*3# to get the best internet offers and enjoy Banglalink’s FASTEST 4G anytime, anywhere!',
-            'message_bn' => 'প্রিয় গ্রাহক, আপনার সিমটি 4G। সেরা ইন্টারনেট অফার পেতে ডায়াল করুন *121*3# এবং বাংলালিংক ফুল স্পিড 4G উপভোগ করুন।',
-            'button_en' => 'Check Offer',
-            'button_bn' => 'ইন্টারনেট কিনুন এখনই',
-            'redirect_url' => '/banglalink-4g'
-        ],
-        "prepaid_non_eligible" => [
-            'message_en' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 250',
-            'message_bn' => 'প্রিয় গ্রাহক, এই অফারটি আপনার জন্য প্রযোজ্য নয়।  আপনি যেকোনো বাংলালিংক সিম রিপ্লেসমেন্ট পয়েন্ট থেকে ২৫০ টাকা রিপ্লেসমেন্ট চার্জ দিয়ে আপনার বর্তমান সিমটি বদলে 4G সিমটি নিতে পারবেন ।',
-            'button_en' => 'Close',
-            'button_bn' => 'বন্ধ',
-            'redirect_url' => '/banglalink-4g'
-        ],
-        "non_4g_prepaid" => [
-            'message_en' => 'Dear Customer, you are not using a 4G SIM. Dial*5000*40# or type “FREE4G” and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
-            'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে ডায়াল *5000*40# অথবা টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
-            'button_en' => 'Close',
-            'button_bn' => 'বন্ধ',
-            'redirect_url' => '/banglalink-4g'
-        ],
-        "postpaid_non_eligible" => [
-            'message_en' => 'Dear Customer please type "free4G" and send it to 5000 to know your eligibility or visit Banglalink Service Center',
-            'message_bn' => 'প্রিয় গ্রাহক, অনুগ্রহ করে টাইপ করুন "free4G" এবং আপনার উপযুক্ততা জানতে পাঠিয়ে দিন ৫০০০  নম্বরে অথবা ভিজিট করুন বাংলালিংক সার্ভিস সেন্টার ।',
-            'button_en' => 'Close',
-            'button_bn' => 'বন্ধ',
-            'redirect_url' => '/banglalink-4g'
-        ],
-        "non_4g_postpaid" => [
-            'message_en' => 'Dear Customer, you are not using a 4G SIM. Please type "FREE4G" and send to 2500 to know your 4G SIM replacement offer.',
-            'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
-            'button_en' => 'Close',
-            'button_bn' => 'বন্ধ',
-            'redirect_url' => '/banglalink-4g'
-        ]
-    ];
+    // protected $eligibilityMessage = [
+    //     '4g_usim' => [
+    //         'message_en' => 'Dear customer, this is already a 4G USIM. Dial *121*3# to get the best internet offers and enjoy Banglalink’s FASTEST 4G anytime, anywhere!',
+    //         'message_bn' => 'প্রিয় গ্রাহক, আপনার সিমটি 4G। সেরা ইন্টারনেট অফার পেতে ডায়াল করুন *121*3# এবং বাংলালিংক ফুল স্পিড 4G উপভোগ করুন।',
+    //         'button_en' => 'Check Offer',
+    //         'button_bn' => 'ইন্টারনেট কিনুন এখনই',
+    //         'redirect_url' => '/banglalink-4g'
+    //     ],
+    //     "prepaid_non_eligible" => [
+    //         'message_en' => 'Dear Customer, you are not eligible for this offer. You can replace your SIM to 4G SIM from any Banglalink SIM replacement point with replacement charge of BDT 250',
+    //         'message_bn' => 'প্রিয় গ্রাহক, এই অফারটি আপনার জন্য প্রযোজ্য নয়।  আপনি যেকোনো বাংলালিংক সিম রিপ্লেসমেন্ট পয়েন্ট থেকে ২৫০ টাকা রিপ্লেসমেন্ট চার্জ দিয়ে আপনার বর্তমান সিমটি বদলে 4G সিমটি নিতে পারবেন ।',
+    //         'button_en' => 'Close',
+    //         'button_bn' => 'বন্ধ',
+    //         'redirect_url' => '/banglalink-4g'
+    //     ],
+    //     "non_4g_prepaid" => [
+    //         'message_en' => 'Dear Customer, you are not using a 4G SIM. Dial*5000*40# or type “FREE4G” and send it to 2500 from your Banglalink number to know your 4G SIM replacement offer.',
+    //         'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে ডায়াল *5000*40# অথবা টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
+    //         'button_en' => 'Close',
+    //         'button_bn' => 'বন্ধ',
+    //         'redirect_url' => '/banglalink-4g'
+    //     ],
+    //     "postpaid_non_eligible" => [
+    //         'message_en' => 'Dear Customer please type "free4G" and send it to 5000 to know your eligibility or visit Banglalink Service Center',
+    //         'message_bn' => 'প্রিয় গ্রাহক, অনুগ্রহ করে টাইপ করুন "free4G" এবং আপনার উপযুক্ততা জানতে পাঠিয়ে দিন ৫০০০  নম্বরে অথবা ভিজিট করুন বাংলালিংক সার্ভিস সেন্টার ।',
+    //         'button_en' => 'Close',
+    //         'button_bn' => 'বন্ধ',
+    //         'redirect_url' => '/banglalink-4g'
+    //     ],
+    //     "non_4g_postpaid" => [
+    //         'message_en' => 'Dear Customer, you are not using a 4G SIM. Please type "FREE4G" and send to 2500 to know your 4G SIM replacement offer.',
+    //         'message_bn' => 'প্রিয় গ্রাহক, আপনি 4G সিম ব্যবহার করছেন না। 4G সিম রিপ্লেসমেন্ট অফার জানতে টাইপ করুন “free4g” এবং পাঠিয়ে দিন 2500 নাম্বারে |',
+    //         'button_en' => 'Close',
+    //         'button_bn' => 'বন্ধ',
+    //         'redirect_url' => '/banglalink-4g'
+    //     ]
+    // ];
+
+    protected function eligibilityMessage($key) {
+        $data = $this->fourGEligibilityMsgRepository->findOneByProperties(['key' => $key]);
+        return $data->other_attributes ?? null;
+    }
 
     public function getSIMCardsUrl($customerId)
     {
@@ -116,18 +127,18 @@ class FourGUSIMEligibilityService extends BaseService
             {
                 $connectionType = $this->connectionType($customerId);
                 if ($connectionType['status'] == "4G") {
-                    $data = $this->eligibilityMessage['4g_usim'];
+                    $data = $this->eligibilityMessage('4g_usim');
                     $data['customer_type'] = $customer_type;
                     // Use Test perpase
                     $data['status'] = $connectionType['status'];
                 } else {
-                    $data = ($customer_type == "PREPAID") ? $this->eligibilityMessage['non_4g_prepaid'] : $this->eligibilityMessage['non_4g_postpaid'];
+                    $data = ($customer_type == "PREPAID") ? $this->eligibilityMessage('non_4g_prepaid') : $this->eligibilityMessage('non_4g_postpaid');
                     // Use Test perpase
                     $data['status'] = $connectionType['status'];
                     $data['customer_type'] = $customer_type;
                 }
             } else {
-                $data = ($customer_type == "PREPAID") ? $this->eligibilityMessage['prepaid_non_eligible'] : $this->eligibilityMessage['postpaid_non_eligible'];
+                $data = ($customer_type == "PREPAID") ? $this->eligibilityMessage('prepaid_non_eligible') : $this->eligibilityMessage('postpaid_non_eligible');
                 // Use Test perpuse
                 $data['customer_type'] = $customer_type;
             }

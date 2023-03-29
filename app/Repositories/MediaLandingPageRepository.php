@@ -14,4 +14,11 @@ use App\Models\MediaLandingPage;
 class MediaLandingPageRepository extends BaseRepository
 {
     public $modelName = MediaLandingPage::class;
+
+    public function getDataByRefType($referenceType)
+    {
+        return $this->model->where('reference_type', $referenceType)
+            ->orderBy('display_order', 'ASC')
+            ->get();
+    }
 }

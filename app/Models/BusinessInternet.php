@@ -11,4 +11,9 @@ class BusinessInternet extends Model
      * @var string
      */
     protected $table = 'business_internet_packages';
+
+    public function tag_category()
+    {
+        return $this->belongsTo(TagCategory::class);
+    }
 }

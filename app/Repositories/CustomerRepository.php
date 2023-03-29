@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Customer;
+use Illuminate\Support\Facades\Log;
+use mysql_xdevapi\Exception;
 
 /**
  * Class CustomerRepository
@@ -54,5 +56,18 @@ class CustomerRepository extends BaseRepository
         $user->save();
 
         return $user;
+    }
+
+    /***
+     * @param $msisdn
+     * @param $customer_account_id
+     */
+    public function updateCustomerAccountId($msisdn, $customer_account_id)
+    {
+        try {
+            $this->model->where('msisdn', $msisdn)->update(['customer_account_id' => $customer_account_id]);
+        } catch (Exception $exception) {
+            Log::info('User Update Failed: '. $exception->getMessage());
+        }
     }
 }
