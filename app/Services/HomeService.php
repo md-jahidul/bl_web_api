@@ -141,7 +141,7 @@ class HomeService extends ApiBaseService
         return $shortCode;
     }
 
-    public function makeResource($requests, $component) { {
+    public function makeResource($requests, $component) {
         $result = [];
 
         foreach ($requests as $request) {
@@ -189,7 +189,6 @@ class HomeService extends ApiBaseService
             }
         }
         return $result;
-    }
     }
 
     public function getQuickLaunchData($component) {
