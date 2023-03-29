@@ -273,7 +273,7 @@ class ProductService extends ApiBaseService
 
             $amarOfferData = [];
             if (request()->header('authorization')) {
-                $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+                $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
                 if (!empty($amarOffers->getData()->data)) {
                     $amarOfferData[] = [
                         "type" => "amar-offer",
@@ -288,8 +288,6 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
-
-
     }
 
     /**
