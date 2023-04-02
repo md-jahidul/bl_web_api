@@ -94,6 +94,12 @@ return [
             'path' => storage_path('logs/lever_api.log'),
             'level' => 'info',
         ],
+        'amarOffer' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/amarOffer/amar_offer_log.log'),
+            'level' => 'info',
+            'days' => 5,
+        ],
     ],
 
 ];

@@ -57,6 +57,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferList');
     Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOffer');
     Route::get('amar-offer/details/{offerType}/{offerId}', 'API\V1\AmarOfferController@amarOfferDetails');
+
     Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
     Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');
 
@@ -366,5 +367,10 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 });
 
+Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
+    //AMAR OFFER ========================================
+    Route::get('amar-offer', 'API\V1\AmarOfferController@getAmarOfferListV2');
+    Route::post('amar-offer/buy', 'API\V1\AmarOfferController@buyAmarOfferV2');
+});
 
 //Route::get('/{model}/{fileName}', 'API\V1\ImageFileViewerController@bannerImageWeb');
