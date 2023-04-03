@@ -284,8 +284,7 @@ class AmarOfferService extends BaseService
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $body = array(
             "channel" => "MYBLAPP",
-//            "msisdn" => $customerInfo->msisdn,
-            "msisdn" => "8801409900110",
+            "msisdn" => $customerInfo->msisdn,
             "offerSubType" => "ALL",
             "offerType" => "ALL",
             "requestID" => $this->generateRequestID(),
@@ -297,9 +296,7 @@ class AmarOfferService extends BaseService
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 
-        if ($responseData['status_code'] == 500){
-            return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
-        }
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
     }
 
     public function getAmarOfferDetails($type)
@@ -414,12 +411,19 @@ class AmarOfferService extends BaseService
     public function getDetails($request, $offerType, $offerId)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
-        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
-        $customer_type = $infoBl->getData()->data->connectionType;
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($customerInfo->msisdn, 3), $customer_type));
+
+        $body = array(
+            "channel" => "MYBLAPP",
+            "msisdn" => $customerInfo->msisdn,
+            "offerSubType" => "ALL",
+            "offerType" => "ALL",
+            "requestID" => $this->generateRequestID(),
+            "serviceType" => ucfirst($customerInfo->number_type)
+        );
+        $response_data = $this->post(self::AMAR_OFFER_API_ENDPOINT_V2, $body);
         $bannerImage = $this->alBannerService->getBanner(0, "amar_offer");
 
-        $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
+        $data = $this->prepareAmarOfferListV2(json_decode($response_data['response']));
         $offer = collect($data)->where('offer_id', $offerId)->first();
         if ($response_data['status_code'] == 200 && !empty($offer)){
             $details = $this->amarOfferDetailsRepository->offerDetails($offerType)->toArray();

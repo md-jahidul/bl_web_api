@@ -273,7 +273,7 @@ class ProductService extends ApiBaseService
 
             $amarOfferData = [];
             if (request()->header('authorization')) {
-                $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+                $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
                 if (!empty($amarOffers->getData()->data)) {
                     $amarOfferData[] = [
                         "type" => "amar-offer",
@@ -288,8 +288,6 @@ class ProductService extends ApiBaseService
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
         }
-
-
     }
 
     /**
@@ -337,8 +335,10 @@ class ProductService extends ApiBaseService
         }
     }
 
-    public function prepareAmarOffer(){
-        $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+    public function prepareAmarOffer()
+    {
+        //  $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+        $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
 
         if ($amarOffers->getData()->status_code == 200) {
             $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
