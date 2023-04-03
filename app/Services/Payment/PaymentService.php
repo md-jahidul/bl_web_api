@@ -113,6 +113,13 @@ class PaymentService extends ApiBaseService
         //  $data['requester_msisdn'] = $requesterUserMsisdn;
         //  dd($data['recharge_data']);
 
+        $dataMod = array_map(function ($value) {
+            $value['mobile_number'] = "88" . $value['mobile_number'];
+            return $value;
+        }, $data['recharge_data']);
+
+        $data['recharge_data'] = $dataMod;
+
         $client = new Client(["base_uri" => $baseURL]);
 
         $options = [
