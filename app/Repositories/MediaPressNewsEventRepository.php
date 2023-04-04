@@ -60,7 +60,6 @@ class MediaPressNewsEventRepository extends BaseRepository
     public function landingDataByRefType($postRefType, $id = [], $pagination = false)
     {
         $data = $this->model
-            ->latest()
             ->where('reference_type', $postRefType)
             ->with('mediaNewsCategory')
             ->select(
@@ -82,7 +81,8 @@ class MediaPressNewsEventRepository extends BaseRepository
                 'tag_bn', 'url_slug_en', 'url_slug_bn'
             )
             ->where('status', 1)
-            ->whereIn('id', $id);
+            ->whereIn('id', $id)
+            ->orderBy('date', 'DESC');
 
         if ($pagination) {
            return $data->paginate(6);
@@ -93,7 +93,6 @@ class MediaPressNewsEventRepository extends BaseRepository
     public function filterArchive($postRefType, $param,$limit)
     {
         $q = $this->model
-            ->latest()
             ->select('title_en', 'title_bn',
                 'short_details_en', 'short_details_bn',
                 'long_details_en', 'long_details_bn',
@@ -112,9 +111,9 @@ class MediaPressNewsEventRepository extends BaseRepository
             if(!empty($param['year']) && !empty($param['month'])){
                 $q->whereRaw("DATE_FORMAT(date,'%Y-%m') = '".$param['year']."-".$param['month']."'");
             }
-        $data = $q->where('status', 1)
-        ->paginate($limit);
-        return $data;
+        return $q->where('status', 1)
+            ->orderBy('date', 'DESC')
+            ->paginate($limit);
     }
 
     public function filterByDate($moduleType, $from, $to)
