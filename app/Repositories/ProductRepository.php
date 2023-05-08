@@ -36,12 +36,22 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
+        // Internet, Voice, Bundle
+        $multiCat =  ["1", "2", "3"];
 
         return $this->model
             ->where('status', 1)
             ->where('offer_category_id', $offerTypeById)
             ->where('special_product', 0)
             ->startEndDate()
+            ->orWhere(function ($q) use ($multiCat, $offerTypeById) {
+                foreach ($multiCat as $cat) {
+                    $q->orWhereJsonContains('show_in_multi_cat', $cat)
+                        ->where('status', 1)
+                        ->where('special_product', 0)
+                        ->startEndDate();
+                }
+            })
             ->select(
                 'products.id',
                 'products.product_code',
@@ -65,7 +75,8 @@ class ProductRepository extends BaseRepository
                 'products.like',
                 'products.validity_postpaid',
                 'products.offer_info',
-                'products.product_image'
+                'products.product_image',
+                'products.show_in_multi_cat'
             )
             ->with('tag', 'productCore.detialTabs')
             ->productCore()
