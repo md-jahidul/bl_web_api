@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use App\Enums\OfferType;
 use App\Models\AlCoreProduct;
 use App\Models\OfferCategory;
 use App\Models\Product;
@@ -36,8 +37,15 @@ class ProductRepository extends BaseRepository
     public function simTypeProduct($type, $offerType)
     {
         $offerTypeById = $this->getOfferTypeId($offerType);
-        // Internet, Voice, Bundle
-        $multiCat =  ["1", "2", "3"];
+
+        $internet = OfferType::INTERNET;
+        $voice = OfferType::VOICE;
+        $bundle = OfferType::BUNDLES;
+        $callRate = OfferType::CALL_RATE;
+        $bondhoSIM = OfferType::BONDHO_SIM;
+        $newSIMOffer = OfferType::NEW_SIM_OFFICE;
+        $rechargeOffer = OfferType::RECHARGE_OFFER;
+        $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer"];
 
         return $this->model
             ->where('status', 1)
