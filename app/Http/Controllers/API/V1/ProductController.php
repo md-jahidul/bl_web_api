@@ -188,4 +188,9 @@ class ProductController extends Controller
     {
         return $this->productService->preSetRechargeAmount();
     }
+
+    public function getFallbackOffers(Request $request)
+    {
+        return $this->productService->fallbackOffers($request);
+    }
 }
