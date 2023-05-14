@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\OfferType;
 use App\Exceptions\IdpAuthException;
+use App\Models\AlCoreProduct;
 use App\Models\Product;
 use App\Models\ProductCore;
 use App\Http\Resources\ProductCoreResource;
@@ -20,11 +21,13 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
+use App\Services\Banglalink\CustomerAvailableProductsService;
 use App\Traits\CrudTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 
 class ProductService extends ApiBaseService
 {
@@ -88,6 +91,10 @@ class ProductService extends ApiBaseService
      * @var AlBannerService
      */
     private $alBannerService;
+    /**
+     * @var CustomerAvailableProductsService
+     */
+    private $customerAvailableProductsService;
 
     /**
      * ProductService constructor.
@@ -113,7 +120,8 @@ class ProductService extends ApiBaseService
         ConfigRepository $configRepository,
         AmarOfferService $amarOfferService,
         AlBannerService $alBannerService,
-        ProductDetailsSectionRepository $productDetailsSectionRepository
+        ProductDetailsSectionRepository $productDetailsSectionRepository,
+        CustomerAvailableProductsService $customerAvailableProductsService
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -128,6 +136,7 @@ class ProductService extends ApiBaseService
         $this->amarOfferService = $amarOfferService;
         $this->alBannerService = $alBannerService;
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
+        $this->customerAvailableProductsService = $customerAvailableProductsService;
         $this->setActionRepository($productRepository);
     }
 
@@ -806,5 +815,71 @@ class ProductService extends ApiBaseService
             $data = $defaultAmount;
         }
         return $this->sendSuccessResponse($data, "Recharge preset amount");
+    }
+
+    public function fallOfferProcess(AlCoreProduct $requestedProduct, $customerAvailableProducts, $balance): array
+    {
+        $products = AlCoreProduct::whereHas(
+            'product',
+            function ($q) {
+                $q->where('status', 1)
+                ->where('status', 1)
+                ->where('special_product', 0)
+                ->startEndDate();
+            }
+        )
+        ->with('product')
+        ->where('content_type', $requestedProduct->content_type)
+        ->where('mrp_price', '<=', $balance)
+        ->limit(5)
+        ->orderBy('mrp_price', 'DESC')
+        ->get()
+        ->filter(function ($item) use ($customerAvailableProducts) {
+            return in_array($item->product_code, $customerAvailableProducts, false);
+        });
+
+        $fallbackProducts = [];
+        foreach ($products as $product) {
+            $fallbackProducts[] = [
+                "name_en" => $product->commercial_name_en,
+                "name_bn" => $product->commercial_name_en,
+                "rate_cutter_unit" => $product->rate_cutter_unit,
+                "rate_cutter_offer" => $product->rate_cutter_offer,
+                "price_tk" => $product->price_tk,
+                "validity_days" => $product->validity_days,
+                "validity_unit" => $product->validity_unit,
+                "internet_volume_mb" => $product->internet_volume_mb,
+                "sms_volume" => $product->sms_volume,
+                "minute_volume" => $product->minute_volume,
+                "callrate_offer" => $product->callrate_offer,
+                "call_rate_unit" => $product->call_rate_unit,
+                "sms_rate_offer" => $product->sms_rate_offer,
+                "product_code" => $product->product_code,
+                "renew_product_code" => $product->renew_product_code,
+                "recharge_product_code" => $product->recharge_product_code,
+                "sd_vat_tax_en" => $product->sd_vat_tax_en,
+                "sd_vat_tax_bn" => $product->sd_vat_tax_bn
+            ];
+        }
+
+        return $fallbackProducts;
+    }
+
+    public function fallbackOffers($request)
+    {
+        $data = [];
+        $customer = $this->customerService->getAuthenticateCustomer($request);
+
+        $product = AlCoreProduct::where('product_code', $request->product_code)->select('mrp_price', 'content_type')->first();
+        $customerId = $customer->customer_account_id;
+
+        $balance = $this->balanceService->getPrepaidBalance($customerId);
+        $productPrice = $product->mrp_price;
+
+        if ($productPrice > $balance) {
+            $availableProducts = $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerId);
+            $data = $this->fallOfferProcess($product, $availableProducts, $balance);
+        }
+        return $this->sendSuccessResponse($data, 'Fall back offers');
     }
 }

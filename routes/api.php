@@ -407,6 +407,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('usage-history/roaming/internet', 'API\V1\RoamingUsageHistoryController@getDataUsageHistory'
     );
 //    Route::get('usage-history/roaming', 'API\V1\RoamingUsageHistoryController@getSummaryUsageHistory');
+
+    // Fallback Offer
+    Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
