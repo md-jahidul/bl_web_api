@@ -111,8 +111,8 @@ class SearchService extends BaseService {
     }
 
     public function searchData($keyword) {
-
         $keywords = $this->searchRepository->searchSuggestion($keyword);
+
         // $keywords = $this->adTechRepository->getAdTech('search_modal');
         $adTech = $this->adTechRepository->getSearchAdTech('search_modal');
         // return $keywords = $this->searchRepository->searchSuggestion($keyword);
@@ -164,6 +164,9 @@ class SearchService extends BaseService {
         //     $catName = $k;
         // }
         $response = [];
+
+        $response['search_result'] = $keywords;
+
         $count = 0;
         foreach ($keywords as $k => $val) {
             if ($val->product_code != "") {
@@ -221,8 +224,8 @@ class SearchService extends BaseService {
         $response['keyword_sections']['adTech'] = $adTech;
 
 
-        
-        
+
+
 
         return $this->apiBaseService->sendSuccessResponse($response, 'Search Data');
     }
