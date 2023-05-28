@@ -882,4 +882,69 @@ class ProductService extends ApiBaseService
         }
         return $this->sendSuccessResponse($data, 'Fall back offers');
     }
+
+    public function validityUnitGenerator($validityUnit, $freeTest)
+    {
+        $freeTxtEn = null;
+        $freeTxtBn = null;
+
+        if ($validityUnit == "free_text") {
+            $freeTxtEn = $freeTest['validity_free_text_en'] ?? null;
+            $freeTxtBn = $freeTest['validity_free_text_bn'] ?? null;
+        }
+
+        $validityUnits = [
+            'hour'  => ['en' => 'Hour', 'bn' => 'ঘন্টা'],
+            'hours' => ['en' => 'Hours', 'bn' => 'ঘন্টা'],
+            'day'   => ['en' => 'Day', 'bn' => 'দিন'],
+            'days'  => ['en' => 'Days', 'bn' => 'দিন'],
+            'month' => ['en' => 'Month', 'bn' => 'মাস'],
+            'months' => ['en' => 'Months', 'bn' => 'মাস'],
+            'year'  => ['en' => 'Year', 'bn' => 'বছর'],
+            'years'  => ['en' => 'Years', 'bn' => 'বছর'],
+            'free_text' => ['en' => $freeTxtEn, 'bn' => $freeTxtBn]
+        ];
+        return $validityUnits[$validityUnit];
+    }
+
+    public function trendingOffers()
+    {
+        $products = $this->productRepository->showTrendingProduct();
+        $data = [];
+        foreach ($products as $product) {
+            if ($product->sim_category_id == 1) {
+                $urlEn = "/prepaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
+                $urlBn = "/প্রিপেইড/" . $product->offer_category->url_slug_bn . "/". $product->url_slug_bn;
+            } else {
+                $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
+                $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
+            }
+
+            $data[] = [
+                'product_code' => $product->product_code,
+                'commercial_title_en' => $product->commercial_name_en,
+                'commercial_title_bn' => $product->commercial_name_bn,
+                'data_volume' => $product->productCore->internet_volume_mb,
+                'data_volume_unit_en' => ($product->productCore->internet_volume_mb > 1024) ? "MB" : "GB",
+                'data_volume_unit_bn' => ($product->productCore->internet_volume_mb > 1024) ? "এমবি" : "জিবি",
+                'minute_volume' => $product->productCore->minute_volume,
+                'minute_volume_unit_en' => "Min",
+                'minute_volume_unit_bn' => "মিনিট",
+                'sms_volume' => $product->productCore->sms_volume,
+                'sms_volume_unit_en' => "SMS",
+                'sms_volume_unit_bn' => "এসএমএস",
+                'call_rate_offer' => $product->productCore->callrate_offer,
+                'call_rate_unit_en' => $product->productCore->call_rate_unit,
+                'call_rate_unit_bn' => $product->productCore->call_rate_unit_bn,
+                'validity' => $product->productCore->validity_days,
+                'validity_unit_en' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['en'],
+                'validity_unit_bn' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['bn'],
+                'tag_name_en' => optional($product->tag)->tag_name_en,
+                'tag_name_bn' => optional($product->tag)->tag_name_bn,
+                'url_en' => $urlEn,
+                'url_bn' => $urlBn,
+            ];
+        }
+        return $this->sendSuccessResponse($data, "Trending offers");
+    }
 }

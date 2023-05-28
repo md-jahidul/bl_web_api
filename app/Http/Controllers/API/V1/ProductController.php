@@ -197,4 +197,9 @@ class ProductController extends Controller
     {
         return $this->productService->fallbackOffers($request);
     }
+
+    public function eShopTrendingOffers()
+    {
+        return $this->productService->trendingOffers();
+    }
 }

@@ -410,6 +410,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Fallback Offer
     Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
+    //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+    //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    // E-shop Trending Offer
+    Route::get('trending-offer', 'API\V1\ProductController@eShopTrendingOffers');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
