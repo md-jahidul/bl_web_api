@@ -52,6 +52,7 @@ class Product extends Model
                 'validity_unit',
                 'internet_volume_mb',
                 'sms_volume',
+                'sms_rate_unit',
                 'minute_volume',
                 'call_rate as callrate_offer',
                 'call_rate_unit',

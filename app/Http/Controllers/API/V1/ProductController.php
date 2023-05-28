@@ -188,4 +188,9 @@ class ProductController extends Controller
     {
         return $this->productService->preSetRechargeAmount();
     }
+
+    public function eShopTrendingOffers()
+    {
+        return $this->productService->trendingOffers();
+    }
 }
