@@ -847,6 +847,9 @@ class ProductService extends ApiBaseService
 
             $data[] = [
                 'product_code' => $product->product_code,
+                'offer_type_en' => $product->offer_category->name_en,
+                'offer_type_bn' => $product->offer_category->name_bn,
+                'offer_alias' => $product->offer_category->alias,
                 'commercial_title_en' => $product->commercial_name_en,
                 'commercial_title_bn' => $product->commercial_name_bn,
                 'data_volume' => $product->productCore->internet_volume_mb,
