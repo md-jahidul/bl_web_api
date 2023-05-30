@@ -835,44 +835,64 @@ class ProductService extends ApiBaseService
     public function trendingOffers()
     {
         $products = $this->productRepository->showTrendingProduct();
-        $data = [];
         foreach ($products as $product) {
             if ($product->sim_category_id == 1) {
-                $urlEn = "/prepaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
-                $urlBn = "/প্রিপেইড/" . $product->offer_category->url_slug_bn . "/". $product->url_slug_bn;
+                $prepaid[] = $this->productAttrPrepare($product);
             } else {
-                $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
-                $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
+                $postpaid[] = $this->productAttrPrepare($product);
             }
-
-            $data[] = [
-                'product_code' => $product->product_code,
-                'offer_type_en' => $product->offer_category->name_en,
-                'offer_type_bn' => $product->offer_category->name_bn,
-                'offer_alias' => $product->offer_category->alias,
-                'title_en' => $product->name_en,
-                'title_bn' => $product->name_bn,
-                'data_volume' => $product->productCore->internet_volume_mb,
-                'data_volume_unit_en' => ($product->productCore->internet_volume_mb > 1024) ? "MB" : "GB",
-                'data_volume_unit_bn' => ($product->productCore->internet_volume_mb > 1024) ? "এমবি" : "জিবি",
-                'minute_volume' => $product->productCore->minute_volume,
-                'minute_volume_unit_en' => "Min",
-                'minute_volume_unit_bn' => "মিনিট",
-                'sms_volume' => $product->productCore->sms_volume,
-                'sms_volume_unit_en' => "SMS",
-                'sms_volume_unit_bn' => "এসএমএস",
-                'call_rate_offer' => $product->productCore->callrate_offer,
-                'call_rate_unit_en' => $product->productCore->call_rate_unit,
-                'call_rate_unit_bn' => $product->productCore->call_rate_unit_bn,
-                'validity' => $product->productCore->validity_days,
-                'validity_unit_en' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['en'],
-                'validity_unit_bn' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['bn'],
-                'tag_name_en' => optional($product->tag)->tag_name_en,
-                'tag_name_bn' => optional($product->tag)->tag_name_bn,
-                'url_en' => $urlEn,
-                'url_bn' => $urlBn,
-            ];
         }
+        $data = [
+            [
+                'title_en' => "Prepaid",
+                'title_bn' => "প্রিপেইড",
+                'offers' => $prepaid ?? []
+            ],
+            [
+                'title_en' => "Postpaid",
+                'title_bn' => "পোস্টপেইড",
+                'offers' => $postpaid ?? []
+            ]
+        ];
         return $this->sendSuccessResponse($data, "Trending offers");
+    }
+
+    public function productAttrPrepare($product)
+    {
+        if ($product->sim_category_id == 1) {
+            $urlEn = "/prepaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
+            $urlBn = "/প্রিপেইড/" . $product->offer_category->url_slug_bn . "/". $product->url_slug_bn;
+        } else {
+            $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
+            $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
+        }
+        return [
+            'product_code' => $product->product_code,
+            'offer_type_en' => $product->offer_category->name_en,
+            'offer_type_bn' => $product->offer_category->name_bn,
+            'offer_alias' => $product->offer_category->alias,
+            'title_en' => $product->name_en,
+            'title_bn' => $product->name_bn,
+            'data_volume' => $product->productCore->internet_volume_mb,
+            'data_volume_unit_en' => ($product->productCore->internet_volume_mb > 1024) ? "MB" : "GB",
+            'data_volume_unit_bn' => ($product->productCore->internet_volume_mb > 1024) ? "এমবি" : "জিবি",
+            'minute_volume' => $product->productCore->minute_volume,
+            'minute_volume_unit_en' => "Min",
+            'minute_volume_unit_bn' => "মিনিট",
+            'sms_volume' => $product->productCore->sms_volume,
+            'sms_volume_unit_en' => "SMS",
+            'sms_volume_unit_bn' => "এসএমএস",
+            'call_rate_offer' => $product->productCore->callrate_offer,
+            'call_rate_unit_en' => $product->productCore->call_rate_unit,
+            'call_rate_unit_bn' => $product->productCore->call_rate_unit_bn,
+            'price' => $product->productCore->price_tk,
+            'validity' => $product->productCore->validity_days,
+            'validity_unit_en' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['en'],
+            'validity_unit_bn' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['bn'],
+            'tag_name_en' => optional($product->tag)->tag_name_en,
+            'tag_name_bn' => optional($product->tag)->tag_name_bn,
+            'url_en' => $urlEn,
+            'url_bn' => $urlBn,
+        ];
     }
 }
