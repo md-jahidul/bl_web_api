@@ -72,8 +72,6 @@ class SearchService extends BaseService {
             'others' => "Others"
         );
 
-
-
         $data = [];
         $response = [];
         $response['more_result'] = 0;
@@ -111,6 +109,9 @@ class SearchService extends BaseService {
     }
 
     public function searchData($keyword) {
+
+        $keyword = str_replace(['-', '_', '\'', '@'], ' ', $keyword->keyword);
+
         $keywords = $this->searchRepository->searchSuggestion($keyword);
 
         // AdTech

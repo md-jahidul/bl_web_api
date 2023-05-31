@@ -9,7 +9,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\SearchService;
-
+use \Illuminate\Http\Request;
 class SearchController extends Controller
 {
     /**
@@ -25,19 +25,19 @@ class SearchController extends Controller
     {
         $this->searchService = $searchService;
     }
-    
+
     public function getPopularSearch(){
         return $this->searchService->popularSearch();
     }
-    
+
     public function getSearchSuggestion($keyword){
         return $this->searchService->searchSuggestion($keyword);
     }
-    
-    public function getSearchData($keyword){
-        return $this->searchService->searchData($keyword);
+
+    public function getSearchData(Request $request){
+        return $this->searchService->searchData($request);
     }
-    
+
 
 
 
