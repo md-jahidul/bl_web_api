@@ -35,7 +35,7 @@ class SearchController extends Controller
     }
 
     public function getSearchData(Request $request){
-        return $this->searchService->searchData($request);
+        return $this->searchService->searchData($request->keyword);
     }
 
 
