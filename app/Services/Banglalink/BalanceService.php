@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Models\AlCoreProduct;
 use App\Models\Config;
 use App\Models\Customer;
+use App\Models\Product;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
 use App\Services\ApiBaseService;
@@ -347,19 +348,25 @@ class BalanceService extends BaseService
         $rate_cutter_info = null;
 
         if ($rate_cutter_offer) {
-            $product = AlCoreProduct::where('product_code', $rate_cutter_offer ['code'])->first();
-            if ($product) {
+            $product = Product::where('product_code', $rate_cutter_offer ['code'])->first();
+
+            // Prepaid Only
+            if ($product && $product->sim_category_id == 1) {
+                $urlEn = "/prepaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
+                $urlBn = "/prepaid/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
                 $rate_cutter_info = [
                     'title' => $rate_cutter_offer ['commercialName'],
                     'code' => $rate_cutter_offer ['code'],
                     'fee' => $rate_cutter_offer ['fee'],
-                    'rate_cutter_rate' => $product->call_rate,
-                    'rate_cutter_unit_en' => $product->call_rate_unit,
-                    'rate_cutter_unit_bn' => $product->product->call_rate_unit_bn ?? null,
-                    'validity' => $product->validity ?? null,
-                    'validity_unit' => $product->validity_unit ?? null,
+                    'rate_cutter_rate' => $product->productCore->call_rate,
+                    'rate_cutter_unit_en' => $product->productCore->call_rate_unit,
+                    'rate_cutter_unit_bn' => $product->call_rate_unit_bn ?? null,
+                    'validity' => $product->productCore->validity ?? null,
+                    'validity_unit' => $product->productCore->validity_unit ?? null,
                     'expires_in' => isset($rate_cutter_offer['deactivatedDateTime']) ?
-                        Carbon::parse($rate_cutter_offer['deactivatedDateTime'])->setTimezone('UTC')->toDateTimeString() : null
+                        Carbon::parse($rate_cutter_offer['deactivatedDateTime'])->setTimezone('UTC')->toDateTimeString() : null,
+                    'url_slug_en' => $urlEn,
+                    'url_slug_bn' => $urlBn
                 ];
             }
         }
