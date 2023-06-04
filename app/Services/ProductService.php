@@ -526,9 +526,8 @@ class ProductService extends ApiBaseService
                 ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
             }
 
-            $data[] = $sections[0];
+            $sectionData = [];
             foreach ($sections as $sectionKey => $section) {
-
                 foreach ($section->components as $key => $component) {
                     if ($component->component_type == "bondho_sim_offer") {
                         $products = $this->productRepository->getProductById($component->other_attributes??[]);
@@ -541,6 +540,8 @@ class ProductService extends ApiBaseService
                         $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
                     }
                 }
+
+                $sectionData[] = $section;
             }
 
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
@@ -609,7 +610,7 @@ class ProductService extends ApiBaseService
                 $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
                 $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
 
-                $productDetail['section'] = array_values($data);
+                $productDetail['section'] = $sectionData;
                 return response()->success($productDetail, 'Data Found!');
             }
 
