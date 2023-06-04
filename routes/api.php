@@ -165,7 +165,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     //Web Site Search
     Route::get('popular-search/', 'API\V1\SearchController@getPopularSearch');
     Route::get('search-suggestion/{keyword}', 'API\V1\SearchController@getSearchSuggestion');
-    Route::get('search/{keyword}', 'API\V1\SearchController@getSearchData');
+    Route::get('search/', 'API\V1\SearchController@getSearchData');
 
     //Easy payment card
     Route::get('easy-payment-cards/{division?}/{area?}', 'API\V1\EasyPaymentCardController@cardList');

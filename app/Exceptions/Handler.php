@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
             return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Server file size limit exceded.']), 500);
         }
-        
+
         if (env('APP_ENV') !== 'local') {
             if ($exception instanceof \PDOException) {
                 return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong with data!']), 500);
@@ -60,7 +60,7 @@ class Handler extends ExceptionHandler
                 return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong!']), 500);
             }
 
-            
+
 
         }
         return parent::render($request, $exception);
