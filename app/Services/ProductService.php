@@ -526,23 +526,22 @@ class ProductService extends ApiBaseService
                 ($section->section_type == "tab_section") ? $isTab = true : $isTab = false;
             }
 
-//            $data = $sections;
-//            foreach ($sections as $sectionKey => $section) {
-//
-//                foreach ($section->components as $key => $component) {
-//                    if ($component->component_type == "bondho_sim_offer") {
-//                        $products = $this->productRepository->getProductById($component->other_attributes??[]);
-//                        $productData = [];
-//                        if (isset($products)){
-//                            foreach ($products as $product) {
-//                                $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
-//                            }
-//                        }
-////                        dd($key);
-//                        $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
-//                    }
-//                }
-//            }
+            $data[] = $sections[0];
+            foreach ($sections as $sectionKey => $section) {
+
+                foreach ($section->components as $key => $component) {
+                    if ($component->component_type == "bondho_sim_offer") {
+                        $products = $this->productRepository->getProductById($component->other_attributes??[]);
+                        $productData = [];
+                        if (isset($products)){
+                            foreach ($products as $product) {
+                                $productData[] = array_merge($product->getAttributes(), $product->productCore->getAttributes());
+                            }
+                        }
+                        $data['section'][$sectionKey]['components'][$key]['products'] = $productData;
+                    }
+                }
+            }
 
             $rechargeCode = isset($productDetail->product_details->other_attributes['recharge_benefits_code']) ? $productDetail->product_details->other_attributes['recharge_benefits_code'] : null;
             $rechargeBenefitOffer = $this->productRepository->rechargeBenefitsOffer($rechargeCode);
@@ -609,7 +608,8 @@ class ProductService extends ApiBaseService
                 $productDetail->product_details->banner_title_bn = $banner->title_bn ?? null;
                 $productDetail->product_details->banner_desc_en = $banner->desc_en ?? null;
                 $productDetail->product_details->banner_desc_bn = $banner->desc_bn ?? null;
-//                $productDetail['section'] = $data;
+
+                $productDetail['section'] = array_values($data);
                 return response()->success($productDetail, 'Data Found!');
             }
 
