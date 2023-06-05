@@ -138,10 +138,15 @@ class SearchService extends BaseService {
         $products = $this->productRepository->getProductInfoByCode($product_code_array);
 
         foreach ($products as $key => $product) {
+
+            $urlEn = '/' . $product->sim_category->alias . '/' . $product->offer_category->url_slug . '/' . $product->url_slug;
+            $urlBn = '/' . $product->sim_category->alias . '/' . $product->offer_category->url_slug_bn . '/' . $product->url_slug_bn;
+
             $row = [];
             $row['id'] = $product->id;
             $row['product_code'] = $product->product_code;
-            $row['url_slug'] = $product->url_slug;
+            $row['url_slug_en'] = $urlEn;
+            $row['url_slug_bn'] = $urlBn;
             $row['name_en'] = $product->name_en;
             $row['name_bn'] = $product->name_bn;
             $row['bonus'] = $product->bonus;
