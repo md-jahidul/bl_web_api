@@ -380,10 +380,10 @@ class ProductRepository extends BaseRepository
     public function getProductInfoByCode(array $productCodes)
     {
          return $this->model->whereIn('product_code', $productCodes)
-                ->select('id','product_code', 'url_slug', 'name_en', 'name_bn', 'bonus', 'point', 'sim_category_id', 'offer_category_id')
+                ->select('id','product_code', 'url_slug', 'url_slug_bn', 'name_en', 'name_bn', 'bonus', 'point', 'sim_category_id', 'offer_category_id')
                  ->where('status', 1)
                  ->with(['sim_category:id,name,alias'])
-                 ->with(['offer_category:id,name_en,name_bn,alias'])
+                 ->with(['offer_category:id,name_en,name_bn,alias,url_slug,url_slug_bn'])
                  ->with(['productCore' => function ( $query ){
                     $query->select(
                         'id',

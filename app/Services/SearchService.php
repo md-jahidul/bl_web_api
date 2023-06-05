@@ -72,8 +72,6 @@ class SearchService extends BaseService {
             'others' => "Others"
         );
 
-
-
         $data = [];
         $response = [];
         $response['more_result'] = 0;
@@ -112,58 +110,22 @@ class SearchService extends BaseService {
 
     public function searchData($keyword) {
 
-        $keywords = $this->searchRepository->searchSuggestion($keyword);
-        // $keywords = $this->adTechRepository->getAdTech('search_modal');
-        $adTech = $this->adTechRepository->getSearchAdTech('search_modal');
-        // return $keywords = $this->searchRepository->searchSuggestion($keyword);
+        $keyword = str_replace(['-', '_', '\'', '@'], ' ', $keyword->keyword);
 
-        $heads = array(
-            'prepaid-internet' => "Prepid Internet",
-            'prepaid-voice' => "Prepid Voice",
-            'prepaid-bundle' => "Prepid Bundle",
-            'postpaid-internet' => "Postpaid Internet",
-            'others' => "Others"
-        );
+        $keywords = $this->searchRepository->searchSuggestion($keyword);
+
+        // AdTech
+        $adTech = $this->adTechRepository->getSearchAdTech('search_modal');
 
         #code array for get the product list
         $product_code_array = [];
-
-
-
-        // $data = [];
-        // $response = [];
-        // $count = 0;
-        // foreach ($keywords as $k => $val) {
-        //     if ($val->type != "") {
-        //         $data[$val->type][$count] = $val;
-        //         $count++;
-        //     }
-
-        //    if ($val->product_code) {
-        //     $product_code_array[] = $val->product_code;
-        //    }
-        // }
-
-        // $products = $this->productRepository->getProductInfoByCode($product_code_array);
-
-
-        // $catCount = -1;
-        // $catName = "";
-        // foreach ($data as $k => $kw) {
-
-        //     if ($catName != $k) {
-        //         $catName = $k;
-        //         $catCount++;
-        //     }
-        //     $response['keyword_sections'][$catCount]['category'] = $heads[$k];
-        //     $count = 0;
-        //     foreach ($kw as $val) {
-        //         $response['keyword_sections'][$catCount]['keywords'][$count] = $val;
-        //         $count++;
-        //     }
-        //     $catName = $k;
-        // }
         $response = [];
+        $result = $keywords->reject(function ($product){
+            return $product->product_code;
+        });
+
+        $response['search_result'] = array_values($result->toArray());
+
         $count = 0;
         foreach ($keywords as $k => $val) {
             if ($val->product_code != "") {
@@ -176,22 +138,17 @@ class SearchService extends BaseService {
         }
 
         $products = $this->productRepository->getProductInfoByCode($product_code_array);
-        $productArray = [];
-        // return $data;
-        // return $keywords;
-        // print_r($keywords->toArray());
-        // $ke = $keywords->toArray();
-
-
 
         foreach ($products as $key => $product) {
 
-            // print_r($product->productCore->name);
-            // die;
+            $urlEn = '/' . $product->sim_category->alias . '/' . $product->offer_category->url_slug . '/' . $product->url_slug;
+            $urlBn = '/' . $product->sim_category->alias . '/' . $product->offer_category->url_slug_bn . '/' . $product->url_slug_bn;
+
             $row = [];
             $row['id'] = $product->id;
             $row['product_code'] = $product->product_code;
-            $row['url_slug'] = $product->url_slug;
+            $row['url_slug_en'] = $urlEn;
+            $row['url_slug_bn'] = $urlBn;
             $row['name_en'] = $product->name_en;
             $row['name_bn'] = $product->name_bn;
             $row['bonus'] = $product->bonus;
@@ -206,24 +163,16 @@ class SearchService extends BaseService {
             $row['callrate_offer'] = $product->productCore->callrate_offer;
             $row['call_rate_unit'] = $product->productCore->call_rate_unit;
             $row['sms_rate_offer'] = $product->productCore->sms_rate_offer;
-
             $row['sim_type'] = $product->sim_category->alias;
             $row['offer_type'] = $product->offer_category->alias;
-
             $row['keyword'] = $data[$product->product_code]['keyword'];
             $row['product_url'] = $data[$product->product_code]['product_url'];
             $row['type'] = $data[$product->product_code]['type'];
-
             $response['keyword_sections']['products'][] = $row;
         }
 
         #For Add tag
         $response['keyword_sections']['adTech'] = $adTech;
-
-
-        
-        
-
         return $this->apiBaseService->sendSuccessResponse($response, 'Search Data');
     }
 
