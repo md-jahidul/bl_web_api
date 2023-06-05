@@ -391,6 +391,7 @@ class UserService extends ApiBaseService
         $customerInfo['personal_data'] = $user_data;
 
         $balanceData = $this->balanceService->getBalanceSummary($user_data['phone']);
+
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
         $loyaltyInfo = $this->blLoyaltyService->getPriyojonStatus("88" . $mobile)->getData();
