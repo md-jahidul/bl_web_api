@@ -136,14 +136,22 @@ class BalanceService extends BaseService
         });
 
         $is_eligible_to_loan =  $this->isEligibleToLoan($customer_id);
+
+        $loan_balance = $balance_data->first(function ($item) {
+            return $item->type == 'LOAN';
+        });
+
         $data['balance'] = [
-            'amount' => isset($main_balance->amount) ? $main_balance->amount : 0 ,
-            'unit' => isset($main_balance->unit) ? $main_balance->unit : 'Tk.',
+            'amount' => $main_balance->amount ?? 0,
+            'unit' => $main_balance->unit ?? 'Tk.',
             'expires_in' => isset($main_balance->expiryDateTime) ?
                 Carbon::parse($main_balance->expiryDateTime)->toDateTimeString() : null,
             'loan' => [
                 'is_eligible' => $is_eligible_to_loan,
-                'amount'      => ($is_eligible_to_loan) ? 30 : 0
+                'amount'      => $loan_balance->amount ?? 0,
+                'unit' => $loan_balance->unit ?? 'Tk.',
+                'expires_in' => isset($loan_balance->expiryDateTime) ?
+                    Carbon::parse($loan_balance->expiryDateTime)->toDateTimeString() : null,
             ]
         ];
 
