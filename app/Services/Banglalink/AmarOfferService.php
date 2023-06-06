@@ -284,22 +284,20 @@ class AmarOfferService extends BaseService
         $customerInfo = $this->customerService->getCustomerDetails($request);
         $body = array(
             "channel" => "MYBLAPP",
-//            "msisdn" => $customerInfo->msisdn,
-            "msisdn" => "8801409900110",
+            "msisdn" => $customerInfo->msisdn,
             "offerSubType" => "ALL",
             "offerType" => "ALL",
             "requestID" => $this->generateRequestID(),
             "serviceType" => ucfirst($customerInfo->number_type)
         );
         $responseData = $this->post(self::AMAR_OFFER_API_ENDPOINT_V2, $body);
+
         if ($responseData['status_code'] == 200){
             $data = $this->prepareAmarOfferListV2(json_decode($responseData['response']));
             return $this->responseFormatter->sendSuccessResponse($data, 'Amar Offer List');
         }
 
-        if ($responseData['status_code'] == 500){
-            return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
-        }
+        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
     }
 
     public function getAmarOfferDetails($type)
