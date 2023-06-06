@@ -153,11 +153,12 @@ class PaymentService extends ApiBaseService
             'initiate_status' => $res->statusCode == 200 ? 'SUCCESSFUL' : 'FAILED',
             'trx_id' => $res->statusCode == 200 ? $res->data->tran_id : '',
             'gateway' => 'PGW',
-            'channel' => $req['recharge_platform'],
+            'channel' => env('OWN_RGW_PLATFORM', 'BLWebSite'),
             'recharge_amounts' => implode(',', collect($req['recharge_data'])->pluck('recharge_amount')->toArray()),
             'msisdns' => implode(',', collect($req['recharge_data'])->pluck('mobile_number')->toArray()),
             'total_payment_amount' => $res->statusCode == 200 ? $res->data->total_payment_amount : 0
         ];
+
         (new RechargeLogRepository)->create($data);
     }
 

@@ -282,13 +282,19 @@ class AmarOfferService extends BaseService
     public function getAmarOfferListV2(Request $request)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
+        $blCustomerInfo = $this->blCustomerService->getCustomerInfoByNumber($customerInfo->msisdn);
+
+        if ($blCustomerInfo->getData()->status_code != 200){
+            return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
+        }
+        $customerType = $blCustomerInfo->getData()->data->connectionType;
         $body = array(
             "channel" => "MYBLAPP",
             "msisdn" => $customerInfo->msisdn,
             "offerSubType" => "ALL",
             "offerType" => "ALL",
             "requestID" => $this->generateRequestID(),
-            "serviceType" => ucfirst($customerInfo->number_type)
+            "serviceType" => ucfirst(strtolower($customerType))
         );
         $responseData = $this->post(self::AMAR_OFFER_API_ENDPOINT_V2, $body);
 
