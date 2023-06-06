@@ -338,7 +338,7 @@ class ProductService extends ApiBaseService
     }
 
     public function prepareAmarOffer(){
-        $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+        $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
 
         if ($amarOffers->getData()->status_code == 200) {
             $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
