@@ -93,9 +93,10 @@ class ProductRepository extends BaseRepository
     }
 
     #
-    public function showTrendingProduct()
+    public function showTrendingProduct($offerType = null)
     {
-       return $this->model->select(
+        $offerTypeById = $this->getOfferTypeId($offerType);
+        return $this->model->select(
                'id',
                'product_code',
                'url_slug',

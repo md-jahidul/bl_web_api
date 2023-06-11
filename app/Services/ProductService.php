@@ -897,4 +897,30 @@ class ProductService extends ApiBaseService
             'url_bn' => $urlBn,
         ];
     }
+
+    public function eShopNewSimOffers($offerType)
+    {
+        $products = $this->productRepository->showTrendingProduct();
+
+        foreach ($products as $product) {
+            if ($product->sim_category_id == 1) {
+                $prepaid[] = $this->productAttrPrepare($product);
+            } else {
+                $postpaid[] = $this->productAttrPrepare($product);
+            }
+        }
+        $data = [
+            [
+                'title_en' => "Prepaid",
+                'title_bn' => "প্রিপেইড",
+                'offers' => $prepaid ?? []
+            ],
+            [
+                'title_en' => "Postpaid",
+                'title_bn' => "পোস্টপেইড",
+                'offers' => $postpaid ?? []
+            ]
+        ];
+        return $this->sendSuccessResponse($data, "Trending offers");
+    }
 }
