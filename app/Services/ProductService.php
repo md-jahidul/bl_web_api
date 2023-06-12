@@ -13,6 +13,7 @@ use App\Models\MyBlProductTab;
 use App\Repositories\ConfigRepository;
 use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
+use App\Repositories\OfferCategoryRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductDetailsSectionRepository;
 use App\Repositories\ProductRepository;
@@ -95,6 +96,14 @@ class ProductService extends ApiBaseService
      * @var CustomerAvailableProductsService
      */
     private $customerAvailableProductsService;
+    /**
+     * @var ProductDetailsSectionRepository
+     */
+    private $productDetailsSectionRepository;
+    /**
+     * @var OfferCategoryRepository
+     */
+    private $offerCategoryRepository;
 
     /**
      * ProductService constructor.
@@ -121,7 +130,8 @@ class ProductService extends ApiBaseService
         AmarOfferService $amarOfferService,
         AlBannerService $alBannerService,
         ProductDetailsSectionRepository $productDetailsSectionRepository,
-        CustomerAvailableProductsService $customerAvailableProductsService
+        CustomerAvailableProductsService $customerAvailableProductsService,
+        OfferCategoryRepository $offerCategoryRepository
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -135,6 +145,7 @@ class ProductService extends ApiBaseService
         $this->configRepository = $configRepository;
         $this->amarOfferService = $amarOfferService;
         $this->alBannerService = $alBannerService;
+        $this->offerCategoryRepository = $offerCategoryRepository;
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->customerAvailableProductsService = $customerAvailableProductsService;
         $this->setActionRepository($productRepository);
@@ -346,7 +357,7 @@ class ProductService extends ApiBaseService
 
     public function prepareAmarOffer()
     {
-        //  $amarOffers = $this->amarOfferService->getAmarOfferList(request());
+        //  $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
         $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
 
         if ($amarOffers->getData()->status_code == 200) {
@@ -911,7 +922,7 @@ class ProductService extends ApiBaseService
 
     public function trendingOffers()
     {
-        $products = $this->productRepository->showTrendingProduct();
+        $products = $this->productRepository->productOffers();
         foreach ($products as $product) {
             if ($product->sim_category_id == 1) {
                 $prepaid[] = $this->productAttrPrepare($product);
@@ -971,5 +982,28 @@ class ProductService extends ApiBaseService
             'url_en' => $urlEn,
             'url_bn' => $urlBn,
         ];
+    }
+
+    public function eShopOffers($offerType)
+    {
+        $offerCat =  $this->offerCategoryRepository->findOneByProperties(['alias' => $offerType], [
+            'id', 'url_slug', 'url_slug_bn', 'alias'
+        ]);
+
+        $products = $this->productRepository->productOffers($offerCat->id);
+
+        foreach ($products as $product) {
+            if ($product->sim_category_id == 1) {
+                $prepaid[] = $this->productAttrPrepare($product);
+            }
+        }
+        $data = [
+            [
+                'title_en' => "Prepaid",
+                'title_bn' => "প্রিপেইড",
+                'offers' => $prepaid ?? []
+            ]
+        ];
+        return $this->sendSuccessResponse($data, "New SIM offers");
     }
 }

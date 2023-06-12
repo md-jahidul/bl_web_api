@@ -46,23 +46,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
+            return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Server file size limit exceded.']), 500);
+        }
 
-//        if ($exception instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
-//            return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Server file size limit exceded.']), 500);
-//        }
-//
-//        if (env('APP_ENV') !== 'local') {
-//            if ($exception instanceof \PDOException) {
-//                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong with data!']), 500);
-//            }
-//
-//            if ($exception instanceof FatalErrorException) {
-//                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong!']), 500);
-//            }
-//
-//
-//
-//        }
+        if (env('APP_ENV') !== 'local') {
+            if ($exception instanceof \PDOException) {
+                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong with data!']), 500);
+            }
+
+            if ($exception instanceof FatalErrorException) {
+                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong!']), 500);
+            }
+        }
         return parent::render($request, $exception);
     }
 

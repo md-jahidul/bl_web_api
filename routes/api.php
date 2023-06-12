@@ -415,6 +415,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // E-shop Trending Offer
     Route::get('trending-offer', 'API\V1\ProductController@eShopTrendingOffers');
+
+    // E-shop NEW Sim Offer
+    Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
