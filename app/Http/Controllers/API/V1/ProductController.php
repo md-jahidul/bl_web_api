@@ -194,8 +194,8 @@ class ProductController extends Controller
         return $this->productService->trendingOffers();
     }
 
-    public function eShopNewSimOffers($offerType)
+    public function eShopOffers($offerType)
     {
-        return $this->productService->eShopNewSimOffers($offerType);
+        return $this->productService->eShopOffers($offerType);
     }
 }

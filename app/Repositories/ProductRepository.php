@@ -93,10 +93,20 @@ class ProductRepository extends BaseRepository
     }
 
     #
-    public function showTrendingProduct($offerType = null)
+    public function productOffers($offerCatId = null)
     {
-        $offerTypeById = $this->getOfferTypeId($offerType);
-        return $this->model->select(
+        $data = $this->model
+            ->startEndDate()
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order');
+        if ($offerCatId) {
+            $data = $data->where('offer_category_id', $offerCatId);
+        } else {
+            $data = $data->where('show_in_e_shop', 1);
+        }
+
+        return $data->select(
                'id',
                'product_code',
                'url_slug',
@@ -120,11 +130,6 @@ class ProductRepository extends BaseRepository
                'offer_info'
            )
            ->productCore()
-           ->startEndDate()
-           ->where('status', 1)
-           ->where('show_in_e_shop', 1)
-           ->where('special_product', 0)
-           ->orderBy('display_order')
            ->get();
     }
 
