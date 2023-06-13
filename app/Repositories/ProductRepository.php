@@ -93,7 +93,7 @@ class ProductRepository extends BaseRepository
     }
 
     #
-    public function productOffers($offerCatId = null)
+    public function productOffers($offerCatId = null, $fourGOffer = false)
     {
         $data = $this->model
             ->startEndDate()
@@ -375,9 +375,9 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
-    public function fourGData($type)
+    public function fourGData($type, $isFourGOffer = false)
     {
-        return $this->model->where('offer_category_id', 1)
+        $data = $this->model->where('offer_category_id', 1)
             ->where('is_four_g_offer', 1)
             ->where('status', 1)
             ->where('special_product', 0)
@@ -397,9 +397,14 @@ class ProductRepository extends BaseRepository
                 'offer_info',
                 'like')
             ->startEndDate()
-            ->productCore()
-            ->category($type)
-            ->paginate(4);
+            ->productCore();
+
+        if ($isFourGOffer){
+            return $data->get();
+        }else{
+            return $data->category($type)
+                 ->paginate(4);
+        }
     }
 
     public function getProductInfoByCode(array $productCodes)
