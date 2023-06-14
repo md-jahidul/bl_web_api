@@ -63,9 +63,8 @@ class DynamicPageService extends ApiBaseService
     {
         $pageData = $this->pageRepo->page(strtolower($slug));
         // if (!empty($pageData)) {
-
         //     foreach ($pageData->components as $key => $value) {
-        //         if ($value->component_type == 'button_component') {      
+        //         if ($value->component_type == 'button_component') {
         //             unset($value->title_en);
         //             unset($value->title_bn);
         //             unset($value->extra_title_bn);
@@ -78,9 +77,14 @@ class DynamicPageService extends ApiBaseService
         //         }
         //     }
         // }
+
+        if (empty($pageData)) {
+            return $this->sendSuccessResponse(json_decode("{}"), 'Dynamic page no data found!');
+        }
+
         $banner     = $this->alBannerRepository->findOneByProperties(['section_id' => $pageData->id, 'section_type' => 'other_dynamic_page']);
         $pageData['banner'] = $banner ? AlBannerResource::make($banner) : null;
-        
+
         return $this->sendSuccessResponse($pageData, 'Dynamic page data');
     }
 }
