@@ -954,9 +954,7 @@ class ProductService extends ApiBaseService
             $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
             $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
         }
-
-        $dataValue = ($product->productCore->internet_volume_mb > 1024);
-//        dd($dataValue);
+        $dataValue = ($product->productCore->internet_volume_mb >= 1024);
         return [
             'product_code' => $product->product_code,
             'offer_type_en' => $product->offer_category->name_en,
