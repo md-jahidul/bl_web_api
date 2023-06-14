@@ -879,6 +879,9 @@ class ProductService extends ApiBaseService
             $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
             $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
         }
+
+        $dataValue = ($product->productCore->internet_volume_mb > 1024);
+//        dd($dataValue);
         return [
             'product_code' => $product->product_code,
             'offer_type_en' => $product->offer_category->name_en,
@@ -886,9 +889,9 @@ class ProductService extends ApiBaseService
             'offer_alias' => $product->offer_category->alias,
             'title_en' => $product->name_en,
             'title_bn' => $product->name_bn,
-            'data_volume' => $product->productCore->internet_volume_mb,
-            'data_volume_unit_en' => ($product->productCore->internet_volume_mb > 1024) ? "MB" : "GB",
-            'data_volume_unit_bn' => ($product->productCore->internet_volume_mb > 1024) ? "এমবি" : "জিবি",
+            'data_volume' => $dataValue ? $product->productCore->internet_volume_mb / 1024 : $product->productCore->internet_volume_mb,
+            'data_volume_unit_en' => $dataValue ? "GB" : "MB",
+            'data_volume_unit_bn' => $dataValue ? "জিবি" : "এমবি",
             'minute_volume' => $product->productCore->minute_volume,
             'minute_volume_unit_en' => "Min",
             'minute_volume_unit_bn' => "মিনিট",
