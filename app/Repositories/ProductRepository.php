@@ -24,7 +24,7 @@ class ProductRepository extends BaseRepository
             ->first();
 
         if ($offerType) {
-            return $offerType->id;
+            return $offerType;
         }
         return false;
     }
@@ -36,7 +36,7 @@ class ProductRepository extends BaseRepository
      */
     public function simTypeProduct($type, $offerType)
     {
-        $offerTypeById = $this->getOfferTypeId($offerType);
+        $offerCategory = $this->getOfferTypeId($offerType);
 
         $internet = OfferType::INTERNET;
         $voice = OfferType::VOICE;
@@ -47,20 +47,24 @@ class ProductRepository extends BaseRepository
         $rechargeOffer = OfferType::RECHARGE_OFFER;
         $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer"];
 
-        return $this->model
+        $data = $this->model
             ->where('status', 1)
-            ->where('offer_category_id', $offerTypeById)
             ->where('special_product', 0)
-            ->startEndDate()
-            ->orWhere(function ($q) use ($multiCat, $offerTypeById) {
-                foreach ($multiCat as $cat) {
-                    $q->orWhereJsonContains('show_in_multi_cat', $cat)
-                        ->where('status', 1)
-                        ->where('special_product', 0)
-                        ->startEndDate();
-                }
-            })
-            ->select(
+            ->startEndDate();
+        if ($offerCategory->alias == "recharge_offer") {
+            $data = $data->where('is_recharge', 1);
+        }else{
+            $data = $data->where('offer_category_id', $offerCategory->id);
+        }
+        // ->orWhere(function ($q) use ($multiCat, $offerTypeById) {
+        //     foreach ($multiCat as $cat) {
+        //         $q->orWhereJsonContains('show_in_multi_cat', $cat)
+        //             ->where('status', 1)
+        //             ->where('special_product', 0)
+        //             ->startEndDate();
+        //     }
+        // })
+        return $data->select(
                 'products.id',
                 'products.product_code',
                 'products.url_slug',
@@ -86,7 +90,6 @@ class ProductRepository extends BaseRepository
                 'products.product_image',
                 'products.show_in_multi_cat'
             )
-            ->with('tag', 'productCore.detialTabs')
             ->productCore()
             ->category($type)
             ->get();
