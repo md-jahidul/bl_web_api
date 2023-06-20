@@ -395,51 +395,34 @@ class HomeService extends ApiBaseService
     }
     public function getComponents($request)
     {
-        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
-        $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
+//        if (!Redis::get('al_home_components')){
+            $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+            $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
 
-        $componentList = ShortCode::where('page_id', 1)
-            ->where('is_active', 1)
-            ->orderBy('sequence', 'ASC')
-            ->get();
-        $metainfo = MetaTag::where('page_id', 1)
-            ->first()->toArray();
+            $componentList = ShortCode::where('page_id', 1)
+                ->where('is_active', 1)
+                ->orderBy('sequence', 'ASC')
+                ->get();
+            $metainfo = MetaTag::where('page_id', 1)
+                ->first()->toArray();
 
-        $homePageData = [];
-        foreach ($componentList as $component) {
-            if($component->id === 19){
-                continue;
-            }
-            $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
-        }
-        $data = [
-            'metatags' => $metainfo,
-            'components' => $homePageData
-        ];
-
-        return $this->sendSuccessResponse($data, 'Home page components data');
-
-        if (!$value = Redis::get('al_home_components')){
             $homePageData = [];
             foreach ($componentList as $component) {
-
                 if($component->id === 19){
                     continue;
                 }
-
                 $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
             }
-            $value = json_encode($homePageData);
-            //Redis::setex('al_home_components', 3600, json_encode($homePageData));
-            //$value = Redis::get('al_home_components');
-        } else {
-            //$value = Redis::get('al_home_components');
-        }
-        $data = [
-            'metatags' => $metainfo,
-            'components' => json_decode($value)
-        ];
+            $data = [
+                'metatags' => $metainfo,
+                'components' => $homePageData
+            ];
+            return $this->sendSuccessResponse($data, 'Home page components data');
+//            Redis::setex('al_home_components', 3600, json_encode($data));
+//        }else {
+//            $data = json_decode(Redis::get('al_home_components'));
+//        }
 
-        return $this->sendSuccessResponse($data, 'Home page components data');
+//        return $this->sendSuccessResponse($data, 'Home page components data');
     }
 }

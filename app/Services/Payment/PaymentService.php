@@ -119,6 +119,7 @@ class PaymentService extends ApiBaseService
         }, $data['recharge_data']);
 
         $data['recharge_data'] = $dataMod;
+        $data['recharge_platform'] = env('OWN_RGW_PLATFORM', 'BLWebSite');
 
         $client = new Client(["base_uri" => $baseURL]);
 

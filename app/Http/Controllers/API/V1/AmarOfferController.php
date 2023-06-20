@@ -58,6 +58,6 @@ class AmarOfferController extends Controller
 
     public function amarOfferDetails(Request $request, $offerType, $offerId)
     {
-        return $this->amarOfferService->getDetails($request, $offerType, $offerId);
+        return $this->amarOfferService->getDetailsV2($request, $offerType, $offerId);
     }
 }
