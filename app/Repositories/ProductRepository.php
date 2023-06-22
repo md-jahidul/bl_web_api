@@ -255,8 +255,8 @@ class ProductRepository extends BaseRepository
         //TODO:add filter by start and end date
         # check price range
         $check_product_code = ProductPriceSlab::where('range_start', '<=', (int)$amount)->where('range_end', '>=', (int)$amount)->first();
+//        dd($check_product_code);
         $check_product_code = !empty($check_product_code->product_code) ? $check_product_code->product_code : null;
-
         return $this->model->join('al_core_products', 'products.product_code', 'al_core_products.product_code')
             ->selectRaw('products.*, al_core_products.recharge_product_code, al_core_products.activation_ussd as ussd_en, al_core_products.balance_check_ussd, al_core_products.mrp_price as price_tk,
              al_core_products.validity as validity_days,al_core_products.validity_unit, al_core_products.internet_volume_mb,al_core_products.sms_volume,
@@ -270,9 +270,12 @@ class ProductRepository extends BaseRepository
             //  })
             //  ->where('al_core_products.mrp_price', '=', $amount)
             ->where(function ($query) use ($amount, $check_product_code) {
-                return $query->where('al_core_products.recharge_product_code', $check_product_code)
-                    ->whereNotNull('al_core_products.recharge_product_code');
-                    // $query->where('al_core_products.mrp_price', $amount)
+                return $query
+                    ->where('al_core_products.mrp_price', $amount)
+                    ->whereNotNull('al_core_products.recharge_product_code')
+                    ->orWhere('al_core_products.recharge_product_code', $check_product_code);
+
+                // $query->where('al_core_products.mrp_price', $amount)
             })
             ->whereIn('offer_category_id', [1, 2, 3])
             ->first();
