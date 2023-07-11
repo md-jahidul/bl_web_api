@@ -1,69 +1,54 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers\API\V1\BlLab;
 
 use App\Exceptions\IdpAuthException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BlLabVerifyOTPRequest;
 use App\Services\AboutUsService;
+use App\Services\BlLabs\BlLabsUserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
-class AboutUsController extends Controller
+class BlLabUserController extends Controller
 {
+    /**
+     * @var BlLabsUserService
+     */
+    private $blLabsUserService;
+
 
     /**
-     * @var AboutUsService
+     * BlLabUserController constructor.
+     * @param BlLabsUserService $blLabsUserService
      */
-    protected $aboutUsService;
-
-
-    /**
-     * AboutUsController constructor.
-     * @param AboutUsService $aboutUsService
-     */
-    public function __construct(AboutUsService $aboutUsService)
+    public function __construct(BlLabsUserService $blLabsUserService)
     {
-        $this->aboutUsService = $aboutUsService;
+        $this->blLabsUserService = $blLabsUserService;
     }
 
     /**
      * @return JsonResponse
      */
-    public function getAboutBanglalink()
+    public function register(Request $request)
     {
-        return $this->aboutUsService->getAboutBanglalink();
+        return $this->blLabsUserService->register($request);
     }
 
     /**
      * @return JsonResponse
      */
-    public function getAboutusPages($url_slug)
+    public function sendOTP(Request $request)
     {
-        return $this->aboutUsService->getAboutusPages($url_slug);
-    }
-
-    
-
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getAboutManagement()
-    {
-        return $this->aboutUsService->getAboutManagement();
+        return $this->blLabsUserService->sendOTP($request);
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
-     * @throws IdpAuthException
      */
-    public function getEcareersInfo()
+    public function verifyOTP(Request $request)
     {
-        return $this->aboutUsService->getEcareersInfo();
+        return $this->blLabsUserService->verifyOTP($request);
     }
-
-
 }

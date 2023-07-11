@@ -8,8 +8,8 @@
     @endslot
 
     {{-- Body --}}
-    <strong>Hello, User</strong><br>
-    <p>Found a lead request. Please check in CMS</p>
+    <strong>Hello, Bl Lab User</strong><br>
+    <p><strong>{{ $data['body'] }}</strong></p>
 
 {{--    {{ $slot }}--}}
 

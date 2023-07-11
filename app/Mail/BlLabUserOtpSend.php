@@ -11,14 +11,16 @@ class BlLabUserOtpSend extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $data;
+
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $data
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->data = $data;
     }
 
     /**
@@ -28,6 +30,10 @@ class BlLabUserOtpSend extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        $data = $this->data;
+        return $this
+            ->markdown('emails.bl-labs.send-otp.message', compact('data'))
+            ->subject($data['subject'])
+            ->from('asset@banglalink.net');
     }
 }

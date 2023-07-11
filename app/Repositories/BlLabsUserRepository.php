@@ -9,15 +9,9 @@
 
 namespace App\Repositories;
 
-use App\Models\AboutPage;
-use App\Models\Prize;
+use App\Models\BlLabUser;
 
-class AboutPageRepository extends BaseRepository
+class BlLabsUserRepository extends BaseRepository
 {
-    public $modelName = AboutPage::class;
-
-    public function findDetail($key)
-    {
-        return $this->model->where('slug', $key)->get();
-    }
+    public $modelName = BlLabUser::class;
 }

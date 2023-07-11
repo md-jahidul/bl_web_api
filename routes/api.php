@@ -371,6 +371,11 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('csr/details/{slug}', 'API\V1\CsrController@getBlogDetails');
 //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    // BL Labs
+    Route::post('bl-labs/register', 'API\V1\BlLab\BlLabUserController@register');
+    Route::post('bl-labs/send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
+    Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {

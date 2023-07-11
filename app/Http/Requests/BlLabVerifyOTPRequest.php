@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ForgetPasswordRequest extends FormRequest
+class BlLabVerifyOTPRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,14 +25,8 @@ class ForgetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'otp'      => 'required',
-            'phone'    => ['required', 'regex:/(01)[0-9]{9}/'],
-            'password' => [
-                'required',
-                'min:8',
-                'regex:/[a-zA-Z]/',      // must contain at least one lowercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-            ],
+            'email' => 'required|email|max:255|unique:bl_lab_users',
+            'otp' => 'required|max:6|min:6',
         ];
     }
 }

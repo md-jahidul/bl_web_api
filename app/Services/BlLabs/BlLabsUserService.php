@@ -1,101 +1,117 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\BlLabs;
 
-use App\Http\Resources\AboutPriyojonResource;
-use App\Repositories\AboutPageRepository;
-use App\Repositories\AboutPriyojonRepository;
-use App\Repositories\LmsAboutBannerRepository;
-use App\Repositories\LmsBenefitRepository;
-use App\Repositories\PriyojonRepository;
+use App\Jobs\SendEmailJob;
+use App\Mail\BlLabUserOtpSend;
+use App\Models\BlLabUser;
+use App\Repositories\BlLabsUserRepository;
+use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Validator;
 
 
-class AboutPageService extends ApiBaseService
+class BlLabsUserService extends ApiBaseService
 {
     use CrudTrait;
 
     /**
-     * @var $aboutPageRepository
+     * @var BlLabsUserRepository
      */
-    protected $aboutPageRepository;
+    private $blLabsUserRepository;
 
     /**
-     * @var $priyojonRepository
-     */
-    protected $priyojonRepository;
-
-    protected const PRIYOJON = "priyojon";
-    protected const REWARD_POINTS = "reward_points";
-    /**
-     * @var LmsBenefitRepository
-     */
-    private $benefitRepository;
-    /**
-     * @var LmsAboutBannerRepository
-     */
-    private $lmsAboutBannerRepository;
-
-    /**
-     * AboutPageService constructor.
-     * @param AboutPageRepository $aboutPageRepository
-     * @param LmsBenefitRepository $benefitRepository
-     * @param LmsAboutBannerRepository $lmsAboutBannerRepository
-     * @param PriyojonRepository $priyojonRepository
+     * BlLabsUserService constructor.
+     * @param BlLabsUserRepository $blLabsUserRepository
      */
     public function __construct(
-        AboutPageRepository $aboutPageRepository,
-        LmsBenefitRepository $benefitRepository,
-        LmsAboutBannerRepository $lmsAboutBannerRepository,
-        PriyojonRepository $priyojonRepository
+        BlLabsUserRepository $blLabsUserRepository
     ) {
-        $this->aboutPageRepository = $aboutPageRepository;
-        $this->benefitRepository = $benefitRepository;
-        $this->lmsAboutBannerRepository = $lmsAboutBannerRepository;
-        $this->priyojonRepository = $priyojonRepository;
-        $this->setActionRepository($aboutPageRepository);
+        $this->blLabsUserRepository = $blLabsUserRepository;
+        $this->setActionRepository($blLabsUserRepository);
     }
 
-    /**
-     * @param $slug
-     * @return mixed
-     */
-    public function aboutDetails($slug)
+    public function register($request)
+    {
+        //Validate data
+        $data = $request->only('name', 'email', 'password');
+        $validator = Validator::make($data, [
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:6|max:50'
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 200);
+        }
+
+        //Request is valid, create new user
+        $user = BlLabUser::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
+        ]);
+
+        //User created, return success response
+        return $this->sendSuccessResponse($user, 'User register successfully');
+    }
+
+    public function sendOTP($request)
     {
         try {
-            if ($slug == self::PRIYOJON || $slug == self::REWARD_POINTS){
-                $aboutDetails = $this->aboutPageRepository->findDetail($slug);
-                if (!empty($aboutDetails)) {
-                    $benefits = $this->benefitRepository->findByProperties(
-                        ['page_type' => $slug, 'status' => 1],
-                        ['page_type', 'title_en', 'title_bn', 'image_url', 'alt_text_en']
-                    );
+            $request->validate([
+                'email' => 'required|email|max:255|unique:bl_lab_users',
+            ]);
 
-                    $priyojonAlias = $slug == self::PRIYOJON ? 'about-priyojon' : 'about';
+            $otp = rand(1000,9999);
+            $data = [
+                'to' => $request->email,
+                'subject' => "Email Verification",
+                'body' => 'Your OTP is : '. $otp
+            ];
+            Redis::setex($request->email, 300, $otp);
+            dispatch(new SendEmailJob($data));
 
-                    $priyojonMenu = $this->priyojonRepository->getMenuForSlug($priyojonAlias);
-
-                    $data = [
-                        "details" => $aboutDetails,
-                        "benefits" => $benefits,
-                        'alias' => $priyojonMenu->alias,
-                        'url_slug_en' => $priyojonMenu->url_slug_en,
-                        'url_slug_bn' => $priyojonMenu->url_slug_bn,
-                    ];
-
-                    return $this->sendSuccessResponse($data, 'Loyalty About Us info');
-                }
-            }
-            return response()->error("Invalid Parameter");
+            return $this->sendSuccessResponse([], 'OTP sent successfully');
         } catch (QueryException $exception) {
-            return response()->error("Something Wrong", $exception);
+            return $this->sendErrorResponse('OTP send failed', $exception->getMessage(), '500',);
+        }
+    }
+    public function verifyOTP($request)
+    {
+//        $validator = Validator::make($request->all(), [
+//            'email' => 'required|email|max:255',
+//            'password' => 'required|max:6|min:6',
+//        ]);
+//
+//        $token = auth('api')->attempt($validator->validated());
+//        dd($token);
+
+
+        $otp = Redis::get($request->email);
+        if (!$otp) {
+            return $this->sendErrorResponse('OTP verification failed', 'OTP session time is expired', 404);
+        }
+
+        if ($otp == $request->otp) {
+            if ($token = auth()->attempt())
+            return $this->sendSuccessResponse([], 'OTP verify successfully');
+        } else {
+            return $this->sendErrorResponse('OTP verification failed', 'Invalid OTP', 401);
         }
     }
 
-    public function lmsAboutBanner($slug)
+    protected function responseWithToken($token)
     {
-        $data = $this->lmsAboutBannerRepository->findOneByProperties(['page_type' => $slug], ['page_type', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']);
-        return $this->sendSuccessResponse($data, 'Loyalty About Us info');
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expire_in' => '' /*auth()->factory()*/
+        ]);
     }
 }
