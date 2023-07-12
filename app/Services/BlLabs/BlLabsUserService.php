@@ -64,6 +64,10 @@ class BlLabsUserService extends ApiBaseService
         $token = auth('api')->attempt(['email' => $user->email, 'password' => $user->password]);
         $data = $this->responseWithToken($token);
         //User created, return success response
+        $data['user'] = [
+            'email' => $user->email,
+            'avatar' => null
+        ];
         return $this->sendSuccessResponse($data, 'User register successfully');
     }
 
@@ -80,10 +84,11 @@ class BlLabsUserService extends ApiBaseService
                 'subject' => "Email Verification",
                 'body' => 'Your OTP is : '. $otp
             ];
-            Redis::setex($request->email, 300, $otp);
+            $ttl = 300;
+            Redis::setex($request->email, $ttl, $otp);
             dispatch(new SendEmailJob($data));
 
-            return $this->sendSuccessResponse([], 'OTP sent successfully');
+            return $this->sendSuccessResponse(['otp_expire_in' => $ttl], 'OTP sent successfully');
         } catch (QueryException $exception) {
             return $this->sendErrorResponse('OTP send failed', $exception->getMessage(), '500',);
         }

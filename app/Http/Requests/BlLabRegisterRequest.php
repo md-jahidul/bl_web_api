@@ -25,8 +25,7 @@ class BlLabRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-//            'email' => 'required|email|unique:bl_lab_users',
+            'email' => 'required|email|unique:bl_lab_users',
             'password' => 'required|string|min:6|max:50',
             'secret_token' => 'required'
         ];
