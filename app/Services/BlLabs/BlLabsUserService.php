@@ -56,7 +56,6 @@ class BlLabsUserService extends ApiBaseService
 
         //Request is valid, create new user
         $user = BlLabUser::create([
-            'name' => $request['name'],
             'email' => $request['email'],
             'password' => bcrypt($request['password'])
         ]);
