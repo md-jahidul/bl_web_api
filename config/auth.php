@@ -40,11 +40,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+//        'api' => [
+//            'driver'   => 'jwt',
+//            'provider' => 'otp-user', // Previously 'users'
+//        ],
 
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'otp-user',
-            'hash' => false,
+            'provider' => 'bl_lab_users'
         ],
     ],
 
@@ -70,9 +73,14 @@ return [
             'driver' => 'eloquent',
             'model' => \App\Models\User::class,
         ],
-        'otp-user' => [
-            'driver' => 'password-based-auth-provider'
-        ],
+//        'otp-user' => [
+//            'driver' => 'otp-based-auth-provider'
+//        ],
+
+        'bl_lab_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\BlLabUser::class,
+        ]
 
 //         'users' => [
 //             'driver' => 'database',
@@ -101,10 +109,5 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
-//        'bl_lab_users' => [
-//            'provider' => 'users',
-//            'table' => 'password_resets',
-//            'expire' => 60,
-//        ],
     ],
 ];

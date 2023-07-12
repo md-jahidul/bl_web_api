@@ -2,19 +2,14 @@
 
 namespace App\Services\BlLabs;
 
+use App\Enums\HttpStatusCode;
 use App\Jobs\SendEmailJob;
-use App\Mail\BlLabUserOtpSend;
 use App\Models\BlLabUser;
 use App\Repositories\BlLabsUserRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Validator;
-
 
 class BlLabsUserService extends ApiBaseService
 {
@@ -33,13 +28,29 @@ class BlLabsUserService extends ApiBaseService
         BlLabsUserRepository $blLabsUserRepository
     ) {
         $this->blLabsUserRepository = $blLabsUserRepository;
-//        $this->middleware('auth:api', ['except' => ['login']]);
         $this->setActionRepository($blLabsUserRepository);
+    }
+
+    public function login($data)
+    {
+        $credentials = request(['email', 'password']);
+
+        if (! $token = auth()->attempt($credentials)) {
+            return $this->sendErrorResponse('Unauthorized', "Incorrect Email or Password", HttpStatusCode::UNAUTHORIZED);
+        }
+        $response = $this->responseWithToken($token);
+
+        $user = $this->blLabsUserRepository->findOneByProperties(['email' => $data['email']], ['email']);
+        $response['user'] = [
+            'email' => $user->email,
+            'avatar' => null
+        ];
+
+        return $this->sendSuccessResponse($response, 'Successful Attempt');
     }
 
     public function register($request)
     {
-
         //Validate data
         $request = $request->only('name', 'email', 'password', 'secret_token');
 
@@ -54,13 +65,14 @@ class BlLabsUserService extends ApiBaseService
             return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", '401',);
         }
 
+        $credentials = request(['email', 'password']);
         //Request is valid, create new user
-        $user = BlLabUser::create([
-            'email' => $request['email'],
-            'password' => bcrypt($request['password'])
-        ]);
+        $user = BlLabUser::create($credentials);
 
-        $token = auth('api')->attempt(['email' => $user->email, 'password' => $user->password]);
+        if (! $token = auth()->attempt($credentials)) {
+            return $this->sendErrorResponse('Unauthorized', "Incorrect Email or Password", HttpStatusCode::UNAUTHORIZED);
+        }
+
         $data = $this->responseWithToken($token);
         //User created, return success response
         $data['user'] = [
@@ -83,7 +95,7 @@ class BlLabsUserService extends ApiBaseService
                 'subject' => "Email Verification",
                 'body' => 'Your OTP is : '. $otp
             ];
-            $ttl = 300;
+            $ttl = 60 * 5; // 5 min
             Redis::setex($request->email, $ttl, $otp);
             dispatch(new SendEmailJob($data));
 
@@ -94,8 +106,6 @@ class BlLabsUserService extends ApiBaseService
     }
     public function verifyOTP($request)
     {
-//        $token = auth('api')->attempt($validator->validated());
-
         $otp = Redis::get($request->email);
         if (!$otp) {
             return $this->sendErrorResponse('OTP verification failed', 'OTP session time is expired', 401);
@@ -103,7 +113,6 @@ class BlLabsUserService extends ApiBaseService
 
         if ($otp == $request->otp) {
             $secretToken = bin2hex(random_bytes(30));
-//            dd($secretToken);
             Redis::setex("secret_token_" . $request->email, 1800, $secretToken);
             return $this->sendSuccessResponse(['secret_token' => $secretToken], 'OTP verify successfully');
         } else {
@@ -112,22 +121,24 @@ class BlLabsUserService extends ApiBaseService
         }
     }
 
+    public function refreshToken()
+    {
+        $data = $this->responseWithToken(auth()->refresh());
+        return $this->sendSuccessResponse($data, 'Refresh token generate successfully!');
+    }
+
+    public function forgetPassword()
+    {
+        $data = $this->responseWithToken(auth()->refresh());
+        return $this->sendSuccessResponse($data, 'Refresh token generate successfully!');
+    }
+
     protected function responseWithToken($token)
     {
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expire_in' => $this->guard()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60
         ];
-    }
-
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
-    public function guard()
-    {
-        return Auth::guard();
     }
 }

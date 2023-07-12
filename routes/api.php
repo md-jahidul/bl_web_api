@@ -373,14 +373,17 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 
     // BL Labs
-    Route::middleware(['auth:api'])->group(function () {
-        Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
+    Route::group(['prefix' => 'bl-labs' ], function () {
+        Route::middleware(['auth-jwt'])->group(function () {
+            Route::get('profile', 'API\V1\BlLab\BlLabUserController@profile');
+            Route::post('refresh-token', 'API\V1\BlLab\BlLabUserController@refresh');
+        });
+        Route::post('login', 'API\V1\BlLab\BlLabUserController@login');
+        Route::post('register', 'API\V1\BlLab\BlLabUserController@register');
+        Route::post('send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
+        Route::post('verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
+        Route::post('forget-password', 'API\V1\BlLab\BlLabUserController@verifyOTP');
     });
-    Route::post('bl-labs/register', 'API\V1\BlLab\BlLabUserController@register');
-    Route::post('bl-labs/send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
-    Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
-
-
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
