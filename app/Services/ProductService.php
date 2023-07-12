@@ -604,8 +604,10 @@ class ProductService extends ApiBaseService
                 $offerType = [
                     OfferType::INTERNET,
                     OfferType::VOICE,
+                    OfferType::BUNDLES,
                     OfferType::CALL_RATE,
                     OfferType::RECHARGE_OFFER,
+                    OfferType::PREPAID_PLANS,
                 ];
 
                 if (in_array($productDetail->offer_category_id, $offerType)) {

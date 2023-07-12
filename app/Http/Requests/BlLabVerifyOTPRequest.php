@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class BuyAmarOfferRequest extends FormRequest
+class BlLabVerifyOTPRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +25,8 @@ class BuyAmarOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'offer_id' => 'required',
-            'treatment_code' => 'required'
+            'email' => 'required|email|max:255|unique:bl_lab_users',
+            'otp' => 'required|max:6|min:6',
         ];
     }
 }

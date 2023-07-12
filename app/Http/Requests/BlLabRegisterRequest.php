@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class BuyAmarOfferRequest extends FormRequest
+class BlLabRegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +25,10 @@ class BuyAmarOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'offer_id' => 'required',
-            'treatment_code' => 'required'
+            'name' => 'required|string',
+//            'email' => 'required|email|unique:bl_lab_users',
+            'password' => 'required|string|min:6|max:50',
+            'secret_token' => 'required'
         ];
     }
 }

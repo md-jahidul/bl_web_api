@@ -418,6 +418,16 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // E-shop NEW Sim Offer
     Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');
+
+    Route::middleware(['auth:api'])->group(function () {
+        // BL Labs
+        Route::post('bl-labs/register', 'API\V1\BlLab\BlLabUserController@register');
+        Route::post('bl-labs/send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
+        Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
+        Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
+    });
+
+
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {

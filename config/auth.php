@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -42,8 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
+            'driver' => 'jwt',
+            'provider' => 'otp-user',
             'hash' => false,
         ],
     ],
@@ -68,13 +68,16 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => \App\Models\User::class,
+        ],
+        'otp-user' => [
+            'driver' => 'password-based-auth-provider'
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+//         'users' => [
+//             'driver' => 'database',
+//             'table' => 'users',
+//         ],
     ],
 
     /*
@@ -98,6 +101,10 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
+//        'bl_lab_users' => [
+//            'provider' => 'users',
+//            'table' => 'password_resets',
+//            'expire' => 60,
+//        ],
     ],
-
 ];

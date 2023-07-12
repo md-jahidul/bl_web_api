@@ -65,6 +65,8 @@ class Kernel extends HttpKernel
 //        'client.secret.token' => \App\Http\Middleware\ClientSecretToken::class,
         'verifyFacebookUpsellKey' => \App\Http\Middleware\VerifyFacebookUpsellKey::class,
         'verifyIdpToken' => \App\Http\Middleware\VerifyIdpToken::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
     ];
 
     /**

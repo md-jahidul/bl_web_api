@@ -10,6 +10,7 @@ namespace App\Services\Payment;
 
 
 use App\Enums\HttpStatusCode;
+use App\Models\Config;
 use App\Repositories\RechargeLogRepository;
 use App\Services\ApiBaseService;
 use App\Services\NumberValidationService;
@@ -45,6 +46,12 @@ class PaymentService extends ApiBaseService
      */
     public function paymentGateways()
     {
+        $canRecharge = Config::where('key', 'can_recharge')->select('key', 'value')->first();
+
+        if ($canRecharge->value == "no"){
+            return $this->sendSuccessResponse(json_decode("{}"), 'Payment gateways!!');
+        }
+
         $sslRgwPaymentGateways = $this->sslPaymentGateways();
         $ownRgwPaymentGateways = $this->ownRgwPaymentGateways();
         $data = [
