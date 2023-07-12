@@ -426,6 +426,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
         Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
     });
+    // BL Labs
+    Route::middleware(['auth:api'])->group(function () {
+        Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
+    });
+    Route::post('bl-labs/register', 'API\V1\BlLab\BlLabUserController@register');
+    Route::post('bl-labs/send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
+    Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
 
 
 });
