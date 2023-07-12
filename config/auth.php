@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -71,7 +71,7 @@ return [
             'model' => \App\Models\User::class,
         ],
         'otp-user' => [
-            'driver' => 'otp-based-auth-provider'
+            'driver' => 'password-based-auth-provider'
         ],
 
 //         'users' => [

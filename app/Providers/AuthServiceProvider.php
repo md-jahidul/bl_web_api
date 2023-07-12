@@ -8,7 +8,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 class AuthServiceProvider extends ServiceProvider
 {
     public function register () {
-        $this->app['auth']->provider('otp-based-auth-provider', function ($app, array $config) {
+        $this->app['auth']->provider('password-based-auth-provider', function ($app, array $config) {
             return new BlLabUserServiceProvider();
         });
     }
