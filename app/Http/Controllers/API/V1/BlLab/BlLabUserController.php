@@ -19,7 +19,6 @@ class BlLabUserController extends Controller
      */
     private $blLabsUserService;
 
-
     /**
      * BlLabUserController constructor.
      * @param BlLabsUserService $blLabsUserService
@@ -27,6 +26,12 @@ class BlLabUserController extends Controller
     public function __construct(BlLabsUserService $blLabsUserService)
     {
         $this->blLabsUserService = $blLabsUserService;
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->only('email', 'password');
+        return $this->blLabsUserService->login($data);
     }
 
     /**
@@ -51,6 +56,21 @@ class BlLabUserController extends Controller
     public function register(BlLabRegisterRequest $request)
     {
         return $this->blLabsUserService->register($request);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return array
+     */
+    public function refresh()
+    {
+        return $this->blLabsUserService->refreshToken();
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        return $this->blLabsUserService->forgetPassword($request);
     }
 
     public function profile()
