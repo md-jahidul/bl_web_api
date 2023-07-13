@@ -382,7 +382,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::post('register', 'API\V1\BlLab\BlLabUserController@register');
         Route::post('send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
         Route::post('verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
-        Route::post('forget-password', 'API\V1\BlLab\BlLabUserController@verifyOTP');
+        Route::post('forget-password', 'API\V1\BlLab\BlLabUserController@forgetPassword');
     });
 });
 

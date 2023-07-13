@@ -68,9 +68,9 @@ class BlLabUserController extends Controller
         return $this->blLabsUserService->refreshToken();
     }
 
-    public function forgetPassword()
+    public function forgetPassword(Request $request)
     {
-        return $this->blLabsUserService->forgetPassword();
+        return $this->blLabsUserService->forgetPassword($request);
     }
 
     public function profile()

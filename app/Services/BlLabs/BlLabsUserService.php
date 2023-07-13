@@ -9,6 +9,7 @@ use App\Repositories\BlLabsUserRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class BlLabsUserService extends ApiBaseService
@@ -52,7 +53,7 @@ class BlLabsUserService extends ApiBaseService
     public function register($request)
     {
         //Validate data
-        $request = $request->only('name', 'email', 'password', 'secret_token');
+        $request = $request->only('email', 'password', 'secret_token');
 
         // Verify authorized request
         $redisSecretToken = Redis::get("secret_token_" . $request['email']);
@@ -74,19 +75,25 @@ class BlLabsUserService extends ApiBaseService
         }
 
         $data = $this->responseWithToken($token);
+
         //User created, return success response
         $data['user'] = [
             'email' => $user->email,
             'avatar' => null
         ];
+
+        $secretTokenKey = "secret_token_" . $request['email'];
+        Redis::del($secretTokenKey);
         return $this->sendSuccessResponse($data, 'User register successfully');
     }
 
     public function sendOTP($request)
     {
         try {
+            $unique = ($request->is_reg_request == "true") ? "|unique:bl_lab_users" : '';
+
             $request->validate([
-                'email' => 'required|email|max:255|unique:bl_lab_users',
+                'email' => 'required|email|max:255' . $unique,
             ]);
 
             $otp = rand(100000,999999);
@@ -127,10 +134,61 @@ class BlLabsUserService extends ApiBaseService
         return $this->sendSuccessResponse($data, 'Refresh token generate successfully!');
     }
 
-    public function forgetPassword()
+    public function forgetPassword($request)
     {
-        $data = $this->responseWithToken(auth()->refresh());
-        return $this->sendSuccessResponse($data, 'Refresh token generate successfully!');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/[a-zA-Z]/',      // must contain at least one lowercase letter
+                'regex:/[0-9]/',      // must contain at least one digit
+                'confirmed'
+            ],
+            'secret_token' => 'required'
+        ]);
+
+        $request = $request->only('email', 'password', 'secret_token');
+
+        // Verify authorized request
+        $redisSecretToken = Redis::get("secret_token_" . $request['email']);
+
+        if (!$redisSecretToken) {
+            return $this->sendErrorResponse('Token expired', "Token session is expired", '404',);
+        }
+
+        if ($redisSecretToken != $request['secret_token']){
+            return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", '401',);
+        }
+
+        $blLabUser =  BlLabUser::where('email', $request['email'])->first();
+
+        if (!$blLabUser) {
+            return $this->sendErrorResponse('Unauthorized', "Email address not found", '401',);
+        }
+        $blLabUser->update($request);
+
+        $secretTokenKey = "secret_token_" . $request['email'];
+        Redis::del($secretTokenKey);
+        return $this->sendSuccessResponse([], 'Password new set successfully!');
+    }
+
+    public function prepareSendOtp($request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255|unique:bl_lab_users',
+        ]);
+
+        $otp = rand(100000,999999);
+        $data = [
+            'to' => $request->email,
+            'subject' => "Email Verification",
+            'body' => 'Your OTP is : '. $otp
+        ];
+        $ttl = 60 * 5; // 5 min
+        Redis::setex($request->email, $ttl, $otp);
+        dispatch(new SendEmailJob($data));
+        return $ttl;
     }
 
     protected function responseWithToken($token)

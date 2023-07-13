@@ -25,7 +25,7 @@ class BlLabVerifyOTPRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255|unique:bl_lab_users',
+            'email' => 'required|email|max:255',
             'otp' => 'required|max:6|min:6',
         ];
     }
