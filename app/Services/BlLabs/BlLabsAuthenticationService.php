@@ -5,28 +5,28 @@ namespace App\Services\BlLabs;
 use App\Enums\HttpStatusCode;
 use App\Jobs\SendEmailJob;
 use App\Models\BlLabUser;
-use App\Repositories\BlLabsUserRepository;
+use App\Repositories\BlLabsAuthenticationRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
-class BlLabsUserService extends ApiBaseService
+class BlLabsAuthenticationService extends ApiBaseService
 {
     use CrudTrait;
 
     /**
-     * @var BlLabsUserRepository
+     * @var BlLabsAuthenticationRepository
      */
     private $blLabsUserRepository;
 
     /**
-     * BlLabsUserService constructor.
-     * @param BlLabsUserRepository $blLabsUserRepository
+     * BlLabsAuthenticationService constructor.
+     * @param BlLabsAuthenticationRepository $blLabsUserRepository
      */
     public function __construct(
-        BlLabsUserRepository $blLabsUserRepository
+        BlLabsAuthenticationRepository $blLabsUserRepository
     ) {
         $this->blLabsUserRepository = $blLabsUserRepository;
         $this->setActionRepository($blLabsUserRepository);
@@ -90,8 +90,20 @@ class BlLabsUserService extends ApiBaseService
     public function sendOTP($request)
     {
         try {
-            $unique = ($request->is_reg_request == "true") ? "|unique:bl_lab_users" : '';
 
+            if (!$request->is_reg_request) {
+                $user = $this->blLabsUserRepository->findOneByProperties(['email' => $request->email], ['email']);
+                if (!$user) {
+                    return $this->sendErrorResponse("OTP couldn't be send",'This email is not registered', '404');
+                }
+            }
+
+            $request->validate([
+                'email' => 'required|email',
+                'is_reg_request' => 'required'
+            ]);
+
+            $unique = ($request->is_reg_request == "true") ? "|unique:bl_lab_users" : '';
             $request->validate([
                 'email' => 'required|email|max:255' . $unique,
             ]);

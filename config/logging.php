@@ -110,6 +110,11 @@ return [
             'path'   => storage_path('logs/payment_log/request_fail_log.log'),
             'level' => 'info',
         ],
+        'mailSendFailLog' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/mail-send/send_fail.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];
