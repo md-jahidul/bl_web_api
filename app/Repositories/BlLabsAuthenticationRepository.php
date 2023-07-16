@@ -11,7 +11,7 @@ namespace App\Repositories;
 
 use App\Models\BlLabUser;
 
-class BlLabsUserRepository extends BaseRepository
+class BlLabsAuthenticationRepository extends BaseRepository
 {
     public $modelName = BlLabUser::class;
 }

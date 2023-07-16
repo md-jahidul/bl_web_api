@@ -7,23 +7,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BlLabRegisterRequest;
 use App\Http\Requests\BlLabVerifyOTPRequest;
 use App\Services\AboutUsService;
-use App\Services\BlLabs\BlLabsUserService;
+use App\Services\BlLabs\BlLabsAuthenticationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
-class BlLabUserController extends Controller
+class BlLabAuthenticationController extends Controller
 {
     /**
-     * @var BlLabsUserService
+     * @var BlLabsAuthenticationService
      */
     private $blLabsUserService;
 
     /**
-     * BlLabUserController constructor.
-     * @param BlLabsUserService $blLabsUserService
+     * BlLabAuthenticationController constructor.
+     * @param BlLabsAuthenticationService $blLabsUserService
      */
-    public function __construct(BlLabsUserService $blLabsUserService)
+    public function __construct(BlLabsAuthenticationService $blLabsUserService)
     {
         $this->blLabsUserService = $blLabsUserService;
     }

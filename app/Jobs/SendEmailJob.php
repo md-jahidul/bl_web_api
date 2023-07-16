@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendEmailJob implements ShouldQueue
@@ -36,7 +37,11 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        $data = $this->data;
-        Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
+        try {
+            $data = $this->data;
+            Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
+        } catch (\Exception $exception) {
+            Log::channel('mailSendFailLog')->error($exception->getMessage());
+        }
     }
 }
