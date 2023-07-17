@@ -845,8 +845,8 @@ class ProductService extends ApiBaseService
                 "name_bn" => $product->commercial_name_en,
                 "rate_cutter_unit" => $product->rate_cutter_unit,
                 "rate_cutter_offer" => $product->rate_cutter_offer,
-                "price_tk" => $product->price_tk,
-                "validity_days" => $product->validity_days,
+                "price_tk" => $product->mrp_price,
+                "validity_days" => $product->validity ?? 0,
                 "validity_unit" => $product->validity_unit,
                 "internet_volume_mb" => $product->internet_volume_mb,
                 "sms_volume" => $product->sms_volume,
@@ -857,8 +857,8 @@ class ProductService extends ApiBaseService
                 "product_code" => $product->product_code,
                 "renew_product_code" => $product->renew_product_code,
                 "recharge_product_code" => $product->recharge_product_code,
-                "sd_vat_tax_en" => $product->sd_vat_tax_en,
-                "sd_vat_tax_bn" => $product->sd_vat_tax_bn
+                "offer_breakdown_en" => $product->product->product_details->offer_details_title_bn ?? null,
+                "offer_breakdown_bn" => $product->product->product_details->offer_details_title_bn ?? null
             ];
         }
 
