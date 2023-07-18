@@ -13,6 +13,7 @@ use App\Repositories\BlLabStartUpInfoRepository;
 use App\Repositories\BlLabSummaryRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
+use App\Traits\FileTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Redis;
 class BlLabsIdeaSubmitService extends ApiBaseService
 {
     use CrudTrait;
+    use FileTrait;
 
     /**
      * @var BlLabApplicationRepository
@@ -67,30 +69,22 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->id_number]);
 
         if ($userApplication) {
-            return $this->sendErrorResponse('Request Failed', 'Application not found. wrong request');
-        }
-
-
-        $userApplication = null;
-        if ($userApplication) {
             $stepStatus = $userApplication->step_completed;
-            $stepStatus = (in_array($request->step, $userApplication->step_completed)) ? $stepStatus : $userApplication->step_completed;
             $stepStatus[] = $request->step;
-//            dd($stepStatus, in_array($request->step, $userApplication->step_completed));
         } else {
             $stepStatus[] = $request->step;
         }
 
-
         $applicationData = [
             'bl_lab_user_id' => $user->id,
             'application_status' => 'draft',
-            'step_completed' => $stepStatus
+            'step_completed' => (isset($userApplication) && in_array($request->step, $userApplication->step_completed)) ? $userApplication->step_completed : $stepStatus
         ];
-//        dd($applicationData);
-        if ($request->request_type == "create") {
+
+        if (!$userApplication) {
             $application = $this->findAll();
             $idNumber = $application->count() + 1;
+
             $idNumber = str_pad($idNumber, 7, '0', STR_PAD_LEFT);
             $applicationData['id_number'] = "$idNumber";
             $userApplication = $this->save($applicationData);
@@ -98,17 +92,22 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $userApplication->update($applicationData);
         }
 
-        dd($userApplication);
+        if ($request->step == "summary") {
+            $this->summaryData($request->all(), $userApplication->id);
+        } elseif ($request->step == "personal") {
+           $this->personalData($request->all(), $userApplication->id);
+        } else {
+            dd('ff');
+        }
 
-
-        $summary = $this->summaryData($request->all(), $user->id);
-        dd($summary);
-        return $this->sendSuccessResponse($response, 'Successful Attempt');
+        return $this->sendSuccessResponse([], 'Application successful store');
     }
 
-    public function summaryData($data, $applicationId): array
+    public function summaryData($data, $applicationId)
     {
-        return [
+        $blSummary = $this->labSummaryRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
+
+        $data = [
             'bl_lab_app_id' => $applicationId,
             'idea_title' => $data['idea_title'],
             'idea_details' => $data['idea_details'],
@@ -116,5 +115,45 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             'apply_for' => $data['apply_for'],
             'status' => "Complete",
         ];
+
+        if (!$blSummary) {
+            $this->labSummaryRepository->save($data);
+        } else {
+            $blSummary->update($data);
+        }
+    }
+
+    public function personalData($data, $applicationId)
+    {
+        $blPersonal = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
+
+        if (request()->hasFile('cv')) {
+            $cv = [];
+            foreach ($data['cv'] as $key => $file) {
+                $fileName = $file->getClientOriginalName();
+                $cv[$key]['file_path'] = $this->upload($file, 'lab-applicant-file');
+                $cv[$key]['file_name'] = $fileName;
+            }
+        }
+
+        $data = [
+            'bl_lab_app_id' => $applicationId,
+            'name' => $data['name'],
+            'gender' => $data['gender'],
+            'email' => $data['email'],
+            'phone_number' => $data['phone_number'],
+            'institute_or_org' => $data['institute_or_org'],
+            'education' => $data['education'],
+            'team_members' => $data['team_members'],
+            'applicant_agree' => $data['applicant_agree'],
+            'cv' => $cv,
+            'status' => "Complete",
+        ];
+
+        if (!$blPersonal) {
+            $this->labPersonalInfoRepository->save($data);
+        } else {
+            $blPersonal->update($data);
+        }
     }
 }

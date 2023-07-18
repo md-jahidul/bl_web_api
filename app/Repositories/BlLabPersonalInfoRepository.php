@@ -9,9 +9,9 @@
 
 namespace App\Repositories;
 
-use App\Models\BlLabApplication;
+use App\Models\BlLabPersonalInfo;
 
 class BlLabPersonalInfoRepository extends BaseRepository
 {
-    public $modelName = BlLabApplication::class;
+    public $modelName = BlLabPersonalInfo::class;
 }
