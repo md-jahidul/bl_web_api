@@ -377,6 +377,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::middleware(['auth-jwt'])->group(function () {
             Route::get('profile', 'API\V1\BlLab\BlLabAuthenticationController@profile');
             Route::post('refresh-token', 'API\V1\BlLab\BlLabAuthenticationController@refresh');
+            Route::post('idea-submit', 'API\V1\BlLab\BlLabIdeaSubmitController@ideaSubmit');
         });
         Route::post('login', 'API\V1\BlLab\BlLabAuthenticationController@login');
         Route::post('register', 'API\V1\BlLab\BlLabAuthenticationController@register');
