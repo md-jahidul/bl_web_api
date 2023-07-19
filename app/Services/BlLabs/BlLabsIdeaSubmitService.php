@@ -2,22 +2,14 @@
 
 namespace App\Services\BlLabs;
 
-use App\Enums\HttpStatusCode;
-use App\Jobs\SendEmailJob;
-use App\Models\BlLabApplication;
-use App\Models\BlLabUser;
 use App\Repositories\BlLabApplicationRepository;
 use App\Repositories\BlLabPersonalInfoRepository;
-use App\Repositories\BlLabsAuthenticationRepository;
 use App\Repositories\BlLabStartUpInfoRepository;
 use App\Repositories\BlLabSummaryRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 
 class BlLabsIdeaSubmitService extends ApiBaseService
 {
@@ -97,10 +89,10 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         } elseif ($request->step == "personal") {
            $this->personalData($request->all(), $userApplication->id);
         } else {
-            dd('ff');
+            $this->startUpData($request->all(), $userApplication->id);
         }
 
-        return $this->sendSuccessResponse([], 'Application successful store');
+        return $this->sendSuccessResponse(['idea_id' => $userApplication->id_number], 'Application successful store');
     }
 
     public function summaryData($data, $applicationId)
@@ -136,24 +128,49 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             }
         }
 
-        $data = [
-            'bl_lab_app_id' => $applicationId,
-            'name' => $data['name'],
-            'gender' => $data['gender'],
-            'email' => $data['email'],
-            'phone_number' => $data['phone_number'],
-            'institute_or_org' => $data['institute_or_org'],
-            'education' => $data['education'],
-            'team_members' => $data['team_members'],
-            'applicant_agree' => $data['applicant_agree'],
-            'cv' => $cv,
-            'status' => "Complete",
-        ];
+        $data['bl_lab_app_id'] = $applicationId;
+        $data['cv'] = $cv ?? null;
+        $data['status'] = "Complete";
 
         if (!$blPersonal) {
             $this->labPersonalInfoRepository->save($data);
         } else {
             $blPersonal->update($data);
+        }
+    }
+
+    public function startUpData($data, $applicationId)
+    {
+        $startUpInfo = $this->labStartUpInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
+
+        if (request()->hasFile('business_model_file')) {
+            $fileName = $data['business_model_file']->getClientOriginalName();
+            $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file');
+            $businessModelFile['file_name'] = $fileName;
+        }
+
+        if (request()->hasFile('gtm_plan_file')) {
+            $fileName = $data['gtm_plan_file']->getClientOriginalName();
+            $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file');
+            $gtmPlanFile['file_name'] = $fileName;
+        }
+
+        if (request()->hasFile('financial_metrics_file')) {
+            $fileName = $data['financial_metrics_file']->getClientOriginalName();
+            $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file');
+            $financialMetricsFile['file_name'] = $fileName;
+        }
+
+        $data['bl_lab_app_id'] = $applicationId;
+        $data['business_model_file'] = $businessModelFile ?? null;
+        $data['gtm_plan_file'] = $gtmPlanFile ?? null;
+        $data['financial_metrics_file'] = $financialMetricsFile ?? null;
+        $data['status'] = "Complete";
+
+        if (!$startUpInfo) {
+            $this->labStartUpInfoRepository->save($data);
+        } else {
+            $startUpInfo->update($data);
         }
     }
 }
