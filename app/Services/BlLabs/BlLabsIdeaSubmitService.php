@@ -35,6 +35,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     private $labSummaryRepository;
 
     protected const STEP_TYPES = ['summary', 'personal', 'startup'];
+    protected const DRAFT = "draft";
 
     /**
      * BlLabsIdeaSubmitService constructor.
@@ -71,7 +72,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
             $applicationData = [
                 'bl_lab_user_id' => $user->id,
-                'application_status' => 'draft',
+                'application_status' => $request->application_status,
+                'submitted_at' => ($request->application_status == "submit") ? now()->toDateString() : 'draft',
                 'step_completed' => (isset($userApplication) && in_array($request->step, $userApplication->step_completed)) ? $userApplication->step_completed : $stepStatus
             ];
 
@@ -94,7 +96,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
                 $this->startUpData($request->all(), $userApplication->id);
             }
 
-            return $this->sendSuccessResponse(['idea_id' => $userApplication->id_number], 'Application successfully save');
+            return $this->sendSuccessResponse(['application_id' => $userApplication->id_number], 'Application successfully save');
         }catch (\Exception $exception) {
             Log::channel('ideaSubmitLog')->error($exception->getMessage());
             return $this->sendErrorResponse("Failed" , $exception->getMessage());
@@ -215,5 +217,29 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         }
 
         return $this->sendSuccessResponse($data, "Idea step information for $request->step");
+    }
+
+    public function getApplicationCurrentStage()
+    {
+        $user = Auth::user();
+        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'application_status' => self::DRAFT]);
+
+        if ($userApplication) {
+            $stepTypes = self::STEP_TYPES;
+
+            $nextStage = collect($stepTypes)->filter(function ($item) use ($userApplication){
+                if (!in_array($item, $userApplication->step_completed)) {
+                    return $item;
+                }
+            })->toArray();
+
+            $data = [
+                'application_id' => $userApplication->id_number,
+                'next_stage' => array_values($nextStage)[0]
+            ];
+            return $this->sendSuccessResponse($data, "Current applications stage");
+        }
+
+        return $this->sendErrorResponse('Application Not Found', 'The user currently has no applications running.');
     }
 }

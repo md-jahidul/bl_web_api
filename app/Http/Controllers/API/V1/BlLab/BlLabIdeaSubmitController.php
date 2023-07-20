@@ -38,4 +38,9 @@ class BlLabIdeaSubmitController extends Controller
     {
         return $this->labsIdeaSubmitService->ideaSubmittedData($request);
     }
+
+    public function applicationStage()
+    {
+        return $this->labsIdeaSubmitService->getApplicationCurrentStage();
+    }
 }

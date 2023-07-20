@@ -378,7 +378,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
             Route::get('profile', 'API\V1\BlLab\BlLabAuthenticationController@profile');
             Route::post('refresh-token', 'API\V1\BlLab\BlLabAuthenticationController@refresh');
             Route::post('idea-submit', 'API\V1\BlLab\BlLabIdeaSubmitController@ideaSubmit');
-            Route::get('idea-submitted-data', 'API\V1\BlLab\BlLabIdeaSubmitController@getIdeaSubmittedData');
+            Route::get('application-data', 'API\V1\BlLab\BlLabIdeaSubmitController@getIdeaSubmittedData');
+            Route::get('application-stage', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationStage');
         });
         Route::post('login', 'API\V1\BlLab\BlLabAuthenticationController@login');
         Route::post('register', 'API\V1\BlLab\BlLabAuthenticationController@register');

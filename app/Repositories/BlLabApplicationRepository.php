@@ -14,4 +14,5 @@ use App\Models\BlLabApplication;
 class BlLabApplicationRepository extends BaseRepository
 {
     public $modelName = BlLabApplication::class;
+
 }
