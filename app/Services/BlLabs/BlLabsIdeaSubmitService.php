@@ -96,7 +96,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
             return $this->sendSuccessResponse(['idea_id' => $userApplication->id_number], 'Application successfully save');
         }catch (\Exception $exception) {
-            Log::channel()->error($exception->getMessage());
+            Log::channel('ideaSubmitLog')->error($exception->getMessage());
             return $this->sendErrorResponse("Failed" , $exception->getMessage());
         }
     }
@@ -135,7 +135,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             foreach ($data['team_members'] as $key => $member) {
                 if (!empty($member['file'])) {
                     $fileName = $member['file']->getClientOriginalName();
-                    $memberData[$key]['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
+                    $memberData[$key]['file_path'] = $this->upload($member['file'], 'lab-applicant-file');
                     $memberData[$key]['file_name'] = $fileName;
                 }
                 $memberData[$key]['name'] = $member['name'] ?? null;
