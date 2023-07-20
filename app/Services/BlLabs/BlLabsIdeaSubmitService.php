@@ -10,6 +10,7 @@ use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BlLabsIdeaSubmitService extends ApiBaseService
 {
@@ -57,42 +58,47 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function storeIdea($request)
     {
-        $user = Auth::user();
-        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->id_number]);
+        try {
+            $user = Auth::user();
+            $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->id_number]);
 
-        if ($userApplication) {
-            $stepStatus = $userApplication->step_completed;
-            $stepStatus[] = $request->step;
-        } else {
-            $stepStatus[] = $request->step;
+            if ($userApplication) {
+                $stepStatus = $userApplication->step_completed;
+                $stepStatus[] = $request->step;
+            } else {
+                $stepStatus[] = $request->step;
+            }
+
+            $applicationData = [
+                'bl_lab_user_id' => $user->id,
+                'application_status' => 'draft',
+                'step_completed' => (isset($userApplication) && in_array($request->step, $userApplication->step_completed)) ? $userApplication->step_completed : $stepStatus
+            ];
+
+            if (!$userApplication) {
+                $application = $this->findAll();
+                $idNumber = $application->count() + 1;
+
+                $idNumber = str_pad($idNumber, 7, '0', STR_PAD_LEFT);
+                $applicationData['id_number'] = "$idNumber";
+                $userApplication = $this->save($applicationData);
+            } else {
+                $userApplication->update($applicationData);
+            }
+
+            if ($request->step == "summary") {
+                $this->summaryData($request->all(), $userApplication->id);
+            } elseif ($request->step == "personal") {
+                $this->personalData($request->all(), $userApplication->id);
+            } else {
+                $this->startUpData($request->all(), $userApplication->id);
+            }
+
+            return $this->sendSuccessResponse(['idea_id' => $userApplication->id_number], 'Application successfully save');
+        }catch (\Exception $exception) {
+            Log::channel()->error($exception->getMessage());
+            return $this->sendErrorResponse("Failed" , $exception->getMessage());
         }
-
-        $applicationData = [
-            'bl_lab_user_id' => $user->id,
-            'application_status' => 'draft',
-            'step_completed' => (isset($userApplication) && in_array($request->step, $userApplication->step_completed)) ? $userApplication->step_completed : $stepStatus
-        ];
-
-        if (!$userApplication) {
-            $application = $this->findAll();
-            $idNumber = $application->count() + 1;
-
-            $idNumber = str_pad($idNumber, 7, '0', STR_PAD_LEFT);
-            $applicationData['id_number'] = "$idNumber";
-            $userApplication = $this->save($applicationData);
-        } else {
-            $userApplication->update($applicationData);
-        }
-
-        if ($request->step == "summary") {
-            $this->summaryData($request->all(), $userApplication->id);
-        } elseif ($request->step == "personal") {
-           $this->personalData($request->all(), $userApplication->id);
-        } else {
-            $this->startUpData($request->all(), $userApplication->id);
-        }
-
-        return $this->sendSuccessResponse(['idea_id' => $userApplication->id_number], 'Application successful store');
     }
 
     public function summaryData($data, $applicationId)
@@ -118,17 +124,28 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     public function personalData($data, $applicationId)
     {
         $blPersonal = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
-
         if (request()->hasFile('cv')) {
-            $cv = [];
-            foreach ($data['cv'] as $key => $file) {
-                $fileName = $file->getClientOriginalName();
-                $cv[$key]['file_path'] = $this->upload($file, 'lab-applicant-file');
-                $cv[$key]['file_name'] = $fileName;
+            $fileName = $data['cv']->getClientOriginalName();
+            $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
+            $cv['file_name'] = $fileName;
+        }
+
+        $memberData = [];
+        if (!empty($data['team_members'])) {
+            foreach ($data['team_members'] as $key => $member) {
+                if (!empty($member['file'])) {
+                    $fileName = $member['file']->getClientOriginalName();
+                    $memberData[$key]['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
+                    $memberData[$key]['file_name'] = $fileName;
+                }
+                $memberData[$key]['name'] = $member['name'] ?? null;
+                $memberData[$key]['designation'] = $member['designation'] ?? null;
+                $memberData[$key]['email'] = $member['email'] ?? null;
             }
         }
 
         $data['bl_lab_app_id'] = $applicationId;
+        $data['team_members'] = $memberData;
         $data['cv'] = $cv ?? null;
         $data['status'] = "Complete";
 
@@ -172,5 +189,31 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         } else {
             $startUpInfo->update($data);
         }
+    }
+
+    public function ideaSubmittedData($request)
+    {
+        $user = Auth::user();
+        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->application_id]);
+
+
+        if ($request->step == "summary") {
+            $data = $this->labSummaryRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
+                ['idea_title', 'idea_details', 'industry', 'apply_for']);
+        } elseif ($request->step == "personal") {
+            $data = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
+                ['name', 'gender', 'email', 'phone_number', 'profession', 'institute_or_org', 'education', 'cv', 'team_members', 'applicant_agree']);
+        } elseif ($request->step == "startup") {
+            $data = $this->labStartUpInfoRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
+                [
+                    'problem_identification','big_idea','target_group','market_size','business_model','business_model_file','gtm_plan','gtm_plan_file',
+                    'financial_metrics','financial_metrics_file','exist_product_service','exist_product_service_details','exist_product_service_diff','receive_fund',
+                    'receive_fund_source','startup_current_stage'
+                ]);
+        } else {
+            return $this->sendErrorResponse('Data not found', 'Request step is not found');
+        }
+
+        return $this->sendSuccessResponse($data, "Idea step information for $request->step");
     }
 }

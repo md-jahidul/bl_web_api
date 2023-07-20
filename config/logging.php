@@ -115,6 +115,10 @@ return [
             'path'   => storage_path('logs/mail-send/send_fail.log'),
             'level' => 'info',
         ],
+        'ideaSubmitLog' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/idea-submit-fail/send_fail.log'),
+            'level' => 'info',
+        ],
     ],
-
 ];
