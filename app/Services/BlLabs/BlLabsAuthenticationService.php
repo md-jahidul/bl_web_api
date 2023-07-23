@@ -38,12 +38,16 @@ class BlLabsAuthenticationService extends ApiBaseService
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return $this->sendErrorResponse('Unauthorized', "Incorrect Email or Password", HttpStatusCode::UNAUTHORIZED);
-        }
-        $response = $this->responseWithToken($token);
-
         $user = $this->blLabsUserRepository->findOneByProperties(['email' => $data['email']], ['email']);
+        if (!$user) {
+            return $this->sendErrorResponse("Invalid Email",'This email is not registered', '404');
+        }
+
+        if (! $token = auth()->attempt($credentials)) {
+            return $this->sendErrorResponse('Unauthorized', "Invalid credential", HttpStatusCode::UNAUTHORIZED);
+        }
+
+        $response = $this->responseWithToken($token);
         $response['user'] = [
             'email' => $user->email,
             'avatar' => null
@@ -180,6 +184,7 @@ class BlLabsAuthenticationService extends ApiBaseService
         if (!$blLabUser) {
             return $this->sendErrorResponse('Unauthorized', "Email address not found", '401',);
         }
+
         $blLabUser->update($request);
 
         $secretTokenKey = "secret_token_" . $request['email'];
