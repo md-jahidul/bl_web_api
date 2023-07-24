@@ -115,10 +115,4 @@ class NumberValidationService extends ApiBaseService
             );
         }
     }
-
-    public function numberCheck($number)
-    {
-        // Validate alphanumeric
-
-    }
 }
