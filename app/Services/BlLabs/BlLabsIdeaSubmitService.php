@@ -125,6 +125,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function personalData($data, $applicationId)
     {
+
         $blPersonal = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
         if (request()->hasFile('cv')) {
             $fileName = $data['cv']->getClientOriginalName();
@@ -132,22 +133,31 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $cv['file_name'] = $fileName;
         }
 
-        $memberData = [];
-        if (!empty($data['team_members'])) {
-            foreach ($data['team_members'] as $key => $member) {
-                if (!empty($member['file'])) {
-                    $fileName = $member['file']->getClientOriginalName();
-                    $memberData[$key]['file_path'] = $this->upload($member['file'], 'lab-applicant-file');
-                    $memberData[$key]['file_name'] = $fileName;
+        $teamMembers = [];
+        if (isset($data['team_members_0_name']) && isset($data['team_members_count'])) {
+            for ($i = 0; $i<$data['team_members_count']; $i++){
+                $name = "team_members_" . $i . "_name";
+                $desc = "team_members_" . $i . "_designation";
+                $email = "team_members_" . $i . "_email";
+                $file = "team_members_" . $i . "_file";
+
+                if (!empty($data[$file])) {
+                    $fileName = $data[$file]->getClientOriginalName();
+                    $teamMembers[$i]['file_path'] = $this->upload($data[$file], 'lab-applicant-file');
+                    $teamMembers[$i]['file_name'] = $fileName;
+                } else {
+                    $teamMembers[$i]['file_path'] = (isset($blPersonal->team_members[$i])) ? $blPersonal->team_members[$i]['file_path'] : null;
+                    $teamMembers[$i]['file_name'] = (isset($blPersonal->team_members[$i])) ? $blPersonal->team_members[$i]['file_name'] : null;
                 }
-                $memberData[$key]['name'] = $member['name'] ?? null;
-                $memberData[$key]['designation'] = $member['designation'] ?? null;
-                $memberData[$key]['email'] = $member['email'] ?? null;
+
+                $teamMembers[$i]['name'] = $data[$name];
+                $teamMembers[$i]['designation'] = $data[$desc];
+                $teamMembers[$i]['email'] = $data[$email];
             }
         }
 
         $data['bl_lab_app_id'] = $applicationId;
-        $data['team_members'] = $memberData;
+        $data['team_members'] = $teamMembers;
         $data['cv'] = $cv ?? null;
         $data['status'] = "Complete";
 
