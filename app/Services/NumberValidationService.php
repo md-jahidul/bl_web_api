@@ -75,8 +75,15 @@ class NumberValidationService extends ApiBaseService
      */
     public function validateNumberWithResponse($number, $validateReq = false)
     {
-        $missdn = "88" . $number;
+        if (!preg_match('/^[0-9]{11}+$/', $number)) {
+            return $this->sendErrorResponse(
+                "Not a valid input",
+                [],
+                HttpStatusCode::INTERNAL_ERROR
+            );
+        }
 
+        $missdn = "88" . $number;
         $customer = $this->blCustomerService->getCustomerInfoByNumber($missdn);
 
         if ($customer->getData()->status == "FAIL") {
@@ -107,5 +114,11 @@ class NumberValidationService extends ApiBaseService
                 HttpStatusCode::VALIDATION_ERROR
             );
         }
+    }
+
+    public function numberCheck($number)
+    {
+        // Validate alphanumeric
+
     }
 }
