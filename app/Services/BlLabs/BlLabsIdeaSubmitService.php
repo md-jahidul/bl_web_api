@@ -36,6 +36,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     protected const STEP_TYPES = ['summary', 'personal', 'startup'];
     protected const DRAFT = "draft";
+    protected const SUBMIT = "submit";
 
     /**
      * BlLabsIdeaSubmitService constructor.
@@ -251,5 +252,22 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         }
 
         return $this->sendErrorResponse('Application Not Found', 'The user currently has no applications running.');
+    }
+
+    public function applicationList()
+    {
+        $user = Auth::user();
+        $applications = $this->blLabApplicationRepository->getApplications($user->id, self::SUBMIT);
+        if (!empty($applications)) {
+            $data = $applications->map(function ($item){
+                return [
+                    'application_id' => $item->id_number,
+                    'idea_title' => $item->summary->idea_title,
+                    'submitted_at' => $item->submitted_at
+                ];
+            });
+            return $this->sendSuccessResponse($data, "Applications List");
+        }
+        return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
     }
 }
