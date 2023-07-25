@@ -37,7 +37,7 @@ class BlLabsAuthenticationService extends ApiBaseService
 
         $user = $this->blLabsUserRepository->findOneByProperties(['email' => $data['email']], ['email']);
         if (!$user) {
-            return $this->sendErrorResponse("Invalid Email",'This email is not registered', '404');
+            return $this->sendErrorResponse("Already exists",'This email is already registered. Try Login instead.', HttpStatusCode::ALREADY_EXIST);
         }
 
         if (! $token = auth()->attempt($credentials)) {
@@ -62,11 +62,11 @@ class BlLabsAuthenticationService extends ApiBaseService
         $redisSecretToken = Redis::get("secret_token_" . $request['email']);
 
         if (!$redisSecretToken) {
-            return $this->sendErrorResponse('Token expired', "Token session is expired", '404',);
+            return $this->sendErrorResponse('Token expired', "Token session is expired", HttpStatusCode::NOT_FOUND,);
         }
 
         if ($redisSecretToken != $request['secret_token']){
-            return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", '401',);
+            return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", HttpStatusCode::INVALID_TOKEN);
         }
 
         $credentials = request(['email', 'password']);
@@ -97,7 +97,7 @@ class BlLabsAuthenticationService extends ApiBaseService
             if (!$request->is_reg_request) {
                 $user = $this->blLabsUserRepository->findOneByProperties(['email' => $request->email], ['email']);
                 if (!$user) {
-                    return $this->sendErrorResponse("OTP couldn't be send",'This email is not registered', '404');
+                    return $this->sendErrorResponse("Not Registered",'This email is not registered', HttpStatusCode::NOT_FOUND);
                 }
             }
 
