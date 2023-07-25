@@ -7,9 +7,10 @@
  * Time: 3:51 PM
  */
 
-namespace App\Repositories;
+namespace App\Repositories\BlLab;
 
-use App\Models\BlLabStartupInfo;
+use App\Models\BlLab\BlLabStartupInfo;
+use App\Repositories\BaseRepository;
 
 class BlLabStartUpInfoRepository extends BaseRepository
 {

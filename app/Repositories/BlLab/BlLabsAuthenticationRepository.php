@@ -7,9 +7,10 @@
  * Time: 3:51 PM
  */
 
-namespace App\Repositories;
+namespace App\Repositories\BlLab;
 
-use App\Models\BlLabUser;
+use App\Models\BlLab\BlLabUser;
+use App\Repositories\BaseRepository;
 
 class BlLabsAuthenticationRepository extends BaseRepository
 {

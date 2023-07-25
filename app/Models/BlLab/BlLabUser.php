@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\BlLab;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
 //use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class BlLabUser extends Authenticatable implements JWTSubject
 {

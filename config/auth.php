@@ -79,7 +79,7 @@ return [
 
         'bl_lab_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\BlLabUser::class,
+            'model' => \App\Models\BlLab\BlLabUser::class,
         ]
 
 //         'users' => [
