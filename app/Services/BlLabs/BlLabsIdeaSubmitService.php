@@ -2,10 +2,10 @@
 
 namespace App\Services\BlLabs;
 
-use App\Repositories\BlLabApplicationRepository;
-use App\Repositories\BlLabPersonalInfoRepository;
-use App\Repositories\BlLabStartUpInfoRepository;
-use App\Repositories\BlLabSummaryRepository;
+use App\Repositories\BlLab\BlLabApplicationRepository;
+use App\Repositories\BlLab\BlLabPersonalInfoRepository;
+use App\Repositories\BlLab\BlLabStartUpInfoRepository;
+use App\Repositories\BlLab\BlLabSummaryRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;

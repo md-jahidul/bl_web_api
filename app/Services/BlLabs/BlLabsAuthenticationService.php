@@ -4,14 +4,11 @@ namespace App\Services\BlLabs;
 
 use App\Enums\HttpStatusCode;
 use App\Jobs\SendEmailJob;
-use App\Mail\BlLabUserOtpSend;
-use App\Models\BlLabUser;
-use App\Repositories\BlLabsAuthenticationRepository;
+use App\Models\BlLab\BlLabUser;
+use App\Repositories\BlLab\BlLabsAuthenticationRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 class BlLabsAuthenticationService extends ApiBaseService
