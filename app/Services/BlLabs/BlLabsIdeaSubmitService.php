@@ -9,6 +9,7 @@ use App\Repositories\BlLab\BlLabSummaryRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -268,6 +269,19 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             });
             return $this->sendSuccessResponse($data, "Applications List");
         }
+        return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
+    }
+
+    public function generatePDF($applicationId)
+    {
+        $data = Auth::user();
+//        dd($data->toArray());
+        // share data to view
+        view()->share('employee',$data);
+        $pdf = PDF::loadView('pdf_view', $data->toArray());
+        // download PDF file with download method
+        return $pdf->download('pdf_file.pdf');
+
         return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
     }
 }

@@ -48,4 +48,9 @@ class BlLabIdeaSubmitController extends Controller
     {
         return $this->labsIdeaSubmitService->applicationList();
     }
+
+    public function applicationDownload($applicationId)
+    {
+        return $this->labsIdeaSubmitService->generatePDF($applicationId);
+    }
 }
