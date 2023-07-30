@@ -12,6 +12,7 @@ use App\Models\MyBlProductTab;
 use App\Repositories\ConfigRepository;
 use App\Models\OfferCategory;
 use App\Repositories\FourGLandingPageRepository;
+use App\Repositories\OfferCategoryRepository;
 use App\Repositories\ProductBookmarkRepository;
 use App\Repositories\ProductDetailsSectionRepository;
 use App\Repositories\ProductRepository;
@@ -88,6 +89,14 @@ class ProductService extends ApiBaseService
      * @var AlBannerService
      */
     private $alBannerService;
+    /**
+     * @var ProductDetailsSectionRepository
+     */
+    private $productDetailsSectionRepository;
+    /**
+     * @var OfferCategoryRepository
+     */
+    private $offerCategoryRepository;
 
     /**
      * ProductService constructor.
@@ -113,7 +122,8 @@ class ProductService extends ApiBaseService
         ConfigRepository $configRepository,
         AmarOfferService $amarOfferService,
         AlBannerService $alBannerService,
-        ProductDetailsSectionRepository $productDetailsSectionRepository
+        ProductDetailsSectionRepository $productDetailsSectionRepository,
+        OfferCategoryRepository $offerCategoryRepository
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -127,6 +137,7 @@ class ProductService extends ApiBaseService
         $this->configRepository = $configRepository;
         $this->amarOfferService = $amarOfferService;
         $this->alBannerService = $alBannerService;
+        $this->offerCategoryRepository = $offerCategoryRepository;
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->setActionRepository($productRepository);
     }
@@ -838,7 +849,7 @@ class ProductService extends ApiBaseService
 
     public function trendingOffers()
     {
-        $products = $this->productRepository->showTrendingProduct();
+        $products = $this->productRepository->productOffers();
         foreach ($products as $product) {
             if ($product->sim_category_id == 1) {
                 $prepaid[] = $this->productAttrPrepare($product);
@@ -870,6 +881,7 @@ class ProductService extends ApiBaseService
             $urlEn = "/postpaid/" . $product->offer_category->url_slug . "/" . $product->url_slug;
             $urlBn = "/পোস্টপেইড/" . $product->offer_category->url_slug_bn . "/" . $product->url_slug_bn;
         }
+        $dataValue = ($product->productCore->internet_volume_mb >= 1024);
         return [
             'product_code' => $product->product_code,
             'offer_type_en' => $product->offer_category->name_en,
@@ -877,9 +889,9 @@ class ProductService extends ApiBaseService
             'offer_alias' => $product->offer_category->alias,
             'title_en' => $product->name_en,
             'title_bn' => $product->name_bn,
-            'data_volume' => $product->productCore->internet_volume_mb,
-            'data_volume_unit_en' => ($product->productCore->internet_volume_mb > 1024) ? "MB" : "GB",
-            'data_volume_unit_bn' => ($product->productCore->internet_volume_mb > 1024) ? "এমবি" : "জিবি",
+            'data_volume' => $dataValue ? $product->productCore->internet_volume_mb / 1024 : $product->productCore->internet_volume_mb,
+            'data_volume_unit_en' => $dataValue ? "GB" : "MB",
+            'data_volume_unit_bn' => $dataValue ? "জিবি" : "এমবি",
             'minute_volume' => $product->productCore->minute_volume,
             'minute_volume_unit_en' => "Min",
             'minute_volume_unit_bn' => "মিনিট",
@@ -898,5 +910,39 @@ class ProductService extends ApiBaseService
             'url_en' => $urlEn,
             'url_bn' => $urlBn,
         ];
+    }
+
+    public function eShopOffers($offerType)
+    {
+        if ($offerType == "four_g_offers") {
+            $products = $this->productRepository->fourGData('', true);
+        } else {
+            $offerCat =  $this->offerCategoryRepository->findOneByProperties(['alias' => $offerType], [
+                'id', 'url_slug', 'url_slug_bn', 'alias'
+            ]);
+            $products = $this->productRepository->productOffers($offerCat->id);
+        }
+
+        foreach ($products as $product) {
+            if ($product->sim_category_id == 1) {
+                $prepaid[] = $this->productAttrPrepare($product);
+            } else {
+                $postpaid[] = $this->productAttrPrepare($product);
+            }
+        }
+
+        $data = [
+            [
+                'title_en' => "Prepaid",
+                'title_bn' => "প্রিপেইড",
+                'offers' => $prepaid ?? []
+            ],
+            [
+                'title_en' => "Postpaid",
+                'title_bn' => "পোস্টপেইড",
+                'offers' => $postpaid ?? []
+            ]
+        ];
+        return $this->sendSuccessResponse($data, "New SIM offers");
     }
 }

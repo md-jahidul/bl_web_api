@@ -96,9 +96,20 @@ class ProductRepository extends BaseRepository
     }
 
     #
-    public function showTrendingProduct()
+    public function productOffers($offerCatId = null, $fourGOffer = false)
     {
-       return $this->model->select(
+        $data = $this->model
+            ->startEndDate()
+            ->where('status', 1)
+            ->where('special_product', 0)
+            ->orderBy('display_order');
+        if ($offerCatId) {
+            $data = $data->where('offer_category_id', $offerCatId);
+        } else {
+            $data = $data->where('show_in_e_shop', 1);
+        }
+
+        return $data->select(
                'id',
                'product_code',
                'url_slug',
@@ -122,11 +133,6 @@ class ProductRepository extends BaseRepository
                'offer_info'
            )
            ->productCore()
-           ->startEndDate()
-           ->where('status', 1)
-           ->where('show_in_e_shop', 1)
-           ->where('special_product', 0)
-           ->orderBy('display_order')
            ->get();
     }
 
@@ -370,9 +376,9 @@ class ProductRepository extends BaseRepository
             ->first();
     }
 
-    public function fourGData($type)
+    public function fourGData($type, $isFourGOffer = false)
     {
-        return $this->model->where('offer_category_id', 1)
+        $data = $this->model->where('offer_category_id', 1)
             ->where('is_four_g_offer', 1)
             ->where('status', 1)
             ->where('special_product', 0)
@@ -392,9 +398,14 @@ class ProductRepository extends BaseRepository
                 'offer_info',
                 'like')
             ->startEndDate()
-            ->productCore()
-            ->category($type)
-            ->paginate(4);
+            ->productCore();
+
+        if ($isFourGOffer){
+            return $data->get();
+        }else{
+            return $data->category($type)
+                 ->paginate(4);
+        }
     }
 
     public function getProductInfoByCode(array $productCodes)
