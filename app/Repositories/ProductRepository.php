@@ -124,7 +124,7 @@ class ProductRepository extends BaseRepository
            ->productCore()
            ->startEndDate()
            ->where('status', 1)
-           ->where('show_in_home', 1)
+           ->where('show_in_e_shop', 1)
            ->where('special_product', 0)
            ->orderBy('display_order')
            ->get();
