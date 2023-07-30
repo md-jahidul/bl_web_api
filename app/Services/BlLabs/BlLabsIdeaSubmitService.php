@@ -133,6 +133,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['cv']->getClientOriginalName();
             $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
             $cv['file_name'] = $fileName;
+        } else {
+            $cv = (isset($blPersonal->cv)) ? $blPersonal->cv : null;
         }
 
         $teamMembers = [];
