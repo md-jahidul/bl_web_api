@@ -212,6 +212,9 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         $user = Auth::user();
         $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->application_id]);
 
+        if (!$userApplication) {
+            return $this->sendSuccessResponse(json_decode("{}"), 'Application not found');
+        }
 
         if ($request->step == "summary") {
             $data = $this->labSummaryRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
