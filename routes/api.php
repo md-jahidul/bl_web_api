@@ -433,6 +433,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
             Route::post('idea-submit', 'API\V1\BlLab\BlLabIdeaSubmitController@ideaSubmit');
             Route::get('application-data', 'API\V1\BlLab\BlLabIdeaSubmitController@getIdeaSubmittedData');
             Route::get('application-stage', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationStage');
+            Route::get('application-list', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationList');
+            Route::get('application-download/{applicationId}', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationDownload');
             // Content
             Route::get('industry', 'API\V1\BlLab\BlLabApplicationContentController@getIndustry');
             Route::get('program', 'API\V1\BlLab\BlLabApplicationContentController@getProgram');

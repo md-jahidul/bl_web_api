@@ -61,31 +61,31 @@ class BlLabApplicationContentService extends ApiBaseService
 
     public function industry()
     {
-        $data = $this->blLabIndustryRepository->findByProperties(['status' => 1], ['name_en']);
+        $data = $this->blLabIndustryRepository->findByProperties(['status' => 1], ['name_en', 'slug']);
         return $this->sendSuccessResponse($data, 'Industry List');
     }
 
     public function program()
     {
-        $data = $this->blLabProgramRepository->findByProperties(['status' => 1], ['name_en', 'icon', 'is_clickable']);
+        $data = $this->blLabProgramRepository->findByProperties(['status' => 1], ['name_en', 'slug', 'icon', 'is_clickable']);
         return $this->sendSuccessResponse($data, 'Program List');
     }
 
     public function profession()
     {
-        $data = $this->blLabProfessionRepository->findByProperties(['status' => 1], ['name_en']);
+        $data = $this->blLabProfessionRepository->findByProperties(['status' => 1], ['name_en', 'slug']);
         return $this->sendSuccessResponse($data, 'Profession List');
     }
 
     public function instituteOrOrg()
     {
-        $data = $this->blLabInstituteOrgRepository->findByProperties(['status' => 1], ['name_en']);
+        $data = $this->blLabInstituteOrgRepository->findByProperties(['status' => 1], ['name_en', 'slug']);
         return $this->sendSuccessResponse($data, 'Institute/Organization List');
     }
 
     public function education()
     {
-        $data = $this->blLabEducationRepository->findByProperties(['status' => 1], ['name_en']);
+        $data = $this->blLabEducationRepository->findByProperties(['status' => 1], ['name_en', 'slug']);
         return $this->sendSuccessResponse($data, 'Education List');
     }
 }

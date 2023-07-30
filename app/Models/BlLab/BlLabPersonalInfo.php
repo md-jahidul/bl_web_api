@@ -12,6 +12,7 @@ class BlLabPersonalInfo extends Model
         'gender',
         'email',
         'phone_number',
+        'profession',
         'institute_or_org',
         'education',
         'cv',

@@ -18,4 +18,6 @@ final class HttpStatusCode extends Enum
     const UNAUTHORIZED     =   401;
     const NOT_FOUND        =   404;
     const INTERNAL_ERROR   =   500;
+    const ALREADY_EXIST    =   403;
+    const INVALID_TOKEN    =   498;
 }

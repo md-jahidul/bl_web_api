@@ -9,6 +9,7 @@ use App\Repositories\BlLab\BlLabSummaryRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -36,6 +37,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     protected const STEP_TYPES = ['summary', 'personal', 'startup'];
     protected const DRAFT = "draft";
+    protected const SUBMIT = "submit";
 
     /**
      * BlLabsIdeaSubmitService constructor.
@@ -131,6 +133,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['cv']->getClientOriginalName();
             $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
             $cv['file_name'] = $fileName;
+        } else {
+            $cv = (isset($blPersonal->cv)) ? $blPersonal->cv : null;
         }
 
         $teamMembers = [];
@@ -251,5 +255,35 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         }
 
         return $this->sendErrorResponse('Application Not Found', 'The user currently has no applications running.');
+    }
+
+    public function applicationList()
+    {
+        $user = Auth::user();
+        $applications = $this->blLabApplicationRepository->getApplications($user->id, self::SUBMIT);
+        if (!empty($applications)) {
+            $data = $applications->map(function ($item){
+                return [
+                    'application_id' => $item->id_number,
+                    'idea_title' => $item->summary->idea_title,
+                    'submitted_at' => $item->submitted_at
+                ];
+            });
+            return $this->sendSuccessResponse($data, "Applications List");
+        }
+        return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
+    }
+
+    public function generatePDF($applicationId)
+    {
+        $data = Auth::user();
+//        dd($data->toArray());
+        // share data to view
+        view()->share('employee',$data);
+        $pdf = PDF::loadView('pdf_view', $data->toArray());
+        // download PDF file with download method
+        return $pdf->download('pdf_file.pdf');
+
+        return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
     }
 }
