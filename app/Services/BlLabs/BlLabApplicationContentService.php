@@ -11,6 +11,7 @@ use App\Repositories\BlLab\BlLabProfessionRepository;
 use App\Repositories\BlLab\BlLabProgramRepository;
 use App\Repositories\BlLab\BlLabStartUpInfoRepository;
 use App\Repositories\BlLab\BlLabSummaryRepository;
+use App\Services\AlBannerService;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
@@ -39,6 +40,10 @@ class BlLabApplicationContentService extends ApiBaseService
      * @var BlLabEducationRepository
      */
     private $blLabEducationRepository;
+    /**
+     * @var AlBannerService
+     */
+    private $alBannerService;
 
     /**
      * BlLabApplicationContentService constructor.
@@ -49,13 +54,15 @@ class BlLabApplicationContentService extends ApiBaseService
         BlLabProgramRepository $blLabProgramRepository,
         BlLabProfessionRepository $blLabProfessionRepository,
         BlLabInstituteOrgRepository $blLabInstituteOrgRepository,
-        BlLabEducationRepository $blLabEducationRepository
+        BlLabEducationRepository $blLabEducationRepository,
+        AlBannerService $alBannerService
     ) {
         $this->blLabIndustryRepository = $blLabIndustryRepository;
         $this->blLabProgramRepository = $blLabProgramRepository;
         $this->blLabProfessionRepository = $blLabProfessionRepository;
         $this->blLabInstituteOrgRepository = $blLabInstituteOrgRepository;
         $this->blLabEducationRepository = $blLabEducationRepository;
+        $this->alBannerService = $alBannerService;
 //        $this->setActionRepository($labApplicationRepository);
     }
 
@@ -87,5 +94,14 @@ class BlLabApplicationContentService extends ApiBaseService
     {
         $data = $this->blLabEducationRepository->findByProperties(['status' => 1], ['name_en', 'slug']);
         return $this->sendSuccessResponse($data, 'Education List');
+    }
+
+    public function banner()
+    {
+        $data = [
+            'bl_lab_my_idea' => $this->alBannerService->getBanner(0, 'bl_lab_my_idea'),
+            'bl_lab_application' => $this->alBannerService->getBanner(0, 'bl_lab_application'),
+        ];
+        return $this->sendSuccessResponse($data, 'Bl Lab Banners');
     }
 }

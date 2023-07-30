@@ -54,4 +54,9 @@ class BlLabApplicationContentController extends Controller
     {
         return $this->applicationContentService->education();
     }
+
+    public function getBanner()
+    {
+        return $this->applicationContentService->banner();
+    }
 }
