@@ -102,15 +102,12 @@ class BlLabsAuthenticationService extends ApiBaseService
                 }
             }
 
-            $request->validate([
-                'email' => 'required|email',
-                'is_reg_request' => 'required'
-            ]);
-
-            $unique = ($request->is_reg_request == "true") ? "|unique:bl_lab_users" : '';
-            $request->validate([
-                'email' => 'required|email|max:255' . $unique,
-            ]);
+            if ($request->is_reg_request) {
+                $user = $this->blLabsUserRepository->findOneByProperties(['email' => $request->email], ['email']);
+                if ($user) {
+                    return $this->sendErrorResponse("Already Registered",'This email is already registered. Try Login instead.', HttpStatusCode::ALREADY_EXIST);
+                }
+            }
 
             $otp = rand(100000,999999);
             $data = [
