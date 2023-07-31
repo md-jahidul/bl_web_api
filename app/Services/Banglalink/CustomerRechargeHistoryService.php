@@ -116,7 +116,7 @@ class CustomerRechargeHistoryService extends BaseService
     public function getRechargeHistory(Request $request)
     {
         $user = $this->customerService->getCustomerDetails($request);
-        dd($user);
+
         if (!$user) {
             return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
         }
