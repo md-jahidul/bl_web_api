@@ -36,8 +36,9 @@ class BlLabsAuthenticationService extends ApiBaseService
         $credentials = request(['email', 'password']);
 
         $user = $this->blLabsUserRepository->findOneByProperties(['email' => $data['email']], ['email']);
+
         if (!$user) {
-            return $this->sendErrorResponse("Already exists",'This email is already registered. Try Login instead.', HttpStatusCode::ALREADY_EXIST);
+            return $this->sendErrorResponse("Not registered",'This email is not registered.', HttpStatusCode::NOT_FOUND);
         }
 
         if (! $token = auth()->attempt($credentials)) {
