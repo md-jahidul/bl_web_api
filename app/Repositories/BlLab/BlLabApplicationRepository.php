@@ -16,11 +16,10 @@ class BlLabApplicationRepository extends BaseRepository
 {
     public $modelName = BlLabApplication::class;
 
-    public function getApplications($userId, $applicationStatus)
+    public function getApplications($userId)
     {
         return $this->model->where('bl_lab_user_id', $userId)
-            ->where('application_status', $applicationStatus)
-            ->select('id', 'bl_lab_user_id', 'id_number', 'submitted_at', 'application_status')
+            ->select('id', 'bl_lab_user_id', 'application_id', 'submitted_at', 'application_status')
             ->with('summary')
             ->get();
     }
