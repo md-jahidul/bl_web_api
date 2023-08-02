@@ -60,6 +60,11 @@ class BalanceTransferController extends Controller
         return $this->balanceTransferService->transferBalance($request);
     }
 
+    public function pinVerify(Request $request)
+    {
+        return $this->balanceTransferService->checkPin($request);
+    }
+
     /**
      * @param SetBalanceTransferPinRequest $request
      * @return JsonResponse
