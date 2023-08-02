@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class BlLabApplication extends Model
 {
-    protected $fillable = ['bl_lab_user_id', 'id_number', 'application_status', 'step_completed', 'submitted_at'];
+    protected $fillable = ['bl_lab_user_id', 'application_id', 'application_status', 'step_completed', 'submitted_at'];
 
     protected $casts = [
         'step_completed' => 'array'

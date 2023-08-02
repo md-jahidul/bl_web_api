@@ -63,7 +63,11 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     {
         try {
             $user = Auth::user();
-            $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->id_number]);
+            $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'application_id' => $request->application_id]);
+
+            if (isset($userApplication->application_status) && $userApplication->application_status == self::SUBMIT){
+                return $this->sendErrorResponse("Failed" , "You can't edit submitted idea");
+            }
 
             if ($userApplication) {
                 $stepStatus = $userApplication->step_completed;
@@ -74,8 +78,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
             $applicationData = [
                 'bl_lab_user_id' => $user->id,
-                'application_status' => $request->application_status,
-                'submitted_at' => ($request->application_status == "submit") ? now()->toDateString() : 'draft',
+                'application_status' => $request->application_status ?? self::DRAFT,
+                'submitted_at' => ($request->application_status == self::SUBMIT) ? now()->toDateString() : null,
                 'step_completed' => (isset($userApplication) && in_array($request->step, $userApplication->step_completed)) ? $userApplication->step_completed : $stepStatus
             ];
 
@@ -84,7 +88,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
                 $idNumber = $application->count() + 1;
 
                 $idNumber = str_pad($idNumber, 7, '0', STR_PAD_LEFT);
-                $applicationData['id_number'] = "$idNumber";
+                $applicationData['application_id'] = "$idNumber";
                 $userApplication = $this->save($applicationData);
             } else {
                 $userApplication->update($applicationData);
@@ -98,7 +102,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
                 $this->startUpData($request->all(), $userApplication->id);
             }
 
-            return $this->sendSuccessResponse(['application_id' => $userApplication->id_number], 'Application successfully save');
+            return $this->sendSuccessResponse(['application_id' => $userApplication->application_id], 'Application successfully save');
         }catch (\Exception $exception) {
             Log::channel('ideaSubmitLog')->error($exception->getMessage());
             return $this->sendErrorResponse("Failed" , $exception->getMessage());
@@ -210,7 +214,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     public function ideaSubmittedData($request)
     {
         $user = Auth::user();
-        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'id_number' => $request->application_id]);
+        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'application_id' => $request->application_id]);
 
         if (!$userApplication) {
             return $this->sendSuccessResponse(json_decode("{}"), 'Application not found');
@@ -236,10 +240,12 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         return $this->sendSuccessResponse($data, "Idea step information for $request->step");
     }
 
-    public function getApplicationCurrentStage()
+    public function getApplicationCurrentStage($request)
     {
         $user = Auth::user();
-        $userApplication = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'application_status' => self::DRAFT]);
+        $userApplication = $this->blLabApplicationRepository->findOneByProperties([
+            'bl_lab_user_id' => $user->id, 'application_status' => self::DRAFT, 'application_id' => $request->application_id
+        ]);
 
         if ($userApplication) {
             $stepTypes = self::STEP_TYPES;
@@ -251,8 +257,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             })->toArray();
 
             $data = [
-                'application_id' => $userApplication->id_number,
-                'next_stage' => array_values($nextStage)[0]
+                'application_id' => $userApplication->application_id,
+                'next_stage' => sizeof($nextStage) ? array_values($nextStage)[0] : ""
             ];
             return $this->sendSuccessResponse($data, "Current applications stage");
         }
@@ -263,13 +269,14 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     public function applicationList()
     {
         $user = Auth::user();
-        $applications = $this->blLabApplicationRepository->getApplications($user->id, self::SUBMIT);
+        $applications = $this->blLabApplicationRepository->getApplications($user->id);
         if (!empty($applications)) {
             $data = $applications->map(function ($item){
                 return [
-                    'application_id' => $item->id_number,
+                    'application_id' => $item->application_id,
                     'idea_title' => $item->summary->idea_title,
-                    'submitted_at' => $item->submitted_at
+                    'submitted_at' => $item->submitted_at,
+                    'application_status' => $item->application_status
                 ];
             });
             return $this->sendSuccessResponse($data, "Applications List");
@@ -280,7 +287,6 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     public function generatePDF($applicationId)
     {
         $data = Auth::user();
-//        dd($data->toArray());
         // share data to view
         view()->share('employee',$data);
         $pdf = PDF::loadView('pdf_view', $data->toArray());
