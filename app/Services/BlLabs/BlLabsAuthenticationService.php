@@ -210,7 +210,7 @@ class BlLabsAuthenticationService extends ApiBaseService
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => (int) auth()->factory()->getTTL()
+            'expires_in' => (int) auth()->factory()->getTTL() * 60 // Sec
         ];
     }
 }
