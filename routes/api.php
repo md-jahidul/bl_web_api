@@ -387,6 +387,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
     Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
     Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
+    Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
 
     # Usage History
     Route::get('usage-history', 'API\V1\CustomerUsageHistoryController@getSummaryHistory');

@@ -94,14 +94,6 @@ class BalanceTransferService extends BaseService
     {
         $customer = $this->customerService->getAuthenticateCustomer($request);
 
-        if (!$customer) {
-            throw new TokenInvalidException();
-        }
-
-        if (!$this->validateCustomerPin($customer, $request->pin)) {
-            throw new PinInvalidException();
-        }
-
         $param = [
             'amount' => $request->amount,
             'transactionPIN' => $this->generatePin($customer->customer_account_id),
@@ -145,6 +137,21 @@ class BalanceTransferService extends BaseService
         }
 
         throw new CurlRequestException($result);
+    }
+
+    public function checkPin($request)
+    {
+        $customer = $this->customerService->getAuthenticateCustomer($request);
+
+        if (!$customer->balance_transfer_pin) {
+            throw new PinNotSetException();
+        }
+
+        if (!$this->validateCustomerPin($customer, $request->pin)) {
+            throw new PinInvalidException();
+        }
+
+        return $this->apiBaseService->sendSuccessResponse([], 'This is a valid pin');
     }
 
     /**
