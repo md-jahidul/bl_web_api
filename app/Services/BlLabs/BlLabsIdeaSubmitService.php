@@ -274,9 +274,9 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $data = $applications->map(function ($item){
                 return [
                     'application_id' => $item->application_id,
-                    'idea_title' => $item->summary->idea_title,
-                    'submitted_at' => $item->submitted_at,
-                    'application_status' => $item->application_status
+                    'idea_title' => $item->summary->idea_title ?? null,
+                    'submitted_at' => $item->submitted_at ?? null,
+                    'application_status' => $item->application_status ?? null
                 ];
             });
             return $this->sendSuccessResponse($data, "Applications List");
