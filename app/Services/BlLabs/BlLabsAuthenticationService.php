@@ -4,11 +4,13 @@ namespace App\Services\BlLabs;
 
 use App\Enums\HttpStatusCode;
 use App\Jobs\SendEmailJob;
+use App\Mail\BlLabUserOtpSend;
 use App\Models\BlLab\BlLabUser;
 use App\Repositories\BlLab\BlLabsAuthenticationRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 class BlLabsAuthenticationService extends ApiBaseService
@@ -117,7 +119,8 @@ class BlLabsAuthenticationService extends ApiBaseService
             ];
             $ttl = 60 * 5; // 5 min
             Redis::setex($request->email, $ttl, $otp);
-            dispatch(new SendEmailJob($data));
+            Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
+            //dispatch(new SendEmailJob($data));
 
             return $this->sendSuccessResponse(['otp' => $otp, 'otp_expire_in' => $ttl], 'OTP sent successfully');
         } catch (QueryException $exception) {
