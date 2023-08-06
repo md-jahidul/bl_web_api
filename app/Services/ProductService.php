@@ -844,12 +844,14 @@ class ProductService extends ApiBaseService
             'years'  => ['en' => 'Years', 'bn' => 'বছর'],
             'free_text' => ['en' => $freeTxtEn, 'bn' => $freeTxtBn]
         ];
+
         return $validityUnits[$validityUnit];
     }
 
     public function trendingOffers()
     {
         $products = $this->productRepository->productOffers();
+//        dd($products);
         foreach ($products as $product) {
             if ($product->sim_category_id == 1) {
                 $prepaid[] = $this->productAttrPrepare($product);
@@ -903,8 +905,8 @@ class ProductService extends ApiBaseService
             'call_rate_unit_bn' => $product->productCore->call_rate_unit_bn,
             'price' => $product->productCore->price_tk,
             'validity' => $product->productCore->validity_days,
-            'validity_unit_en' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['en'],
-            'validity_unit_bn' => $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['bn'],
+            'validity_unit_en' => isset($product->productCore->validity_unit) ? $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['en'] : null,
+            'validity_unit_bn' => isset($product->productCore->validity_unit) ? $this->validityUnitGenerator($product->productCore->validity_unit, $product->offer_info)['bn'] : null,
             'tag_name_en' => optional($product->tag)->tag_name_en,
             'tag_name_bn' => optional($product->tag)->tag_name_bn,
             'url_en' => $urlEn,
