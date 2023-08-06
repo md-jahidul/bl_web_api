@@ -184,18 +184,24 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['business_model_file']->getClientOriginalName();
             $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file');
             $businessModelFile['file_name'] = $fileName;
+        } else {
+            $businessModelFile = (isset($startUpInfo->business_model_file)) ? $startUpInfo->business_model_file : null;
         }
 
         if (request()->hasFile('gtm_plan_file')) {
             $fileName = $data['gtm_plan_file']->getClientOriginalName();
             $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file');
             $gtmPlanFile['file_name'] = $fileName;
+        } else {
+            $gtmPlanFile = (isset($startUpInfo->gtm_plan_file)) ? $startUpInfo->gtm_plan_file : null;
         }
 
         if (request()->hasFile('financial_metrics_file')) {
             $fileName = $data['financial_metrics_file']->getClientOriginalName();
             $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file');
             $financialMetricsFile['file_name'] = $fileName;
+        } else {
+            $financialMetricsFile = (isset($startUpInfo->financial_metrics_file)) ? $startUpInfo->financial_metrics_file : null;
         }
 
         $data['bl_lab_app_id'] = $applicationId;
