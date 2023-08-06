@@ -442,6 +442,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
             Route::get('profession', 'API\V1\BlLab\BlLabApplicationContentController@getProfession');
             Route::get('institute-or-org', 'API\V1\BlLab\BlLabApplicationContentController@getInstituteOrOrg');
             Route::get('education', 'API\V1\BlLab\BlLabApplicationContentController@getEducation');
+            Route::get('startup-stage', 'API\V1\BlLab\BlLabApplicationContentController@getStartupStage');
         });
         Route::post('login', 'API\V1\BlLab\BlLabAuthenticationController@login');
         Route::post('register', 'API\V1\BlLab\BlLabAuthenticationController@register');

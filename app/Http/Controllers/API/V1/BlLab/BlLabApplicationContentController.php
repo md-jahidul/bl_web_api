@@ -55,6 +55,11 @@ class BlLabApplicationContentController extends Controller
         return $this->applicationContentService->education();
     }
 
+    public function getStartupStage()
+    {
+        return $this->applicationContentService->startupStage();
+    }
+
     public function getBanner()
     {
         return $this->applicationContentService->banner();
