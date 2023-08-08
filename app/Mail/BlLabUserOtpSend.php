@@ -33,7 +33,6 @@ class BlLabUserOtpSend extends Mailable
         $data = $this->data;
         return $this
             ->markdown('emails.bl-labs.send-otp.message', compact('data'))
-            ->subject($data['subject'])
-            ->from('info@banglalink.net', 'Banglalink');
+            ->subject($data['subject']);
     }
 }
