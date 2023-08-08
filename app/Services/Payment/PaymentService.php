@@ -105,7 +105,7 @@ class PaymentService extends ApiBaseService
                 return json_decode($response->getBody()->getContents(), true);
             }
         } catch (\Exception $exception) {
-            Log::channel('paymentReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
+            Log::channel('sslReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
             return $this->sendErrorResponse('Internal server Error', "PGW couldn't perform", 404);
         }
     }
