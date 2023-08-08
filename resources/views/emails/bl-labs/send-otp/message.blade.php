@@ -8,8 +8,8 @@
     @endslot
 
     {{-- Body --}}
-    <strong>Hello, Bl Lab User</strong><br>
-    <p><strong>{{ $data['body'] }}</strong></p>
+    <strong>Hello, Dear</strong><br>
+    <p>Your OTP is : <strong>{{ $data['body'] }}</strong></p>
 
 {{--    {{ $slot }}--}}
 
