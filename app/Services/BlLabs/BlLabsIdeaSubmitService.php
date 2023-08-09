@@ -292,10 +292,20 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function generatePDF($applicationId)
     {
-        $data = Auth::user();
+//        $user = Auth::user();
+
+        $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => 1]);
+
+        $data = [
+            'application_id' => $application->application_id,
+            '' => ''
+        ];
+
+//        dd($application);
         // share data to view
-        view()->share('employee',$data);
-        $pdf = PDF::loadView('pdf_view', $data->toArray());
+        view()->share('application', $application);
+        $pdf = PDF::loadView('pdf_view', $application->toArray());
+        return $pdf->stream('pdf_file.pdf');
         // download PDF file with download method
         return $pdf->download('pdf_file.pdf');
 
