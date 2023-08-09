@@ -30,7 +30,7 @@ class PartnerOfferDetailsResource extends JsonResource {
             'category_tag_en'       => $this['offer_type_en'] ?? null,
             'category_tag_bn'       => $this['offer_type_bn'] ?? null,
             'offer_details_en'      => $this['offer_details_en'] ?? null,
-            'offer_details_bn'      => $this['offer_details_en'] ?? null,
+            'offer_details_bn'      => $this['offer_details_bn'] ?? null,
             'eligible_customer_en'  => $this['eligible_customer_en'] ?? null,
             'eligible_customer_bn'  => $this['eligible_customer_bn'] ?? null,
             'phone_en'              => !empty($phone) ? $phone->en : "",
