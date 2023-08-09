@@ -10,6 +10,7 @@ use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -137,6 +138,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['cv']->getClientOriginalName();
             $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
             $cv['file_name'] = $fileName;
+            $cv['file_size'] = $this->formatBytes($data['cv']->getSize());
         } else {
             $cv = (isset($blPersonal->cv)) ? $blPersonal->cv : null;
         }
@@ -153,9 +155,11 @@ class BlLabsIdeaSubmitService extends ApiBaseService
                     $fileName = $data[$file]->getClientOriginalName();
                     $teamMembers[$i]['file_path'] = $this->upload($data[$file], 'lab-applicant-file');
                     $teamMembers[$i]['file_name'] = $fileName;
+                    $teamMembers[$i]['file_size'] =  $this->formatBytes($data[$file]->getSize());;
                 } else {
                     $teamMembers[$i]['file_path'] = (isset($blPersonal->team_members[$i])) ? $blPersonal->team_members[$i]['file_path'] : null;
                     $teamMembers[$i]['file_name'] = (isset($blPersonal->team_members[$i])) ? $blPersonal->team_members[$i]['file_name'] : null;
+                    $teamMembers[$i]['file_size'] = (isset($blPersonal->team_members[$i])) ? $blPersonal->team_members[$i]['file_size'] : null;
                 }
 
                 $teamMembers[$i]['name'] = $data[$name];
@@ -184,6 +188,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['business_model_file']->getClientOriginalName();
             $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file');
             $businessModelFile['file_name'] = $fileName;
+            $businessModelFile['file_size'] = $this->formatBytes($data['business_model_file']->getSize());
         } else {
             $businessModelFile = (isset($startUpInfo->business_model_file)) ? $startUpInfo->business_model_file : null;
         }
@@ -192,6 +197,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['gtm_plan_file']->getClientOriginalName();
             $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file');
             $gtmPlanFile['file_name'] = $fileName;
+            $gtmPlanFile['file_size'] = $this->formatBytes($data['gtm_plan_file']->getSize());
         } else {
             $gtmPlanFile = (isset($startUpInfo->gtm_plan_file)) ? $startUpInfo->gtm_plan_file : null;
         }
@@ -200,6 +206,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $fileName = $data['financial_metrics_file']->getClientOriginalName();
             $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file');
             $financialMetricsFile['file_name'] = $fileName;
+            $financialMetricsFile['file_size'] = $this->formatBytes($data['financial_metrics_file']->getSize());
         } else {
             $financialMetricsFile = (isset($startUpInfo->financial_metrics_file)) ? $startUpInfo->financial_metrics_file : null;
         }
@@ -215,6 +222,15 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         } else {
             $startUpInfo->update($data);
         }
+    }
+
+    function formatBytes($bytes, $precision = 2) {
+        $units = array('B', 'KB', 'MB', 'GB');
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1000));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1000, $pow);
+        return round($bytes, $precision) . $units[$pow];
     }
 
     public function ideaSubmittedData($request)
@@ -296,19 +312,22 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
         $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => 1]);
 
+        $attachmentArr = [];
+
         $data = [
             'application_id' => $application->application_id,
-            '' => ''
+            'submitted_at' => date_format(date_create($application->submitted_at),"F,d,Y l"),
+            'summary' => $application->summary->toArray(),
+            'personal' => $application->personal->toArray(),
+            'startup' => $application->startup->toArray(),
+            'attachments' => ''
         ];
 
-//        dd($application);
         // share data to view
         view()->share('application', $application);
         $pdf = PDF::loadView('pdf_view', $application->toArray());
         return $pdf->stream('pdf_file.pdf');
         // download PDF file with download method
-        return $pdf->download('pdf_file.pdf');
-
-        return $this->sendSuccessResponse([], "You haven't submitted any ideas yet.");
+//        return $pdf->download('pdf_file.pdf');
     }
 }

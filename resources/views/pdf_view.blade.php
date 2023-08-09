@@ -6,9 +6,256 @@
     <title>Document</title>
 </head>
 <body style="padding: 30px;">
-<table style="width: 100%;">
-    <tr>
-        <td>
+<style>
+    body {
+        font-family: Inter, sans-serif;
+    }
+    .box-1 {
+        width: 100%;
+        padding: 12px;
+        margin-top: 40px;
+        border-radius: 8px;
+        border: 1px solid #FBD1BD;
+        background: linear-gradient(90deg, #FFF 0%, #FFFAF8 100%);
+        float: left;
+    }
+    .label-1 {
+        font-family: Inter;
+        display: block;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        color: #757575;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .label-2 {
+        color: #212121 font-family: Inter;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 130%;
+        /* 18.2px */
+        letter-spacing: 0.28px;
+    }
+    .value-2 {
+        color: #616161;
+        /* Text/Badge/Badge | Light | Regular 400 */
+        font-family: Inter;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .value-3 {
+        color: #757575; font-family: Inter;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .value-1 {
+        font-family: Inter;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 130%;
+    }
+    .box-1-item {
+        float: left;
+    }
+    .float-left {
+        float: left;
+    }
+    .col-2 {
+        width: 50%;
+        float: left;
+    }
+    .col-3 {
+        width: 33.33%;
+        float: left;
+    }
+    .heading-1 {
+        font-family: Inter, sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 130%;
+        margin-top: 32px;
+        margin-bottom: 8px;
+    }
+    .box-2 {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #E0E0E0;
+        padding: 12px;
+        float: left;
+    }
+    .section-2 div {}
+    .mb-16 {
+        margin-bottom: 16px;
+    }
+    .label-3 {
+        color: #757575;
+        /* Text/Badge/Badge | Light | Regular 400 */
+        font-family: Inter;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .value-4 {
+        color: #212121;
+        /* Text/Label/Label | Rest | Regular 400 */
+        font-family: Inter;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 125%;
+        /* 15px */
+        letter-spacing: 0.24px;
+    }
+    .block {
+        display: block;
+    }
+    .w-100 {
+        width: 100%;
+    }
+    .startup-information .item {
+        margin-bottom: 12px;
+        float: left;
+        width: 100%;
+    }
+    .startup-information .item .label-3 {
+        margin-bottom: 5px;
+        display: inline-block;
+        float: left;
+    }
+    .attachments .item {
+        float: left;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    .section {
+        /* margin-top: 18px; */
+        float: left;
+        width: 100%;
+    }
+    .section .heading-1 {
+        margin-bottom: 8px;
+    }
+    .team-members .label-2 {
+        margin-bottom: 3px;
+    }
+    .team-members .value-2 {
+        margin-bottom: 3px;
+    }
+    .footer {
+        margin-top: 24px;
+        float: left;
+        width: 100%;
+        display: block;
+    }
+    .footer .item-1 .icon {
+        float: left;
+        margin-right: 10px;
+    }
+    .footer .item-2 {
+        color: #212121;
+        margin-bottom: 12px;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%;
+        margin-top: 24px;
+        text-align: center;
+        float: left;
+        width: 100%;
+        display: block;
+    }
+    .txt-bottom {
+        color: #212121;
+        text-align: center;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .top-section {
+        float: left;
+        width: 100%;
+        display: block;
+    }
+    .top-section .item-left {
+        float: left;
+    }
+    .top-section .item-right {
+        float: right;
+    }
+    .heading-2 {
+        color: #212121;
+        text-align: right;
+        font-family: Inter;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 120%;
+    }
+    .box-4 {
+        float: left;
+        border-right: 1px solid #E0E0E0;
+        padding-right: 16px;
+    }
+    .txt-2 {
+        font-family: Inter;
+        display: block;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        color: #757575;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .txt-3 {
+        font-family: Inter;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 130%;
+    }
+    .txt-4 {
+        font-family: Inter;
+        display: block;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        color: #757575;
+        line-height: 125%;
+        /* 12.5px */
+        letter-spacing: 0.2px;
+    }
+    .txt-5 {
+        font-family: Inter;
+        font-size: 12px;
+        color: #F16522;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 130%;
+    }
+</style>
+<div class="top-section">
+    <div>
+        <div class="item-left">
             <svg width="91" height="71" viewBox="0 0 91 71" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M46.2769 35.493V53.7296H42.6016V35.493H46.2769Z" fill="url(#paint0_radial_1035_21497)" />
                 <path
@@ -120,882 +367,321 @@
                         <stop stop-color="#535353" />
                         <stop offset="1" stop-color="#070707" />
                     </radialGradient>
-                    <radialGradient id="paint10_radial_1035_21497" cx="0" cy="0" r="1"
-                                    gradientUnits="userSpaceOnUse"
+                    <radialGradient id="paint10_radial_1035_21497" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
                                     gradientTransform="translate(19.0736 4.97139) rotate(125.165) scale(8.40185 8.12665)">
                         <stop stop-color="#535353" />
                         <stop offset="1" stop-color="#070707" />
                     </radialGradient>
-                    <radialGradient id="paint11_radial_1035_21497" cx="0" cy="0" r="1"
-                                    gradientUnits="userSpaceOnUse"
+                    <radialGradient id="paint11_radial_1035_21497" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
                                     gradientTransform="translate(19.0736 4.97139) rotate(125.165) scale(8.40185 8.12665)">
                         <stop stop-color="#535353" />
                         <stop offset="1" stop-color="#070707" />
                     </radialGradient>
                 </defs>
             </svg>
-        </td>
-        <td style="float:right;">
-            <h1 style="color: #212121;
-text-align: right;
-font-family: Inter;
-font-size: 24px;
-font-style: normal;
-font-weight: 700;
-line-height: 120%;">Submitted Idea</h1>
-            <span style="float: left;border-right: 1px solid #E0E0E0; padding-right: 16px;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+        </div>
+        <div class="item-right">
+            <h1 class="heading-2">Submitted Idea</h1>
+            <span class="box-4">
+               <span class="txt-2">
                Submitted on
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+               <span class="txt-3">
                July 7, 2023, Wednesday
                </span>
                </span>
             <span style="float:right; padding-left: 16px;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+               <span class="txt-4">
                ID Number
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  color:#F16522;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-                   IDN. #{{ $application['application_id'] }}
+               <span class="txt-5">
+               IDN. #1111222
                </span>
                </span>
-        </td>
-    </tr>
-</table>
-<table style="width:100%; padding:12px;margin-top: 40px; border-radius: 8px;
-         border: 1px solid #FBD1BD; min-height: 40px;
-         background: linear-gradient(90deg, #FFF 0%, #FFFAF8 100%);">
-    <tr>
-        <td>
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
-               Idea Name
-               </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-               {{ $application['application_id'] }}
-               </span>
-               </span>
-        </td>
-        <td>
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
-               Industry
-               </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-               Information & Technology
-               </span>
-               </span>
-        </td>
-    </tr>
-</table>
-<h4 style="font-family: Inter;
-         font-size: 14px;
-         font-style: normal;
-         font-weight: 600;
-         line-height: 130%;margin-top: 32px; margin-bottom: 8px;">Personal Information</h4>
-<style>
-
-    .box-1{
-        width: 100%;border-radius: 8px; min-height: 100px; border: 1px solid #E0E0E0; padding: 12px;
-    }
-    .box-1-item{
-        float: left;
-        width: 33%;
-    }
-    .label-1{
-        font-family: Inter;
-        display: block;
-        font-size: 10px;
-        font-style: normal;
-        font-weight: 400;
-        color: #757575;
-        line-height: 125%; /* 12.5px */
-        letter-spacing: 0.2px;
-    }
-</style>
-<div class="box-1">
-
-    <div class="box-1-item">
-        <span class="label-1">
-               Name
-               </span>
-        <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-               John Doe
-               </span>
-
-    </div>
-    <div class="box-1-item">
-                       <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
-               Gender
-               </span>
-        <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-               Male
-               </span>
-
-
-    </div>
-    <div class="box-1-item">
-
-                       <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
-               Designation
-               </span>
-        <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
-               Developer
-               </span>
-
+        </div>
     </div>
 </div>
-<table style="width: 100%;border-radius: 8px; min-height: 100px; border: 1px solid #E0E0E0; padding: 12px;">
-{{--    <tr>--}}
-{{--        <td style="padding-top: 8px; padding-bottom: 8px;">--}}
-{{--               <span style="float: left;">--}}
-{{--               </span>--}}
-{{--        </td>--}}
-{{--        <td style="padding-top: 8px; padding-bottom: 8px;">--}}
-{{--               <span style="float: left;">--}}
-{{--               </span>--}}
-{{--        </td>--}}
-{{--        <td style="padding-top: 8px; padding-bottom: 8px;">--}}
-{{--               <span style="float: left;">--}}
-{{--               </span>--}}
-{{--        </td>--}}
-{{--    </tr>--}}
-    <tr>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+<div class="box-1">
+    <div class="box-1-item col-2">
+            <span class="label-1">
+            Idea Name
+            </span>
+        <span class="value-1">
+            Products8-The whole new product marketplace
+            </span>
+    </div>
+    <div class="box-1-item col-2">
+            <span class="label-1">
+            Industry
+            </span>
+        <span class="value-1">
+            Information & Technology
+            </span>
+    </div>
+</div>
+<div class="section">
+    <h4 style="heading-1">Personal Information</h4>
+    <div class="box-2 section-2">
+        <div class="col-3 mb-16">
+               <span class="label-1">
+               Name
+               </span>
+            <span class="value-1">
+               John Doe
+               </span>
+        </div>
+        <div class="col-3 mb-16">
+               <span class="label-1">
+               Gender
+               </span>
+            <span class="value-1">
+               Male
+               </span>
+        </div>
+        <div class="col-3 mb-16">
+               <span class="label-1">
+               Designation
+               </span>
+            <span class="value-1">
+               Developer
+               </span>
+        </div>
+        <div class="col-3 mb-16">
+               <span class="label-1">
                Email
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+            <span class="value-1">
                asiqmohammad@gmail.com
                </span>
-               </span>
-        </td>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+        </div>
+        <div class="mb-16 col-3">
+               <span class="label-1">
                Contact Number
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+            <span class="value-1">
                +88019XX-XXXXXX
                </span>
-               </span>
-        </td>
-    </tr>
-    <tr>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+        </div>
+        <div class="mb-16 col-3">
+               <span class="label-1">
                Profession
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+            <span class="value-1">
                Businessman
                </span>
-               </span>
-        </td>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+        </div>
+        <div class="box-1-item col-3">
+               <span class="label-1">
                Institute/Organization
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+            <span class="value-1">
                Banglalink
                </span>
-               </span>
-        </td>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="font-family: Inter;
-                  display: block;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  color: #757575;
-                  line-height: 125%; /* 12.5px */
-                  letter-spacing: 0.2px;">
+        </div>
+        <div class="box-1-item col-3">
+               <span class="label-1">
                Education
                </span>
-               <span style="font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 600;
-                  line-height: 130%;">
+            <span class="value-1">
                Masters of Business Administration
                </span>
-               </span>
-        </td>
-    </tr>
-</table>
-<h4 style="font-family: Inter;
-         font-size: 14px;
-         font-style: normal;
-         font-weight: 600;
-         line-height: 130%;margin-top: 32px; margin-bottom: 8px;">Team Members</h4>
-<table style="width: 100%;border-radius: 8px; border: 1px solid #E0E0E0; padding: 12px;">
-    <tr>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 14px;
-                  font-style: normal;
-                  font-weight: 700;
-                  line-height: 130%;
-                  letter-spacing: 0.28px;">
-               John Doe
-               </span>
-               <span style="color:#616161;
-                  display:block;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               Cheif Executive Officer
-               </span>
-               <span style="color: #757575;
-                  margin-top: 8px;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               asiqmohammad@gmail.com</span>
-               </span>
-        </td>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 14px;
-                  font-style: normal;
-                  font-weight: 700;
-                  line-height: 130%;
-                  letter-spacing: 0.28px;">
-               John Doe
-               </span>
-               <span style="color:#616161;
-                  display:block;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               Cheif Executive Officer
-               </span>
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  margin-top: 8px;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               asiqmohammad@gmail.com</span>
-               </span>
-        </td>
-        <td style="padding-top: 8px; padding-bottom: 8px;">
-               <span style="float: left;">
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 14px;
-                  font-style: normal;
-                  font-weight: 700;
-                  line-height: 130%;
-                  letter-spacing: 0.28px;">
-               John Doe
-               </span>
-               <span style="color:#616161;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  display:block;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               Cheif Executive Officer
-               </span>
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  margin-top: 8px;
-                  line-height: 125%;
-                  letter-spacing: 0.2px;">
-               asiqmohammad@gmail.com</span>
-               </span>
-        </td>
-    </tr>
-</table>
-<h4 style="font-family: Inter;
-         font-size: 14px;
-         font-style: normal;
-         font-weight: 600;
-         line-height: 130%;margin-top: 32px; margin-bottom: 8px;">Startup Information</h4>
-<table style="width: 100%;border-radius: 8px; border: 1px solid #E0E0E0; padding: 12px;">
-    <tr>
-        <td>
-               <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Problem Identification
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Our product marketplace is a perfect solution for your business to provide an online store for
-               your
-               products. It is hassle free, easy to use.
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               The Big Idea
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               We can have an effective site. We have already put in my research and know the platform very
-               well.
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Target Group
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Suggested Traits: Gender, age, SEC, occupation, interests, behavior
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Market Size
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               USD 4.9 trillion by 2027, growing at a CAGR of 20.2% during the forecast period.
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Business Model
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Business to Customer
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               GTM Plan
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               GTM plan is a strategy that focuses on creating a unique selling proposition, which includes the
-               organizational structure, marketing plans, and go-to-market strategies.
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Financial Metrics
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Personal Investment
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Is there any existing product or service for this problem?*
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Yes
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Short Description
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Yes! My product/service different from the existing one
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Have you received any funding?*
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Organization/person funding your project
-               </span>
-               </span>
-            <span style="margin-bottom: 12px; display:block">
-               <span style="color: #757575;
-                  font-family: Inter;
-                  font-size: 10px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  display: block;
-                  margin-bottom: 6px;
-                  letter-spacing: 0.2px;">
-               Which stage is your startup currently in?
-               </span>
-               <span style="color: #212121;
-                  font-family: Inter;
-                  font-size: 12px;
-                  font-style: normal;
-                  font-weight: 400;
-                  line-height: 125%;
-                  letter-spacing: 0.24px;">
-               Primary Stage
-               </span>
-               </span>
-        </td>
-    </tr>
-</table>
-<h4 style="font-family: Inter;
-         font-size: 14px;
-         font-style: normal;
-         font-weight: 600;
-         line-height: 130%;margin-top: 32px; margin-bottom: 8px;">Attachments</h4>
-<table style="width: 100%;border-radius: 8px; border: 1px solid #E0E0E0; padding: 12px;">
-    <tr>
-        <td>
-               <span>
-                  <span style="float: left;">
-                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
-                            fill="#9E9E9E" />
-                     </svg>
-                  </span>
-                  <span style="float:left; padding-left: 12px;">
-                  <span style="display:block;
-                     color: #212121;
-                     font-family: Inter;
-                     font-size: 12px;
-                     font-style: normal;
-                     font-weight: 600;
-                     margin-bottom:2px;
-                     line-height: 130%;">Resume_of_Mahmud_Saimon.pdf
-                  </span>
-                  <span style="color: #757575;
-                     font-family: Inter;
-                     font-size: 10px;
-                     font-style: normal;
-                     font-weight: 400;
-                     line-height: 125%;
-                     letter-spacing: 0.2px;">File Size:<span style="font-weight: 600; color: #212121; margin-left:5px">978KB</span></span>
-                  </span>
-               </span>
-        </td>
-    </tr>
-    <tr>
-        <td>
-               <span
-                   style="display: block; height: 1px; width: 100%; background: #E0E0E0; margin-top: 12px; margin-bottom: 12px;"></span>
-            <span>
-                  <span style="float: left;">
-                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
-                            fill="#9E9E9E" />
-                     </svg>
-                  </span>
-                  <span style="float:left; padding-left: 12px;">
-                  <span style="display:block;
-                     color: #212121;
-                     font-family: Inter;
-                     font-size: 12px;
-                     font-style: normal;
-                     font-weight: 600;
-                     margin-bottom:2px;
-                     line-height: 130%;">Resume_of_Mahmud_Saimon.pdf
-                  </span>
-                  <span style="color: #757575;
-                     font-family: Inter;
-                     font-size: 10px;
-                     font-style: normal;
-                     font-weight: 400;
-                     line-height: 125%;
-                     letter-spacing: 0.2px;">File Size:<span style="font-weight: 600; color: #212121; margin-left:5px">978KB</span></span>
-                  </span>
-               </span>
-        </td>
-    </tr>
-    <tr>
-        <td>
-               <span
-                   style="display: block; height: 1px; width: 100%; background: #E0E0E0; margin-top: 12px; margin-bottom: 12px;"></span>
-            <span>
-                  <span style="float: left;">
-                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
-                            fill="#9E9E9E" />
-                     </svg>
-                  </span>
-                  <span style="float:left; padding-left: 12px;">
-                  <span style="display:block;
-                     color: #212121;
-                     font-family: Inter;
-                     font-size: 12px;
-                     font-style: normal;
-                     font-weight: 600;
-                     margin-bottom:2px;
-                     line-height: 130%;">Resume_of_Mahmud_Saimon.pdf
-                  </span>
-                  <span style="color: #757575;
-                     font-family: Inter;
-                     font-size: 10px;
-                     font-style: normal;
-                     font-weight: 400;
-                     line-height: 125%;
-                     letter-spacing: 0.2px;">File Size:<span style="font-weight: 600; color: #212121; margin-left:5px">978KB</span></span>
-                  </span>
-               </span>
-        </td>
-    </tr>
-</table>
-<table style="width: 100%; margin-top: 24px;">
-    <tr>
-        <td>
-               <span style="float: left; margin-right: 8px;">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path
-                         d="M12.6667 2H3.33333C2.6 2 2 2.6 2 3.33333V12.6667C2 13.4 2.6 14 3.33333 14H12.6667C13.4 14 14 13.4 14 12.6667V3.33333C14 2.6 13.4 2 12.6667 2ZM7.14 10.86C6.88 11.12 6.46 11.12 6.2 10.86L3.80667 8.46667C3.54667 8.20667 3.54667 7.78667 3.80667 7.52667C4.06667 7.26667 4.48667 7.26667 4.74667 7.52667L6.66667 9.44667L11.2533 4.86C11.5133 4.6 11.9333 4.6 12.1933 4.86C12.4533 5.12 12.4533 5.54 12.1933 5.8L7.14 10.86Z"
-                         fill="#00AE5B" />
-                  </svg>
-               </span>
-            <span style="float: left;">
-                  <h5 style="margin:0; color: #212121;
-                     font-family: Inter;
-                     font-size: 12px;
-                     font-style: normal;
-                     font-weight: 600;
-                     line-height: 130%;">I consent to BL Labs sharing my information</h5>
-                  <p style="color: #616161;
-                     font-family: Inter;
-                     font-size: 10px;
-                     font-style: normal;
-                     font-weight: 400;
-                     line-height: 125%;
-                     letter-spacing: 0.2px;">I consent to BL Labs sharing the demographic information I provided above and my contact
-                     information to third-party partners who are seeking to help
-                  </p>
-               </span>
-        </td>
-    </tr>
-</table>
-<span style="color:#212121;
-         font-family: Inter;
-         font-size: 12px;
-         text-align: center;
-         width: 100%;
-         display: block;
-         font-style: normal;
-         font-weight: 400;
-         line-height: 130%;">Questions or faq? Contact us at <span style="color:#F16522;">faq@banglalink.com.</span></span>
-<p style="color: #212121;
-         text-align: center;
-         font-family: Inter;
-         font-size: 10px;
-         font-style: normal;
-         font-weight: 400;
-         letter-spacing: 0.2px;">info@banglalink.net | +8801911304121 | For any query: Banglalink Digital Communications Limited
+        </div>
+    </div>
+</div>
+<div class="section">
+    <h4 class="heading-1">Team Members</h4>
+    <div class="box-2 team-members">
+        <div class="col-3">
+            <div class="label-2">John Doe</div>
+            <div class="value-2">Cheif Executive Officer</div>
+            <div class="value-3">asiqmohammad@gmail.com</div>
+        </div>
+        <div class="col-3">
+            <div class="label-2">John Doe</div>
+            <div class="value-2">Cheif Executive Officer</div>
+            <div class="value-3">asiqmohammad@gmail.com</div>
+        </div>
+        <div class="col-3">
+            <div class="label-2">John Doe</div>
+            <div class="value-2">Cheif Executive Officer</div>
+            <div class="value-3">asiqmohammad@gmail.com</div>
+        </div>
+    </div>
+</div>
+<div class="section">
+    <h4 class="heading-1">Startup Information</h4>
+    <div class="box-2 startup-information">
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Problem Identification
+            </div>
+            <div class="value-4 float-left block w-100">
+                Our product marketplace is a perfect solution for your business to provide an online store for
+                your
+                products. It is hassle free, easy to use.
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                The Big Idea
+            </div>
+            <div class="value-4 float-left block w-100">
+                We can have an effective site. We have already put in my research and know the platform very well.
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Target Group
+            </div>
+            <div class="value-4 float-left block w-100">
+                Suggested Traits: Gender, age, SEC, occupation, interests, behavior
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Market Size
+            </div>
+            <div class="value-4 float-left block w-100">
+                USD 4.9 trillion by 2027, growing at a CAGR of 20.2% during the forecast period.
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Business Model
+            </div>
+            <div class="value-4 float-left block w-100">
+                Business to Customer
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                GTM Plan
+            </div>
+            <div class="value-4 float-left block w-100">
+                GTM plan is a strategy that focuses on creating a unique selling proposition, which includes the
+                organizational structure, marketing plans, and go-to-market strategies.
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Financial Metrics
+            </div>
+            <div class="value-4 float-left block w-100">
+                Personal Investment
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Is there any existing product or service for this problem?*
+            </div>
+            <div class="value-4 float-left block w-100">
+                Yes
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Short Description
+            </div>
+            <div class="value-4 float-left block w-100">
+                Yes! My product/service different from the existing one
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Have you received any funding?*
+            </div>
+            <div class="value-4 float-left block w-100">
+                Organization/person funding your project
+            </div>
+        </div>
+        <div class="item">
+            <div class="label-3 float-left block w-100">
+                Which stage is your startup currently in?
+            </div>
+            <div class="value-4 float-left block w-100">
+                Primary Stage
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section">
+    <h4 class="heading-1">Attachments</h4>
+    <div class="box-2 attachments">
+        <div class="item">
+            <div class="float-left">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
+                        fill="#9E9E9E" />
+                </svg>
+            </div>
+            <div style="float:left; padding-left: 12px;">
+                <div class="label-2 float-left block w-100">Resume_of_Mahmud_Saimon.pdf
+                </div>
+                <div class="label-3">File Size:<span
+                        style="font-weight: 600; color: #212121; margin-left:5px">978KB</span>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="float-left">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
+                        fill="#9E9E9E" />
+                </svg>
+            </div>
+            <div style="float:left; padding-left: 12px;">
+                <div class="label-2 float-left block w-100">Resume_of_Mahmud_Saimon.pdf
+                </div>
+                <div class="label-3">File Size:<span
+                        style="font-weight: 600; color: #212121; margin-left:5px">978KB</span>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="float-left">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M13.17 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8.83C20 8.3 19.79 7.79 19.41 7.42L14.58 2.59C14.21 2.21 13.7 2 13.17 2ZM16 15C16 17.34 13.99 19.21 11.61 18.98C9.53 18.78 8 16.92 8 14.83V9.64C8 8.33 8.94 7.14 10.24 7.01C11.74 6.86 13 8.03 13 9.5V14C13 14.55 12.55 15 12 15C11.45 15 11 14.55 11 14V9.5C11 9.22 10.78 9 10.5 9C10.22 9 10 9.22 10 9.5V14.89C10 15.89 10.68 16.81 11.66 16.97C12.92 17.18 14 16.21 14 15V12C14 11.45 14.45 11 15 11C15.55 11 16 11.45 16 12V15ZM14 7V4L18 8H15C14.45 8 14 7.55 14 7Z"
+                        fill="#9E9E9E" />
+                </svg>
+            </div>
+            <div style="float:left; padding-left: 12px;">
+                <div class="label-2 float-left block w-100">Resume_of_Mahmud_Saimon.pdf
+                </div>
+                <div class="label-3">File Size:<span
+                        style="font-weight: 600; color: #212121; margin-left:5px">978KB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="item-1">
+        <div class="icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12.6667 2H3.33333C2.6 2 2 2.6 2 3.33333V12.6667C2 13.4 2.6 14 3.33333 14H12.6667C13.4 14 14 13.4 14 12.6667V3.33333C14 2.6 13.4 2 12.6667 2ZM7.14 10.86C6.88 11.12 6.46 11.12 6.2 10.86L3.80667 8.46667C3.54667 8.20667 3.54667 7.78667 3.80667 7.52667C4.06667 7.26667 4.48667 7.26667 4.74667 7.52667L6.66667 9.44667L11.2533 4.86C11.5133 4.6 11.9333 4.6 12.1933 4.86C12.4533 5.12 12.4533 5.54 12.1933 5.8L7.14 10.86Z"
+                    fill="#00AE5B" />
+            </svg>
+        </div>
+        <div class="content">
+            <div class="label-2">
+                I consent to BL Labs sharing my information
+            </div>
+            <div class="value-3">
+                I consent to BL Labs sharing the demographic information I provided above and my contact information to
+                third-party partners who are seeking to help
+            </div>
+        </div>
+    </div>
+    <div class="item-2">Questions or faq? Contact us at <span style="color:#F16522;">faq@banglalink.com.</span></div>
+</div>
+<p class="txt-bottom">info@banglalink.net | +8801911304121 | For any query: Banglalink Digital
+    Communications Limited
     | info@banglalink.netpr@banglalink.net | Tigers' Den, House 4 (SW), Bir Uttam Mir Shawkat Sharak Gulshan 1,
     Dhaka 1212, Bangladesh
 </p>
 </body>
 </html>
-
-
-{{--<!DOCTYPE html>--}}
-{{--<html lang="en">--}}
-{{--<head>--}}
-{{--    <meta charset="UTF-8">--}}
-{{--    <meta name="viewport" content="width=device-width, initial-scale=1.0">--}}
-{{--    <meta http-equiv="X-UA-Compatible" content="ie=edge">--}}
-{{--    <title>Laravel 7 PDF Example</title>--}}
-{{--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">--}}
-{{--    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />--}}
-{{--</head>--}}
-{{--<body>--}}
-{{--    <div class="container mt-5">--}}
-{{--        <h2 class="text-center mb-3">Laravel HTML to PDF Example</h2>--}}
-{{--        <div class="d-flex justify-content-end mb-4">--}}
-{{--            <a class="btn btn-primary" href="{{ URL::to('#') }}">Export to PDF</a>--}}
-{{--        </div>--}}
-{{--        <table class="table table-bordered mb-5">--}}
-{{--            <thead>--}}
-{{--                <tr class="table-danger">--}}
-{{--                    <th scope="col">#</th>--}}
-{{--                    <th scope="col">Name</th>--}}
-{{--                    <th scope="col">Email</th>--}}
-{{--                </tr>--}}
-{{--            </thead>--}}
-{{--            <tbody>--}}
-{{--            <tr>--}}
-{{--                <th scope="row">{{ $employee->id }}</th>--}}
-{{--                <td>{{ $employee->name }}</td>--}}
-{{--                <td>{{ $employee->email }}</td>--}}
-{{--            </tr>--}}
-{{--            @foreach($employee ?? '' as $data)--}}
-
-{{--            @endforeach--}}
-{{--            </tbody>--}}
-{{--        </table>--}}
-{{--    </div>--}}
-{{--<script src="{{ asset('js/app.js') }}" type="text/js"></script>--}}
-{{--</body>--}}
-{{--</html>--}}
