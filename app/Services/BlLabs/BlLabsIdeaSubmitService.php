@@ -308,26 +308,40 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function generatePDF($applicationId)
     {
-//        $user = Auth::user();
-
-        $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => 1]);
+        $user = Auth::user();
+        $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => 1, 'application_id' => $applicationId]);
 
         $attachmentArr = [];
+        if (!empty($application->personal['cv'])){
+            $attachmentArr[] = $application->personal['cv'];
+        }
+        if (!empty($application->personal['team_members'])){
+            $attachmentArr = array_merge($attachmentArr, $application->personal['team_members']);
+        }
+        if (!empty($application->startup['business_model_file'])){
+            $attachmentArr[] = $application->startup['business_model_file'];
+        }
+        if (!empty($application->startup['gtm_plan_file'])){
+            $attachmentArr[] = $application->startup['gtm_plan_file'];
+        }
+        if (!empty($application->startup['financial_metrics_file'])){
+            $attachmentArr[] = $application->startup['financial_metrics_file'];
+        }
 
         $data = [
             'application_id' => $application->application_id,
-            'submitted_at' => date_format(date_create($application->submitted_at),"F,d,Y l"),
+            'submitted_date' => date_format(date_create($application->submitted_at),"F, d, Y l"),
             'summary' => $application->summary->toArray(),
             'personal' => $application->personal->toArray(),
             'startup' => $application->startup->toArray(),
-            'attachments' => ''
+            'attachments' => $attachmentArr
         ];
 
         // share data to view
-        view()->share('application', $application);
-        $pdf = PDF::loadView('pdf_view', $application->toArray());
-        return $pdf->stream('pdf_file.pdf');
+        view()->share('data', $data);
+        $pdf = PDF::loadView('bl-lab.idea-application', $data);
+        return $pdf->stream('idea-application.pdf');
         // download PDF file with download method
-//        return $pdf->download('pdf_file.pdf');
+//        return $pdf->download('idea-application.pdf');
     }
 }
