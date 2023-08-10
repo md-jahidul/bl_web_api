@@ -40,7 +40,7 @@ class BlLabsAuthenticationService extends ApiBaseService
         $user = $this->blLabsUserRepository->findOneByProperties(['email' => $data['email']], ['email']);
 
         if (!$user) {
-            return $this->sendErrorResponse("Not registered",'This email is not registered.', HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse("Not registered",'The email is not registered.', HttpStatusCode::NOT_FOUND);
         }
 
         if (! $token = auth()->attempt($credentials)) {
@@ -100,7 +100,7 @@ class BlLabsAuthenticationService extends ApiBaseService
             if (!$request->is_reg_request) {
                 $user = $this->blLabsUserRepository->findOneByProperties(['email' => $request->email], ['email']);
                 if (!$user) {
-                    return $this->sendErrorResponse("Not Registered",'This email is not registered', HttpStatusCode::NOT_FOUND);
+                    return $this->sendErrorResponse("Not Registered",'The email is not registered', HttpStatusCode::NOT_FOUND);
                 }
             }
 
