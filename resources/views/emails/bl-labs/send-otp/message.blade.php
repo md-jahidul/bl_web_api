@@ -31,7 +31,6 @@
 {{--    @endslot--}}
 {{--@endcomponent--}}
 
-
 <!doctype html>
 <html>
 <head>
