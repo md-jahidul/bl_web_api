@@ -158,8 +158,6 @@ class BlLabsAuthenticationService extends ApiBaseService
             'password' => [
                 'required',
                 'min:8',
-                'regex:/[a-zA-Z]/',      // must contain at least one lowercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
                 'confirmed'
             ],
             'secret_token' => 'required'
