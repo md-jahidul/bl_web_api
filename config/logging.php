@@ -101,13 +101,13 @@ return [
             'days' => 5,
         ],
         'pgwLogRec' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path'   => storage_path('logs/pgw_log/pgw_request_log.log'),
             'level' => 'info',
         ],
-        'paymentReqLog' => [
-            'driver' => 'single',
-            'path'   => storage_path('logs/payment_log/request_fail_log.log'),
+        'sslReqLog' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/ssl_log/request_log.log'),
             'level' => 'info',
         ],
         'mailSendFailLog' => [

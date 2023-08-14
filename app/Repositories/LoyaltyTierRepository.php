@@ -63,6 +63,7 @@ class LoyaltyTierRepository extends BaseRepository
                     $q->select('id', 'company_logo', 'company_name_en', 'company_name_bn');
                 }]);
             }])
+            ->orderBy('display_order', 'ASC')
             ->get();
     }
 }

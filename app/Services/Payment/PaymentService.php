@@ -105,7 +105,7 @@ class PaymentService extends ApiBaseService
                 return json_decode($response->getBody()->getContents(), true);
             }
         } catch (\Exception $exception) {
-            Log::channel('paymentReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
+            Log::channel('sslReqLog')->info('ssl_payment_gateway_error : ' . $exception->getMessage());
             return $this->sendErrorResponse('Internal server Error', "PGW couldn't perform", 404);
         }
     }
@@ -126,7 +126,7 @@ class PaymentService extends ApiBaseService
         }, $data['recharge_data']);
 
         $data['recharge_data'] = $dataMod;
-        $data['recharge_platform'] = env('OWN_RGW_PLATFORM', 'BLWebSite');
+//        $data['recharge_platform'] = env('OWN_RGW_PLATFORM', 'BLWebSite');
 
         $client = new Client(["base_uri" => $baseURL]);
 
@@ -146,7 +146,7 @@ class PaymentService extends ApiBaseService
             $this->logToFile($options, $response);
             return json_decode($response, true);
         } catch (\Exception $exception) {
-            Log::channel('paymentReqLog')->info('pgw_error : ' . $exception->getMessage());
+            Log::channel('pgwLogRec')->info('pgw_error : ' . $exception->getMessage());
             return $this->sendErrorResponse('Internal server error', "PGW couldn't perform", 404);
         }
     }
@@ -161,7 +161,7 @@ class PaymentService extends ApiBaseService
             'initiate_status' => $res->statusCode == 200 ? 'SUCCESSFUL' : 'FAILED',
             'trx_id' => $res->statusCode == 200 ? $res->data->tran_id : '',
             'gateway' => 'PGW',
-            'channel' => env('OWN_RGW_PLATFORM', 'BLWebSite'),
+            'channel' => $req['recharge_platform'],
             'recharge_amounts' => implode(',', collect($req['recharge_data'])->pluck('recharge_amount')->toArray()),
             'msisdns' => implode(',', collect($req['recharge_data'])->pluck('mobile_number')->toArray()),
             'total_payment_amount' => $res->statusCode == 200 ? $res->data->total_payment_amount : 0
