@@ -308,8 +308,13 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function generatePDF($applicationId)
     {
-        $user = Auth::user(); /*'bl_lab_user_id' => 1, */
-        $application = $this->blLabApplicationRepository->findOneByProperties(['application_id' => $applicationId]);
+        $user = Auth::user();
+
+        $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => $user->id, 'application_id' => $applicationId]);
+
+        if (!$application) {
+            return $this->sendErrorResponse('Application Not Found', "We couldn't found any application. Please try again later");
+        }
 
         $attachmentArr = [];
         if (!empty($application->personal['cv'])){
@@ -343,6 +348,6 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         $pdf = PDF::loadView('bl-lab.idea-application', $data);
         return $pdf->stream('idea-application.pdf');
         // download PDF file with download method
-//        return $pdf->download('idea-application.pdf');
+        // return $pdf->download('idea-application.pdf');
     }
 }
