@@ -308,8 +308,8 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
     public function generatePDF($applicationId)
     {
-        $user = Auth::user();
-        $application = $this->blLabApplicationRepository->findOneByProperties(['bl_lab_user_id' => 1, 'application_id' => $applicationId]);
+        $user = Auth::user(); /*'bl_lab_user_id' => 1, */
+        $application = $this->blLabApplicationRepository->findOneByProperties(['application_id' => $applicationId]);
 
         $attachmentArr = [];
         if (!empty($application->personal['cv'])){
@@ -329,6 +329,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         }
 
         $data = [
+            'application_status' => $application->application_status,
             'application_id' => $application->application_id,
             'submitted_date' => date_format(date_create($application->submitted_at),"F, d, Y l"),
             'summary' => $application->summary->toArray(),
