@@ -10,6 +10,7 @@ class BlLabPersonalInfo extends Model
         'bl_lab_app_id',
         'name',
         'gender',
+        'designation',
         'email',
         'phone_number',
         'profession',

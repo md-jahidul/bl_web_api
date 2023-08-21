@@ -247,7 +247,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
                 ['idea_title', 'idea_details', 'industry', 'apply_for']);
         } elseif ($request->step == "personal") {
             $data = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
-                ['name', 'gender', 'email', 'phone_number', 'profession', 'institute_or_org', 'education', 'cv', 'team_members', 'applicant_agree']);
+                ['name', 'gender', 'designation', 'email', 'phone_number', 'profession', 'institute_or_org', 'education', 'cv', 'team_members', 'applicant_agree']);
         } elseif ($request->step == "startup") {
             $data = $this->labStartUpInfoRepository->findOneByProperties(['bl_lab_app_id' => $userApplication->id],
                 [
