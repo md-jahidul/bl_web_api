@@ -74,7 +74,9 @@ class CustomerRechargeHistoryService extends BaseService
     public function prepareRechargeHistoryData($customer_id, $from, $to, $transaction_type)
     {
         $response_data = $this->get($this->getRechargeHistoryUrl($customer_id, $from, $to, $transaction_type));
-
+        if ($response_data['status_code'] != 200) {
+            return [];
+        }
         $formatted_data = $this->prepareRechargeHistory(json_decode($response_data['response']));
 
         $formatted_data = collect($formatted_data)->sortByDesc('date')->values();
