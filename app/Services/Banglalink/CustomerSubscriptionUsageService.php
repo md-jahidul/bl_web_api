@@ -133,6 +133,13 @@ class CustomerSubscriptionUsageService extends BaseService
             self::STATUS
         ));
 
+        if ($response_data['status_code'] != 200) {
+            return [
+                'cost' => 0,
+                'active_count' => 0
+            ];
+        }
+
         $from = Carbon::parse($from)
             ->startOfDay()        // 2018-09-29 00:00:00.000000
             ->toDateTimeString(); // 2018-09-29 00:00:00
