@@ -2,6 +2,7 @@
 
 namespace App\Services\BlLabs;
 
+use App\Models\BlLab\BlLabTempPdf;
 use App\Repositories\BlLab\BlLabApplicationRepository;
 use App\Repositories\BlLab\BlLabPersonalInfoRepository;
 use App\Repositories\BlLab\BlLabStartUpInfoRepository;
@@ -11,8 +12,10 @@ use App\Traits\CrudTrait;
 use App\Traits\FileTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class BlLabsIdeaSubmitService extends ApiBaseService
 {
@@ -346,8 +349,36 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         // share data to view
         view()->share('data', $data);
         $pdf = PDF::loadView('bl-lab.idea-application', $data);
-        return $pdf->stream('idea-application.pdf');
-        // download PDF file with download method
-        // return $pdf->download('idea-application.pdf');
+
+        // Store new application PDF
+        $hashCode = $this->unique_code(100);
+        $fileName = $hashCode . $application->application_id . "-idea-application.pdf";
+        $path = 'public/pdf/bl-lab/';
+
+        $content = $pdf->download()->getOriginalContent();
+        Storage::disk('local')->put($path . $fileName, $content);
+
+        $filePath = $path . $fileName;
+        $this->fileAddAndDelete($filePath);
+
+        return $this->sendSuccessResponse(['file_path' => $filePath], 'Download Bl Lab Application');
+    }
+
+    function unique_code($limit)
+    {
+        return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+    }
+
+    public function fileAddAndDelete($filePath)
+    {
+        BlLabTempPdf::create(['file_path' => $filePath]);
+
+        $start = now()->subDays(30)->endOfDay()->toDateString() . " 00:00:01";
+        $end = now()->subDays()->toDateString() . " 23:59:59";
+        $pdfs = BlLabTempPdf::whereBetween('created_at', [$start, $end])->get();
+        $pdfs->each(function ($path) {
+            BlLabTempPdf::where('file_path', $path->file_path)->delete();
+            Storage::disk('local')->delete($path->file_path);
+        });
     }
 }
