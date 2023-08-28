@@ -358,7 +358,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         $content = $pdf->download()->getOriginalContent();
         Storage::disk('local')->put($path . $fileName, $content);
 
-        $filePath = $path . $fileName;
+        $filePath = 'storage/pdf/bl-lab/' . $fileName;
         $this->fileAddAndDelete($filePath);
 
         return $this->sendSuccessResponse(['file_path' => $filePath], 'Download Bl Lab Application');
