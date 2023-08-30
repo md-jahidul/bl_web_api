@@ -206,7 +206,7 @@ class BlLabsAuthenticationService extends ApiBaseService
         $secretTokenKey = "secret_token_" . $request['email'];
 
         $mailInfo = [
-            'to' => $request->email,
+            'to' => $blLabUser->email,
             'subject' => "Password Reset Confirmation",
         ];
         Mail::to($mailInfo['to'])->send(new BlLabForgetPasswordMailSend($mailInfo));
