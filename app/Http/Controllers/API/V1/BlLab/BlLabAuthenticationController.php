@@ -53,7 +53,7 @@ class BlLabAuthenticationController extends Controller
     /**
      * @return JsonResponse
      */
-    public function register(BlLabRegisterRequest $request)
+    public function register(BlLabRegisterRequest $request): JsonResponse
     {
         return $this->blLabsUserService->register($request);
     }
