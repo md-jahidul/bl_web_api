@@ -111,14 +111,19 @@ return [
             'level' => 'info',
         ],
         'mailSendFailLog' => [
-            'driver' => 'single',
-            'path'   => storage_path('logs/mail-send/send_fail.log'),
-            'level' => 'info',
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/mail-send/send_fail.log'),
+            'level' => 'error',
         ],
         'ideaSubmitLog' => [
-            'driver' => 'single',
-            'path'   => storage_path('logs/idea-submit-fail/send_fail.log'),
-            'level' => 'info',
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/idea-submit-fail/submission_fail.log'),
+            'level' => 'error',
+        ],
+        'blLabRegFail' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/reg-fail/reg_fail.log'),
+            'level' => 'error',
         ],
     ],
 ];
