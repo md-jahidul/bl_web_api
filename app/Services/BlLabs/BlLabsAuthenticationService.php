@@ -140,7 +140,7 @@ class BlLabsAuthenticationService extends ApiBaseService
             ];
             Redis::setex($request->email, $ttl, $otp);
             Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
-             dispatch(new SendEmailJob($data));
+            // dispatch(new SendEmailJob($data));
 
             return $this->sendSuccessResponse(['otp_expire_in' => $ttl], 'OTP sent successfully');
         } catch (QueryException $exception) {
@@ -206,7 +206,7 @@ class BlLabsAuthenticationService extends ApiBaseService
         $secretTokenKey = "secret_token_" . $request['email'];
 
         $mailInfo = [
-            'to' => $request->email,
+            'to' => $blLabUser->email,
             'subject' => "Password Reset Confirmation",
         ];
         Mail::to($mailInfo['to'])->send(new BlLabForgetPasswordMailSend($mailInfo));
