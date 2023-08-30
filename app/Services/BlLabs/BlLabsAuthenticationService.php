@@ -12,6 +12,8 @@ use App\Repositories\BlLab\BlLabsAuthenticationRepository;
 use App\Services\ApiBaseService;
 use App\Traits\CrudTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
@@ -60,45 +62,54 @@ class BlLabsAuthenticationService extends ApiBaseService
 
     public function register($request)
     {
-        //Validate data
-        $request = $request->only('email', 'password', 'secret_token');
+        DB::beginTransaction();
 
-        // Verify authorized request
-        $redisSecretToken = Redis::get("secret_token_" . $request['email']);
+        try {
+            //Validate data
+            $request = $request->only('email', 'password', 'secret_token');
 
-        if (!$redisSecretToken) {
-            return $this->sendErrorResponse('Token expired', "Token session is expired", HttpStatusCode::NOT_FOUND,);
+            // Verify authorized request
+            $redisSecretToken = Redis::get("secret_token_" . $request['email']);
+
+            if (!$redisSecretToken) {
+                return $this->sendErrorResponse('Token expired', "Token session is expired", HttpStatusCode::NOT_FOUND,);
+            }
+
+            if ($redisSecretToken != $request['secret_token']){
+                return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", HttpStatusCode::INVALID_TOKEN);
+            }
+
+            $credentials = request(['email', 'password']);
+            //Request is valid, create new user
+            $user = BlLabUser::create($credentials);
+
+            if (! $token = auth()->attempt($credentials)) {
+                return $this->sendErrorResponse('Unauthorized', "Incorrect Email or Password", HttpStatusCode::UNAUTHORIZED);
+            }
+
+            $data = $this->responseWithToken($token);
+
+            //User created, return success response
+            $data['user'] = [
+                'email' => $user->email,
+                'avatar' => null
+            ];
+
+            $mailInfo = [
+                'to' => $user->email,
+                'subject' => "Welcome to BL Labs - Your Journey to Innovation Begins!",
+            ];
+            Mail::to($mailInfo['to'])->send(new BlLabSignUpMailSend($mailInfo));
+
+            $secretTokenKey = "secret_token_" . $request['email'];
+            Redis::del($secretTokenKey);
+            DB::commit();
+            return $this->sendSuccessResponse($data, 'User register successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::channel('blLabRegFail')->error($e->getMessage());
+            return $this->sendErrorResponse('Register failed', 'Somethings when wrong!');
         }
-
-        if ($redisSecretToken != $request['secret_token']){
-            return $this->sendErrorResponse('Unauthorized', "Secret token is invalid", HttpStatusCode::INVALID_TOKEN);
-        }
-
-        $credentials = request(['email', 'password']);
-        //Request is valid, create new user
-        $user = BlLabUser::create($credentials);
-
-        if (! $token = auth()->attempt($credentials)) {
-            return $this->sendErrorResponse('Unauthorized', "Incorrect Email or Password", HttpStatusCode::UNAUTHORIZED);
-        }
-
-        $data = $this->responseWithToken($token);
-
-        //User created, return success response
-        $data['user'] = [
-            'email' => $user->email,
-            'avatar' => null
-        ];
-
-        $mailInfo = [
-            'to' => $request->email,
-            'subject' => "Welcome to BL Labs - Your Journey to Innovation Begins!",
-        ];
-        Mail::to($mailInfo['to'])->send(new BlLabSignUpMailSend($mailInfo));
-
-        $secretTokenKey = "secret_token_" . $request['email'];
-        Redis::del($secretTokenKey);
-        return $this->sendSuccessResponse($data, 'User register successfully');
     }
 
     public function sendOTP($request)
@@ -129,7 +140,7 @@ class BlLabsAuthenticationService extends ApiBaseService
             ];
             Redis::setex($request->email, $ttl, $otp);
             Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
-            // dispatch(new SendEmailJob($data));
+             dispatch(new SendEmailJob($data));
 
             return $this->sendSuccessResponse(['otp_expire_in' => $ttl], 'OTP sent successfully');
         } catch (QueryException $exception) {
