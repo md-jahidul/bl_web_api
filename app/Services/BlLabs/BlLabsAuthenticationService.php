@@ -140,7 +140,7 @@ class BlLabsAuthenticationService extends ApiBaseService
             ];
             Redis::setex($request->email, $ttl, $otp);
             Mail::to($data['to'])->send(new BlLabUserOtpSend($data));
-             dispatch(new SendEmailJob($data));
+            // dispatch(new SendEmailJob($data));
 
             return $this->sendSuccessResponse(['otp_expire_in' => $ttl], 'OTP sent successfully');
         } catch (QueryException $exception) {
