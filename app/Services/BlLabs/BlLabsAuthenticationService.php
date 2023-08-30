@@ -4,6 +4,8 @@ namespace App\Services\BlLabs;
 
 use App\Enums\HttpStatusCode;
 use App\Jobs\SendEmailJob;
+use App\Mail\BlLabForgetPasswordMailSend;
+use App\Mail\BlLabSignUpMailSend;
 use App\Mail\BlLabUserOtpSend;
 use App\Models\BlLab\BlLabUser;
 use App\Repositories\BlLab\BlLabsAuthenticationRepository;
@@ -87,6 +89,12 @@ class BlLabsAuthenticationService extends ApiBaseService
             'email' => $user->email,
             'avatar' => null
         ];
+
+        $mailInfo = [
+            'to' => $request->email,
+            'subject' => "Welcome to BL Labs - Your Journey to Innovation Begins!",
+        ];
+        Mail::to($mailInfo['to'])->send(new BlLabSignUpMailSend($mailInfo));
 
         $secretTokenKey = "secret_token_" . $request['email'];
         Redis::del($secretTokenKey);
@@ -185,6 +193,13 @@ class BlLabsAuthenticationService extends ApiBaseService
         $blLabUser->update($request);
 
         $secretTokenKey = "secret_token_" . $request['email'];
+
+        $mailInfo = [
+            'to' => $request->email,
+            'subject' => "Password Reset Confirmation",
+        ];
+        Mail::to($mailInfo['to'])->send(new BlLabForgetPasswordMailSend($mailInfo));
+
         Redis::del($secretTokenKey);
         return $this->sendSuccessResponse([], 'Password new set successfully!');
     }
