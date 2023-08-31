@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Enums\HttpStatusCode;
 use App\Enums\MyBlAppSettingsKey;
+use App\Exceptions\IdpAuthException;
 use App\Models\Customer;
 use App\Models\MyBlAppSettings;
 use App\Repositories\CustomerRepository;
@@ -79,8 +80,7 @@ class CustomerRechargeHistoryService extends BaseService
         }
         $formatted_data = $this->prepareRechargeHistory(json_decode($response_data['response']));
 
-        $formatted_data = collect($formatted_data)->sortByDesc('date')->values();
-        return $formatted_data;
+        return collect($formatted_data)->sortByDesc('date')->values();
     }
 
 
@@ -88,43 +88,26 @@ class CustomerRechargeHistoryService extends BaseService
      * @param $customer_id
      * @param $from
      * @param $to
-     * @return array|\Illuminate\Support\Collection
-     * @throws \App\Exceptions\BLServiceException
-     * @throws \App\Exceptions\CurlRequestException
+     * @return array
      */
     private function preparePostpaidPaymentHistoryData($customer_id, $from, $to)
     {
         $url = self::POSTPAID_RECHARGE_PAYMENT_API_ENDPOINT."?customerId=".$customer_id;
-
         $response_data = $this->get($url);
-
-        $formatted_data = $this->preparePaymentHistory(json_decode($response_data['response']));
-
-       // $formatted_data = collect($formatted_data)->sortByDesc('date')->values();
-
-        return $formatted_data;
+        return $this->preparePaymentHistory(json_decode($response_data['response']));
     }
 
 
     /**
      * @param Request $request
      * @return JsonResponse
-     * @throws \App\Exceptions\BLServiceException
-     * @throws \App\Exceptions\CurlRequestException
-     * @throws \App\Exceptions\TokenInvalidException
-     * @throws \App\Exceptions\TokenNotFoundException
-     * @throws \App\Exceptions\TooManyRequestException
+     * @throws IdpAuthException
      */
     public function getRechargeHistory(Request $request)
     {
         $user = $this->customerService->getCustomerDetails($request);
 
-        if (!$user) {
-            return $this->responseFormatter->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
-        }
-
         $customer_id = $user->customer_account_id;
-
         if ($user->number_type == 'prepaid') {
             return $this->getPrepaidRechargeHistory($customer_id, $request);
         }
@@ -132,6 +115,8 @@ class CustomerRechargeHistoryService extends BaseService
         if ($user->number_type == 'postpaid') {
             return $this->getPostpaidRechargeHistory($customer_id, $request);
         }
+
+        return $this->responseFormatter->sendErrorResponse("Customer type not found", [], HttpStatusCode::NOT_FOUND);
     }
 
 
@@ -147,11 +132,6 @@ class CustomerRechargeHistoryService extends BaseService
         $redis_key = "recharge_usage:" . $customer_id . ':' . $request->from . '-' . $request->to;
 
         $redis_ttl = env('USAGE_HISTORY_TTL_SECONDS', 300);
-
-//        $ttl_settings = MyBlAppSettings::where('key', MyBlAppSettingsKey::USAGE_HISTORY_TTL_SECONDS)->first();
-//        if ($ttl_settings) {
-//            $redis_ttl = json_decode($ttl_settings->value)->value;
-//        }
 
         if (!$recharge_usage = Redis::get($redis_key)) {
             $formatted_data = $this->prepareRechargeHistoryData(
@@ -183,11 +163,6 @@ class CustomerRechargeHistoryService extends BaseService
         $redis_key = "recharge_usage:" . $customer_id . ':' . $request->from . '-' . $request->to;
 
         $redis_ttl = env('USAGE_HISTORY_TTL_SECONDS', 300);
-
-//        $ttl_settings = MyBlAppSettings::where('key', MyBlAppSettingsKey::USAGE_HISTORY_TTL_SECONDS)->first();
-//        if ($ttl_settings) {
-//            $redis_ttl = json_decode($ttl_settings->value)->value;
-//        }
 
         if (!$recharge_usage = Redis::get($redis_key)) {
             $formatted_data = $this->preparePostpaidPaymentHistoryData(

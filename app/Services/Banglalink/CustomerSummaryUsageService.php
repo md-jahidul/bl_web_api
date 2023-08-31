@@ -150,10 +150,10 @@ class CustomerSummaryUsageService extends BaseService
             $recharge_usage_cost = collect($recharge_usage_data)->sum('amount');
 
             $subscription_usage_data = $this->subscriptionUsageService->getSummary($customer_id, $from, $to);
-
+            $totalMin = ($outgoing_total_call_usage + $incoming_total_call_usage) / 60;
             $minutes = [
                 'title' => 'Minutes',
-                'total' => round(($outgoing_total_call_usage + $incoming_total_call_usage), 2),
+                'total' => floor($totalMin),
                 'unit' => 'Min',
                 'cost' => round(($outgoing_call_usage_cost + $incoming_call_usage_cost), 2),
                 'message' => 'Your minute usage in total'

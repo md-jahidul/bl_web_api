@@ -374,6 +374,7 @@ class UserService extends ApiBaseService
     private function register($customerInfo, $mobile)
     {
         $data['mobile'] = $mobile;
+        $data['number_type'] = strtolower($customerInfo->connectionType);
         $data['phone'] = $mobile;
         $data['msisdn'] = '88' . $mobile;
         $randomPass = $this->generateRandomString();
@@ -584,7 +585,7 @@ class UserService extends ApiBaseService
         return $randomString;
     }
 
-    public function getAuthToken($data) 
+    public function getAuthToken($data)
     {
         $response = IdpIntegrationService::loginRequest($data);
 
