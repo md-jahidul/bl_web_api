@@ -167,7 +167,7 @@ class AppServiceDetailsService extends ApiBaseService
 
 						// Multiple attributed formated
 						if( $item->multiple_attributes != null && !empty($item->multiple_attributes) ){
-							
+
 							if ($item->component_type != 'multiple_tab_image') {
 								$res = json_decode($item->multiple_attributes, true);
 							}else{
@@ -239,6 +239,10 @@ class AppServiceDetailsService extends ApiBaseService
         $data = null;
         # get app and service product info
 		$product_info = $this->appServiceProductRepository->getProductInformationBySlug($slug);
+
+        if (empty($product_info)) {
+            return $this->sendSuccessResponse(json_decode('{}'), 'App and Service Details Not found');
+        }
 
         $additional_details = $this->getProductDetailsOthersInfo($product_info->id);
 
