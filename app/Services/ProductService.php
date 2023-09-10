@@ -888,7 +888,6 @@ class ProductService extends ApiBaseService
         $customerId = $customer->customer_account_id;
 
         $balance = $this->balanceService->getPrepaidBalance($customerId);
-        $balance = 150;
         $productPrice = $product->mrp_price;
 
         if ($productPrice > $balance) {
