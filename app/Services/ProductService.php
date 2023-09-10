@@ -819,7 +819,9 @@ class ProductService extends ApiBaseService
 
     public function fallOfferProcess(AlCoreProduct $requestedProduct, $customerAvailableProducts, $balance): array
     {
-        $products = AlCoreProduct::whereHas(
+        $products = AlCoreProduct::
+        whereIn('product_code', $customerAvailableProducts)
+        ->whereHas(
             'product',
             function ($q) {
                 $q->where('status', 1)
@@ -833,16 +835,13 @@ class ProductService extends ApiBaseService
         ->where('mrp_price', '<=', $balance)
         ->limit(5)
         ->orderBy('mrp_price', 'DESC')
-        ->get()
-        ->filter(function ($item) use ($customerAvailableProducts) {
-            return in_array($item->product_code, $customerAvailableProducts, false);
-        });
+        ->get();
 
         $fallbackProducts = [];
         foreach ($products as $product) {
             $fallbackProducts[] = [
                 "name_en" => $product->commercial_name_en,
-                "name_bn" => $product->commercial_name_en,
+                "name_bn" => $product->commercial_name_bn,
                 "rate_cutter_unit" => $product->rate_cutter_unit,
                 "rate_cutter_offer" => $product->rate_cutter_offer,
                 "price_tk" => $product->mrp_price,
@@ -857,7 +856,7 @@ class ProductService extends ApiBaseService
                 "product_code" => $product->product_code,
                 "renew_product_code" => $product->renew_product_code,
                 "recharge_product_code" => $product->recharge_product_code,
-                "offer_breakdown_en" => $product->product->product_details->offer_details_title_bn ?? null,
+                "offer_breakdown_en" => $product->product->product_details->offer_details_title_en ?? null,
                 "offer_breakdown_bn" => $product->product->product_details->offer_details_title_bn ?? null
             ];
         }
@@ -874,6 +873,7 @@ class ProductService extends ApiBaseService
         $customerId = $customer->customer_account_id;
 
         $balance = $this->balanceService->getPrepaidBalance($customerId);
+        $balance = 150;
         $productPrice = $product->mrp_price;
 
         if ($productPrice > $balance) {
