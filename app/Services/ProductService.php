@@ -857,7 +857,9 @@ class ProductService extends ApiBaseService
                 "renew_product_code" => $product->renew_product_code,
                 "recharge_product_code" => $product->recharge_product_code,
                 "offer_breakdown_en" => $product->product->product_details->offer_details_title_en ?? null,
-                "offer_breakdown_bn" => $product->product->product_details->offer_details_title_bn ?? null
+                "offer_breakdown_bn" => $product->product->product_details->offer_details_title_bn ?? null,
+                "url_slug_en" => $product->product->url_slug ?? null,
+                "url_slug_bn" => $product->product->url_slug_bn ?? null
             ];
         }
 
