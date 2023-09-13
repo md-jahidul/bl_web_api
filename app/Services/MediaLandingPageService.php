@@ -23,6 +23,10 @@ class MediaLandingPageService extends ApiBaseService
      * @var MediaBannerImageRepository
      */
     private $mediaBannerImageRepository;
+    /**
+     * @var FixedPageMetaTagService
+     */
+    private $metaTagService;
 
     /**
      * DigitalServicesService constructor.
@@ -35,12 +39,14 @@ class MediaLandingPageService extends ApiBaseService
         MediaLandingPageRepository $mediaLandingPageRepository,
         MediaTvcVideoRepository $mediaTvcVideoRepository,
         MediaPressNewsEventRepository $mediaPressNewsEventRepository,
-        MediaBannerImageRepository $mediaBannerImageRepository
+        MediaBannerImageRepository $mediaBannerImageRepository,
+        FixedPageMetaTagService $metaTagService
     ) {
         $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaTvcVideoRepository = $mediaTvcVideoRepository;
         $this->mediaPressNewsEventRepository = $mediaPressNewsEventRepository;
         $this->mediaBannerImageRepository = $mediaBannerImageRepository;
+        $this->metaTagService = $metaTagService;
     }
 
     public function getMediaFeatureData($componentsData, $type = null, $postRefType = null)
@@ -147,13 +153,13 @@ class MediaLandingPageService extends ApiBaseService
         foreach ($components as $items){
             $allComponents[] = $this->getMediaFeatureData($items, $referenceType, $postRefType);
         }
-
+        $seoData = $this->metaTagService->getMetaByKey($referenceType);
         $data = [
             'components' => $allComponents ?? [],
             'seo_data' => [
-//                'page_header' => $bannerData->page_header,
-//                'page_header_bn' => $bannerData->page_header_bn,
-//                'schema_markup' => $bannerData->schema_markup
+                'page_header' => $seoData->page_header ?? null,
+                'page_header_bn' => $seoData->page_header_bn ?? null,
+                'schema_markup' => $seoData->schema_markup ?? null
             ]
         ];
         return $this->sendSuccessResponse($data, 'Media Landing Page data');
