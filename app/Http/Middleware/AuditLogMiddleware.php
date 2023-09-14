@@ -3,11 +3,22 @@
 namespace App\Http\Middleware;
 
 use App\Models\AuditLog;
+use App\Services\CustomerService;
 use Closure;
 use Illuminate\Support\Facades\Log;
 
 class AuditLogMiddleware
 {
+    /**
+     * @var CustomerService
+     */
+    private $customerService;
+
+    public function __construct(CustomerService $customerService)
+    {
+        return $this->customerService = $customerService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,9 +28,14 @@ class AuditLogMiddleware
      */
     public function handle($request, Closure $next)
     {
-
         try {
-            $number = $request->header('msisdn');
+
+            if ($request->header('authorization')) {
+                $customerInfo = $this->customerService->getCustomerDetails($request);
+                $number = $customerInfo->msisdn;
+            } else {
+                $number = $request->header('msisdn');
+            }
 
             if (preg_match('/^[0-9]*$/', $number)) {
                 $msisdn = $number;
