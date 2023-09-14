@@ -138,7 +138,9 @@ class BalanceService extends BaseService
         $is_eligible_to_loan =  $this->isEligibleToLoan($main_balance->amount);
 
         $loan_balance = $balance_data->first(function ($item) {
-            return $item->type == 'LOAN';
+            if ($item->amount) {
+                return $item->type == 'LOAN';
+            }
         });
 
         $data['balance'] = [
