@@ -369,6 +369,33 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // CSR
     Route::get('csr/landing-page', 'API\V1\CsrController@getLandingPageDataByRefType');
     Route::get('csr/details/{slug}', 'API\V1\CsrController@getBlogDetails');
+//    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+//    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    // BL Labs
+    Route::group(['prefix' => 'bl-labs' ], function () {
+        Route::middleware(['auth-jwt'])->group(function () {
+            Route::post('refresh-token', 'API\V1\BlLab\BlLabAuthenticationController@refresh');
+            Route::post('idea-submit', 'API\V1\BlLab\BlLabIdeaSubmitController@ideaSubmit');
+            Route::get('application-data', 'API\V1\BlLab\BlLabIdeaSubmitController@getIdeaSubmittedData');
+            Route::get('application-stage', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationStage');
+            Route::get('application-list', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationList');
+            Route::get('application-download/{applicationId}', 'API\V1\BlLab\BlLabIdeaSubmitController@applicationDownload');
+            // Content
+            Route::get('industry', 'API\V1\BlLab\BlLabApplicationContentController@getIndustry');
+            Route::get('program', 'API\V1\BlLab\BlLabApplicationContentController@getProgram');
+            Route::get('profession', 'API\V1\BlLab\BlLabApplicationContentController@getProfession');
+            Route::get('institute-or-org', 'API\V1\BlLab\BlLabApplicationContentController@getInstituteOrOrg');
+            Route::get('education', 'API\V1\BlLab\BlLabApplicationContentController@getEducation');
+            Route::get('startup-stage', 'API\V1\BlLab\BlLabApplicationContentController@getStartupStage');
+        });
+        Route::post('login', 'API\V1\BlLab\BlLabAuthenticationController@login');
+        Route::post('register', 'API\V1\BlLab\BlLabAuthenticationController@register');
+        Route::post('send-otp', 'API\V1\BlLab\BlLabAuthenticationController@sendOTP');
+        Route::post('verify-otp', 'API\V1\BlLab\BlLabAuthenticationController@verifyOTP');
+        Route::post('forget-password', 'API\V1\BlLab\BlLabAuthenticationController@forgetPassword');
+        Route::get('banner', 'API\V1\BlLab\BlLabApplicationContentController@getBanner');
+    });
     //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
     //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 

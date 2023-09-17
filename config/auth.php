@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -40,11 +40,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+//        'api' => [
+//            'driver'   => 'jwt',
+//            'provider' => 'otp-user', // Previously 'users'
+//        ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+            'driver' => 'jwt',
+            'provider' => 'bl_lab_users'
         ],
     ],
 
@@ -68,13 +71,21 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => \App\Models\User::class,
         ],
+//        'otp-user' => [
+//            'driver' => 'otp-based-auth-provider'
+//        ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'bl_lab_users' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\BlLab\BlLabUser::class,
+        ]
+
+//         'users' => [
+//             'driver' => 'database',
+//             'table' => 'users',
+//         ],
     ],
 
     /*
@@ -99,5 +110,4 @@ return [
             'expire' => 60,
         ],
     ],
-
 ];

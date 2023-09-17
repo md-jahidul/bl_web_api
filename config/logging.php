@@ -110,6 +110,20 @@ return [
             'path'   => storage_path('logs/ssl_log/request_log.log'),
             'level' => 'info',
         ],
+        'mailSendFailLog' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/mail-send/send_fail.log'),
+            'level' => 'error',
+        ],
+        'ideaSubmitLog' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/idea-submit-fail/submission_fail.log'),
+            'level' => 'error',
+        ],
+        'blLabRegFail' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/bl-lab/reg-fail/reg_fail.log'),
+            'level' => 'error',
+        ],
     ],
-
 ];
