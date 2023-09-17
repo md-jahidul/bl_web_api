@@ -202,4 +202,9 @@ class ProductController extends Controller
     {
         return $this->productService->eShopOffers($offerType);
     }
+
+    public function getFallbackOffers(Request $request)
+    {
+        return $this->productService->fallbackOffers($request);
+    }
 }
