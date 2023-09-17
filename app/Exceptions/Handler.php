@@ -2,8 +2,19 @@
 
 namespace App\Exceptions;
 
+use App\Enums\ApiErrorCode;
+use App\Enums\ApiErrorType;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+use ReflectionException;
+use stdClass;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -27,6 +38,20 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * @var stdClass
+     */
+    private $errorObj;
+
+    private function initErrorObj()
+    {
+        $this->errorObj = new stdClass();
+        $this->errorObj->type = "";
+        $this->errorObj->code = "";
+        $this->errorObj->message = "";
+        $this->errorObj->target = "";
+    }
+
+    /**
      * Report or log an exception.
      *
      * @param  \Exception $exception
@@ -40,25 +65,20 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $exception
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Exception $exception
+     * @return Response
+     * @throws ReflectionException|Exception
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof \Illuminate\Http\Exceptions\PostTooLargeException) {
-            return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Server file size limit exceded.']), 500);
+        $this->initErrorObj();
+        $reflect = new \ReflectionClass($exception);
+        $method = 'handle' . $reflect->getShortName();
+        if (method_exists($this, $method)) {
+            return $this->$method($exception, $request);
         }
 
-        if (env('APP_ENV') !== 'local') {
-            if ($exception instanceof \PDOException) {
-                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong with data!']), 500);
-            }
-
-            if ($exception instanceof FatalErrorException) {
-                return response()->json((['status' => 'FAIL', 'status_code' => 500, 'message' => 'Sorry, cannot perform the action, something went wrong!']), 500);
-            }
-        }
         return parent::render($request, $exception);
     }
 
@@ -76,4 +96,77 @@ class Handler extends ExceptionHandler
         abort(403);
     }
 
+    /**
+     * handleMethodNotAllowedHttpException
+     * The used HTTP Accept header is not allowed on this route in the API
+     *
+     * @param MethodNotAllowedHttpException $exception
+     * @return JsonResponse
+     */
+    protected function handleMethodNotAllowedHttpException(MethodNotAllowedHttpException $exception)
+    {
+        $this->errorObj->hint = "The requested method not allowed";
+        $this->errorObj->message = "Something unexpected happened.Please try again later";
+        $this->errorObj->type = ApiErrorType::METHOD_NOT_ALLOWED_ERROR;
+        $this->errorObj->code = ApiErrorCode::METHOD_NOT_ALLOWED_ERROR;
+        $this->errorObj->target = "query";
+
+        return response()->json([
+            'status' => 'FAIL',
+            'status_code' => 406,
+            'error' => $this->errorObj
+        ], 406);
+    }
+
+
+    /**
+     * ModelNotFoundException
+     * The model is not found with given identifier
+     *
+     * @param ModelNotFoundException $exception
+     * @return JsonResponse
+     */
+    protected function handleModelNotFoundException(ModelNotFoundException $exception)
+    {
+        $fullModel = $exception->getModel();
+        $choppedUpModel = explode('\\', $fullModel);
+        $cleanedUpModel = array_pop($choppedUpModel);
+        $this->errorObj->hint = $cleanedUpModel . " model is not found with given identifier";
+        $this->errorObj->message = 'What you are looking may have been replaced';
+        $this->errorObj->target = $cleanedUpModel;
+        return response()->json([
+            'status' => 'FAIL',
+            'status_code' => 404,
+            'error' => $this->errorObj
+        ], 404);
+    }
+
+    /**
+     * ValidationException
+     * Parameters did not pass validation
+     *
+     * @param ValidationException $exception
+     * @return JsonResponse
+     */
+    protected function handleValidationException(ValidationException $exception)
+    {
+        $this->errorObj->type = ApiErrorType::VALIDATION_FAILED_ERROR;
+        $this->errorObj->code = ApiErrorCode::VALIDATION_FAILED_ERROR;
+        $this->errorObj->hint = "Parameters did not pass validation.See details for more info";
+        $this->errorObj->target = "parameters";
+        $this->errorObj->details = [];
+        foreach ($exception->validator->errors()->getMessages() as $field => $message) {
+            $details = new stdClass();
+            $details->message = $message[0];
+            $this->errorObj->message = $message[0];
+            $details->target = $field;
+            $this->errorObj->details[] = $details;
+        }
+
+        return response()->json([
+            'status' => 'FAIL',
+            'status_code' => 422,
+            'error' => $this->errorObj
+        ], 422);
+    }
 }
