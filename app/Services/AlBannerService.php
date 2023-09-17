@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AlBannerResource;
 use App\Repositories\AlBannerRepository;
 
 /**
@@ -33,4 +34,15 @@ class AlBannerService extends ApiBaseService
             'title_en', 'title_bn', 'desc_en', 'desc_bn', 'image', 'alt_text_en', 'alt_text_bn', 'image_name_en', 'image_name_bn'
         ]);
     }
+
+    public function singlePagebanner($sectionType, $message = '')
+    {
+        $pageData = [];
+        $banner     = $this->alBannerRepository->findOneByProperties(['section_id' => 0, 'section_type' => $sectionType]);
+        $pageData['banner'] = $banner ? AlBannerResource::make($banner) : null;
+        
+        return $this->sendSuccessResponse($pageData, $message);
+    }
+
+    
 }
