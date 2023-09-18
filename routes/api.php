@@ -374,6 +374,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 
+    // Fallback Offer
+    Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
+
     // BL Labs
     Route::group(['prefix' => 'bl-labs' ], function () {
         Route::middleware(['auth-jwt'])->group(function () {
