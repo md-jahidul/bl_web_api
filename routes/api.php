@@ -131,7 +131,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('product/eligibility-check/{mobile}/{productCode}', 'API\V1\ProductController@eligibleCheck');
     Route::post('product/purchase', 'API\V1\ProductController@purchase');
     Route::get('product/list/{customerId}', 'API\V1\ProductController@getProducts');
-    Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
+    // Route::get('product/loan/{loanType}/{msisdn}', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('available-loan-products', 'API\V1\ProductController@customerLoanProducts');
+    Route::get('emergency-balance-banner', 'API\V1\EmergencyBalanceController@emergencyBalancebanner');
 
     //Loyalty or Priyojon section
     //    Route::get('priyojon/redeem/options', 'API\V1\LoyaltyController@redeemOptions');
@@ -404,6 +406,16 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // E-shop NEW Sim Offer
     Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');
+
+    /**
+     *  Balance transfer
+     */
+    Route::post('balance-transfer', 'API\V1\BalanceTransferController@transferBalance');
+    Route::post('balance-transfer/set-pin', 'API\V1\BalanceTransferController@generateCustomerPin');
+    Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
+    Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
+    Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
+    Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {

@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Exceptions\IdpAuthException;
+use App\Exceptions\OldPinInvalidException;
+use App\Exceptions\PinAlreadySetException;
+use App\Exceptions\PinNotSetException;
 use App\Exceptions\TokenInvalidException;
 use App\Exceptions\TokenNotFoundException;
 use App\Exceptions\TooManyRequestException;
@@ -17,6 +20,7 @@ use http\Exception\RuntimeException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -42,10 +46,12 @@ class CustomerService extends ApiBaseService
      * @param CustomerRepository $customerRepository
      * @param CustomerPackageService $customerPackageService
      */
-    public function __construct(CustomerRepository $customerRepository, CustomerPackageService $customerPackageService)
-    {
+    public function __construct(
+        CustomerRepository $customerRepository
+//        CustomerPackageService $customerPackageService
+    ) {
         $this->customerRepository = $customerRepository;
-        $this->CustomerPackageService = $customerPackageService;
+//        $this->CustomerPackageService = $customerPackageService;
         $this->setActionRepository($this->customerRepository);
     }
 
@@ -316,5 +322,80 @@ class CustomerService extends ApiBaseService
             'mobile' =>   isset($data['mobile']) ? $data['mobile'] : null,
             'profile_image' => isset($data['profile_image']) ? $data['profile_image'] : null
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws PinAlreadySetException
+     * @throws TokenInvalidException
+     * @throws TokenNotFoundException
+     * @throws TooManyRequestException
+     */
+    public function setTransferPin(Request $request)
+    {
+        $user = $this->getAuthenticateCustomer($request);
+
+        if (!$user) {
+            return $this->sendErrorResponse("User not found", [], HttpStatusCode::UNAUTHORIZED);
+        }
+
+        if ($user->balance_transfer_pin) {
+            throw new PinAlreadySetException();
+        }
+
+        $user->balance_transfer_pin = Hash::make($request->pin);
+        $user->save();
+
+        return $this->sendSuccessResponse([], 'Balance Transfer Pin is Saved Successfully');
+    }
+
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws OldPinInvalidException
+     * @throws PinNotSetException
+     * @throws TokenInvalidException
+     * @throws TokenNotFoundException
+     * @throws TooManyRequestException
+     */
+    public function changeTransferPin(Request $request)
+    {
+        $user = $this->getAuthenticateCustomer($request);
+
+        if (!$user) {
+            throw new TokenInvalidException();
+        }
+
+        if (!$user->balance_transfer_pin) {
+            throw new PinNotSetException();
+        }
+
+        $hashed_password = $user->balance_transfer_pin;
+
+        if (!Hash::check($request->old_pin, $hashed_password)) {
+            throw new OldPinInvalidException();
+        }
+
+        $user->balance_transfer_pin = Hash::make($request->new_pin);
+        $user->save();
+
+        return $this->sendSuccessResponse([], 'Balance Transfer Pin is changed Successfully');
+    }
+
+    public function resetTransferPin(Request $request)
+    {
+        $customer = $this->getAuthenticateCustomer($request);
+
+        if (!$customer) {
+            throw new TokenInvalidException();
+        }
+
+        $customer->balance_transfer_pin = Hash::make($request->new_pin);
+
+        $customer->save();
+
+        return $this->sendSuccessResponse([], 'Balance Transfer Pin is reset Successfully');
     }
 }

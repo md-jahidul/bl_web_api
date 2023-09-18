@@ -77,16 +77,16 @@ trait CrudTrait
     }
 
 
-    /**
-     * @param $id
-     * @return bool|mixed|null
-     * @throws \Exception
-     */
-    public function delete($id)
-    {
-        $model = $this->actionRepository->findOrFail($id);
-        return $model->delete();
-    }
+//    /**
+//     * @param $id
+//     * @return bool|mixed|null
+//     * @throws \Exception
+//     */
+//    public function delete($id)
+//    {
+//        $model = $this->actionRepository->findOrFail($id);
+//        return $model->delete();
+//    }
 
 
     /**

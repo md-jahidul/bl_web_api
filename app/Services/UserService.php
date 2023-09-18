@@ -383,6 +383,7 @@ class UserService extends ApiBaseService
             $user_data["address"] =  $idpUserData->address ?? null;
             $user_data["district"] =  $user->district ?? null;
             $user_data["thana"] =  $user->thana ?? null;
+            $user_data["balance_transfer_register"] = (bool)$user->balance_transfer_pin;
         }
         else {
             $user_data = $user;
