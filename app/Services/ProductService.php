@@ -104,6 +104,10 @@ class ProductService extends ApiBaseService
      * @var OfferCategoryRepository
      */
     private $offerCategoryRepository;
+    /**
+     * @var CustomerAvailableProductsService
+     */
+    private $customerAvailableProductsService;
 
     /**
      * ProductService constructor.
@@ -130,8 +134,8 @@ class ProductService extends ApiBaseService
         AmarOfferService $amarOfferService,
         AlBannerService $alBannerService,
         ProductDetailsSectionRepository $productDetailsSectionRepository,
+        OfferCategoryRepository $offerCategoryRepository,
         CustomerAvailableProductsService $customerAvailableProductsService,
-        OfferCategoryRepository $offerCategoryRepository
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -1022,5 +1026,72 @@ class ProductService extends ApiBaseService
             ]
         ];
         return $this->sendSuccessResponse($data, "New SIM offers");
+    }
+
+    public function fallOfferProcess(AlCoreProduct $requestedProduct, $customerAvailableProducts, $balance): array
+    {
+        $products = AlCoreProduct::
+        whereIn('product_code', $customerAvailableProducts)
+        ->whereHas(
+            'product',
+            function ($q) {
+                $q->where('status', 1)
+                ->where('status', 1)
+                ->where('special_product', 0)
+                ->startEndDate();
+            }
+        )
+        ->with('product')
+        ->where('content_type', $requestedProduct->content_type)
+        ->where('mrp_price', '<=', $balance)
+        ->limit(5)
+        ->orderBy('mrp_price', 'DESC')
+        ->get();
+
+        $fallbackProducts = [];
+        foreach ($products as $product) {
+            $fallbackProducts[] = [
+                "name_en" => $product->commercial_name_en,
+                "name_bn" => $product->commercial_name_bn,
+                "rate_cutter_unit" => $product->rate_cutter_unit,
+                "rate_cutter_offer" => $product->rate_cutter_offer,
+                "price_tk" => $product->mrp_price,
+                "validity_days" => $product->validity ?? 0,
+                "validity_unit" => $product->validity_unit,
+                "internet_volume_mb" => $product->internet_volume_mb,
+                "sms_volume" => $product->sms_volume,
+                "minute_volume" => $product->minute_volume,
+                "callrate_offer" => $product->callrate_offer,
+                "call_rate_unit" => $product->call_rate_unit,
+                "sms_rate_offer" => $product->sms_rate_offer,
+                "product_code" => $product->product_code,
+                "renew_product_code" => $product->renew_product_code,
+                "recharge_product_code" => $product->recharge_product_code,
+                "offer_breakdown_en" => $product->product->product_details->offer_details_title_en ?? null,
+                "offer_breakdown_bn" => $product->product->product_details->offer_details_title_bn ?? null,
+                "url_slug_en" => $product->product->url_slug ?? null,
+                "url_slug_bn" => $product->product->url_slug_bn ?? null
+            ];
+        }
+
+        return $fallbackProducts;
+    }
+
+    public function fallbackOffers($request)
+    {
+        $data = [];
+        $customer = $this->customerService->getAuthenticateCustomer($request);
+
+        $product = AlCoreProduct::where('product_code', $request->product_code)->select('mrp_price', 'content_type')->first();
+        $customerId = $customer->customer_account_id;
+
+        $balance = $this->balanceService->getPrepaidBalance($customerId);
+        $productPrice = $product->mrp_price;
+
+        if ($productPrice > $balance) {
+            $availableProducts = $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerId);
+            $data = $this->fallOfferProcess($product, $availableProducts, $balance);
+        }
+        return $this->sendSuccessResponse($data, 'Fall back offers');
     }
 }

@@ -125,5 +125,17 @@ return [
             'path'   => storage_path('logs/bl-lab/reg-fail/reg_fail.log'),
             'level' => 'error',
         ],
+        'apihub-error' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/apihub/apihub-error.log'),
+            'level' => 'info',
+            'days' => 5,
+        ],
+        'MyPlan' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/misc/my_plan.log'),
+            'level' => 'info',
+            'days' => 7,
+        ],
     ],
 ];

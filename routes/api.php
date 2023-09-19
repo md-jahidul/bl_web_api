@@ -427,6 +427,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
         Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
     });
+    // Fallback Offer
+    Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
+
     // BL Labs
     Route::group(['prefix' => 'bl-labs' ], function () {
         Route::middleware(['auth-jwt'])->group(function () {
@@ -451,6 +454,27 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::post('forget-password', 'API\V1\BlLab\BlLabAuthenticationController@forgetPassword');
         Route::get('banner', 'API\V1\BlLab\BlLabApplicationContentController@getBanner');
     });
+    //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+    //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    // E-shop Trending Offer
+    Route::get('trending-offer', 'API\V1\ProductController@eShopTrendingOffers');
+
+    // E-shop NEW Sim Offer
+    Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');
+
+    /**
+     *  Balance transfer
+     */
+    Route::post('balance-transfer', 'API\V1\BalanceTransferController@transferBalance');
+    Route::post('balance-transfer/set-pin', 'API\V1\BalanceTransferController@generateCustomerPin');
+    Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
+    Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
+    Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
+    Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
+
+    // My Plan Products
+    Route::get('my-plan/products', 'API\V1\MyPlan\MyPlanProductController@getMyPlanProducts');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
