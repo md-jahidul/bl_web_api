@@ -419,6 +419,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
     Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
     Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
+
+    // My Plan Products
+    Route::get('my-plan/products', 'API\V1\MyPlan\MyPlanProductController@getMyPlanProducts');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
