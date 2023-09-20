@@ -134,7 +134,7 @@ class ProductService extends ApiBaseService
         AlBannerService $alBannerService,
         ProductDetailsSectionRepository $productDetailsSectionRepository,
         OfferCategoryRepository $offerCategoryRepository,
-        CustomerAvailableProductsService $customerAvailableProductsService,
+        CustomerAvailableProductsService $customerAvailableProductsService
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
