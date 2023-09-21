@@ -4,6 +4,7 @@ namespace App\Services\MyPlan;
 
 use App\Enums\HttpStatusCode;
 use App\Repositories\MyPlanProductRepository;
+use App\Services\ApiBaseService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\Services\Banglalink\BaseService;
@@ -21,12 +22,18 @@ class MyPlanProductService extends BaseService
      * @var CustomerAvailableProductsService
      */
     protected $customerAvailableProductsService;
+    /**
+     * @var ApiBaseService
+     */
+    private $apiBaseService;
 
     public function __construct(
         MyPlanProductRepository $myPlanProductRepository,
-        CustomerAvailableProductsService $customerAvailableProductsService
+        CustomerAvailableProductsService $customerAvailableProductsService,
+        ApiBaseService $apiBaseService
     ) {
         $this->myBlPlanProductRepository = $myPlanProductRepository;
+        $this->apiBaseService = $apiBaseService;
         $this->customerAvailableProductsService = $customerAvailableProductsService;
     }
 
@@ -42,9 +49,13 @@ class MyPlanProductService extends BaseService
             $filterdProducts = $products->whereIn('product_code', $available_products);
             $products = $this->getPlansFormatterData($filterdProducts);
             Redis::setex($redis_key, $redis_ttl, json_encode($products));
-            return $products;
+            return $this->apiBaseService->sendSuccessResponse($products, 'MyBlPlan Products');
         }
-        return $products;
+
+        if ($products) {
+            return $this->apiBaseService->sendSuccessResponse($products, 'MyBlPlan Products');
+        }
+        return $this->apiBaseService->sendErrorResponse('Failed', 'Failed to retrieve plan products', HttpStatusCode::INTERNAL_ERROR);
     }
 
 
@@ -118,7 +129,7 @@ class MyPlanProductService extends BaseService
         sort($sms);
         sort($minutes);
 
-        $products = [
+        return [
             "validity" => $validity,
             "internet" => $internet,
             "sms" => $sms,
@@ -126,7 +137,5 @@ class MyPlanProductService extends BaseService
             "default" => $default,
             "plans" => $plans
         ];
-
-        return $products;
     }
 }
