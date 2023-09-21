@@ -30,32 +30,13 @@ class MyPlanProductController extends Controller
 
 
     public function __construct(
-        MyPlanProductService $myblPlanService,
-        CustomerService      $customerService,
-        ApiBaseService       $apiBaseService
+        MyPlanProductService $myblPlanService
     ) {
         $this->myblPlanService = $myblPlanService;
-        $this->customerService = $customerService;
-        $this->apiBaseService = $apiBaseService;
     }
 
     public function getMyPlanProducts(Request $request)
     {
-        $customer = $this->customerService->getAuthenticateCustomer($request);
-
-        if (!$customer) {
-            throw new TokenInvalidException();
-        }
-
-        if ($customer->number_type == "postpaid") {
-            return $this->apiBaseService->sendErrorResponse('Plan Product not available for postpaid users', [], HttpStatusCode::BAD_REQUEST);
-        }
-
-        try {
-            $myBlPlanProducts = $this->myblPlanService->getMyPlanProducts();
-            return $this->apiBaseService->sendSuccessResponse($myBlPlanProducts, 'MyBlPlan Products');
-        } catch (\Exception $e) {
-            return $this->apiBaseService->sendErrorResponse('Failed to retrive plan products', [$e->getMessage()], HttpStatusCode::INTERNAL_ERROR);
-        }
+        return $this->myblPlanService->getMyPlanProducts();
     }
 }
