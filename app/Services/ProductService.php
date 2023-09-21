@@ -22,6 +22,7 @@ use App\Services\Banglalink\BalanceService;
 use App\Services\Banglalink\BanglalinkCustomerService;
 use App\Services\Banglalink\BanglalinkLoanService;
 use App\Services\Banglalink\BanglalinkProductService;
+use App\Services\Banglalink\BaseService;
 use App\Services\Banglalink\CustomerAvailableProductsService;
 use App\Traits\CrudTrait;
 use Illuminate\Auth\AuthenticationException;
@@ -30,7 +31,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
-class ProductService extends ApiBaseService
+class ProductService extends BaseService
 {
     use CrudTrait;
 
@@ -64,10 +65,6 @@ class ProductService extends ApiBaseService
      */
     protected $blLoanProductService;
 
-    /**
-     * @var CustomerInfo
-     */
-    protected $customerInfo;
 
     /***
      * @var ProductBookmarkRepository
@@ -105,6 +102,10 @@ class ProductService extends ApiBaseService
      */
     private $offerCategoryRepository;
     /**
+     * @var ApiBaseService
+     */
+    private $apiBaseService;
+    /**
      * @var CustomerAvailableProductsService
      */
 
@@ -134,7 +135,8 @@ class ProductService extends ApiBaseService
         AlBannerService $alBannerService,
         ProductDetailsSectionRepository $productDetailsSectionRepository,
         OfferCategoryRepository $offerCategoryRepository,
-        CustomerAvailableProductsService $customerAvailableProductsService
+        CustomerAvailableProductsService $customerAvailableProductsService,
+        ApiBaseService $apiBaseService
     ) {
         $this->productRepository = $productRepository;
         $this->blProductService = $blProductService;
@@ -151,6 +153,7 @@ class ProductService extends ApiBaseService
         $this->offerCategoryRepository = $offerCategoryRepository;
         $this->productDetailsSectionRepository = $productDetailsSectionRepository;
         $this->customerAvailableProductsService = $customerAvailableProductsService;
+        $this->apiBaseService = $apiBaseService;
         $this->setActionRepository($productRepository);
     }
 
@@ -349,7 +352,7 @@ class ProductService extends ApiBaseService
                     $this->bindDynamicValues($product, 'offer_info', $data);
                     unset($product->productCore);
                 }
-                return $this->sendSuccessResponse($viewAbleProducts, 'Data Found!');
+                return $this->apiBaseService->sendSuccessResponse($viewAbleProducts, 'Data Found!');
 //                return response()->success($viewAbleProducts, 'Data Found!');
             }
             return response()->error("Data Not Found!");
@@ -414,7 +417,7 @@ class ProductService extends ApiBaseService
 
             if ($offerType == "amar-offer") {
                 $data = $this->prepareAmarOffer();
-                return $this->sendSuccessResponse($data, "{$offerType} packs list");
+                return $this->apiBaseService->sendSuccessResponse($data, "{$offerType} packs list");
             }
 
             $products = $this->productRepository->simTypeProduct($type, $offerType);
@@ -464,7 +467,7 @@ class ProductService extends ApiBaseService
 
             $offerType = ucfirst($offerType);
 
-            return $this->sendSuccessResponse($data, "{$offerType} packs list");
+            return $this->apiBaseService->sendSuccessResponse($data, "{$offerType} packs list");
 
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
@@ -482,7 +485,7 @@ class ProductService extends ApiBaseService
         $customer = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
 
         if ($customer->getData()->status_code == 500) {
-            return $this->sendErrorResponse([], 'Customer not found', 404);
+            return $this->apiBaseService->sendErrorResponse([], 'Customer not found', 404);
         }
         $customer_account_id = $customer->getData()->data->package->customerId;
         $availableProducts = $this->getProductCodesByCustomerId($customer_account_id);
@@ -492,10 +495,10 @@ class ProductService extends ApiBaseService
                 $data = [
                     'is_eligible' => true
                 ];
-                return $this->sendSuccessResponse($data, 'This product eligible to you');
+                return $this->apiBaseService->sendSuccessResponse($data, 'This product eligible to you');
             }
         }
-        return $this->sendSuccessResponse($data = ['is_eligible' => false], 'This product not eligible to you');
+        return $this->apiBaseService->sendSuccessResponse($data = ['is_eligible' => false], 'This product not eligible to you');
     }
 
     private function filterProductsByUser($allProducts, $availableProductIds)
@@ -666,17 +669,17 @@ class ProductService extends ApiBaseService
                 'module_type' => $request->module_type,
                 'category' => $request->category,
             ]);
-            return $this->sendSuccessResponse([], 'Bookmark saved successfully!');
+            return $this->apiBaseService->sendSuccessResponse([], 'Bookmark saved successfully!');
         } else if ($operationType == 'delete') {
             $bookmarkProducts = $this->productBookmarkRepository->findByProperties(['mobile' => $customerInfo->phone]);
             foreach ($bookmarkProducts as $bookmarkProduct) {
                 if ($bookmarkProduct->product_id == $productId) {
                     $bookmarkProduct->delete();
-                    return $this->sendSuccessResponse([], 'Bookmark removed successfully!');
+                    return $this->apiBaseService->sendSuccessResponse([], 'Bookmark removed successfully!');
                 }
             }
         }
-        return $this->sendErrorResponse('Invalid operation');
+        return $this->apiBaseService->sendErrorResponse('Invalid operation');
     }
 
     /**
@@ -720,7 +723,7 @@ class ProductService extends ApiBaseService
             $rechargeOffer->price_tk = !empty($rechargeOffer->price_tk) ? (int)$rechargeOffer->price_tk : 0;
         }
 
-        return $this->sendSuccessResponse($rechargeOffer, '');
+        return $this->apiBaseService->sendSuccessResponse($rechargeOffer, '');
     }
 
     /**
@@ -779,7 +782,7 @@ class ProductService extends ApiBaseService
             if ($products) {
                 $products['like'] = $products['like'] + 1;
                 $products->update();
-                return $this->sendSuccessResponse([], 'Product liked successfully!');
+                return $this->apiBaseService->sendSuccessResponse([], 'Product liked successfully!');
             }
         } catch (QueryException $exception) {
             return response()->error("Data Not Found!", $exception);
@@ -813,7 +816,7 @@ class ProductService extends ApiBaseService
                 'total' => $internetOffers->total()
             ];
             $data = json_decode(json_encode($collection), true);
-            return $this->sendSuccessResponse($data, '4G Internet Offers');
+            return $this->apiBaseService->sendSuccessResponse($data, '4G Internet Offers');
         }
     }
 
@@ -832,7 +835,7 @@ class ProductService extends ApiBaseService
         } else {
             $data = $defaultAmount;
         }
-        return $this->sendSuccessResponse($data, "Recharge preset amount");
+        return $this->apiBaseService->sendSuccessResponse($data, "Recharge preset amount");
     }
 
     public function fallOfferProcess(AlCoreProduct $requestedProduct, $customerAvailableProducts, $balance): array
@@ -888,18 +891,29 @@ class ProductService extends ApiBaseService
     {
         $data = [];
         $customer = $this->customerService->getAuthenticateCustomer($request);
-
-        $product = AlCoreProduct::where('product_code', $request->product_code)->select('mrp_price', 'content_type')->first();
         $customerId = $customer->customer_account_id;
 
-        $balance = $this->balanceService->getPrepaidBalance($customerId);
+        $product = AlCoreProduct::where('product_code', $request->product_code)->select('mrp_price', 'content_type')->first();
+
+        if ($customer->number_type == "postpaid") {
+            $response = $this->get($this->balanceService->getBalanceUrlPostpaid($customerId));
+            $response = json_decode($response['response']);
+
+            if (isset($response->error)) {
+                return $this->apiBaseService->sendErrorResponse('Error', 'API Hub Internal Server Error', $response->status);
+            }
+            $balanceInfo = collect($response)->where('billingAccountType', 'LOCAL')->first();
+            $balance = $balanceInfo->creditLimit - $balanceInfo->totalOutstanding;
+        } else {
+            $balance = $this->balanceService->getPrepaidBalance($customerId);
+        }
         $productPrice = $product->mrp_price;
 
         if ($productPrice > $balance) {
             $availableProducts = $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerId);
             $data = $this->fallOfferProcess($product, $availableProducts, $balance);
         }
-        return $this->sendSuccessResponse($data, 'Fall back offers');
+        return $this->apiBaseService->sendSuccessResponse($data, 'Fall back offers');
     }
 
     public function validityUnitGenerator($validityUnit, $freeTest)
@@ -950,7 +964,7 @@ class ProductService extends ApiBaseService
                 'offers' => $postpaid ?? []
             ]
         ];
-        return $this->sendSuccessResponse($data, "Trending offers");
+        return $this->apiBaseService->sendSuccessResponse($data, "Trending offers");
     }
 
     public function productAttrPrepare($product)
@@ -1024,6 +1038,6 @@ class ProductService extends ApiBaseService
                 'offers' => $postpaid ?? []
             ]
         ];
-        return $this->sendSuccessResponse($data, "New SIM offers");
+        return $this->apiBaseService->sendSuccessResponse($data, "New SIM offers");
     }
 }
