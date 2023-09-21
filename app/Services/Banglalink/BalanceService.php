@@ -94,7 +94,7 @@ class BalanceService extends BaseService
         return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/prepaid-balances' . '?sortType=SERVICE_TYPE';
     }
 
-    private function getBalanceUrlPostpaid($customer_id)
+    public function getBalanceUrlPostpaid($customer_id)
     {
         return self::BALANCE_API_ENDPOINT . '/' . $customer_id . '/postpaid-info';
     }
