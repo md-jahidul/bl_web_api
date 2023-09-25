@@ -113,8 +113,10 @@ class OfferCategoryService extends ApiBaseService
         $offer = OfferCategory::where('status', 1)
             ->where('parent_id', 0)
             ->with(['children' => function($q){
+                $q->orderBy('display_order');
                 $q->where('status', 1);
             }])
+            ->orderBy('display_order')
             ->get();
         $offer->makeHidden(['created_at', 'updated_at', 'created_by', 'updated_by']);
 //        if (!empty($offer)) {

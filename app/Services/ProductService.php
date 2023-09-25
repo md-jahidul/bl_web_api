@@ -443,6 +443,7 @@ class ProductService extends BaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
+
             $sortedData = collect($item)->sortBy('display_order');
 
             foreach ($sortedData as $category => $pack) {
