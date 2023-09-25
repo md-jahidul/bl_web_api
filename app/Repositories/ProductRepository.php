@@ -92,6 +92,7 @@ class ProductRepository extends BaseRepository
             )
             ->productCore()
             ->category($type)
+            ->orderBy('display_order', 'ASC')
             ->get();
     }
 

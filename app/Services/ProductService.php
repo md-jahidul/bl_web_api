@@ -437,6 +437,7 @@ class ProductService extends ApiBaseService
                     $item[$productTab->slug]['packs'][] = $pack;
                 }
             }
+
             $sortedData = collect($item)->sortBy('display_order');
 
             foreach ($sortedData as $category => $pack) {
