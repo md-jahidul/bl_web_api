@@ -243,7 +243,9 @@ class ProductRepository extends BaseRepository
                 'offer_info',
                 'status',
                 'like',
-                'image')
+                'image',
+                'is_not_purchasable'
+            )
             ->with('product_details', 'related_product', 'other_related_product')
             ->first();
     }
