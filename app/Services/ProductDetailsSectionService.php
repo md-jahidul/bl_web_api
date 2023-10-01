@@ -106,7 +106,9 @@ class ProductDetailsSectionService extends ApiBaseService
                 'call_rate_unit_bn',
                 'balance_check_ussd_bn',
                 'like',
-                'offer_info')
+                'offer_info',
+                'is_not_purchasable'
+            )
             ->productCore()->first();
         if ($parentProduct){
             $this->bindDynamicValues($parentProduct, 'offer_info', $parentProduct->productCore);
