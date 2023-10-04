@@ -57,43 +57,42 @@ class ProductRepository extends BaseRepository
         }else{
             $data = $data->where('offer_category_id', $offerCategory->id);
         }
-        $data = $data->orWhere(function ($q) use ($multiCat) {
-             foreach ($multiCat as $cat) {
-//                 dd($cat);
-                 $q->orWhereJsonContains('show_in_multi_cat', $cat)
-                     ->where('status', 1)
-                     ->where('special_product', 0)
-                     ->startEndDate();
-
-//                 dd($q);
-             }
-         });
+        $data = $data->orWhere(function ($q) use ($multiCat, $offerCategory) {
+            foreach ($multiCat as $cat) {
+                if ($offerCategory->id == $cat) {
+                    $q->orWhereJsonContains('show_in_multi_cat', $cat)
+                        ->where('status', 1)
+                        ->where('special_product', 0)
+                        ->startEndDate();
+                }
+            }
+        });
         return $data->select(
-                'products.id',
-                'products.product_code',
-                'products.url_slug',
-                'products.url_slug_bn',
-                'products.schema_markup',
-                'products.page_header',
-                'products.page_header_bn',
-                'products.rate_cutter_unit',
-                'products.rate_cutter_offer',
-                'products.name_en',
-                'products.name_bn',
-                'products.ussd_bn',
-                'products.balance_check_ussd_bn',
-                'products.call_rate_unit_bn',
-                'products.sms_rate_unit_bn',
-                'products.tag_category_id',
-                'products.sim_category_id',
-                'products.offer_category_id',
-                'products.special_product',
-                'products.like',
-                'products.validity_postpaid',
-                'products.offer_info',
-                'products.product_image',
-                'products.show_in_multi_cat'
-            )
+            'products.id',
+            'products.product_code',
+            'products.url_slug',
+            'products.url_slug_bn',
+            'products.schema_markup',
+            'products.page_header',
+            'products.page_header_bn',
+            'products.rate_cutter_unit',
+            'products.rate_cutter_offer',
+            'products.name_en',
+            'products.name_bn',
+            'products.ussd_bn',
+            'products.balance_check_ussd_bn',
+            'products.call_rate_unit_bn',
+            'products.sms_rate_unit_bn',
+            'products.tag_category_id',
+            'products.sim_category_id',
+            'products.offer_category_id',
+            'products.special_product',
+            'products.like',
+            'products.validity_postpaid',
+            'products.offer_info',
+            'products.product_image',
+            'products.show_in_multi_cat'
+        )
             ->productCore()
             ->category($type)
             ->orderBy('display_order', 'ASC')
