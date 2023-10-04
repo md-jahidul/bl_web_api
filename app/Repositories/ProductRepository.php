@@ -45,7 +45,8 @@ class ProductRepository extends BaseRepository
         $bondhoSIM = OfferType::BONDHO_SIM;
         $newSIMOffer = OfferType::NEW_SIM_OFFICE;
         $rechargeOffer = OfferType::RECHARGE_OFFER;
-        $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer"];
+        $worldCupOffer = OfferType::WORLD_CUP_OFFER;
+        $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer", "$worldCupOffer"];
 
         $data = $this->model
             ->where('status', 1)
@@ -56,14 +57,17 @@ class ProductRepository extends BaseRepository
         }else{
             $data = $data->where('offer_category_id', $offerCategory->id);
         }
-        // ->orWhere(function ($q) use ($multiCat, $offerTypeById) {
-        //     foreach ($multiCat as $cat) {
-        //         $q->orWhereJsonContains('show_in_multi_cat', $cat)
-        //             ->where('status', 1)
-        //             ->where('special_product', 0)
-        //             ->startEndDate();
-        //     }
-        // })
+        $data = $data->orWhere(function ($q) use ($multiCat) {
+             foreach ($multiCat as $cat) {
+//                 dd($cat);
+                 $q->orWhereJsonContains('show_in_multi_cat', $cat)
+                     ->where('status', 1)
+                     ->where('special_product', 0)
+                     ->startEndDate();
+
+//                 dd($q);
+             }
+         });
         return $data->select(
                 'products.id',
                 'products.product_code',
@@ -94,6 +98,8 @@ class ProductRepository extends BaseRepository
             ->category($type)
             ->orderBy('display_order', 'ASC')
             ->get();
+//         return $data;
+//         dd($data);
     }
 
     #
