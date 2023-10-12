@@ -21,13 +21,13 @@ trait FileTrait
      * @param directoryPath - Directory path relative to base upload path
      * @return file path
      */
-    protected function upload($file, $directoryPath)
+    protected function upload($file, $directoryPath, $disk = null)
     {
-        $path = $file->store(
+        $diskPath = !empty($disk) ? $disk : $this->disk;
+        return $file->store(
             $directoryPath,
-            $this->disk
+            $diskPath
         );
-        return $path;
     }
 
     /**

@@ -140,7 +140,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
         $blPersonal = $this->labPersonalInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
         if (request()->hasFile('cv')) {
             $fileName = $data['cv']->getClientOriginalName();
-            $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file');
+            $cv['file_path'] = $this->upload($data['cv'], 'lab-applicant-file', 'public');
             $cv['file_name'] = $fileName;
             $cv['file_size'] = $this->formatBytes($data['cv']->getSize());
         } else {
@@ -157,7 +157,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
                 if (!empty($data[$file])) {
                     $fileName = $data[$file]->getClientOriginalName();
-                    $teamMembers[$i]['file_path'] = $this->upload($data[$file], 'lab-applicant-file');
+                    $teamMembers[$i]['file_path'] = $this->upload($data[$file], 'lab-applicant-file', 'public');
                     $teamMembers[$i]['file_name'] = $fileName;
                     $teamMembers[$i]['file_size'] =  $this->formatBytes($data[$file]->getSize());;
                 } else {
@@ -190,7 +190,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
         if (!empty($data['business_model_file'])) {
             $fileName = $data['business_model_file']->getClientOriginalName();
-            $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file');
+            $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file', 'public');
             $businessModelFile['file_name'] = $fileName;
             $businessModelFile['file_size'] = $this->formatBytes($data['business_model_file']->getSize());
         } else {
@@ -199,7 +199,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
         if (!empty($data['gtm_plan_file'])) {
             $fileName = $data['gtm_plan_file']->getClientOriginalName();
-            $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file');
+            $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file', 'public');
             $gtmPlanFile['file_name'] = $fileName;
             $gtmPlanFile['file_size'] = $this->formatBytes($data['gtm_plan_file']->getSize());
         } else {
@@ -208,7 +208,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
         if (!empty($data['financial_metrics_file'])) {
             $fileName = $data['financial_metrics_file']->getClientOriginalName();
-            $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file');
+            $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file', 'public');
             $financialMetricsFile['file_name'] = $fileName;
             $financialMetricsFile['file_size'] = $this->formatBytes($data['financial_metrics_file']->getSize());
         } else {
