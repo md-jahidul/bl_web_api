@@ -108,6 +108,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
 
             return $this->sendSuccessResponse(['application_id' => $userApplication->application_id], 'Application successfully save');
         }catch (\Exception $exception) {
+//            dd($exception->getMessage());
             Log::channel('ideaSubmitLog')->error($exception->getMessage());
             return $this->sendErrorResponse("Failed" , $exception->getMessage());
         }
@@ -187,7 +188,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
     {
         $startUpInfo = $this->labStartUpInfoRepository->findOneByProperties(['bl_lab_app_id' => $applicationId]);
 
-        if (request()->hasFile('business_model_file')) {
+        if (!empty($data['business_model_file'])) {
             $fileName = $data['business_model_file']->getClientOriginalName();
             $businessModelFile['file_path'] = $this->upload($data['business_model_file'], 'lab-applicant-file');
             $businessModelFile['file_name'] = $fileName;
@@ -196,7 +197,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $businessModelFile = (isset($startUpInfo->business_model_file)) ? $startUpInfo->business_model_file : null;
         }
 
-        if (request()->hasFile('gtm_plan_file')) {
+        if (!empty($data['gtm_plan_file'])) {
             $fileName = $data['gtm_plan_file']->getClientOriginalName();
             $gtmPlanFile['file_path'] = $this->upload($data['gtm_plan_file'], 'lab-applicant-file');
             $gtmPlanFile['file_name'] = $fileName;
@@ -205,7 +206,7 @@ class BlLabsIdeaSubmitService extends ApiBaseService
             $gtmPlanFile = (isset($startUpInfo->gtm_plan_file)) ? $startUpInfo->gtm_plan_file : null;
         }
 
-        if (request()->hasFile('financial_metrics_file')) {
+        if (!empty($data['financial_metrics_file'])) {
             $fileName = $data['financial_metrics_file']->getClientOriginalName();
             $financialMetricsFile['file_path'] = $this->upload($data['financial_metrics_file'], 'lab-applicant-file');
             $financialMetricsFile['file_name'] = $fileName;
