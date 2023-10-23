@@ -65,7 +65,7 @@ class AlCashBackRepository extends BaseRepository
              * User: Mehedi Hasan Shuvo
              * Date: 05/03/2023
              * Description: Will select product with closest end_date
-             *  
+             *
              */
             foreach ($selectedArray as $key => $single) {
                 if ($final_end_date == '') {
@@ -79,7 +79,7 @@ class AlCashBackRepository extends BaseRepository
             }
 
             $cashbackDetails['recharge_amount'] = $selectedArray[$final_key]['recharge_amount'];
-            $cashbackDetails['cash_back_amount'] = $selectedArray[$final_key]['cash_back_amount'];
+            $cashbackDetails['cashback_amount'] = $selectedArray[$final_key]['cash_back_amount'];
 
         }
         return $cashbackDetails;
