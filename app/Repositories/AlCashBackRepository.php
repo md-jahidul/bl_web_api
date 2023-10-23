@@ -18,7 +18,6 @@ class AlCashBackRepository extends BaseRepository
 
     public function getCashBackAmount($rechargeAmount)
     {
-        $currentTime = Carbon::parse()->format('Y-m-d H:i:s');
         $cashbackData =  $this->model
             ->select('id')
             ->where('status', 1)
@@ -27,20 +26,17 @@ class AlCashBackRepository extends BaseRepository
                 $q->where('status', 1);
                 $q->where('recharge_amount', $rechargeAmount);
             })
-            ->with(['cashBackProducts' => function($q) use($rechargeAmount, $currentTime) {
+            ->with(['cashBackProducts' => function($q) use($rechargeAmount) {
                 $q->select('al_cash_back_id', 'recharge_amount', 'cash_back_amount', 'end_date');
                 $q->where('status', 1);
-                $q->where('recharge_amount', $rechargeAmount);
-                $q->where('start_date', '<=', $currentTime);
-                $q->where('end_date', '>=', $currentTime);
+                $q->where('recharge_amount', $rechargeAmount)
+                ->startEndDate();
             }])
             ->get();
 
         $cashbackDetails = [];
-
         if(count($cashbackData)) {
             $cashbackProductArray = [];
-
             foreach ($cashbackData as $data) {
                 foreach ($data->cashBackProducts as $value){
                     $row = [];
