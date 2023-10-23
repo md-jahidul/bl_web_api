@@ -32,8 +32,14 @@ class AlCashBackService extends ApiBaseService
 
     public function getCashbackamount($request)
     {
-        $cashbackDetails = $this->cashBackRepository->getCashBackAmount($request->amount) ?? [];
-        return $this->sendSuccessResponse(['cashback_details' => $cashbackDetails], 'Cashback Details', [], HttpStatusCode::SUCCESS);
+        $cashbackDetails = [];
+        foreach ($request->recharge_amounts as $amount){
+            $cashBackData = $this->cashBackRepository->getCashBackAmount($amount['amount']);
+            if ($cashBackData) {
+                $cashbackDetails[] =  $cashBackData;
+            }
+        }
+        return $this->sendSuccessResponse(['cashback_details' => $cashbackDetails], 'Cashback Details');
     }
 
 }
