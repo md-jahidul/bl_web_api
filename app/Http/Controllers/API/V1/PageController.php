@@ -6,6 +6,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 // use App\Services\ApiBaseService;
+use App\Models\Page\NewPage;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -29,8 +30,9 @@ class PageController extends Controller
         );
 
         if($page_slug && $page_slug !== ""){
-            $query = Page::where('url_slug', $page_slug)->where('status', 1)->first();
+            $query = NewPage::where('url_slug', $page_slug)->where('status', 1)->first();
         }
+
         if ( ! $query ) {
             $result['message'] = 'Page not found';
             return response()->json($result, 200);

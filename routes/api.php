@@ -442,7 +442,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
 
     // Page component API routes
-    Route::get('page/{slug}', [PageController::class, 'view']);
+    Route::get('page/{slug}', 'API\V1\PageController@view');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
