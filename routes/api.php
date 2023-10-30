@@ -3,6 +3,7 @@
 //header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
 //header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
 
+use App\Http\Controllers\API\v1\PageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -439,6 +440,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
     Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
     Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
+
+    // Page component API routes
+    Route::get('page/{slug}', [PageController::class, 'view']);
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
