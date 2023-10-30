@@ -478,7 +478,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('my-plan/products', 'API\V1\MyPlan\MyPlanProductController@getMyPlanProducts');
 
     // Page component API routes
-    Route::get('page/{slug}', [PageController::class, 'view']);
+    Route::get('page/{slug}', 'API\V1\PageController@view');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
