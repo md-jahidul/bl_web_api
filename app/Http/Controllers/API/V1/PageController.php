@@ -30,7 +30,7 @@ class PageController extends Controller
         );
 
         if($page_slug && $page_slug !== ""){
-            $query = NewPage::where('url_slug', $page_slug)->where('status', 1)->first();
+            $query = NewPage::select("id", "name", "url_slug", "page_header_en", "page_header_bn")->where('url_slug', $page_slug)->where('status', 1)->first();
         }
 
         if ( ! $query ) {
@@ -52,6 +52,7 @@ class PageController extends Controller
                     $component->data = count($component_child_data) ? $this->tabDataItemFormatted($component_child_data[0]) : [];
                     // $component->data = $component->componentData->menuTreeWithHierarchy();
                 }else{
+                    //->select("id","page_id","name","type","order", "status")
                     $component->data = $component->componentData->groupBy('group')->map(function ($group) {
                         $items = $group->toArray();
                         return isset($items) ? $this->componentDataItemFormatted($items): null;
