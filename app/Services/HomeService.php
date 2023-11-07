@@ -141,7 +141,7 @@ class HomeService extends ApiBaseService
         return $shortCode;
     }
 
-    public function makeResource($requests, $component) { {
+    public function makeResource($requests, $component) {
         $result = [];
 
         foreach ($requests as $request) {
@@ -189,7 +189,6 @@ class HomeService extends ApiBaseService
             }
         }
         return $result;
-    }
     }
 
     public function getQuickLaunchData($component) {
@@ -396,44 +395,34 @@ class HomeService extends ApiBaseService
     }
     public function getComponents($request)
     {
-        // Login User Data
-        if ($request->header('Authorization')){
-            $withCustomerData = $this->homeDataPrepare($request);
-            return $this->sendSuccessResponse($withCustomerData, 'Home page components data');
-        }
-        // Guest User Data
-        if (!Redis::get('al_home_components')){
-            $data = $this->homeDataPrepare($request);
-            Redis::setex('al_home_components', 3600, json_encode($data));
-        }else {
-            $data = json_decode(Redis::get('al_home_components'));
-        }
+//        if (!Redis::get('al_home_components')){
+            $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+            $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
 
-        return $this->sendSuccessResponse($data, 'Home page components data');
-    }
+            $componentList = ShortCode::where('page_id', 1)
+                ->where('is_active', 1)
+                ->orderBy('sequence', 'ASC')
+                ->get();
+            $metainfo = MetaTag::where('page_id', 1)
+                ->first()->toArray();
 
-    public function homeDataPrepare($request): array
-    {
-        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
-        $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
-
-        $componentList = ShortCode::where('page_id', 1)
-            ->where('is_active', 1)
-            ->orderBy('sequence', 'ASC')
-            ->get();
-        $metainfo = MetaTag::where('page_id', 1)
-            ->first()->toArray();
-
-        $homePageData = [];
-        foreach ($componentList as $component) {
-            if($component->id === 19){
-                continue;
+            $homePageData = [];
+            foreach ($componentList as $component) {
+                if($component->id === 19){
+                    continue;
+                }
+                $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
             }
-            $homePageData[] = $this->factoryComponent($component->component_type, $component->component_id, $component, ['customerInfo' => $customerInfo, 'customerAvailableProducts' => $customerAvailableProducts]);
-        }
-        return [
-            'metatags' => $metainfo,
-            'components' => $homePageData
-        ];
+            $data = [
+                'metatags' => $metainfo,
+                'components' => $homePageData
+            ];
+            return $this->sendSuccessResponse($data, 'Home page components data');
+//            Redis::setex('al_home_components', 3600, json_encode($data));
+//        }else {
+//            $data = json_decode(Redis::get('al_home_components'));
+//        }
+
+//        return $this->sendSuccessResponse($data, 'Home page components data');
     }
 }

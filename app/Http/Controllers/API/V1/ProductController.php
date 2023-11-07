@@ -193,6 +193,11 @@ class ProductController extends Controller
         return $this->productService->preSetRechargeAmount();
     }
 
+    public function getFallbackOffers(Request $request)
+    {
+        return $this->productService->fallbackOffers($request);
+    }
+
     public function eShopTrendingOffers()
     {
         return $this->productService->trendingOffers();
@@ -201,10 +206,5 @@ class ProductController extends Controller
     public function eShopOffers($offerType)
     {
         return $this->productService->eShopOffers($offerType);
-    }
-
-    public function getFallbackOffers(Request $request)
-    {
-        return $this->productService->fallbackOffers($request);
     }
 }

@@ -375,6 +375,59 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
 //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
 
+    Route::get('recharge-iris-offer', 'API\V1\RechargeIrisOfferController@getRechargeIrisOffers');
+
+    #Cashback amount
+    Route::post('recharge-cashback-offers', 'API\V1\AlCashBackController@getCashbackAmount');
+
+    /**
+     *  Balance transfer
+     */
+    Route::post('balance-transfer', 'API\V1\BalanceTransferController@transferBalance');
+    Route::post('balance-transfer/set-pin', 'API\V1\BalanceTransferController@generateCustomerPin');
+    Route::post('balance-transfer/change-pin', 'API\V1\BalanceTransferController@changeCustomerPin');
+    Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
+    Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
+    Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
+
+    # Usage History
+    Route::get('usage-history', 'API\V1\CustomerUsageHistoryController@getSummaryHistory');
+
+    /*    Route::get('usage-history/total-amount', 'API\V1\UsageHistory\SummaryUsageHistoryController@getTotalUsageAmount');*/
+
+    Route::get('usage-history/call', 'API\V1\CustomerUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/sms', 'API\V1\CustomerUsageHistoryController@getSmsUsageHistory');
+
+    Route::get('usage-history/internet', 'API\V1\CustomerUsageHistoryController@getInternetUsageHistory');
+
+    Route::get('usage-history/subscription', 'API\V1\CustomerUsageHistoryController@getSubscriptionUsageHistory'
+    );
+    Route::get('usage-history/recharge', 'API\V1\CustomerUsageHistoryController@getRechargeHistory');
+
+    Route::get('usage-history/roaming/call', 'API\V1\RoamingUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/roaming/sms', 'API\V1\RoamingUsageHistoryController@getSmsUsageHistory');
+    Route::get('usage-history/roaming/internet', 'API\V1\RoamingUsageHistoryController@getDataUsageHistory'
+    );
+//    Route::get('usage-history/roaming', 'API\V1\RoamingUsageHistoryController@getSummaryUsageHistory');
+
+    // Fallback Offer
+    Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
+    //    Route::get('blog/archive', 'API\V1\BlogController@getBlogArchive');
+    //    Route::get('blog/topic-list', 'API\V1\BlogController@getTopicList');
+
+    // E-shop Trending Offer
+    Route::get('trending-offer', 'API\V1\ProductController@eShopTrendingOffers');
+
+    // E-shop NEW Sim Offer
+    Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');
+
+    Route::middleware(['auth:api'])->group(function () {
+        // BL Labs
+        Route::post('bl-labs/register', 'API\V1\BlLab\BlLabUserController@register');
+        Route::post('bl-labs/send-otp', 'API\V1\BlLab\BlLabUserController@sendOTP');
+        Route::post('bl-labs/verify-otp', 'API\V1\BlLab\BlLabUserController@verifyOTP');
+        Route::get('bl-labs/profile', 'API\V1\BlLab\BlLabUserController@profile');
+    });
     // Fallback Offer
     Route::get('fallback-offers', 'API\V1\ProductController@getFallbackOffers');
 
@@ -420,6 +473,9 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/reset-pin', 'API\V1\BalanceTransferController@resetCustomerPin');
     Route::get('balance-transfer/conditions', 'API\V1\BalanceTransferController@balanceTransferConditions');
     Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
+
+    // My Plan Products
+    Route::get('my-plan/products', 'API\V1\MyPlan\MyPlanProductController@getMyPlanProducts');
 
     // Page component API routes
     Route::get('page/{slug}', 'API\V1\PageController@view');

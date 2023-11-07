@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Services\Banglalink;
+use App\Enums\HttpStatusCode;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class BaseService
@@ -39,6 +43,22 @@ class BaseService
         return $header;
     }
 
+    protected function makeHeaderV2()
+    {
+        $client_token = Redis::get(self::IDP_TOKEN_REDIS_KEY);
+        $customer_token = app('request')->bearerToken();
+
+        $header = [
+            'Accept' => 'application/vnd.banglalink.apihub-v1.0+json',
+            'Content-Type' => 'application/vnd.banglalink.apihub-v1.0+json',
+            'client_authorization' => $client_token,
+            'customer_authorization' => $customer_token
+        ];
+
+        return $header;
+
+    }
+
 
     /**
      * Make CURL request for GET request.
@@ -51,6 +71,11 @@ class BaseService
     protected function get($url, $body = [], $headers = null)
     {
         return $this->makeMethod('get', $url, $body, $headers);
+    }
+
+    public function getV2($url, $body = [], $headers = null, $skip_service_exception = false)
+    {
+        return $this->makeMethodV2('get', $url, $body, $headers, $skip_service_exception);
     }
 
     /**
@@ -111,6 +136,60 @@ class BaseService
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         return ['response' => $result, 'status_code' => $httpCode];
+    }
+
+    protected function makeMethodV2(
+        $method,
+        $url,
+        $body = [],
+        $headers = null,
+        $skip_service_exception = false
+    ) {
+        $connect_timeout = (strstr($url,"/complaint-management"))? 15 : 10;
+        $headers = $headers ?: $this->makeHeaderV2();
+        $client = new Client(['base_uri' => $this->getHost()]);
+        $responseData = [];
+        $statusCode = 500;
+        try {
+            $response = $client->request(
+                strtoupper($method),
+                $url,
+                [
+                    'connect_timeout' => $connect_timeout,
+                    'headers' => $headers,
+                    'json' => $body
+                ]
+            );
+        } catch (RequestException $e) {
+            // TODO:: $e to json_encode and print log for TEST
+            Log::channel('apihub-error')->info('ApiHub Request Exception: ' . $e->getMessage() . ' || Request body : ' . json_encode($body));
+            #For request log
+            Log::channel('apihub-error')->info('ApiHub Request URL:' . $url . ' || Request body : ' . json_encode(($url == '/otp/one-time-passwords')? ['msisdn' => $body['msisdn']]: $body));
+
+            #For response log
+            if ($e->hasResponse() && ($e->getResponse()->getStatusCode() >= 400 || !$e->getResponse()->getBody())) {
+                $exception = (string)$e->getResponse()->getBody();
+                $exception = json_decode($exception);
+                if ($url == '/otp/one-time-passwords') {
+                    $message = ['status' => $exception->status, 'error' => $exception->error, 'message' => $exception->message, 'url' => $exception->path];
+                    Log::channel('apihub-error')->error('ApiHub  Exception1 (OTP):' .json_encode($message));
+                } else {
+                    // Log::channel('apihub-error')->error('ApiHUb  Exception1:' . $e->getResponse()->getBody(), $exception ? [$exception] : []);
+                    Log::channel('apihub-error')->error('ApiHUb  Exception1: ' . $e->getMessage(), $exception ? [$exception] : []);
+                }
+            } else {
+                Log::channel('apihub-error')->error('ApiHUb Exception2: ' . $e->getTraceAsString());
+            }
+            return ['response' => $e->getMessage(),'status_code' => $e->getResponse()->getStatusCode()];
+        }
+
+        $returned_data = [];
+        if ($response->getStatusCode() == HttpStatusCode::SUCCESS) {
+            $body = $response->getBody();
+            $returned_data = json_decode($body, true);
+        }
+
+        return ['response' => json_encode($returned_data, true), 'status_code' => $response->getStatusCode()];
     }
 
 

@@ -427,6 +427,7 @@ class UserService extends ApiBaseService
     private function register($customerInfo, $mobile)
     {
         $data['mobile'] = $mobile;
+        $data['number_type'] = strtolower($customerInfo->connectionType);
         $data['phone'] = $mobile;
         $data['msisdn'] = '88' . $mobile;
         $randomPass = $this->generateRandomString();

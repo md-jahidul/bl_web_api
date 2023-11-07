@@ -90,6 +90,10 @@ class ProductService extends BaseService
      */
     private $alBannerService;
     /**
+     * @var CustomerAvailableProductsService
+     */
+    private $customerAvailableProductsService;
+    /**
      * @var ProductDetailsSectionRepository
      */
     private $productDetailsSectionRepository;
@@ -104,7 +108,6 @@ class ProductService extends BaseService
     /**
      * @var CustomerAvailableProductsService
      */
-    private $customerAvailableProductsService;
 
     /**
      * ProductService constructor.
@@ -358,7 +361,9 @@ class ProductService extends BaseService
         }
     }
 
-    public function prepareAmarOffer(){
+    public function prepareAmarOffer()
+    {
+        //  $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
         $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
 
         if ($amarOffers->getData()->status_code == 200) {
