@@ -79,7 +79,6 @@ class SimService extends BaseService
                 'status' => $sim->status,
                 "bar_status" => (bool)random_int(0, 1),
                 'active_since' => Carbon::createFromDate('2018', rand(1, 12), rand(1, 20))
-                                   ->setTimezone('UTC')
                                    ->toDateTimeString(),
                 "package" => "Banglalink Desh Ek Rate Darun",
             ];

@@ -316,7 +316,7 @@ class BalanceService extends BaseService
 //                'amount' => isset($main_balance->amount) ? $main_balance->amount : 0,
 //                'currency' => 'Tk.',
 //                'expires_in' => isset($main_balance->expiryDateTime) ?
-//                    Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
+//                    Carbon::parse($main_balance->expiryDateTime)->toDateTimeString() : null
 //            ],
 //            'roaming_balance' => [
 //                'amount' => 0,
@@ -325,6 +325,29 @@ class BalanceService extends BaseService
 //            ]
 //        ];
 //    }
+
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
+    private function getTalkTimeBalance($response)
+    {
+        $talk_time = collect($response->voice);
+
+        $data = [];
+        foreach ($talk_time as $item) {
+            $data [] = [
+                'package_name' => isset($item->product->name) ? $item->product->name : null,
+                'total' => $item->totalAmount,
+                'remaining' => $item->amount,
+                'unit' => $item->unit,
+                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
+                'auto_renew' => false
+            ];
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
+    }
 
     /**
      * @param $response
@@ -402,7 +425,7 @@ class BalanceService extends BaseService
                 'amount' => $main_balance->amount ?? 0,
                 'currency' => 'Tk.',
                 'expires_in' => isset($main_balance->expiryDateTime) ?
-                    Carbon::parse($main_balance->expiryDateTime)->setTimezone('UTC')->toDateTimeString() : null
+                    Carbon::parse($main_balance->expiryDateTime)->toDateTimeString() : null
             ],
             'roaming_balance' => $roaming_balance,
             'rate_cutter' => $rate_cutter_info
@@ -762,7 +785,7 @@ class BalanceService extends BaseService
             'total_outstanding' => $local_balance->totalOutstanding,
             'credit_limit' => $local_balance->creditLimit,
             'payment_date' => isset($local_balance->nextPaymentDate) ?
-                Carbon::parse($local_balance->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+                Carbon::parse($local_balance->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $usage = collect($local_balance->productUsage)->where('code', '<>', '');
@@ -882,7 +905,7 @@ class BalanceService extends BaseService
             'amount' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0 ,
             'unit' => isset($balance_data_local->unit) ? $balance_data_local->unit : 'BDT',
             'expires_in' => isset($balance_data_local->nextPaymentDate) ?
-                Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+                Carbon::parse($balance_data_local->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $data['local'] = [
@@ -890,7 +913,7 @@ class BalanceService extends BaseService
             'totalOutstanding' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0,
             'creditLimit' => isset($balance_data_local->creditLimit) ? $balance_data_local->creditLimit : 0,
             'overPayment' => isset($balance_data_local->overPayment) ? $balance_data_local->overPayment : 0,
-            'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $usage = collect($balance_data_local->productUsage)->where('code', '<>', '');
@@ -953,7 +976,7 @@ class BalanceService extends BaseService
             'totalOutstanding' => isset($balance_data_roaming->totalOutstanding) ? $balance_data_roaming->totalOutstanding : 0,
             'creditLimit' => isset($balance_data_roaming->creditLimit) ? $balance_data_roaming->creditLimit : 0,
             'overPayment' => isset($balance_data_roaming->overPayment) ? $balance_data_roaming->overPayment : 0,
-            'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $roming_product_usage = [];
@@ -1042,7 +1065,7 @@ class BalanceService extends BaseService
             'amount' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0 ,
             'unit' => isset($balance_data_local->unit) ? $balance_data_local->unit : 'BDT',
             'expires_in' => isset($balance_data_local->nextPaymentDate) ?
-                Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+                Carbon::parse($balance_data_local->nextPaymentDate)->toDateTimeString() : null,
             // 'loan' => [
             //     'is_eligible' => $is_eligible_to_loan,
             //     'amount'      => ($is_eligible_to_loan) ? 30 : 0
@@ -1054,7 +1077,7 @@ class BalanceService extends BaseService
             'totalOutstanding' => isset($balance_data_local->totalOutstanding) ? $balance_data_local->totalOutstanding : 0,
             'creditLimit' => isset($balance_data_local->creditLimit) ? $balance_data_local->creditLimit : 0,
             'overPayment' => isset($balance_data_local->overPayment) ? $balance_data_local->overPayment : 0,
-            'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'nextPaymentDate' => isset($balance_data_local->nextPaymentDate) ? Carbon::parse($balance_data_local->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $local_product_usage = [];
@@ -1105,7 +1128,7 @@ class BalanceService extends BaseService
             'totalOutstanding' => isset($balance_data_roaming->totalOutstanding) ? $balance_data_roaming->totalOutstanding : 0,
             'creditLimit' => isset($balance_data_roaming->creditLimit) ? $balance_data_roaming->creditLimit : 0,
             'overPayment' => isset($balance_data_roaming->overPayment) ? $balance_data_roaming->overPayment : 0,
-            'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->setTimezone('UTC')->toDateTimeString() : null,
+            'nextPaymentDate' => isset($balance_data_roaming->overPayment) ? Carbon::parse($balance_data_roaming->nextPaymentDate)->toDateTimeString() : null,
         ];
 
         $roming_product_usage = [];
