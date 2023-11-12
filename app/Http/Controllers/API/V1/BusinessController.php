@@ -7,6 +7,7 @@ use App\Services\Banglalink\BusinessHomeService;
 use App\Services\Banglalink\BusinessPackageService;
 use App\Services\Banglalink\BusinessInternetService;
 use App\Services\Banglalink\BusinessOthersService;
+use App\Services\BusinessService;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Http\Response;
@@ -23,6 +24,10 @@ class BusinessController extends Controller
     protected $packageService;
     protected $internetService;
     protected $enterpriseService;
+    /**
+     * @var BusinessService
+     */
+    private $businessService;
 
     /**
      * BusinessController constructor.
@@ -31,8 +36,14 @@ class BusinessController extends Controller
      * @param BusinessInternetService $internetService
      * @param BusinessOthersService $enterpriseService
      */
-    public function __construct(BusinessHomeService $homeService, BusinessPackageService $packageService, BusinessInternetService $internetService, BusinessOthersService $enterpriseService)
-    {
+    public function __construct(
+        BusinessService $businessService,
+        BusinessHomeService $homeService,
+        BusinessPackageService $packageService,
+        BusinessInternetService $internetService,
+        BusinessOthersService $enterpriseService
+    ) {
+        $this->businessService = $businessService;
         $this->homeService = $homeService;
         $this->packageService = $packageService;
         $this->internetService = $internetService;
@@ -63,87 +74,25 @@ class BusinessController extends Controller
         return $this->homeService->getCategories();
     }
 
-    /**
-     * Get package category page data
-     *
-     * @param No
-     * @return Json Response
-     * @Bulbul Mahmud Nito || 24/02/2020
-     */
-    public function packages()
+    public function getBusinessDataBySlug($slug)
     {
-        return $this->packageService->getPackages();
+        return $this->businessService->getBusinessBySlug($slug);
     }
 
-    /**
-     * Get package details
-     *
-     * @param No
-     * @return Response Response
-     * @Bulbul Mahmud Nito || 24/02/2020
-     */
-    public function packageBySlug($packageSlug)
+    public function getBusinessDetailsBySlug($slug, $urlSlug)
     {
-        return $this->packageService->getPackageBySlug($packageSlug);
+        return $this->businessService->getBusinessDetailsBySlug($slug, $urlSlug);
     }
 
-    /**
-     * Get Internet package
-     *
-     * @param No
-     * @return Json Response
-     * @Bulbul Mahmud Nito || 24/02/2020
-     */
-    public function internet()
-    {
-        return $this->internetService->getInternetPackage();
-    }
-
-    /**
-     * Get Internet package details
-     *
-     * @param $internetId
-     * @return Json Response
-     * @Bulbul Mahmud Nito || 15/03/2020
-     */
-    public function internetDetails($internetSlug)
-    {
-        return $this->internetService->getInternetDetails($internetSlug);
-    }
     /**
      * Give like and get total likes
      *
      * @param No
-     * @return Json Response
+     * @return Response Response
      * @Bulbul Mahmud Nito || 15/03/2020
      */
-    public function internetLike($internetId)
+    public function internetLike($internetId): Response
     {
         return $this->internetService->saveInternetLike($internetId);
     }
-
-    /**
-     * Get Enterprise Solution
-     *
-     * @param $type (business-solusion,iot,others)
-     * @return Json Response
-     * @Bulbul Mahmud Nito || 24/02/2020
-     */
-    public function enterpriseSolusion($type)
-    {
-        return $this->enterpriseService->getOtherService($type);
-    }
-
-    /**
-     * Get Enterprise Solution
-     *
-     * @param $serviceId
-     * @return Json Response
-     * @Bulbul Mahmud Nito || 24/02/2020
-     */
-    public function enterpriseProductDetails($serviceSlug)
-    {
-        return $this->enterpriseService->getServiceBySlug($serviceSlug);
-    }
-
 }

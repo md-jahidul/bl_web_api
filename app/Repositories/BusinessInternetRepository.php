@@ -72,8 +72,9 @@ class BusinessInternetRepository extends BaseRepository {
 
         $internet = $this->model->where('url_slug', $internetSlug)->orWhere('url_slug_bn', $internetSlug)->first();
 
-
-
+        if (empty($internet)) {
+            return [];
+        }
 
         $dataVol = $internet->data_volume;
         if ($internet->volume_data_unit == "GB") {

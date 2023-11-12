@@ -52,10 +52,17 @@ class BusinessOthersService {
      * @param BusinessRelatedProductRepository $relatedProductRepo
      */
     public function __construct(
-    ApiBaseService $responseFormatter, BusinessOthersRepository $otherRepo, BusinessComPhotoTextRepository $photoTextRepo,
-            BusinessComPkOneRepository $pkOneRepo, BusinessComPkTwoRepository $pkTwoRepo, BusinessComFeaturesRepository $featureRepo,
-            BusinessComPriceTableRepository $priceTableRepo, BusinessComVideoRepository $videoRepo,
-            BusinessComPhotoRepository $photoRepo, BusinessAssignedFeaturesRepository $asgnFeatureRepo, BusinessRelatedProductRepository $relatedProductRepo
+        ApiBaseService $responseFormatter,
+        BusinessOthersRepository $otherRepo,
+        BusinessComPhotoTextRepository $photoTextRepo,
+        BusinessComPkOneRepository $pkOneRepo,
+        BusinessComPkTwoRepository $pkTwoRepo,
+        BusinessComFeaturesRepository $featureRepo,
+        BusinessComPriceTableRepository $priceTableRepo,
+        BusinessComVideoRepository $videoRepo,
+        BusinessComPhotoRepository $photoRepo,
+        BusinessAssignedFeaturesRepository $asgnFeatureRepo,
+        BusinessRelatedProductRepository $relatedProductRepo
     ) {
         $this->otherRepo = $otherRepo;
         $this->photoTextRepo = $photoTextRepo;
@@ -67,25 +74,21 @@ class BusinessOthersService {
         $this->photoRepo = $photoRepo;
         $this->asgnFeatureRepo = $asgnFeatureRepo;
         $this->relatedProductRepo = $relatedProductRepo;
-
         $this->responseFormatter = $responseFormatter;
     }
 
-    /**
-     * get other service list
-     * @return Response
-     */
-    public function getOtherService($type) {
-        $servces = $this->otherRepo->getOtherService($type);
-        return $this->responseFormatter->sendSuccessResponse($servces, 'Enterprise Solutions');
-    }
+
 
     /**
      * Get business package by id
-     * @return Response
+     * @return array
      */
     public function getServiceBySlug($serviceSlug) {
         $service = $this->otherRepo->getServiceBySlug($serviceSlug);
+
+        if (empty($service)) {
+            return [];
+        }
 
         $data['packageDetails'] = $service;
         $data['components'] = $this->_getComponents($service['id']);
@@ -95,12 +98,12 @@ class BusinessOthersService {
         $parentType = 2;
         $data['relatedPackages'] = $this->relatedProductRepo->getEnterpriseRelatedProduct($service['id'], $parentType);
 
-        return $this->responseFormatter->sendSuccessResponse($data, 'Enterprise Solutions Details');
+        return $data;
     }
 
     /**
      * Get components by service ID
-     * @return Response
+     * @return array
      */
     private function _getComponents($serviceId) {
 
@@ -116,7 +119,6 @@ class BusinessOthersService {
         }
 
         $packageOne = $this->pkOneRepo->getComponent($serviceId);
-//        return $packageOne;
 
         $prePos = 0;
         $pk1Count = 0;
@@ -264,7 +266,7 @@ class BusinessOthersService {
 
     /**
      * Get business package by id
-     * @return Response
+     * @return array
      */
     private function _getFeaturesByService($serviceType, $serviceId) {
         $types = array("business-solution" => 2, "iot" => 3, "others" => 4);

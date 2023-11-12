@@ -100,6 +100,10 @@ class BusinessOthersRepository extends BaseRepository {
     public function getServiceBySlug($serviceSlug) {
         $service = $this->model->where('url_slug', $serviceSlug)->orWhere('url_slug_bn', $serviceSlug)->first();
 
+        if (empty($service)) {
+            return [];
+        }
+
         $data['id'] = $service->id;
         $data['slug'] = $service->type;
         $data['icon'] = $service->icon == "" ? "" :  $service->icon;

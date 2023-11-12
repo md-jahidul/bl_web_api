@@ -49,40 +49,40 @@ class BusinessPackageService {
         $this->componentRepo = $componentRepo;
     }
 
-    /**
-     * Get business product categories
-     * @return Response
-     */
-    public function getPackages() {
-        $response['packages'] = $this->packageRepo->getPackageList();
-        $response['components'] = $this->componentRepo->getComponentByPageType(self::PAGE_TYPE);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Business Package List');
-    }
+//    /**
+//     * Get business product categories
+//     * @return Response
+//     */
+//    public function getPackages() {
+//        $response['packages'] = $this->packageRepo->getPackageList();
+//        $response['components'] = $this->componentRepo->getComponentByPageType(self::PAGE_TYPE);
+//        return $this->responseFormatter->sendSuccessResponse($response, 'Business Package List');
+//    }
 
 
-    /**
-     * Get business package by id
-     * @return Response
-     */
-    public function getPackageBySlug($packageSlug) {
-        $data['packageDetails'] = $this->packageRepo->getPackageById($packageSlug);
-
-        $data['feature'] = $this->_getFeaturesByPackage($data['packageDetails']['id']);
-
-        $parentType = 1;
-        $data['relatedPackages'] = $this->relatedProductRepo->getPackageRelatedProduct($data['packageDetails']['id'], $parentType);
-
-        $data['components'] = $this->componentRepo->findBy(['section_details_id'=> $data['packageDetails']['id'], 'page_type' => self::PAGE_DETAILS_TYPE, 'status' => 1],null, [
-                'id', 'section_details_id', 'page_type',
-                'component_type', 'title_en', 'title_bn',
-                'editor_en', 'editor_bn', 'extra_title_bn',
-                'extra_title_en', 'multiple_attributes',
-                'video', 'image', 'alt_text', 'other_attributes'
-        ]);
-
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'Business Package Details');
-    }
+//    /**
+//     * Get business package by id
+//     * @return Response
+//     */
+//    public function getPackageBySlug($packageSlug) {
+//        $data['packageDetails'] = $this->packageRepo->getPackageById($packageSlug);
+//
+//        $data['feature'] = $this->_getFeaturesByPackage($data['packageDetails']['id']);
+//
+//        $parentType = 1;
+//        $data['relatedPackages'] = $this->relatedProductRepo->getPackageRelatedProduct($data['packageDetails']['id'], $parentType);
+//
+//        $data['components'] = $this->componentRepo->findBy(['section_details_id'=> $data['packageDetails']['id'], 'page_type' => self::PAGE_DETAILS_TYPE, 'status' => 1],null, [
+//                'id', 'section_details_id', 'page_type',
+//                'component_type', 'title_en', 'title_bn',
+//                'editor_en', 'editor_bn', 'extra_title_bn',
+//                'extra_title_en', 'multiple_attributes',
+//                'video', 'image', 'alt_text', 'other_attributes'
+//        ]);
+//
+//
+//        return $this->responseFormatter->sendSuccessResponse($data, 'Business Package Details');
+//    }
 
     /**
      * Get business package by id
@@ -94,6 +94,6 @@ class BusinessPackageService {
         return $response;
     }
 
-    
+
 
 }

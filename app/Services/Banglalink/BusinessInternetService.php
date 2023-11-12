@@ -30,23 +30,6 @@ class BusinessInternetService {
     }
 
     /**
-     * Get Internet package
-     * @return Response
-     */
-    public function getInternetPackage() {
-        $response = $this->internetRepo->getInternetPackageList();
-        return $this->responseFormatter->sendSuccessResponse($response, 'Business Internet Package List');
-    }
-
-    /**
-     * Get Internet package details
-     * @return Response
-     */
-    public function getInternetDetails($internetSlug) {
-        $response = $this->internetRepo->getInternetPackageDetails($internetSlug);
-        return $this->responseFormatter->sendSuccessResponse($response, 'Business Internet Package Details');
-    }
-    /**
      * Give Internet like and get total count
      * @return Response
      */
