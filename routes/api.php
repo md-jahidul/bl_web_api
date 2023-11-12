@@ -179,14 +179,19 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     //Business Module APIs
     Route::get('business-home-data', 'API\V1\BusinessController@index');
     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
+
     Route::get('business-packages', 'API\V1\BusinessController@packages');
     Route::get('business-packages-details/{packageSlug}', 'API\V1\BusinessController@packageBySlug');
+
     Route::get('business-internet-package', 'API\V1\BusinessController@internet');
     Route::get('business-internet-details/{internetSlug}', 'API\V1\BusinessController@internetDetails');
     Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
-    Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
 
+    Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
     Route::get('business-enterprise-package-details/{serviceSlug}', 'API\V1\BusinessController@enterpriseProductDetails');
+
+    Route::get('business/{slug}/', 'API\V1\BusinessController@getBusinessDataBySlug');
+    Route::get('business-details/{slug}/{url_slug}', 'API\V1\BusinessController@getBusinessDetailsBySlug');
 
 
     //roaming Module APIs
@@ -460,6 +465,26 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // E-shop Trending Offer
     Route::get('trending-offer', 'API\V1\ProductController@eShopTrendingOffers');
+
+    # Usage History
+    Route::get('usage-history', 'API\V1\CustomerUsageHistoryController@getSummaryHistory');
+
+    /*    Route::get('usage-history/total-amount', 'API\V1\UsageHistory\SummaryUsageHistoryController@getTotalUsageAmount');*/
+
+    Route::get('usage-history/call', 'API\V1\CustomerUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/sms', 'API\V1\CustomerUsageHistoryController@getSmsUsageHistory');
+
+    Route::get('usage-history/internet', 'API\V1\CustomerUsageHistoryController@getInternetUsageHistory');
+
+    Route::get('usage-history/subscription', 'API\V1\CustomerUsageHistoryController@getSubscriptionUsageHistory'
+    );
+    Route::get('usage-history/recharge', 'API\V1\CustomerUsageHistoryController@getRechargeHistory');
+
+    Route::get('usage-history/roaming/call', 'API\V1\RoamingUsageHistoryController@getCallUsageHistory');
+    Route::get('usage-history/roaming/sms', 'API\V1\RoamingUsageHistoryController@getSmsUsageHistory');
+    Route::get('usage-history/roaming/internet', 'API\V1\RoamingUsageHistoryController@getDataUsageHistory'
+    );
+//    Route::get('usage-history/roaming', 'API\V1\RoamingUsageHistoryController@getSummaryUsageHistory');
 
     // E-shop NEW Sim Offer
     Route::get('eshop-offers/{offer_type}', 'API\V1\ProductController@eShopOffers');

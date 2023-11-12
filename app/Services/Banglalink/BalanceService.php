@@ -275,9 +275,9 @@ class BalanceService extends BaseService
                 'total' => $item->totalAmount,
                 'remaining' => $item->amount,
                 'unit' => $item->unit,
-                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
                 'url_slug_en' => $urlSlugEn,
                 'url_slug_bn' => $urlSlugBn,
+                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
                 'auto_renew' => false
             ];
         }
@@ -327,6 +327,29 @@ class BalanceService extends BaseService
 //            ]
 //        ];
 //    }
+
+    /**
+     * @param $response
+     * @return JsonResponse|mixed
+     */
+    private function getTalkTimeBalance($response)
+    {
+        $talk_time = collect($response->voice);
+
+        $data = [];
+        foreach ($talk_time as $item) {
+            $data [] = [
+                'package_name' => isset($item->product->name) ? $item->product->name : null,
+                'total' => $item->totalAmount,
+                'remaining' => $item->amount,
+                'unit' => $item->unit,
+                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
+                'auto_renew' => false
+            ];
+        }
+
+        return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
+    }
 
     /**
      * @param $response

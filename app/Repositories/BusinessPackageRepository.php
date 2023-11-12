@@ -47,6 +47,7 @@ class BusinessPackageRepository extends BaseRepository {
 
     public function getPackageById($packageSlug) {
         $package = $this->model->where('url_slug', $packageSlug)->orWhere('url_slug_bn', $packageSlug)->first();
+
         $data = [];
         if (!empty($package)) {
             $data['id'] = $package->id;
