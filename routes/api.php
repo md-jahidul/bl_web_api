@@ -179,19 +179,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('business-home-data', 'API\V1\BusinessController@index');
     Route::get('business-categories', 'API\V1\BusinessController@getCategories');
 
-    Route::get('business-packages', 'API\V1\BusinessController@packages');
-    Route::get('business-packages-details/{packageSlug}', 'API\V1\BusinessController@packageBySlug');
-
-    Route::get('business-internet-package', 'API\V1\BusinessController@internet');
-    Route::get('business-internet-details/{internetSlug}', 'API\V1\BusinessController@internetDetails');
-    Route::get('business-internet-like/{internetId}', 'API\V1\BusinessController@internetLike');
-
-    Route::get('business-enterprise-package/{type}', 'API\V1\BusinessController@enterpriseSolusion');
-    Route::get('business-enterprise-package-details/{serviceSlug}', 'API\V1\BusinessController@enterpriseProductDetails');
-
     Route::get('business/{slug}/', 'API\V1\BusinessController@getBusinessDataBySlug');
     Route::get('business-details/{slug}/{url_slug}', 'API\V1\BusinessController@getBusinessDetailsBySlug');
-
 
     //roaming Module APIs
     Route::get('roaming-categories', 'API\V1\RoamingController@getCategories');
