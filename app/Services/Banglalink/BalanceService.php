@@ -351,29 +351,29 @@ class BalanceService extends BaseService
         return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
     }
 
-    /**
-     * @param $response
-     * @param $customer
-     * @return array
-     */
-    private function getTalkTimeBalance($response)
-    {
-        $talk_time = collect($response->voice);
-
-        $data = [];
-        foreach ($talk_time as $item) {
-            $data [] = [
-                'package_name' => isset($item->product->name) ? $item->product->name : null,
-                'total' => $item->totalAmount,
-                'remaining' => $item->amount,
-                'unit' => $item->unit,
-                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
-                'auto_renew' => false
-            ];
-        }
-
-        return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
-    }
+//    /**
+//     * @param $response
+//     * @param $customer
+//     * @return array
+//     */
+//    private function getTalkTimeBalance($response)
+//    {
+//        $talk_time = collect($response->voice);
+//
+//        $data = [];
+//        foreach ($talk_time as $item) {
+//            $data [] = [
+//                'package_name' => isset($item->product->name) ? $item->product->name : null,
+//                'total' => $item->totalAmount,
+//                'remaining' => $item->amount,
+//                'unit' => $item->unit,
+//                'expires_in' => Carbon::parse($item->expiryDateTime)->toDateTimeString(),
+//                'auto_renew' => false
+//            ];
+//        }
+//
+//        return $this->responseFormatter->sendSuccessResponse($data, 'Talk Time  Balance Details');
+//    }
 
     /**
      * @param $response
