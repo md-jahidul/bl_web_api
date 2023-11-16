@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API\v1;
 
 // use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Page;
+// use App\Models\Page;
 // use App\Services\ApiBaseService;
-use App\Models\Page\NewPage;
+use App\Models\Page\NewPage as Page;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -38,19 +38,15 @@ class PageController extends Controller
             return response()->json($result, 200);
         }
 
+        $tab_component_types = ['tab-component','tab_component_with_image_card_one','tab_component_with_image_card_two', 'tab_component_with_image_card_three'];
         if($query && isset($query->pageComponentsQuery)){
-            $query->page_components = $query->pageComponentsQuery->each(function ($component) {
-                if($component->type == 'tab-component'){
+            $query->page_components = $query->pageComponentsQuery->each(function ($component) use($tab_component_types) {
+                if(in_array($component->type, $tab_component_types)){
                     $component_child_data = $component->componentData->map(function ($group) use($component) {
-                        // $items = $group->menuTreeWithHierarchy();
-                        // return $group->menuTreeWithHierarchy($component->id)->toArray();
                         $items = $group->menuTreeWithHierarchy($component->id)->toArray();
                         return ($items);
-                        // $items = $group->toArray();
-                        // return isset($items) ? $this->componentDataItemFormatted($items): null;
                     })->values()->all();
                     $component->data = count($component_child_data) ? $this->tabDataItemFormatted($component_child_data[0]) : [];
-                    // $component->data = $component->componentData->menuTreeWithHierarchy();
                 }else{
                     //->select("id","page_id","name","type","order", "status")
                     $component->data = $component->componentData->groupBy('group')->map(function ($group) {
