@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class NewPageComponentData extends Model
 {
     protected $guarded = ['id'];
-
+    protected $hidden = ['created_at', 'updated_at'];
     public function NewPageComponent(){
         return $this->hasMany( NewPageComponentData::class, 'parent_id', 'id' );
     }
