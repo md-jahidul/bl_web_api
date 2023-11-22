@@ -11,6 +11,7 @@ class Page extends Model
     protected $primaryKey = 'id';
 
     public function pageComponentsQuery(){
-        return $this->hasMany(PageComponent::class, 'page_id', 'id')->select("id","name","type")->where('status', 1)->orderBy('order', 'asc');
+        return null;
+        // return $this->hasMany(PageComponent::class, 'page_id', 'id')->select("id","name","type","attribute","config")->where('status', 1)->orderBy('order', 'asc');
     }
 }

@@ -3,10 +3,12 @@
 namespace App\Models\Page;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Page\NewPageComponentData;
 
 class NewPageComponent extends Model
 {
     protected $guarded = ['id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
         'attribute' => 'array',
