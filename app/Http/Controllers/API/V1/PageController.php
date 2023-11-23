@@ -110,7 +110,11 @@ class PageController extends Controller
                             'bn'=> $item['value_bn']
                         );
                     }
-                    $arr = $_tab;
+                    // $arr = $_tab;
+                    $arr[$_tab['key']] = array(
+                        'en'=> $_tab['value_en'],
+                        'bn'=> $_tab['value_bn']
+                    );
                     $arr['items'] = array_values($arr2['items']);
                 }else{
                     $arr = $tab;
