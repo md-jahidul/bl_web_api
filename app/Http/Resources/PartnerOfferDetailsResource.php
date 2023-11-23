@@ -44,6 +44,9 @@ class PartnerOfferDetailsResource extends JsonResource {
             'banner_image_url'      => $this['banner_image_url'] ?? null,
             'company_website'       => $this['company_website'],
             'map_link'              => $this['map_link'] ?? null,
+            "page_header"           => $this['page_header'],
+            "page_header_bn"        => $this['page_header_bn'],
+            "schema_markup"         => $this['schema_markup']
         ];
     }
 
