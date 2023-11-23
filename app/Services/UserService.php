@@ -491,15 +491,12 @@ class UserService extends ApiBaseService
         $requested_input = ['name', 'email', 'first_name', 'last_name', 'birth_date', 'gender', 'alternate_phone', 'address' ];
 
         foreach ($request->all() as $request_key => $request_value) {
-
             if(  in_array($request_key, $requested_input) ){
                 $update_data [] = [
                     'name' => $request_key,
                     'contents' => ($request->filled($request_key)) ? $request->input($request_key) : null
                 ];
             }
-
-
         }
 
         $client = new Client();
@@ -537,11 +534,13 @@ class UserService extends ApiBaseService
         if (!$user) {
             return $this->sendErrorResponse('User not found in the system');
         }
-        $data = $request->all();
+        $data = $request->only(
+            'first_name', 'last_name', 'gender','birth_date','email','alternate_phone','district','thana',
+            'address','name'
+        );
         $data['msisdn'] = '88' . $idpData->user->mobile;
 
         if ($request->hasFile('profile_photo')) {
-
             $data['profile_image'] = isset($path) ? $path : null;
         }
 

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\API\V1\ConfigController;
+use Illuminate\Validation\Rule;
 
 class UserProfileController extends Controller
 {
@@ -35,8 +37,13 @@ class UserProfileController extends Controller
         $image_upload_type = ConfigController::customerImageUploadType();
 
         $validator = Validator::make($request->all(), [
-            'profile_photo' => 'nullable|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
+            'profile_photo' => 'nullable|mimes:'.$image_upload_type.'|max:'.$image_upload_size, // 2M,
+            'gender' => Rule::in(['Male', 'Female', 'Other']),
+            'alternate_phone' => 'regex:/^(01)([0-9\s\-\+\(\)]*)$/|min:11|max:11',
+            'email' => 'email:rfc,dns',
+            'birth_date' => 'date_format:Y-m-d|before:today|nullable'
         ]);
+
         if ($validator->fails()) {
             // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
             return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
@@ -57,11 +64,11 @@ class UserProfileController extends Controller
             $validator = Validator::make($request->all(), [
                 'profile_photo' => 'required|mimes:'.$image_upload_type.'|max:'.$image_upload_size // 2M
             ]);
+
             if ($validator->fails()) {
                 // return response()->json($validator->messages()->first(), HttpStatusCode::VALIDATION_ERROR);
                 return response()->json((['status' => 'FAIL', 'status_code' => HttpStatusCode::VALIDATION_ERROR, 'message' =>  $validator->messages()->first(), 'errors' => [] ]), HttpStatusCode::VALIDATION_ERROR);
             }
-
 
             return $this->userService->uploadProfileImage($request);
         } else {
