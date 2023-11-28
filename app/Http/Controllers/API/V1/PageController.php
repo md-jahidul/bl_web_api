@@ -49,7 +49,7 @@ class PageController extends Controller
                     $component->data = count($component_child_data) ? $this->tabDataItemFormatted($component_child_data[0]) : [];
                 }else{
                     //->select("id","page_id","name","type","order", "status")
-                    $component->data = $component->componentData->groupBy('group')->map(function ($group) {
+                    $component->data = $component->componentData->groupBy('order')->map(function ($group) {
                         $items = $group->toArray();
                         return isset($items) ? $this->componentDataItemFormatted($items): null;
                     })->values()->all();
