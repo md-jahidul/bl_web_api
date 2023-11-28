@@ -40,8 +40,11 @@ class MediaPressNewsEventRepository extends BaseRepository
             ->where('status', 1)
             ->where('url_slug_en', $slug)
             ->orWhere('url_slug_bn', $slug)
-            ->select('id','title_en','title_bn','date', 'media_news_category_id', 'read_time')
+            ->select('id','title_en','title_bn','date', 'media_news_category_id', 'read_time', 'page_header_bn', 'page_header', 'schema_markup')
             ->first();
+
+
+
     }
 
     public function getRelatedBlog($postId,$categoryId)

@@ -98,6 +98,7 @@ class ProductDetailsSectionService extends ApiBaseService
                 'url_slug_bn',
                 'schema_markup',
                 'page_header',
+                'page_header_bn',
                 'offer_category_id',
                 'name_en',
                 'name_bn',

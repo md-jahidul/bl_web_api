@@ -276,25 +276,20 @@ class PartnerOfferService extends ApiBaseService
     public function getComponentByPageType($pageType)
     {
         if ($pageType == 'discount_privilege') {
-
-            #
             $data['discount_privilege'] = $this->priyojonRepository->findOneByProperties(
                 ['component_type' => $pageType, 'status' => 1],
                 // ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup', 'url_slug_en', 'url_slug_bn', 'alias']
-                ['title_en', 'title_bn', 'desc_en', 'desc_bn']
+                ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup']
             );
-            $banner     = $this->alBannerRepository->findOneByProperties(['section_id' => 0, 'section_type' => $pageType]);
+            $banner = $this->alBannerRepository->findOneByProperties(['section_id' => 0, 'section_type' => $pageType]);
             $data['banner'] = $banner ? AlBannerResource::make($banner) : null;
-
-
             return $this->sendSuccessResponse($data, 'Discount Privilege components');
-
         }else if ($pageType == 'benefits_for_you') {
 
             $data['benefits_for_you'] = $this->priyojonRepository->findOneByProperties(
                 ['component_type' => $pageType, 'status' => 1],
                 // ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup', 'url_slug_en', 'url_slug_bn', 'alias']
-                ['title_en', 'title_bn', 'desc_en', 'desc_bn']
+                ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'page_header', 'page_header_bn', 'schema_markup']
             );
 
             return $this->sendSuccessResponse($data, 'Benefites for you components');
@@ -306,6 +301,8 @@ class PartnerOfferService extends ApiBaseService
                 ['page_type' => "about_loyalty"],
                 ['title_en', 'title_bn', 'desc_en', 'desc_bn', 'banner_image_url', 'banner_mobile_view', 'alt_text_en']
             );
+
+            $data['seo_data'] = $this->priyojonRepository->findOneByProperties(['alias' => 'about-priyojon'], ['page_header', 'page_header_bn', 'schema_markup']);
             return $this->sendSuccessResponse($data, 'About loyalty components');
         }
 

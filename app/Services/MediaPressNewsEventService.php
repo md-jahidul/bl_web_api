@@ -42,6 +42,11 @@ class MediaPressNewsEventService extends ApiBaseService
 
     protected $mediaLandingPageRepository;
     /**
+     * @var FixedPageMetaTagService
+     */
+    private $metaTagService;
+
+    /**
      * DigitalServicesService constructor.
      * @param MediaPressNewsEventRepository $mediaPNERepository
      * @param MediaBannerImageRepository $mediaBannerImageRepository
@@ -52,7 +57,8 @@ class MediaPressNewsEventService extends ApiBaseService
         ComponentRepository $componentRepository,
         AdTechRepository $adTechRepository,
         MediaNewsCategoryRepository $mediaNewsCategoryRepository,
-        MediaLandingPageRepository $mediaLandingPageRepository
+        MediaLandingPageRepository $mediaLandingPageRepository,
+        FixedPageMetaTagService $metaTagService
     ) {
         $this->mediaLandingPageRepository = $mediaLandingPageRepository;
         $this->mediaPNERepository = $mediaPNERepository;
@@ -60,6 +66,7 @@ class MediaPressNewsEventService extends ApiBaseService
         $this->componentRepository = $componentRepository;
         $this->adTechRepository = $adTechRepository;
         $this->mediaNewsCategoryRepository = $mediaNewsCategoryRepository;
+        $this->metaTagService = $metaTagService;
     }
 
     public function mediaPressEventData($moduleType)
@@ -104,6 +111,7 @@ class MediaPressNewsEventService extends ApiBaseService
         $data = $this->mediaPNERepository->filterArchive($type, $param, $limit);
         $custom = collect(['banner'=>$banner]);
         $res = $custom->merge($data);
+        $res['seo_data'] = $this->metaTagService->getMetaByKey('blog_archive_seo');
         return $this->sendSuccessResponse($res, "Filter Date");
     }
 

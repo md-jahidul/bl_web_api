@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MetaTag;
 use App\Repositories\EcareerPortalRepository;
 use App\Repositories\EcareerPortalItemRepository;
 use App\Traits\CrudTrait;
@@ -36,13 +37,19 @@ class EcareerService
      * @var [type]
      */
     protected $ecarrerPortalItemRepository;
+    /**
+     * @var FixedPageMetaTagService
+     */
+    private $fixedPageMetaTagService;
 
     /**
      * PrizeService constructor.
      * @param PrizeRepository $prizeRepository
      */
-    public function __construct(EcareerPortalRepository $ecarrerPortalRepository, EcareerPortalItemRepository $ecarrerPortalItemRepository)
-    {
+    public function __construct(
+        EcareerPortalRepository $ecarrerPortalRepository,
+        EcareerPortalItemRepository $ecarrerPortalItemRepository
+    ) {
         $this->ecarrerPortalRepository = $ecarrerPortalRepository;
         $this->ecarrerPortalItemRepository = $ecarrerPortalItemRepository;
         $this->setActionRepository($ecarrerPortalRepository);
@@ -236,26 +243,9 @@ class EcareerService
      */
     public function getProgramsSap()
     {
-
-
         $results = null;
-
         try {
-
-            $category = "sap";
-            $seoData = $this->programsTapSeoData($category);
-
-
-//            dd($seoData);
-
-            $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
-                'alt_text' => $seoData->alt_text,
-                'page_header' => $seoData->page_header,
-                'page_header_bn' => $seoData->page_header_bn,
-                'schema_markup' => $seoData->schema_markup
-            );
+            $results['seo_data'] = $this->seoDataBinding('sap');
 
             # get sap title for tab
             //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'sap');
@@ -265,14 +255,24 @@ class EcareerService
             $sections['boxicon_section'] = $this->getProgramsBoxIconSections('programs_proiconbox', 'sap');
             $sections['photogallery_section'] = $this->getProgramsPhotoGallerySections('programs_photogallery', 'sap');
             $sections['previousbatch_section'] = $this->getProgramsPreviousBatchSections('programs_sapbatches');
-
             $results['sections'] = $sections;
-
-
             return $results;
         } catch (\Exception $e) {
             return $results;
-        };
+        }
+    }
+
+    public function seoDataBinding($key)
+    {
+        $seoData = MetaTag::where('dynamic_route_key', $key)->first();
+        if ($seoData) {
+            return array(
+                'page_header' => $seoData->page_header,
+                'page_header_bn' => $seoData->page_header_bn,
+                'schema_markup' => $seoData->schema_markup
+            );
+        }
+        return [];
     }
 
     /**
@@ -299,18 +299,8 @@ class EcareerService
 
         try {
 
-            $category = "ennovators";
-            $seoData = $this->programsTapSeoData($category);
 
-            $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
-                'alt_text' => $seoData->alt_text,
-                'page_header' => $seoData->page_header,
-                'page_header_bn' => $seoData->page_header_bn,
-                'schema_markup' => $seoData->schema_markup
-            );
-
+            $results['seo_data'] = $this->seoDataBinding("ennovators");
             # get sap title for tab
             //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'ennovators');
             $sections['hero_section'] = $this->getProgramsNewsSections('programs_progeneral', 'ennovators', 'programs_news_section');
@@ -350,18 +340,7 @@ class EcareerService
         $results = null;
 
         try {
-
-            $category = "aip";
-            $seoData = $this->programsTapSeoData($category);
-
-            $results['seo_data'] = array(
-                'banner_web' => $seoData->image == "" ? "" :  $seoData->image,
-                'banner_mobile' => $seoData->image_mobile == "" ? "" :  $seoData->image_mobile,
-                'alt_text' => $seoData->alt_text,
-                'page_header' => $seoData->page_header,
-                'page_header_bn' => $seoData->page_header_bn,
-                'schema_markup' => $seoData->schema_markup
-            );
+            $results['seo_data'] = $this->seoDataBinding("aip");
 
             # get sap title for tab
             //$results['tab_title'] = $this->getProgramsTabTitle('programs_top_tab_title', 'aip');

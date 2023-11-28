@@ -37,10 +37,15 @@ class FixedPageMetaTagService extends ApiBaseService
      */
     public function metaTag($key)
     {
-        $data = $this->fixedPageMetaTagRepository->findOneByProperties(['dynamic_route_key' => $key],
+        $data = $this->getMetaByKey($key);
+        return $this->sendSuccessResponse($data,'Fixed page meta tag');
+    }
+
+    public function getMetaByKey($key)
+    {
+        return $this->fixedPageMetaTagRepository->findOneByProperties(['dynamic_route_key' => $key],
             [
                 'dynamic_route_key', 'page_header', 'page_header_bn', 'schema_markup'
             ]);
-        return $this->sendSuccessResponse($data,'Fixed page meta tag');
     }
 }
