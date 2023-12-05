@@ -10,6 +10,6 @@ class NewPage extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     public function pageComponentsQuery(){
-        return $this->hasMany(NewPageComponent::class, 'page_id', 'id')->select('id', 'name', 'type', 'attribute','config')->orderBy('order', 'asc');
+        return $this->hasMany(NewPageComponent::class, 'page_id', 'id')->select('id', 'name', 'type', 'attribute','config')->where('status', 1)->orderBy('order', 'asc');
     }
 }
