@@ -105,7 +105,9 @@ class PageController extends Controller
                     unset($_tab['items']);
                     $arr2 = [];
                     foreach($items as $item){
-                        $arr2['items'][$item['group']][$item['key']] = array(
+                        $integerNumber = $item['group'] * 10;
+                        $group = (string )$integerNumber;
+                        $arr2['items'][$group][$item['key']] = array(
                             'en'=> $item['value_en'],
                             'bn'=> $item['value_bn']
                         );
