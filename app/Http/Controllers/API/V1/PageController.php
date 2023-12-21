@@ -49,7 +49,7 @@ class PageController extends Controller
                     $component->data = count($component_child_data) ? $this->tabDataItemFormatted($component_child_data[0]) : [];
                 }else{
                     //->select("id","page_id","name","type","order", "status")
-                    $component->data = $component->componentData->groupBy('group')->map(function ($group) {
+                    $component->data = $component->componentData->groupBy('order')->map(function ($group) {
                         $items = $group->toArray();
                         return isset($items) ? $this->componentDataItemFormatted($items): null;
                     })->values()->all();
@@ -105,7 +105,9 @@ class PageController extends Controller
                     unset($_tab['items']);
                     $arr2 = [];
                     foreach($items as $item){
-                        $arr2['items'][$item['group']][$item['key']] = array(
+                        $integerNumber = $item['group'] * 10;
+                        $group = (string )$integerNumber;
+                        $arr2['items'][$group][$item['key']] = array(
                             'en'=> $item['value_en'],
                             'bn'=> $item['value_bn']
                         );
