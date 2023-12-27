@@ -825,12 +825,20 @@ class ProductService extends BaseService
     {
         $defaultAmount = [20, 30, 50, 100, 150, 200];
         $data = $this->configRepository->findOneByProperties(['key' => 'recharge_pre_set_amount'], ['key', 'value']);
+        $rechargePacksAmount = $this->configRepository->findOneByProperties(['key' => 'recharge_packs_amount'], ['key', 'value']);
 
         if (isset($data)) {
-            $data = array_map('intval', explode(',', $data->value));
+            $data['pre_set_amount'] = array_map('intval', explode(',', $data->value));
         } else {
-            $data = $defaultAmount;
+            $data["pre_set_amount"] = $defaultAmount;
         }
+
+        if (isset($rechargePacksAmount)) {
+            $data['recharge_packs_amount'] = array_map('intval', explode(',', $rechargePacksAmount->value));
+        } else {
+            $data["recharge_packs_amount"] = [];
+        }
+
         return $this->apiBaseService->sendSuccessResponse($data, "Recharge preset amount");
     }
 
