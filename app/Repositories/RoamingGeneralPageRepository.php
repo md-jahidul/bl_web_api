@@ -15,10 +15,10 @@ class RoamingGeneralPageRepository extends BaseRepository {
     public $modelName = RoamingGeneralPage::class;
 
     public function roamingGeneralPage($pageSlug) {
-        $page = $this->model
-                        ->where('page_type', $pageSlug)->first();
+
+        $page = $this->model->where('page_type', $pageSlug)->first();
         $data = [];
-        
+
         $data['category_slug'] = $page->page_type;
         $data['title_en'] = $page->title_en;
         $data['title_bn'] = $page->title_bn;
@@ -29,9 +29,9 @@ class RoamingGeneralPageRepository extends BaseRepository {
         $data['page_header_en'] = $page->page_header_en;
         $data['page_header_bn'] = $page->page_header_bn;
         $data['schema_markup'] = $page->schema_markup;
-        
+
         $count = 0;
-        
+
         $components = RoamingGeneralPageComponents::where('parent_id', $page->id)->orderBy('position')->get();
 
         foreach ($components as $v) {
@@ -42,7 +42,7 @@ class RoamingGeneralPageRepository extends BaseRepository {
             $data['components'][$count]['body_text_en'] = $v->body_text_en;
             $data['components'][$count]['body_text_bn'] = $v->body_text_bn;
             $data['components'][$count]['show_button'] = $v->show_button;
-            
+
             $count++;
         }
         return $data;
