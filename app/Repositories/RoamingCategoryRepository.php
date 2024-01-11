@@ -26,6 +26,7 @@ class RoamingCategoryRepository extends BaseRepository {
             3 => 'roaming-rates',
             4 => 'bill-payment',
             5 => 'info-tips',
+            6 => 'roaming-coverage',
         );
 
 
