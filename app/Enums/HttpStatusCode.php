@@ -20,4 +20,5 @@ final class HttpStatusCode extends Enum
     const INTERNAL_ERROR   =   500;
     const ALREADY_EXIST    =   403;
     const INVALID_TOKEN    =   498;
+    const INVALID_INPUT    =   405;
 }

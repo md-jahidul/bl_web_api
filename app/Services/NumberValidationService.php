@@ -79,7 +79,7 @@ class NumberValidationService extends ApiBaseService
             return $this->sendErrorResponse(
                 "Not a valid input",
                 [],
-                HttpStatusCode::INTERNAL_ERROR
+                HttpStatusCode::INVALID_INPUT
             );
         }
 
@@ -90,7 +90,7 @@ class NumberValidationService extends ApiBaseService
             return $this->sendErrorResponse(
                 "Not a Valid Banglalink Number",
                 [],
-                HttpStatusCode::INTERNAL_ERROR
+                $customer->getData()->status_code
             );
         }
 
@@ -109,7 +109,7 @@ class NumberValidationService extends ApiBaseService
             }
         } else {
             return $this->sendErrorResponse(
-                "Number is Not Valid. Status: ". $customer->getData()->data->status == "active",
+                "Number is Not Valid. Status: ". $customer->getData()->data->status,
                 [],
                 HttpStatusCode::VALIDATION_ERROR
             );

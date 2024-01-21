@@ -135,6 +135,23 @@ class BaseService
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+        $url = $this->getHost() . $url;
+
+        if ($httpCode != 200){
+            $requestData = [
+                'request' => [
+                    'api_hub_url' => $url,
+                    'body' => $body,
+                    'client_url' => request()->getRequestUri()
+                ],
+                'response' => [
+                    'response_data' => $result,
+                    'status_code' => $httpCode
+                ]
+            ];
+            Log::channel('apiHubReqError')->info(json_encode($requestData));
+        }
+
         return ['response' => $result, 'status_code' => $httpCode];
     }
 
