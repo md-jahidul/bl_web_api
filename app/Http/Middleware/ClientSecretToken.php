@@ -22,10 +22,12 @@ class ClientSecretToken
      */
     public function handle($request, Closure $next)
     {
-//        return $next($request);
+        // return $next($request);
         if ($this->validateToken($request)){
             return $next($request);
         }
+        $errorRes = $this->logFormat($request);
+        Log::channel("clientSecretToken")->error($errorRes);
         throw new RequestUnauthorizedException();
     }
 
@@ -36,8 +38,8 @@ class ClientSecretToken
     {
         try {
             $clientSecurityToken = $request->header('client-security-token');
-//            dd($clientSecurityToken);
             $clientSecurityTokenArr = explode('=', $clientSecurityToken);
+
             $redisKey = "al_api_security_key:" . $clientSecurityTokenArr[0];
             $secretToken = $clientSecurityTokenArr[1];
 
@@ -55,5 +57,17 @@ class ClientSecretToken
         } catch (\Exception $exception){
             Log::error("Token Validate Failed:" . $exception->getMessage());
         }
+    }
+
+    protected function logFormat($request): array
+    {
+        $clientSecurityToken = $request->header('client-security-token');
+        $clientIp = request()->ip();
+        $endpoint = request()->getRequestUri();
+        return [
+            'client_ip' => $clientIp,
+            'api_end_point' => $endpoint,
+            'error_message' => 'UNAUTHORIZED request. Invalid token: ' . $clientSecurityToken
+        ];
     }
 }

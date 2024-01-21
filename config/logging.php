@@ -137,5 +137,10 @@ return [
             'level' => 'info',
             'days' => 7,
         ],
+        'clientSecretToken' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/invalid-request/invalid-rew-error.log'),
+            'level' => 'error',
+        ],
     ],
 ];
