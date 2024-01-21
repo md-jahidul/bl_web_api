@@ -111,9 +111,8 @@ class BaseService
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        $url = $this->getHost() . $url;
-
         if ($httpCode != 200){
+            $url = $this->getHost() . $url;
             $requestData = [
                 'request' => [
                     'api_hub_url' => $url,
