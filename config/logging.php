@@ -125,5 +125,10 @@ return [
             'path'   => storage_path('logs/bl-lab/reg-fail/reg_fail.log'),
             'level' => 'error',
         ],
+        'clientSecretToken' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/invalid-request/invalid-rew-error.log'),
+            'level' => 'error',
+        ],
     ],
 ];
