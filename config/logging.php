@@ -127,8 +127,13 @@ return [
         ],
         'clientSecretToken' => [
             'driver' => 'daily',
-            'path'   => storage_path('logs/invalid-request/invalid-rew-error.log'),
+            'path'   => storage_path('logs/invalid-request/invalid-req-error.log'),
             'level' => 'error',
+        ],
+        'apiHubReqError' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/apihub/api-hub-error.log'),
+            'level' => 'info',
         ],
     ],
 ];
