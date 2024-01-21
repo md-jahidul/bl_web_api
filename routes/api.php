@@ -103,8 +103,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('user/profile/image/remove', 'API\V1\UserProfileController@removeProfileImage');
     Route::get('user/number/validation/{mobile}', 'API\V1\AuthenticationController@numberValidation');
     //        ->middleware('client.secret.token');
-    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin');
-    //        ->middleware('client.secret.token');
+    Route::post('user/otp-login/request', 'API\V1\AuthenticationController@requestOtpLogin')
+            ->middleware('client.secret.token');
     Route::post('user/otp-login/perform', 'API\V1\AuthenticationController@otpLogin');
     Route::post('user/verify-otp', 'API\V1\AuthenticationController@verifyOTPForLogin');
 

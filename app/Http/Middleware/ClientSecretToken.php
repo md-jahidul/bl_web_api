@@ -6,6 +6,7 @@ use App\Exceptions\RequestUnauthorizedException;
 use App\Exceptions\SecreteTokenExpireException;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class ClientSecretToken
@@ -21,7 +22,7 @@ class ClientSecretToken
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+//        return $next($request);
         if ($this->validateToken($request)){
             return $next($request);
         }
@@ -35,6 +36,7 @@ class ClientSecretToken
     {
         try {
             $clientSecurityToken = $request->header('client-security-token');
+//            dd($clientSecurityToken);
             $clientSecurityTokenArr = explode('=', $clientSecurityToken);
             $redisKey = "al_api_security_key:" . $clientSecurityTokenArr[0];
             $secretToken = $clientSecurityTokenArr[1];
@@ -51,7 +53,7 @@ class ClientSecretToken
                 return true;
             }
         } catch (\Exception $exception){
-
+            Log::error("Token Validate Failed:" . $exception->getMessage());
         }
     }
 }
