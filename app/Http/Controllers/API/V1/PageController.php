@@ -38,7 +38,13 @@ class PageController extends Controller
             return response()->json($result, 200);
         }
 
-        $tab_component_types = ['tab-component','tab_component_with_image_card_one','tab_component_with_image_card_two', 'tab_component_with_image_card_three'];
+        $tab_component_types = [
+            'tab-component',
+            'tab_component_with_image_card_one',
+            'tab_component_with_image_card_two',
+            'tab_component_with_image_card_three',
+            'tab_component_with_image_card_four'
+        ];
         if($query && isset($query->pageComponentsQuery)){
             $query->page_components = $query->pageComponentsQuery->each(function ($component) use($tab_component_types) {
                 if(in_array($component->type, $tab_component_types)){
@@ -46,6 +52,7 @@ class PageController extends Controller
                         $items = $group->menuTreeWithHierarchy($component->id)->toArray();
                         return ($items);
                     })->values()->all();
+//                    dd($component_child_data);
                     $component->data = count($component_child_data) ? $this->tabDataItemFormatted($component_child_data[0]) : [];
                 }else{
                     //->select("id","page_id","name","type","order", "status")
@@ -108,8 +115,16 @@ class PageController extends Controller
                     unset($_tab['items']);
                     $arr2 = [];
                     foreach($items as $item){
+                        if ($item['key'] == "content_type" || $item['key'] == "static_component") {
+                            $arr[$item['key']] = array(
+                                'en'=> $item['value_en'],
+                                'bn'=> $item['value_bn']
+                            );
+                            continue;
+                        }
                         $integerNumber = $item['group'] * 10;
                         $group = (string )$integerNumber;
+
                         $arr2['items'][$group][$item['key']] = array(
                             'en'=> $item['value_en'],
                             'bn'=> $item['value_bn']
@@ -120,7 +135,7 @@ class PageController extends Controller
                         'en'=> $_tab['value_en'],
                         'bn'=> $_tab['value_bn']
                     );
-                    $arr['items'] = array_values($arr2['items']);
+                    $arr['items'] = isset($arr2['items']) ? array_values($arr2['items']) : [];
                 }else{
                     $arr = $tab;
                     $arr['items'] = array();
@@ -128,7 +143,6 @@ class PageController extends Controller
                 $data[$key] = $arr;
             }
         }
-
         return $data;
     }
 }
