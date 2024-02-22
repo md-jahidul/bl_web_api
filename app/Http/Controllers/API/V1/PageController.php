@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
+namespace App\Http\Controllers\API\V1;
 
 // use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
@@ -30,7 +30,7 @@ class PageController extends Controller
         );
 
         if($page_slug && $page_slug !== ""){
-            $query = NewPage::select("id", "name", "url_slug", "page_header_en", "page_header_bn")->where('url_slug', $page_slug)->where('status', 1)->first();
+            $query = Page::select("id", "name", "url_slug", "page_header_en", "page_header_bn")->where('url_slug', $page_slug)->where('status', 1)->first();
         }
 
         if ( ! $query ) {
