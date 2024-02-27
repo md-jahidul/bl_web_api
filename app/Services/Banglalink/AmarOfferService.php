@@ -12,6 +12,7 @@ use App\Services\AlBannerService;
 use App\Services\ApiBaseService;
 use App\Services\CustomerService;
 
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -41,6 +42,10 @@ class AmarOfferService extends BaseService
      * @var AlBannerService
      */
     private $alBannerService;
+    /**
+     * @var CustomerAvailableProductsService
+     */
+    private $customerAvailableProductsService;
 
     public function __construct
     (
@@ -48,13 +53,17 @@ class AmarOfferService extends BaseService
         CustomerService $customerService,
         AmarOfferDetailsRepository $amarOfferDetailsRepository,
         BanglalinkCustomerService $blCustomerService,
-        AlBannerService $alBannerService
+        AlBannerService $alBannerService,
+        ProductService $productService,
+        CustomerAvailableProductsService $availableProductsService
     ) {
         $this->amarOfferDetailsRepository = $amarOfferDetailsRepository;
         $this->responseFormatter = $apiBaseService;
         $this->customerService = $customerService;
         $this->blCustomerService = $blCustomerService;
         $this->alBannerService = $alBannerService;
+        $this->productService = $productService;
+        $this->customerAvailableProductsService = $availableProductsService;
     }
 
     public function getAmarOfferListUrl($msisdn, $customerType)
@@ -416,29 +425,6 @@ class AmarOfferService extends BaseService
         }
     }
 
-    /*public function getDetails($request, $offerType, $offerId)
-    {
-        $customerInfo = $this->customerService->getCustomerDetails($request);
-        $msisdn = "88" . $customerInfo->phone;
-        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
-        $customer_type = $infoBl->getData()->data->connectionType;
-
-        $response_data = $this->get($this->getAmarOfferListUrl(substr($msisdn, 3), $customer_type));
-
-        $bannerImage = $this->alBannerService->getBanner(0, "amar_offer");
-
-        $data = $this->prepareAmarOfferList(json_decode($response_data['response']));
-        $offer = collect($data)->where('offer_id', $offerId)->first();
-        if ($response_data['status_code'] == 200 && !empty($offer)){
-            $details = $this->amarOfferDetailsRepository->offerDetails($offerType)->toArray();
-            $data = array_merge($offer, $details);
-            $data['banner'] = $bannerImage ?? null;
-            return $this->responseFormatter->sendSuccessResponse($data, "Amar Offer details");
-        }
-
-        return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
-    }*/
-
     public function getDetailsV2($request, $offerType, $offerId)
     {
         $customerInfo = $this->customerService->getCustomerDetails($request);
@@ -469,5 +455,19 @@ class AmarOfferService extends BaseService
         }
 
         return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
+    }
+
+    public function amarOfferHome($request)
+    {
+        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+        $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
+
+        $params = [
+            'customerInfo' => $customerInfo,
+            'customerAvailableProducts' => $customerAvailableProducts
+        ];
+        $homeProducts = $this->productService->trendingProduct($params);
+
+        dd($homeProducts);
     }
 }
