@@ -46,7 +46,9 @@ class ProductRepository extends BaseRepository
         $newSIMOffer = OfferType::NEW_SIM_OFFICE;
         $rechargeOffer = OfferType::RECHARGE_OFFER;
         $worldCupOffer = OfferType::WORLD_CUP_OFFER;
-        $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer", "$worldCupOffer"];
+        $postpaidSelect = OfferType::POSTPAID_SELECT;
+        $other = OfferType::OTHERS;
+        $multiCat =  ["$internet", "$voice", "$bundle", "$callRate", "$bondhoSIM", "$newSIMOffer", "$rechargeOffer", "$worldCupOffer", "$postpaidSelect", "$other"];
 
         $data = $this->model
             ->where('status', 1)
@@ -59,6 +61,7 @@ class ProductRepository extends BaseRepository
         }
         $data = $data->orWhere(function ($q) use ($multiCat, $offerCategory) {
             foreach ($multiCat as $cat) {
+//                dd($offerCategory);
                 if ($offerCategory->id == $cat) {
                     $q->orWhereJsonContains('show_in_multi_cat', $cat)
                         ->where('status', 1)

@@ -34,4 +34,5 @@ final class OfferType extends Enum
     const NEW_SIM_OFFICE = 23;
     const RECHARGE_OFFER = 24;
     const WORLD_CUP_OFFER = 26;
+    const POSTPAID_SELECT = 27;
 }
