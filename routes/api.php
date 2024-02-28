@@ -446,6 +446,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Amar Offer
     Route::get('home-amar-offer', 'API\V1\AmarOfferController@amarOfferForHome');
+    Route::get('home-loyalty-offer', 'API\V1\PriyojonController@loyaltyOfferForHome');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
