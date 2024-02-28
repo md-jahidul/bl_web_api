@@ -116,6 +116,11 @@ class PriyojonController extends Controller
         return $this->partnerOfferService->tierOffers();
     }
 
+    public function loyaltyOfferForHome()
+    {
+        return $this->partnerOfferService->tierOffers(true);
+    }
+
     public function aboutLoyalty()
     {
         return $this->partnerOfferService->getComponentByPageType('about_loyalty');
@@ -130,7 +135,7 @@ class PriyojonController extends Controller
     {
         return $this->partnerOfferService->getComponentByPageType('benefits_for_you');
     }
-    
+
     public function filterOptions()
     {
         return $this->partnerOfferService->getFilterOption();

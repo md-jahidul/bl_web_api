@@ -267,9 +267,6 @@ class PartnerOfferService extends ApiBaseService
         $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
 
         $data = OrangeClubTierResource::collection($offers);
-        if ($showInHome) {
-            return $data;
-        }
         return $this->sendSuccessResponse($data, 'Orange club offers');
     }
 
