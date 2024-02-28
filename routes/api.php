@@ -3,7 +3,7 @@
 //header('Access-Control-Allow-Origin: https://assetlite.banglalink.net');
 //header('Access-Control-Allow-Origin: http://172.16.8.160:9443');
 
-use App\Http\Controllers\API\v1\PageController;
+use App\Http\Controllers\API\V1\PageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -493,6 +493,12 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Page component API routes
     Route::get('page/{slug}', 'API\V1\PageController@view');
+
+    // Page component API routes
+    Route::get('page/{slug}', 'API\V1\PageController@view');
+
+    // Amar Offer
+    Route::get('home-amar-offer', 'API\V1\AmarOfferController@amarOfferForHome');
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
