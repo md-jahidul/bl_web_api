@@ -57,6 +57,7 @@ class AmarOfferService extends BaseService
         ProductService $productService,
         CustomerAvailableProductsService $availableProductsService
     ) {
+        dd('Hii');
         $this->amarOfferDetailsRepository = $amarOfferDetailsRepository;
         $this->responseFormatter = $apiBaseService;
         $this->customerService = $customerService;

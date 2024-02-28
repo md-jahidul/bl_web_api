@@ -63,6 +63,7 @@ class AmarOfferController extends Controller
 
     public function amarOfferForHome(Request $request)
     {
+        dd($request);
         return $this->amarOfferService->amarOfferHome($request);
     }
 }
