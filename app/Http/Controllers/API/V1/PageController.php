@@ -30,7 +30,7 @@ class PageController extends Controller
         );
 
         if($page_slug && $page_slug !== ""){
-            $query = Page::select("id", "name", "url_slug", "page_header_en", "page_header_bn")->where('url_slug', $page_slug)->where('status', 1)->first();
+            $query = Page::select("id", "name", "url_slug", "page_header_en", "page_header_bn", "schema_markup")->where('url_slug', $page_slug)->where('status', 1)->first();
         }
 
         if ( ! $query ) {
