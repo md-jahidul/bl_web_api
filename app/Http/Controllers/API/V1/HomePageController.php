@@ -70,7 +70,6 @@ class HomePageController extends Controller
 
     public function getHomePageData(Request $request)
     {
-        // return $request->header('authorization');
         return $this->homeService->getComponents($request);
     }
 
