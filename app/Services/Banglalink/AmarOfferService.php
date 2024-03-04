@@ -7,12 +7,15 @@ use App\Enums\HttpStatusCode;
 use App\Exceptions\AmarOfferBuyException;
 use App\Exceptions\IdpAuthException;
 
+use App\Models\OfferCategory;
 use App\Repositories\AmarOfferDetailsRepository;
+use App\Repositories\ProductRepository;
 use App\Services\AlBannerService;
 use App\Services\ApiBaseService;
 use App\Services\CustomerService;
 
 use App\Services\ProductService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -23,7 +26,7 @@ class AmarOfferService extends BaseService
      * @var ApiBaseService
      */
     public $amarOfferDetailsRepository;
-    public $productService;
+
     public $responseFormatter;
     protected const AMAR_OFFER_API_ENDPOINT = "/product-offer/offer/amar-offers";
     protected const AMAR_OFFER_API_ENDPOINT_V2 = "/product-offer/offer/v2/amar-offers";
@@ -46,6 +49,10 @@ class AmarOfferService extends BaseService
      * @var CustomerAvailableProductsService
      */
     private $customerAvailableProductsService;
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
 
     public function __construct
     (
@@ -54,17 +61,16 @@ class AmarOfferService extends BaseService
         AmarOfferDetailsRepository $amarOfferDetailsRepository,
         BanglalinkCustomerService $blCustomerService,
         AlBannerService $alBannerService,
-        ProductService $productService,
-        CustomerAvailableProductsService $availableProductsService
+        CustomerAvailableProductsService $availableProductsService,
+        ProductRepository $productRepository
     ) {
-        dd('Hii');
         $this->amarOfferDetailsRepository = $amarOfferDetailsRepository;
         $this->responseFormatter = $apiBaseService;
         $this->customerService = $customerService;
         $this->blCustomerService = $blCustomerService;
         $this->alBannerService = $alBannerService;
-        $this->productService = $productService;
         $this->customerAvailableProductsService = $availableProductsService;
+        $this->productRepository = $productRepository;
     }
 
     public function getAmarOfferListUrl($msisdn, $customerType)
@@ -289,9 +295,9 @@ class AmarOfferService extends BaseService
      * @return JsonResponse
      * @throws IdpAuthException
      */
-    public function getAmarOfferListV2(Request $request)
+    public function getAmarOfferListV2()
     {
-        $customerInfo = $this->customerService->getCustomerDetails($request);
+        $customerInfo = $this->customerService->getCustomerDetails(request());
         $msisdn = "88" . $customerInfo->phone;
         $blCustomerInfo = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
 
@@ -300,7 +306,7 @@ class AmarOfferService extends BaseService
         }
         $customerType = $blCustomerInfo->getData()->data->connectionType;
         $body = array(
-            "channel" => "MYBLAPP",
+            "channel" => config('product.amar_offer.channel'),
             "msisdn" => $msisdn,
             "offerSubType" => "ALL",
             "offerType" => "ALL",
@@ -395,7 +401,7 @@ class AmarOfferService extends BaseService
         $body = array(
             "requestID" => $this->generateRequestID('PROV'),
             "msisdn" => $customer->msisdn,
-            "channel" => "MYBLAPP",
+            "channel" => config('product.amar_offer.channel'),
             "treatmentCode"=> $treatment_code,
             "offerCode" => $offerCode
         );
@@ -434,7 +440,7 @@ class AmarOfferService extends BaseService
         $customerType = $infoBl->getData()->data->connectionType;
 
         $body = array(
-            "channel" => env('AMAR_OFFER_CHANNEL', 'MYBLAPP'),
+            "channel" => config('product.amar_offer.channel'),
             "msisdn" => $msisdn,
             "offerSubType" => "ALL",
             "offerType" => "ALL",
@@ -458,17 +464,85 @@ class AmarOfferService extends BaseService
         return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
     }
 
-    public function amarOfferHome($request)
+    public function bindDynamicValues($obj, $json_data = 'other_attributes', $data = null)
     {
-        $customerInfo = ($request->header('authorization') != '') ? $this->customerService->getCustomerDetails($request) : '';
+        if (!empty($obj->{$json_data})) {
+            foreach ($obj->{$json_data} as $key => $value) {
+                $obj->{$key} = $value;
+            }
+            unset($obj->{$json_data});
+        }
+        // Product Core Data BindDynamicValues
+        $data = json_decode($data);
+
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $obj->{$key} = $value;
+            }
+            return $obj;
+        }
+    }
+
+    public function offerForYou()
+    {
+        $customerInfo = $this->customerService->getCustomerDetails(request());
+        $msisdn = "88" . $customerInfo->phone;
+        $infoBl = $this->blCustomerService->getCustomerInfoByNumber($msisdn);
+        $customerType = strtolower($infoBl->getData()->data->connectionType);
         $customerAvailableProducts = (isset($customerInfo->id)) ? $this->customerAvailableProductsService->getAvailableProductsByCustomer($customerInfo->id) : [];
 
-        $params = [
-            'customerInfo' => $customerInfo,
-            'customerAvailableProducts' => $customerAvailableProducts
-        ];
-        $homeProducts = $this->productService->trendingProduct($params);
+        $offerType = ['internet', 'voice', 'bundles'];
+        $offerCategories =  OfferCategory::whereIn('alias', $offerType)->select('id', 'alias', 'name_en', 'name_bn')->get()?? [];
+        $offerIDArr = collect($offerCategories)->pluck('id');
 
-        dd($homeProducts);
+        try {
+            $item = [];
+            $data = [];
+            $products = $this->productRepository->offerProductsForYou($customerType, $offerIDArr, $customerAvailableProducts);
+
+            if ($products) {
+                foreach ($products as $product) {
+                    $productData = $product->productCore;
+                    $this->bindDynamicValues($product, 'offer_info', $productData);
+                    unset($product->productCore);
+                }
+            }
+
+            foreach ($products as $offer) {
+                $pack = $offer->getAttributes();
+                $item[$offer->offer_category->alias]['title_en'] = $offer->offer_category->name_en;
+                $item[$offer->offer_category->alias]['title_bn'] = $offer->offer_category->name_bn;
+                $item[$offer->offer_category->alias]['packs'][] = $pack;
+            }
+
+            $sortedData = collect($item);
+            foreach ($sortedData as $category => $pack) {
+                $data[] = [
+                    'type' => $category,
+                    'title_en' => $pack['title_en'],
+                    'title_bn' => $pack['title_bn'],
+                    'items' => array_values($pack['packs']) ?? []
+                ];
+            }
+
+            $amarOfferData = [];
+            if (request()->header('authorization')) {
+                $amarOffers = $this->getAmarOfferListV2();
+                if (!empty($amarOffers->getData()->data)) {
+                    $amarOfferData[] = [
+                        "type" => "amar-offer",
+                        "title_en" => "Amar Offer",
+                        "title_bn" => "আমার অফার",
+                        "items" => $amarOffers->getData()->data
+                    ];
+                }
+            }
+            $responseData = array_merge($data, $amarOfferData);
+
+            return $this->responseFormatter->sendSuccessResponse($responseData, 'Offer for you list');
+
+        } catch (QueryException $exception) {
+            return response()->error("Data Not Found!", $exception);
+        }
     }
 }

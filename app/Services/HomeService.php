@@ -219,33 +219,12 @@ class HomeService extends ApiBaseService
     }
 
     public function getMultipleSliderData($id,$shortCode,$params = []) {
-//        $slider = AlSlider::find($id);
-        //$slider = $this->sliderRepository->findOne($id);
-        //$this->bindDynamicValues($slider);
         $slider = $shortCode;
         $this->bindDynamicValues($shortCode);
 
-        //$slider->component = AlSliderComponentType::find($slider->component_id)->slug;
-        //$slider = $shortCode;
         if ($id == 4) {
-//            $partnerOffers = DB::table('partner_offers as po')
-//                ->where('po.show_in_home', 1)
-//                ->where('po.is_active', 1)
-//                ->join('partners as p', 'po.partner_id', '=', 'p.id')
-//                ->join('partner_categories as pc', 'p.partner_category_id', '=', 'pc.id') // you may add more joins
-//                ->select('po.*', 'pc.name_en AS offer_type_en', 'pc.name_bn AS offer_type_bn', 'p.company_name_en', 'p.company_name_bn', 'p.company_logo')
-//                ->orderBy('po.display_order')
-//                ->get();
-//            $slider->data = PartnerOfferResource::collection($partnerOffers);
-//            dd($this->partnerOfferService->tierOffers(true));
             $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
-        }
-        // else if($id == 13){
-        //     //$slider = $shortCode;
-        //     //$slider->data =  $this->businessTypeService->getBusinessTypeInfo();
-
-        // }
-        else {
+        } else {
             $slider->data = $this->productService->trendingProduct($params);
         }
 
