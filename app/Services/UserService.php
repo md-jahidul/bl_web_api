@@ -395,12 +395,14 @@ class UserService extends ApiBaseService
 
         $customerInfo['balance_data'] = $balanceData['status'] == 'SUCCESS' ? $balanceData['data'] : $balanceData;
 
-        $loyaltyInfo = $this->blLoyaltyService->getPriyojonStatus("88" . $mobile)->getData();
-
-        if ($loyaltyInfo->status_code == 200){
-            $customerInfo['loyalty_info'] = $loyaltyInfo->data->data;
-            if (isset($loyaltyInfo->data->data->priyojonInfo->slab)) {
-                $customerInfo['loyalty_info']->priyojonInfo->tier_slug = strtolower($loyaltyInfo->data->data->priyojonInfo->slab);
+        $loyaltyInfo = $this->blLoyaltyService->getLmsMemberProfile("88" . $mobile);
+        if ($loyaltyInfo['status_code'] == 200){
+            $lmsData = json_decode($loyaltyInfo['response'], true);
+            if ($lmsData['loyaltyProfileInfo']) {
+                $customerInfo['loyalty_info'] = [
+                    'points' => $lmsData['loyaltyProfileInfo']['availablePoints'],
+                    'tier_level' => $lmsData['loyaltyProfileInfo']['currentTierLevel']
+                ];
             }
         } else {
             $customerInfo['loyalty_info'] = null;

@@ -16,6 +16,7 @@ class BanglalinkLoyaltyService extends BaseService
 {
 //    protected $statusEndPoint = '/loyalty-old-sys/loyalty-old-sys/priyojon-status';
     protected $statusEndPoint = '/loyalty/loyalty/priyojon-status';
+    protected $lmsProfileEndPoint = '/loyalty2/loyalty2/get-member-profile';
     protected $redeemOptionEndPoint = '/loyalty/loyalty/get-priyojon-redeem-options';
     protected $redeemPurchaseEndPoint = '/loyalty/loyalty/purchase-priyojon-redeem';
 
@@ -28,6 +29,17 @@ class BanglalinkLoyaltyService extends BaseService
     public function __construct(ApiBaseService $apiBaseService)
     {
         $this->apiBaseService = $apiBaseService;
+    }
+
+    public function getLmsMemberProfile($msisdn)
+    {
+        $body = array(
+            'channel' => env('LMS_CHANNEL', 'MYBLAPP'),
+            'msisdn' => $msisdn,
+            'transactionID' => uniqid()
+        );
+        $url = $this->lmsProfileEndPoint;
+        return $this->post($url, $body);
     }
 
     public function getPriyojonStatus($subscriberId)
