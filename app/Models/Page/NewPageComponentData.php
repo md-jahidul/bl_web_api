@@ -14,6 +14,9 @@ class NewPageComponentData extends Model
     public function NewPageComponent(){
         return $this->hasMany( NewPageComponentData::class, 'parent_id', 'id' );
     }
+    public function children(){
+        return $this->hasMany( NewPageComponentData::class, 'parent_id', 'id' );
+    }
     public function data(){
         return $this->belongsTo(NewPageComponent::class)->withDefault();
     }

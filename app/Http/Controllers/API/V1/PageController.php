@@ -7,10 +7,26 @@ use App\Http\Controllers\Controller;
 // use App\Models\Page;
 // use App\Services\ApiBaseService;
 use App\Models\Page\NewPage as Page;
+use App\Repositories\Page\PageRepository;
+use App\Services\Page\PageService;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+    /**
+     * @var PageService
+     */
+    private $pageService;
+
+    /**
+     * PageService constructor.
+     * @param PageService $pageService
+     */
+    public function __construct(
+        PageService $pageService
+    ) {
+        $this->pageService = $pageService;
+    }
 
     /**
      * Fetches the page data with the specified page slug
@@ -77,6 +93,81 @@ class PageController extends Controller
             return response()->json($result, 200);
         }
         $result['data']['page'] = $this->componentDataFormatted($query);
+        return response()->json($result, 200);
+    }
+
+    public function getPageComponents($slug) {
+
+        return $this->pageService->pageComponents($slug);
+
+        $page_slug = $request->route('slug', null);
+        $query = null;
+        $message = "Page has been fetched successfully";
+        $result = array(
+            'status' => 'SUCCESS',
+            'status_code' => 200,
+            'message' => $message,
+            'data' => ['page' => null]
+        );
+
+        if($page_slug && $page_slug !== ""){
+            $query = Page::select("id", "name", "url_slug", "page_header_en", "page_header_bn", "schema_markup")->where('url_slug', $page_slug)->where('status', 1)->first();
+        }
+
+        if ( ! $query ) {
+            $result['message'] = 'Page not found';
+            return response()->json($result, 200);
+        }
+
+        if($query && isset($query->pageComponentsQuery)){
+
+            $pageComponents = [];
+            foreach ($query->pageComponentsQuery as $comIndex => $component){
+                $pageComponents[] = $component;
+                $componentData = [];
+
+                foreach ($component->componentData as $comDataIndex => $data){
+                    if ($data->parent_id == 0) {
+                        $componentData[$data->group][$data->key] = [
+                            'en' => $data->value_en,
+                            'bn' => $data->value_bn,
+                        ];
+                    }
+                    $tabComponents = [
+                        "tab_component_with_image_card_one",
+                        "tab_component_with_image_card_two",
+                        "tab_component_with_image_card_three",
+                        "tab_component_with_image_card_four"
+                    ];
+
+                    $tabItemData = [];
+                    if (!empty($data->children) && in_array($component->type, $tabComponents)) {
+                        foreach ($data->children as $childData) {
+                            if ($component->type == "tab_component_with_image_card_four" && $childData->key == "content_type" || $childData->key == "static_component") {
+                                $componentData[$data->group][$childData->key] = [
+                                    'en' => $childData->value_en,
+                                    'bn' => $childData->value_bn,
+                                ];
+                            }else{
+                                $tabItemData["$childData->group"][$childData->key] = [
+                                    'en' => $childData->value_en,
+                                    'bn' => $childData->value_bn,
+                                ];
+                            }
+                        }
+                        if (!empty($tabItemData)){
+                            $componentData[$data->group]['items'] = array_values($tabItemData);
+                        }
+                    }
+                }
+                unset($component->componentData);
+                $pageComponents[$comIndex]['data'] = array_values($componentData);
+            }
+
+            $query['page_components'] = $pageComponents;
+        }
+
+        $result['data']['page'] = $query;
         return response()->json($result, 200);
     }
 

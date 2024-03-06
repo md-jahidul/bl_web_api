@@ -443,6 +443,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Page component API routes
     Route::get('page/{slug}', 'API\V1\PageController@view');
+    Route::get('page2/{slug}', 'API\V1\PageController@getPageComponents');
 
     // Amar Offer Home
     Route::get('home-amar-offer', 'API\V1\AmarOfferController@amarOfferForHome');
