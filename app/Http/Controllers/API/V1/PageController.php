@@ -7,10 +7,27 @@ use App\Http\Controllers\Controller;
 // use App\Models\Page;
 // use App\Services\ApiBaseService;
 use App\Models\Page\NewPage as Page;
+use App\Repositories\Page\PageRepository;
+use App\Services\Page\PageService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+    /**
+     * @var PageService
+     */
+    private $pageService;
+
+    /**
+     * PageService constructor.
+     * @param PageService $pageService
+     */
+    public function __construct(
+        PageService $pageService
+    ) {
+        $this->pageService = $pageService;
+    }
 
     /**
      * Fetches the page data with the specified page slug
@@ -45,8 +62,8 @@ class PageController extends Controller
             'tab_component_with_image_card_three',
             'tab_component_with_image_card_four'
         ];
-        if($query && isset($query->pageComponentsQuery)){
-            $query->page_components = $query->pageComponentsQuery->each(function ($component) use($tab_component_types) {
+        if($query && isset($query->pageComponents)){
+            $query->page_components = $query->pageComponents->each(function ($component) use($tab_component_types) {
                 if(in_array($component->type, $tab_component_types)){
                     $component_child_data = $component->componentData->map(function ($group) use($component) {
                         $items = $group->menuTreeWithHierarchy($component->id)->toArray();
@@ -78,6 +95,15 @@ class PageController extends Controller
         }
         $result['data']['page'] = $this->componentDataFormatted($query);
         return response()->json($result, 200);
+    }
+
+    /**
+     * @param $slug
+     * @return JsonResponse|mixed
+     */
+    public function getPageComponents($slug)
+    {
+        return $this->pageService->pageComponents($slug);
     }
 
     protected function componentDataFormatted($page){
