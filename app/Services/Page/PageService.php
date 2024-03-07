@@ -38,7 +38,7 @@ class PageService extends ApiBaseService
                 $data = [
                     'page' => $this->fetchPageData($slug)
                 ];
-//                Redis::set($redisKey, json_encode($data));
+                Redis::set($redisKey, json_encode($data));
                 return $this->sendSuccessResponse($data, 'Page data');
             }
             return $this->sendSuccessResponse(json_decode($redisData), 'Page data');
