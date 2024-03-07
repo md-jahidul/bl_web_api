@@ -442,8 +442,8 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::post('balance-transfer/verify-pin', 'API\V1\BalanceTransferController@pinVerify');
 
     // Page component API routes
-    Route::get('page/{slug}', 'API\V1\PageController@view');
-    Route::get('page2/{slug}', 'API\V1\PageController@getPageComponents');
+    Route::get('page2/{slug}', 'API\V1\PageController@view');
+    Route::get('page/{slug}', 'API\V1\PageController@getPageComponents');
 
     // Amar Offer Home
     Route::get('home-amar-offer', 'API\V1\AmarOfferController@amarOfferForHome');
