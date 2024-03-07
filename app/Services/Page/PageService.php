@@ -14,7 +14,7 @@ class PageService extends ApiBaseService
     use FileTrait;
     private $pageRepository;
 
-    protected const REDIS_PAGE_KEY = "new_page_components";
+    protected const REDIS_PAGE_KEY = "new_page_components:";
 
     /**
      * PageService constructor.
@@ -30,13 +30,16 @@ class PageService extends ApiBaseService
     public function pageComponents($slug)
     {
         try {
-            $redisKey = self::REDIS_PAGE_KEY. ":" .$slug;
+            $redisKey = self::REDIS_PAGE_KEY . $slug;
             $redisData = Redis::get($redisKey);
 
             if (!$redisData){
-                $page = $this->fetchPageData($slug);
-                Redis::set($redisKey, $page);
-                return $this->sendSuccessResponse($page, 'Page data');
+
+                $data = [
+                    'page' => $this->fetchPageData($slug)
+                ];
+//                Redis::set($redisKey, json_encode($data));
+                return $this->sendSuccessResponse($data, 'Page data');
             }
             return $this->sendSuccessResponse(json_decode($redisData), 'Page data');
         }catch (\Exception $exception){
