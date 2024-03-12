@@ -34,7 +34,7 @@ class BanglalinkLoyaltyService extends BaseService
     public function getLmsMemberProfile($msisdn)
     {
         $body = array(
-            'channel' => env('LMS_CHANNEL', 'MYBLAPP'),
+            'channel' => env('LMS_CHANNEL', 'LMSMYBLAPP'),
             'msisdn' => $msisdn,
             'transactionID' => uniqid()
         );
