@@ -59,7 +59,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     Route::get('amar-offer/details/{offerType}/{offerId}', 'API\V1\AmarOfferController@amarOfferDetails');
 
     // Check recycle MSISDN
-    Route::get('recycle-msisdn-check/{msisdn}', 'API\V1\AmarOfferController@recycleMsisdnCheck');
+    Route::get('recycle-msisdn-check/{msisdn}', 'API\V1\RecycleMsisdnController@recycleMsisdnCheck');
 
     Route::get('product-like/{id}', 'API\V1\ProductController@productLike');
     Route::get('customer/products', 'API\V1\ProductController@customerSavedBookmarkProduct');

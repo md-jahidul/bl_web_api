@@ -15,7 +15,6 @@ use App\Services\CustomerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Client;
 
 class AmarOfferService extends BaseService
 {
@@ -470,30 +469,5 @@ class AmarOfferService extends BaseService
         }
 
         return $this->responseFormatter->sendErrorResponse("Something went wrong!", "Internal Server Error", 500);
-    }
-
-    /**
-     * Check Recycle MSISDN service availability
-     * @param int $msisdn
-     * @return JsonResponse
-     */
-    public function checkRecycleMsisdn($msisdn)
-    {
-        $data['is_recycle'] = false;
-        try {
-            $client = new Client();
-            //TODO: check that with valid endpoint
-            $response = $client->get("https://jsonplaceholder.typicode.com/posts/{$msisdn}");
-            $post = json_decode($response->getBody(), true);
-
-            if (!empty($post)) {
-                $data['is_recycle'] = true;
-            } else {
-                $data['is_recycle'] = false;
-            }
-            return $this->responseFormatter->sendSuccessResponse($data, 'Recycle msisdn checked successfully');
-        } catch (\Exception $e) {
-            return $this->responseFormatter->sendErrorResponse("Something went wrong!", [$e->getMessage()], 500);
-        }
     }
 }

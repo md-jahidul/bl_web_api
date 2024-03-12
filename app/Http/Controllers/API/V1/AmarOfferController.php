@@ -60,16 +60,4 @@ class AmarOfferController extends Controller
     {
         return $this->amarOfferService->getDetailsV2($request, $offerType, $offerId);
     }
-
-    
-    /**
-     * Check Recycle MSISDN
-     * 
-     * @param int $msisdn
-     * @return JsonResponse
-     */
-    public function recycleMsisdnCheck($msisdn)
-    {
-        return $this->amarOfferService->checkRecycleMsisdn($msisdn);
-    }
 }
