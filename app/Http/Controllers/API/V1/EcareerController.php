@@ -404,7 +404,6 @@ class EcareerController extends Controller
      */
     public function getEcarrerPrograms($type)
     {
-
         try {
 
             $data = [];
@@ -429,7 +428,7 @@ class EcareerController extends Controller
                 $ecarrer_ennovators = $this->ecarrerService->getProgramsEnnovators();
                 $data['data'] = $ecarrer_ennovators;
             }
-            else if($type === 'aip'){
+            else if($type === 'dip'){
                 $ecarrer_aip = $this->ecarrerService->getProgramsAip();
                 $data['data'] = $ecarrer_aip;
             }
