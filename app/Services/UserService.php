@@ -400,7 +400,7 @@ class UserService extends ApiBaseService
             $lmsData = json_decode($loyaltyInfo['response'], true);
             if ($lmsData['loyaltyProfileInfo']) {
                 $customerInfo['loyalty_info'] = [
-                    'points' => $lmsData['loyaltyProfileInfo']['availablePoints'],
+                    'points' => (int)$lmsData['loyaltyProfileInfo']['availablePoints'],
                     'tier_level' => $lmsData['loyaltyProfileInfo']['currentTierLevel']
                 ];
             }
