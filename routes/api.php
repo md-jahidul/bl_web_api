@@ -43,13 +43,13 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
     // Offers Categories
     Route::get('offers-categories', 'API\V1\OfferCategoryController@offerCategories');
 
+    // Product Details
     Route::get('product-details/{slug}', 'API\V1\ProductController@productDetails');
-
     Route::get('packages/related-products/{type}', 'API\V1\OfferCategoryController@getPackageRelatedProduct');
-
-
     Route::get('product-other-details/{slug}', 'API\V1\ProductDetailsController@productDetails');
 
+    // App Product Deeplink Redirect
+    Route::get('deeplink-product-redirect/{product_code}', 'API\V1\ProductController@deeplinkProductUrlGen');
 
     // QUICK LAUNCH  ====================================
     Route::get('quick-launch/button', 'API\V1\QuickLaunchController@getQuickLaunchItems');
