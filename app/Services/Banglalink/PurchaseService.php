@@ -97,6 +97,10 @@ class PurchaseService extends BaseService
             );
         }
 
+        if ($result['status_code'] != 500) {
+            return $this->apiBaseService->sendErrorResponse('Purchase failed', "Product code couldn't be performed for purchase", $result['status_code']);
+        }
+
         return $this->apiBaseService->sendErrorResponse(
             "Internal service error",
             [],
