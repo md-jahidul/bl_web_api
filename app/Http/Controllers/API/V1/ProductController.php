@@ -91,7 +91,6 @@ class ProductController extends Controller
      */
     public function simPackageOffers($type, $offerType = null)
     {
-        // return $this->productService->simTypeOffers($type, $offerType);
         return $this->productService->simTypeOffersTypeWise($type, $offerType);
     }
 

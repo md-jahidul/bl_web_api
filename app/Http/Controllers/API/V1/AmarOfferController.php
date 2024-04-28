@@ -41,9 +41,9 @@ class AmarOfferController extends Controller
      * @return JsonResponse
      * @throws IdpAuthException
      */
-    public function getAmarOfferListV2(Request $request)
+    public function getAmarOfferListV2()
     {
-        return $this->amarOfferService->getAmarOfferListV2($request);
+        return $this->amarOfferService->getAmarOfferListV2();
     }
 
     public function buyAmarOffer(BuyAmarOfferRequest $request)
@@ -59,5 +59,10 @@ class AmarOfferController extends Controller
     public function amarOfferDetails(Request $request, $offerType, $offerId)
     {
         return $this->amarOfferService->getDetailsV2($request, $offerType, $offerId);
+    }
+
+    public function amarOfferForHome()
+    {
+        return $this->amarOfferService->offerForYou();
     }
 }

@@ -296,7 +296,7 @@ class ProductService extends BaseService
 
             $amarOfferData = [];
             if (request()->header('authorization')) {
-                $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
+                $amarOffers = $this->amarOfferService->getAmarOfferListV2();
                 if (!empty($amarOffers->getData()->data)) {
                     $amarOfferData[] = [
                         "type" => "amar-offer",
@@ -359,7 +359,7 @@ class ProductService extends BaseService
     }
 
     public function prepareAmarOffer(){
-        $amarOffers = $this->amarOfferService->getAmarOfferListV2(request());
+        $amarOffers = $this->amarOfferService->getAmarOfferListV2();
 
         if ($amarOffers->getData()->status_code == 200) {
             $offerCollection = collect($amarOffers->getData()->data)->groupBy('offer_type');
