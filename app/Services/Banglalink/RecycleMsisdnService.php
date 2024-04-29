@@ -11,7 +11,7 @@ class RecycleMsisdnService extends BaseService
      * @var ApiBaseService
      */
     public $responseFormatter;
-    protected const RECYCLE_MSISDN_CHECK_API_ENDPOINT = "https://jsonplaceholder.typicode.com/posts";
+    protected const RECYCLE_MSISDN_CHECK_API_ENDPOINT = "/customer-information-ext/customer-information-ext/sim-recycle/search?msisdn=";
 
     public function __construct
     (
@@ -32,16 +32,15 @@ class RecycleMsisdnService extends BaseService
         $data['is_recycle'] = false;
         try {
             $msisdn = $msisdn !== "" ? $msisdn : "1"; // TODO: MSISDN Validation
-            $requestUrl = self::RECYCLE_MSISDN_CHECK_API_ENDPOINT."/".$msisdn;
+            $requestUrl = self::RECYCLE_MSISDN_CHECK_API_ENDPOINT.$msisdn;
             $responseData = $this->get($requestUrl);
-            // $response = json_decode($responseData['response']);
-
-            if ($responseData['status_code'] == 200){
-                $data['is_recycle'] = true;
-            } else {
-                $data['is_recycle'] = false;
+            $response = json_decode($responseData['response']);
+            $data['is_recycle'] = false;
+            if ($response->data && $response->data->status){
+                $data['is_recycle'] = $response->data->status == "false" ? false : true;
             }
-            return $this->responseFormatter->sendSuccessResponse($data, 'Recycle msisdn checked successfully');
+            $message = $response->data->message ?? "";
+            return $this->responseFormatter->sendSuccessResponse($data, $message);
         } catch (\Exception $e) {
             return $this->responseFormatter->sendErrorResponse("Something went wrong!", [$e->getMessage()], 500);
         }
