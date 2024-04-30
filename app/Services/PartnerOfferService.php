@@ -264,10 +264,14 @@ class PartnerOfferService extends ApiBaseService
 
     public function tierOffers($showInHome = false)
     {
-        $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
-
-        $data = OrangeClubTierResource::collection($offers);
+        $data = $this->prepareLmsOffers($showInHome);
         return $this->sendSuccessResponse($data, 'Orange club offers');
+    }
+
+    public function prepareLmsOffers($showInHome)
+    {
+        $offers = $this->loyaltyTierRepository->offerByTier($showInHome);
+        return OrangeClubTierResource::collection($offers);
     }
 
     public function getComponentByPageType($pageType)
