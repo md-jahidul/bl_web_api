@@ -4,6 +4,7 @@ namespace App\Services\Banglalink;
 
 use App\Services\ApiBaseService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
 
 class RecycleMsisdnService extends BaseService
 {
@@ -27,10 +28,20 @@ class RecycleMsisdnService extends BaseService
      * @param int $msisdn
      * @return JsonResponse
      */
-    public function checkRecycleMsisdn($msisdn="")
+    public function checkRecycleMsisdn($request)
     {
-        $data['is_recycle'] = false;
+        
+        $validator = Validator::make($request->all(), [
+            'msisdn' => 'required|numeric|digits:13|regex:/^8801[0-9]{9}$/'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->responseFormatter->sendErrorResponse("Input Validation fails", [$validator->errors()], 422);
+        }
+        $inputs = $request->all();
+        $msisdn = $inputs['msisdn'];
         try {
+            $data['is_recycle'] = false;
             $msisdn = $msisdn !== "" ? $msisdn : "1"; // TODO: MSISDN Validation
             $requestUrl = self::RECYCLE_MSISDN_CHECK_API_ENDPOINT.$msisdn;
             $responseData = $this->get($requestUrl);
