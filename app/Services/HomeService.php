@@ -224,7 +224,7 @@ class HomeService extends ApiBaseService
         $this->bindDynamicValues($shortCode);
 
         if ($id == 4) {
-            $slider->data = $this->partnerOfferService->tierOffers($showInHome = true);
+            $slider->data = $this->partnerOfferService->prepareLmsOffers(true);
         } else {
             $slider->data = $this->productService->trendingProduct($params);
         }
