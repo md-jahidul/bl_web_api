@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Services\Banglalink\RecycleMsisdnService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class RecycleMsisdnController extends Controller
 {
@@ -28,9 +29,9 @@ class RecycleMsisdnController extends Controller
      * @param int $msisdn
      * @return JsonResponse
      */
-    public function recycleMsisdnCheck($msisdn)
+    public function recycleMsisdnCheck(Request $request)
     {
-        return $this->recycleMsisdnService->checkRecycleMsisdn($msisdn);
+        return $this->recycleMsisdnService->checkRecycleMsisdn($request);
     }
     
 }
