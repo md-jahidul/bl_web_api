@@ -29,6 +29,7 @@ class SalesAndServicesResource extends JsonResource
             "half_holiday" => $this->half_holiday ?? null,
             "half_holiday_opening_time" => $this->half_holiday_opening_time ?? null,
             "half_holiday_closing_time" => $this->half_holiday_closing_time ?? null,
+            "additional_info" => $this->additional_info ?? null,
             "isShow" => false,
 
             // "image_url" => (!empty($this->image_url)) ? env("IMAGE_HOST_URL") . $this->image_url : null,
