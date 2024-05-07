@@ -506,6 +506,16 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
 
     // Loyalty Offer Home
     Route::get('home-loyalty-offer', 'API\V1\PriyojonController@loyaltyOfferForHome');
+
+    // Mybl Customer Delete
+    Route::group(['prefix' => '/mybl'], function () {
+        Route::post('send-otp', 'API\V1\Mybl\MyblAppCustomerController@sendOtp');
+        Route::post('verify-otp', 'API\V1\Mybl\MyblAppCustomerController@verifyOtp');
+        Route::get('customer-deletion-questions', 'API\V1\Mybl\MyblAppCustomerController@feedbackQuestions');
+        Route::get('customer-deletion-tnc', 'API\V1\Mybl\MyblAppCustomerController@deleteTnc');
+        Route::delete('customer-account-delete', 'API\V1\Mybl\MyblAppCustomerController@customerAccountDelete');
+    });
+
 });
 
 Route::group(['prefix' => '/v2', 'middleware' => ['audit.log']], function () {
