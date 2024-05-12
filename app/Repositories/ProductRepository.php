@@ -451,15 +451,15 @@ class ProductRepository extends BaseRepository
                 // ->paginate(1);
     }
 
-    public function getAppProductByCode($productCode)
-    {
-        return $this->model->where('product_code', $productCode)
-            ->orWhere('app_product_code', $productCode)
-            ->select(
-                'id', 'product_code', 'offer_category_id',
-                'sim_category_id', 'url_slug','url_slug_bn'
-            )
-            ->first();
-    }
+//    public function getAppProductByCode($productCode)
+//    {
+//        return $this->model->where('product_code', $productCode)
+//            ->orWhere('app_product_code', $productCode)
+//            ->select(
+//                'id', 'product_code', 'offer_category_id',
+//                'sim_category_id', 'url_slug','url_slug_bn'
+//            )
+//            ->first();
+//    }
 
 }
