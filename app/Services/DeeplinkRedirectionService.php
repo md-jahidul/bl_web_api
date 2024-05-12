@@ -30,9 +30,7 @@ class DeeplinkRedirectionService extends ApiBaseService
     public function getRedirectionLink($data)
     {
         try {
-
-            $data = $this->redirectionRepository->findOneByProperties(['from_url' => $data['deeplink_url']], ['from_url', 'to_url']);
-
+            $data = $this->redirectionRepository->findOneByProperties(['from_url' => $data['deeplink_url'], 'status' => 1], ['from_url', 'to_url']);
             return $this->sendSuccessResponse($data, 'Deeplink Redirection URL');
         } catch (\Exception $exception) {
             return $this->sendErrorResponse('Something went wrong', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
