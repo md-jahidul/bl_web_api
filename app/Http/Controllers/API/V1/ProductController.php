@@ -206,9 +206,4 @@ class ProductController extends Controller
     {
         return $this->productService->eShopOffers($offerType);
     }
-
-    public function deeplinkProductUrlGen($productCode)
-    {
-        return $this->productService->deeplinkProductDetailsUrl($productCode);
-    }
 }

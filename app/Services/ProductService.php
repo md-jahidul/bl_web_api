@@ -1047,48 +1047,4 @@ class ProductService extends BaseService
         ];
         return $this->apiBaseService->sendSuccessResponse($data, "New SIM offers");
     }
-
-//    public function deeplinkProductDetailsUrl($productCode)
-//    {
-//        $data = [];
-//        $product = $this->productRepository->getAppProductByCode(['product_code' => $productCode]);
-//        if ($product){
-//            $data['product_details'] = $this->makeProductDetailsUrl($product);
-//        }
-//        return $this->apiBaseService->sendSuccessResponse($data, 'Product URL generated successfully!!');
-//    }
-
-    //save Search Data
-//    private function makeProductDetailsUrl($product)
-//    {
-//        $productCode = null;
-//        #Product Code
-//        if ($product->offer_category->alias != "others"){
-//            $productCode = $product->product_code;
-//        }
-//
-//        $urlEn = "";
-//        $urlBn = "";
-//        if ($product->sim_category_id == 1) {
-//            $urlEn .= 'prepaid';
-//            $urlBn .= 'prepaid';
-//        }
-//
-//        if ($product->sim_category_id == 2) {
-//            $urlEn .= 'postpaid';
-//            $urlBn .= 'postpaid';
-//        }
-//
-//        //category url
-//        $urlEn .= "/" . $product->offer_category->url_slug;
-//        $urlBn .= "/" . $product->offer_category->url_slug_bn;
-//        $urlEn .= "/" . $product->url_slug;
-//        $urlBn .= "/" . $product->url_slug_bn;
-//
-//        return [
-//            'product_code' => $productCode,
-//            'url_slug_en' => $urlEn,
-//            'url_slug_bn' => $urlBn,
-//        ];
-//    }
 }
