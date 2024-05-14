@@ -206,9 +206,4 @@ class ProductController extends Controller
     {
         return $this->productService->fallbackOffers($request);
     }
-
-    public function deeplinkProductUrlGen($productCode)
-    {
-        return $this->productService->deeplinkProductDetailsUrl($productCode);
-    }
 }
