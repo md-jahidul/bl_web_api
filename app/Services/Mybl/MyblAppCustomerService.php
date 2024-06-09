@@ -41,7 +41,7 @@ class MyblAppCustomerService extends ApiBaseService
     public function otpRequest($request)
     {
         try {
-            $url = config('mybl-app.base_url') . '/' . self::SEND_OTP;
+            $url = config('mybl-app.base_url') . self::SEND_OTP;
             $response = $this->client->request('POST', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -66,7 +66,7 @@ class MyblAppCustomerService extends ApiBaseService
     public function otpVerify($request)
     {
         try {
-            $url = config('mybl-app.base_url') . '/' . self::VERIFY_OTP;
+            $url = config('mybl-app.base_url') . self::VERIFY_OTP;
 
             $body = $request->all();
             $body['client_id'] = config('mybl-app.client_id');
@@ -98,12 +98,14 @@ class MyblAppCustomerService extends ApiBaseService
     public function feedbackQuestion()
     {
         try {
-            $url = config('mybl-app.base_url') . '/' . self::ACCOUNT_DELETION_REASONS;
+            $url = config('mybl-app.base_url') . self::ACCOUNT_DELETION_REASONS;
+
             $response = $this->client->request('GET', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json'
                 ],
             ]);
+
             $response = json_decode($response->getBody()->getContents(), true);
 
             return response()->json($response);
@@ -120,7 +122,7 @@ class MyblAppCustomerService extends ApiBaseService
     public function deleteTnc()
     {
         try {
-            $url = config('mybl-app.base_url') . '/' . self::DELETE_TNC;
+            $url = config('mybl-app.base_url') . self::DELETE_TNC;
             $response = $this->client->request('GET', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json'
@@ -142,7 +144,7 @@ class MyblAppCustomerService extends ApiBaseService
     public function deleteAccount($request)
     {
         try {
-            $url = config('mybl-app.base_url') . '/' . self::CUSTOMER_ACCOUNT_DELETE;
+            $url = config('mybl-app.base_url') . self::CUSTOMER_ACCOUNT_DELETE;
             $response = $this->client->request('DELETE', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json',
