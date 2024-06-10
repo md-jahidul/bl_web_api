@@ -457,7 +457,7 @@ Route::group(['prefix' => '/v1', 'middleware' => ['audit.log']], function () {
         Route::post('verify-otp', 'API\V1\Mybl\MyblAppCustomerController@verifyOtp');
         Route::get('customer-deletion-questions', 'API\V1\Mybl\MyblAppCustomerController@feedbackQuestions');
         Route::get('customer-deletion-tnc', 'API\V1\Mybl\MyblAppCustomerController@deleteTnc');
-        Route::delete('customer-account-delete', 'API\V1\Mybl\MyblAppCustomerController@customerAccountDelete');
+        Route::post('customer-account-delete', 'API\V1\Mybl\MyblAppCustomerController@customerAccountDelete');
     });
 
 });
