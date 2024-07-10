@@ -32,6 +32,13 @@ class MenuRepository extends BaseRepository
             )
             ->with(['children' => function($query){
                 $query->where('status', 1)
+                ->with(['children' => function($query){
+                    $query->where('status', 1)
+                        ->select(
+                            'id', 'parent_id', 'en_label_text', 'bn_label_text', 'code as key', 'url', 'url_bn', 'external_site',
+                            'description_en', 'description_bn', 'icon'
+                        );
+                }])
                 ->select(
                     'id', 'parent_id', 'en_label_text', 'bn_label_text', 'code as key', 'url', 'url_bn', 'external_site',
                     'description_en', 'description_bn', 'icon'
